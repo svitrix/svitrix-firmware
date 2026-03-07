@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "author": "Svitrix",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "wokwi-esp32-devkit-v1", "id": "esp", "top": -78, "left": 44, "attrs": {} },
+    {
+      "type": "wokwi-neopixel-matrix",
+      "id": "matrix",
+      "top": -250,
+      "left": -180,
+      "attrs": { "rows": "8", "cols": "32", "pixelSpacing": "8" }
+    },
+    { "type": "wokwi-pushbutton", "id": "btn_up", "top": 100, "left": -80, "attrs": { "label": "UP (Left)", "color": "green" } },
+    { "type": "wokwi-pushbutton", "id": "btn_sel", "top": 100, "left": 40, "attrs": { "label": "SELECT (Mid)", "color": "blue" } },
+    { "type": "wokwi-pushbutton", "id": "btn_down", "top": 100, "left": 160, "attrs": { "label": "DOWN (Right)", "color": "red" } },
+    { "type": "wokwi-buzzer", "id": "buzzer", "top": -250, "left": 300, "attrs": {} },
+    { "type": "wokwi-photoresistor-sensor", "id": "ldr", "top": -250, "left": 450, "attrs": {} }
+  ],
+  "connections": [
+    ["esp:TX0", "$serialMonitor:RX", "", []],
+    ["esp:RX0", "$serialMonitor:TX", "", []],
+
+    ["matrix:DIN", "esp:D32", "green", ["v0"]],
+    ["matrix:VSS", "esp:GND.1", "black", ["v0"]],
+    ["matrix:VDD", "esp:3V3", "red", ["v0"]],
+
+    ["btn_up:1.l", "esp:D26", "green", ["v0"]],
+    ["btn_up:2.l", "esp:GND.1", "black", ["v0"]],
+
+    ["btn_sel:1.l", "esp:D27", "blue", ["v0"]],
+    ["btn_sel:2.l", "esp:GND.1", "black", ["v0"]],
+
+    ["btn_down:1.l", "esp:D14", "red", ["v0"]],
+    ["btn_down:2.l", "esp:GND.1", "black", ["v0"]],
+
+    ["buzzer:1", "esp:D15", "orange", ["v0"]],
+    ["buzzer:2", "esp:GND.1", "black", ["v0"]],
+
+    ["ldr:VCC", "esp:3V3", "red", ["v0"]],
+    ["ldr:GND", "esp:GND.1", "black", ["v0"]],
+    ["ldr:AO", "esp:D35", "purple", ["v0"]]
+  ]
+}

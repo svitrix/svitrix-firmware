@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>SVITRIX - LiveView</title>
+
+  <style>
+    body, #container {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      background: #070b1e;
+    }
+    body {
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+    #container {
+      position: relative;
+      padding: 40px;
+      border: 1px solid #1e2550;
+      border-radius: 12px;
+      box-shadow: 0 0 30px rgba(240, 184, 0, 0.08);
+    }
+    canvas {
+      position: relative;
+      max-width: 100%;
+      max-height: 100%;
+      background: #000;
+      z-index: 1;
+      border-radius: 4px;
+    }
+    .controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      margin-top: 24px;
+    }
+    .controls button {
+      width: 150px;
+      height: 44px;
+      color: #f0b800;
+      background: #111638;
+      border: 1px solid #1e2550;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .controls button:hover {
+      background: #f0b800;
+      color: #070b1e;
+      border-color: #f0b800;
+    }
+  </style>
+
+  <script type="module">
+    import { GIFEncoder, quantize, applyPalette } from 'https://unpkg.com/gifenc@1.0.3';
+
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const WIDTH = 1052;
+    const HEIGHT = 260;
+
+    canvas.width = WIDTH;
+    canvas.height = HEIGHT;
+
+    let gifEncoder;
+    let isRecording = false;
+    let lastFrameTime = performance.now();
+
+    /* ── Live screen polling ── */
+
+    function fetchAndDraw() {
+      fetch("/api/screen")
+        .then(function (res) { return res.json(); })
+        .then(function (pixels) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.fillStyle = "#000";
+
+          for (let row = 0; row < 8; row++) {
+            for (let col = 0; col < 32; col++) {
+              const color = pixels[row * 32 + col];
+              const r = (color & 0xff0000) >> 16;
+              const g = (color & 0x00ff00) >> 8;
+              const b = color & 0x0000ff;
+              ctx.fillStyle = `rgb(${r},${g},${b})`;
+              ctx.fillRect(col * 33, row * 33, 29, 29);
+            }
+          }
+
+          // Capture frame if recording GIF
+          if (isRecording) {
+            const now = performance.now();
+            const delay = Math.round(now - lastFrameTime);
+            lastFrameTime = now;
+
+            const imageData = ctx.getImageData(0, 0, WIDTH, HEIGHT).data;
+            const format = "rgb444";
+            const palette = quantize(imageData, 256, { format: format });
+            const index = applyPalette(imageData, palette, format);
+            gifEncoder.writeFrame(index, WIDTH, HEIGHT, { palette: palette, delay: delay });
+          }
+
+          fetchAndDraw();
+        });
+    }
+
+    /* ── File download helper ── */
+
+    function downloadBlob(data, filename, mimeType) {
+      const blob = data instanceof Blob ? data : new Blob([data], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      link.click();
+    }
+
+    /* ── Button handlers ── */
+
+    document.addEventListener("DOMContentLoaded", function () {
+      fetchAndDraw();
+
+      // Download PNG
+      document.getElementById("downloadPng").addEventListener("click", function () {
+        const link = document.createElement("a");
+        link.href = canvas.toDataURL();
+        link.download = 'svitrix.png';
+        link.click();
+      });
+
+      // Next app
+      document.getElementById("nextApp").addEventListener("click", function () {
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/api/nextapp", true);
+        xhr.send();
+      });
+
+      // Previous app
+      document.getElementById("prevApp").addEventListener("click", function () {
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/api/previousapp", true);
+        xhr.send();
+      });
+
+      // GIF recording toggle
+      document.getElementById("recordGif").addEventListener("click", async function () {
+        var btn = this;
+        if (isRecording) {
+          gifEncoder.finish();
+          var bytes = gifEncoder.bytesView();
+          downloadBlob(bytes, 'svitrix.gif', 'image/gif');
+          isRecording = false;
+          btn.textContent = "Start GIF recording";
+        } else {
+          gifEncoder = GIFEncoder();
+          lastFrameTime = performance.now();
+          isRecording = true;
+          btn.textContent = "Stop GIF recording";
+        }
+      });
+    });
+  </script>
+</head>
+
+<body>
+  <div id="container">
+    <canvas id="canvas"></canvas>
+  </div>
+  <div class="controls">
+    <button id="prevApp">&lt;</button>
+    <button id="downloadPng">Download PNG</button>
+    <button id="recordGif">Start GIF recording</button>
+    <button id="nextApp">&gt;</button>
+  </div>
+</body>
+</html>
