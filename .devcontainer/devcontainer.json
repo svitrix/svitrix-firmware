@@ -1,0 +1,14 @@
+{
+	"name": "svitrix",
+	"build": {
+		"dockerfile": "Dockerfile"
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"platformio.platformio-ide"
+			]
+		}
+	},
+	"postCreateCommand": "pio pkg install -e ulanzi && pio pkg install -e native_test"
+}

@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>SVITRIX - Files</title>
+
+  <style media="screen">
+    body {
+      font-size: 12px;
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #070b1e;
+      color: #e8e8f0;
+    }
+
+    /* ── Context menu ── */
+    .contextMenu {
+      z-index: 300;
+      position: absolute;
+      left: 5px;
+      border: 1px solid #1e2550;
+      background-color: #111638;
+      display: none;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .contextMenu ul {
+      list-style: none;
+      top: 0;
+      left: 0;
+      margin: 0;
+      padding: 0;
+    }
+    .contextMenu li {
+      position: relative;
+      min-width: 60px;
+      cursor: pointer;
+    }
+    .contextMenu span {
+      color: #e8e8f0;
+      display: inline-block;
+      padding: 6px;
+    }
+    .contextMenu li:hover {
+      background: #1e2550;
+    }
+    .contextMenu li:hover span {
+      color: #f0b800;
+    }
+
+    /* ── CSS tree view ── */
+    .css-treeview li,
+    .css-treeview ul {
+      padding: 0;
+      margin: 0;
+      list-style: none;
+    }
+    .css-treeview input {
+      position: absolute;
+      opacity: 0;
+    }
+    .css-treeview {
+      font-size: 11px;
+      -moz-user-select: none;
+      -webkit-user-select: none;
+      user-select: none;
+      color: #e8e8f0;
+    }
+    .css-treeview span {
+      color: #f0b800;
+      cursor: pointer;
+    }
+    .css-treeview span:hover {
+      text-decoration: underline;
+    }
+    .css-treeview input + label + ul {
+      margin: 0 0 0 22px;
+    }
+    .css-treeview input ~ ul {
+      display: none;
+    }
+    .css-treeview label,
+    .css-treeview label::before {
+      cursor: pointer;
+    }
+    .css-treeview input:disabled + label {
+      cursor: default;
+      opacity: 0.6;
+    }
+    .css-treeview input:checked:not(:disabled) ~ ul {
+      display: block;
+    }
+    .css-treeview label,
+    .css-treeview label::before,
+    .css-treeview span {
+      background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAACgCAMAAAAy5xwmAAAAb1BMVEVHcEyWm55WW2E6QUdAQEBiaG1jaG7///8vNj3KzM7CxMbm5ufMzc/Y2dqxtLaGio58gYWJjZFRVFZJTE/Lzc+vsbNdXV74+PhvdHlsbW2kp6q7vLzy8vMuNTzf39+ho6UyOUCFhYWUl5nv7+/p6ekQi/GRAAAAAXRSTlMAQObYZgAAASRJREFUSMftk9tywiAQhoUAhVAwJpqDRqfavv8zluNKkurEjrY3+e74JizLn2W1miAKxphOBMeUYq6uH/A3A66YpRBRqJZaMI8iwsV/CdM6A2xj5nIUsK0/iTUPrGNm0MUDIkeG/J54uOiksb9hXh55PhIIjfKgdJTHSEy2/FD06Xmod8NOwrrwFUsQmXZHZhhekHBiByYIoaIJAjP8USWiCA8KhEW8UGT7KPaZExsObHyrUgTkjTz8liPXwzwEB+OPFVxHE8X2ckRByLaVyhVKxP27KN+nAtH7Rvur2Dr621tekMes+WiG86Hr6jKYj+7Q1Kd0PpxI58NsQdN/25zlQDQdKb9AnM6fHSGkPsQaJamIpQzCrywhD1iT2XksLCws/IZv8Zof7t25YlkAAAAASUVORK5CYII=) no-repeat;
+    }
+    .css-treeview label,
+    .css-treeview label::before,
+    .css-treeview span,
+    .css-treeview span::before {
+      display: inline-block;
+      height: 16px;
+      line-height: 16px;
+      vertical-align: middle;
+    }
+    .css-treeview label {
+      background-position: 18px 0;
+    }
+    .css-treeview span {
+      background-position: 18px -48px;
+    }
+    .css-treeview span.txt {
+      background-position: 18px -64px;
+    }
+    .css-treeview span.img {
+      background-position: 18px -80px;
+    }
+    .css-treeview label::before {
+      content: "";
+      width: 16px;
+      margin: 0 22px 0 0;
+      vertical-align: middle;
+      background-position: 0 -32px;
+    }
+    .css-treeview span::before {
+      content: "";
+      width: 16px;
+      margin: 0 22px 0 0;
+    }
+    .css-treeview input:checked + label::before {
+      background-position: 0 -16px;
+    }
+    @media screen and (-webkit-min-device-pixel-ratio: 0) {
+      .css-treeview {
+        -webkit-animation: webkit-adjacent-element-selector-bugfix infinite 1s;
+      }
+      @-webkit-keyframes webkit-adjacent-element-selector-bugfix {
+        from { padding: 0; }
+        to { padding: 0; }
+      }
+    }
+
+    /* ── Layout ── */
+    #header {
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      height: 24px;
+      padding: 1px 1px 0 10px;
+      background-color: #111638;
+      color: #e8e8f0;
+    }
+    #header button {
+      background: #1e2550;
+      color: #e8e8f0;
+      border: 1px solid #1e2550;
+      border-radius: 4px;
+      padding: 2px 8px;
+      cursor: pointer;
+      font-size: 11px;
+    }
+    #header button:hover {
+      background: #f0b800;
+      color: #070b1e;
+    }
+    #header input[type="text"] {
+      background: #0a0e27;
+      border: 1px solid #1e2550;
+      color: #e8e8f0;
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-size: 11px;
+    }
+    #header input[type="file"] {
+      color: #8890b0;
+      font-size: 11px;
+    }
+    #tree {
+      position: absolute;
+      top: 25px;
+      bottom: 0;
+      left: 0;
+      width: 20%;
+      padding: 8px;
+      background: #0a0e27;
+      border-right: 1px solid #1e2550;
+      overflow: auto;
+    }
+    #editor,
+    #preview {
+      position: absolute;
+      top: 25px;
+      right: 0;
+      bottom: 0;
+      left: 20%;
+    }
+    #preview {
+      background-color: #0a0e27;
+      padding: 5px;
+      color: #e8e8f0;
+    }
+    #preview img {
+      height: 200px;
+      image-rendering: pixelated;
+    }
+
+    /* ── Status / meter ── */
+    #status {
+      position: absolute;
+      top: 3px;
+      right: 10px;
+      font-size: 15px;
+      color: #8890b0;
+    }
+    #fsMeter {
+      width: 100px;
+      padding-bottom: 2px;
+    }
+    #warning {
+      height: 100%;
+      background-color: orange;
+      color: #000;
+    }
+    .tooltip {
+      position: absolute;
+      z-index: 2;
+      right: 0;
+      top: 20px;
+      visibility: hidden;
+      background-color: #111638;
+      color: #e8e8f0;
+      text-align: center;
+      border: 1px solid #1e2550;
+      padding: 3px;
+      font-size: 10px;
+    }
+    #warning:hover .tooltip {
+      visibility: visible;
+    }
+
+    /* ── Loading overlay ── */
+    #loading {
+      position: absolute;
+      top: -100vh;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 100;
+      background-color: rgba(7, 11, 30, 0.8);
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+    }
+    #loading.shown {
+      top: 0;
+      opacity: 1;
+    }
+    #loading-msg {
+      display: inline-block;
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #f0b800;
+      font-size: 32px;
+    }
+    @keyframes spinner-anim {
+      0%   { transform: rotate(0); }
+      100% { transform: rotate(360deg); }
+    }
+    .spinner-anim:not(:required) {
+      display: inline-block;
+      position: relative;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation: spinner-anim 1s infinite linear;
+      border: 16px solid #1e2550;
+      border-right-color: #f0b800;
+      border-radius: 32px;
+      box-sizing: border-box;
+      overflow: hidden;
+      text-indent: -9999px;
+      width: 64px;
+      height: 64px;
+    }
+
+    i {
+      color: #8890b0;
+    }
+  </style>
+
+  <script>
+    var tree, fsInfo;
+
+    /* ────────────────────────────────────────────
+     *  Utility helpers
+     * ──────────────────────────────────────────── */
+
+    function setLoading(show, msg) {
+      if (msg) console.log(msg);
+      document.getElementById("loading-msg").innerHTML = msg || "";
+      if (show)
+        document.getElementById("loading").classList.add("shown");
+      else
+        document.getElementById("loading").classList.remove("shown");
+      document.body.style.cursor = show ? "wait" : "default";
+    }
+
+    function readableSize(bytes) {
+      if (bytes < 1024) return bytes + " B";
+      for (var i = -1; i++, 1024 < (bytes /= 1024););
+      return bytes.toFixed(2) + [" KiB", " MiB", " GiB", " TiB", "PiB"][i];
+    }
+
+    function showHttpError(xhr) {
+      alert("ERROR: [" + xhr.status + "] " + xhr.responseText);
+    }
+
+    function canLoadNewContents() {
+      if (!document.getElementById("saveBtn").disabled) {
+        if (!confirm("Changes to your document will be lost if you continue"))
+          return false;
+        enableSaveDiscardBtns(false);
+      }
+      return true;
+    }
+
+    function enableSaveDiscardBtns(enabled) {
+      document.getElementById("saveBtn").disabled = !enabled;
+      document.getElementById("discardBtn").disabled = !enabled;
+    }
+
+    function getParentFolder(path) {
+      path = path.startsWith("/") ? path : "/" + path;
+      path = path.endsWith("/") ? path.slice(0, -1) : path;
+      return path.substring(0, path.lastIndexOf("/"));
+    }
+
+    /* ────────────────────────────────────────────
+     *  FS status bar
+     * ──────────────────────────────────────────── */
+
+    function refreshStatus() {
+      document.getElementById("status").innerHTML = "(refreshing...)";
+      var xhr = new XMLHttpRequest();
+      xhr.onload = function () {
+        if (200 != xhr.status) {
+          showHttpError(xhr);
+          return;
+        }
+        fsInfo = JSON.parse(xhr.responseText);
+        var html = fsInfo.type + " - ";
+        if (fsInfo.isOk) {
+          var pct = 1 + Math.round(99 * fsInfo.usedBytes / fsInfo.totalBytes);
+          var freeText = readableSize(fsInfo.totalBytes - fsInfo.usedBytes)
+            + " free of " + readableSize(fsInfo.totalBytes);
+          html += "<meter id='fsMeter' min='0' optimum='0' low='90' high='95' max='100' value='"
+            + pct + "' title='" + freeText + "'>" + freeText + "</meter>";
+          if (fsInfo.unsupportedFiles) {
+            html += " <span id='warning'>WARNING<span class='tooltip'>"
+              + "Filesystem&nbsp;contains&nbsp;unsupported&nbsp;filenames:<br/>"
+              + fsInfo.unsupportedFiles + "</span></span>";
+          }
+        } else {
+          html += "<span style='background-color:red;color:white;font-weight:bold'>INIT ERROR !</span>";
+        }
+        document.getElementById("status").innerHTML = html;
+        if ("SPIFFS" != fsInfo.type) {
+          document.getElementById("mkdir").style.display = "inline";
+        }
+      };
+      xhr.open("GET", "/status", true);
+      xhr.send(null);
+    }
+
+    /* ────────────────────────────────────────────
+     *  Header toolbar
+     * ──────────────────────────────────────────── */
+
+    function createHeader(containerId, treeCtrl, editorCtrl) {
+      var container = document.getElementById(containerId);
+
+      var fileInput = document.createElement("input");
+      fileInput.type = "file";
+      fileInput.multiple = false;
+      fileInput.name = "data";
+      container.appendChild(fileInput);
+
+      var pathInput = document.createElement("input");
+      pathInput.id = "pathInput";
+      pathInput.type = "text";
+      pathInput.name = "path";
+      pathInput.defaultValue = "/";
+      container.appendChild(pathInput);
+
+      var uploadBtn = document.createElement("button");
+      uploadBtn.innerHTML = "Upload";
+      container.appendChild(uploadBtn);
+
+      var mkdirBtn = document.createElement("button");
+      mkdirBtn.id = "mkdir";
+      mkdirBtn.style.display = "none";
+      mkdirBtn.innerHTML = "MkDir";
+      container.appendChild(mkdirBtn);
+
+      var mkfileBtn = document.createElement("button");
+      mkfileBtn.innerHTML = "MkFile";
+      container.appendChild(mkfileBtn);
+
+      var editorBtns = document.createElement("span");
+      editorBtns.id = "editorButtons";
+      editorBtns.style.display = "none";
+      container.appendChild(editorBtns);
+
+      var saveBtn = document.createElement("button");
+      saveBtn.id = "saveBtn";
+      saveBtn.innerHTML = "Save";
+      saveBtn.style.marginLeft = "30px";
+      saveBtn.disabled = true;
+      editorBtns.appendChild(saveBtn);
+
+      var discardBtn = document.createElement("button");
+      discardBtn.id = "discardBtn";
+      discardBtn.innerHTML = "Discard";
+      discardBtn.disabled = true;
+      editorBtns.appendChild(discardBtn);
+
+      var helpBtn = document.createElement("button");
+      helpBtn.id = "helpBtn";
+      helpBtn.innerHTML = "?";
+      editorBtns.appendChild(helpBtn);
+
+      var statusSpan = document.createElement("span");
+      statusSpan.id = "status";
+      statusSpan.innerHTML = "(loading)";
+      container.appendChild(statusSpan);
+
+      /* ── Events ── */
+
+      fileInput.onchange = function () {
+        if (fileInput.files.length === 0) return;
+        var name = fileInput.files[0].name;
+        if (!pathInput.value.startsWith("/")) pathInput.value = "/" + pathInput.value;
+        pathInput.value = getParentFolder(pathInput.value) + "/" + name;
+      };
+
+      uploadBtn.onclick = function () {
+        if (fileInput.files.length !== 0)
+          treeCtrl.httpUpload(fileInput.files[0], pathInput.value);
+      };
+
+      mkfileBtn.onclick = function () {
+        var path = pathInput.value.trim();
+        if (path === "")
+          alert("A filename must be given");
+        else if (path.endsWith("/"))
+          alert("Filenames must not end with a '/' character");
+        else
+          treeCtrl.httpCreate(path);
+      };
+
+      mkdirBtn.onclick = function () {
+        var path = pathInput.value.trim();
+        if (path === "")
+          alert("A folder name must be given");
+        else {
+          if (!path.endsWith("/")) path += "/";
+          treeCtrl.httpCreate(path);
+        }
+      };
+
+      saveBtn.onclick = function () { editorCtrl.save(); };
+      discardBtn.onclick = function () { editorCtrl.discard(); };
+      helpBtn.onclick = function () { editorCtrl.showShortcuts(); };
+    }
+
+    /* ────────────────────────────────────────────
+     *  File tree
+     * ──────────────────────────────────────────── */
+
+    function createTree(containerId, editor) {
+      var preview = document.getElementById("preview");
+      var root = document.createElement("div");
+
+      /* ── File type checks ── */
+
+      function isTextFile(name) {
+        var ext = /(?:\.([^.]+))?$/.exec(name)[1];
+        if (ext === undefined) return false;
+        switch (ext.toLowerCase()) {
+          case "txt": case "htm": case "html": case "js": case "json":
+          case "c": case "h": case "cpp": case "css": case "xml":
+            return true;
+        }
+        return false;
+      }
+
+      function isImageFile(name) {
+        var ext = /(?:\.([^.]+))?$/.exec(name)[1];
+        if (ext === undefined) return false;
+        switch (ext.toLowerCase()) {
+          case "png": case "jpg": case "jpeg": case "gif": case "ico":
+            return true;
+        }
+        return false;
+      }
+
+      /* ── Preview / view helpers ── */
+
+      function showImage(path) {
+        document.getElementById("pathInput").value = path;
+        document.getElementById("editor").style.display = "none";
+        document.getElementById("editorButtons").style.display = "none";
+        preview.style.display = "block";
+        preview.innerHTML = "<img src='" + path
+          + "' style='max-width:100%; max-height:100%; margin:auto; display:block;'/>";
+      }
+
+      function showTextFallback(path) {
+        document.getElementById("pathInput").value = path;
+        document.getElementById("editor").style.display = "none";
+        document.getElementById("editorButtons").style.display = "none";
+        preview.style.display = "block";
+        preview.innerHTML = "<span style='color:#ff4444;'>Ace editor could not be loaded "
+          + "from the internet nor from /edit/ace.js . Defaulting to text viewer...</span>"
+          + "<pre id='txtContents' style='overflow: auto; color: #e8e8f0;'></pre>";
+        var xhr = new XMLHttpRequest();
+        xhr.onload = function () {
+          document.getElementById("txtContents").textContent = this.responseText;
+        };
+        xhr.open("GET", path);
+        xhr.send();
+      }
+
+      function attemptLoad(path) {
+        console.log("Attempting load of '" + path + "'...");
+        document.getElementById("pathInput").value = path;
+        if (!canLoadNewContents()) return;
+        if (isTextFile(path)) {
+          if (typeof ace === "undefined") showTextFallback(path);
+          else editor.loadUrl(path);
+        } else if (isImageFile(path)) {
+          showImage(path);
+        } else {
+          clearMainPanel();
+        }
+      }
+
+      function clearMainPanel() {
+        document.getElementById("editor").style.display = "none";
+        document.getElementById("editorButtons").style.display = "none";
+        preview.style.display = "block";
+        preview.innerHTML = "<div style='text-align:center;color:#8890b0'>"
+          + "(file not found or format not supported)</div>";
+      }
+
+      /* ── Context menus ── */
+
+      function buildFileMenu(menuEl, filePath) {
+        var ul = document.createElement("ul");
+        menuEl.appendChild(ul);
+
+        var li = document.createElement("li");
+        ul.appendChild(li);
+
+        if (isTextFile(filePath)) {
+          if (typeof ace === "undefined") {
+            li.innerHTML = "<span>View</span>";
+            li.onclick = function () {
+              if (document.body.getElementsByClassName("contextMenu").length > 0)
+                document.body.removeChild(menuEl);
+              if (canLoadNewContents()) showTextFallback(filePath);
+            };
+          } else {
+            li.innerHTML = "<span>Edit</span>";
+            li.onclick = function () {
+              if (document.body.getElementsByClassName("contextMenu").length > 0)
+                document.body.removeChild(menuEl);
+              if (canLoadNewContents()) editor.loadUrl(filePath);
+            };
+          }
+        } else if (isImageFile(filePath)) {
+          li.innerHTML = "<span>Preview</span>";
+          li.onclick = function () {
+            if (document.body.getElementsByClassName("contextMenu").length > 0)
+              document.body.removeChild(menuEl);
+            if (canLoadNewContents()) showImage(filePath);
+          };
+        }
+
+        // Download
+        li = document.createElement("li");
+        ul.appendChild(li);
+        li.innerHTML = "<span>Download</span>";
+        li.onclick = function () {
+          if (document.body.getElementsByClassName("contextMenu").length > 0)
+            document.body.removeChild(menuEl);
+          document.getElementById("download-frame").src = filePath + "?download=true";
+        };
+
+        // Rename
+        li = document.createElement("li");
+        ul.appendChild(li);
+        li.innerHTML = "<span>Rename/Move</span>";
+        li.onclick = function () {
+          if (document.body.getElementsByClassName("contextMenu").length > 0)
+            document.body.removeChild(menuEl);
+          var newName = prompt("Rename " + filePath + " to", filePath);
+          if (newName != null && newName != filePath) httpRename(filePath, newName);
+        };
+
+        // Delete
+        li = document.createElement("li");
+        ul.appendChild(li);
+        li.innerHTML = "<span>Delete</span>";
+        li.onclick = function () {
+          if (document.body.getElementsByClassName("contextMenu").length > 0)
+            document.body.removeChild(menuEl);
+          httpDelete(filePath);
+        };
+      }
+
+      function buildFolderMenu(menuEl, folderId) {
+        var ul = document.createElement("ul");
+        menuEl.appendChild(ul);
+
+        var li = document.createElement("li");
+        ul.appendChild(li);
+
+        var isExpanded = document.getElementById(folderId).childNodes[0].checked;
+
+        li = document.createElement("li");
+        ul.appendChild(li);
+
+        if (isExpanded) {
+          li.innerHTML = "<span>Collapse</span>";
+          li.onclick = function () {
+            if (document.body.getElementsByClassName("contextMenu").length > 0)
+              document.body.removeChild(menuEl);
+            document.getElementById(folderId).childNodes[0].checked = false;
+          };
+          var refreshLi = document.createElement("li");
+          ul.appendChild(refreshLi);
+          refreshLi.innerHTML = "<span>Refresh</span>";
+          refreshLi.onclick = function () {
+            if (document.body.getElementsByClassName("contextMenu").length > 0)
+              document.body.removeChild(menuEl);
+            listDir(folderId);
+          };
+        } else {
+          li.innerHTML = "<span>Expand</span>";
+          li.onclick = function () {
+            if (document.body.getElementsByClassName("contextMenu").length > 0)
+              document.body.removeChild(menuEl);
+            document.getElementById(folderId).childNodes[0].checked = true;
+            listDir(folderId);
+          };
+        }
+
+        // Rename
+        li = document.createElement("li");
+        ul.appendChild(li);
+        li.innerHTML = "<span>Rename/Move</span>";
+        li.onclick = function () {
+          if (document.body.getElementsByClassName("contextMenu").length > 0)
+            document.body.removeChild(menuEl);
+          var newName = prompt("Rename " + folderId + " to", folderId);
+          if (newName != null && newName != folderId) httpRename(folderId, newName);
+        };
+
+        // Delete
+        li = document.createElement("li");
+        ul.appendChild(li);
+        li.innerHTML = "<span>Delete</span>";
+        li.onclick = function () {
+          if (document.body.getElementsByClassName("contextMenu").length > 0)
+            document.body.removeChild(menuEl);
+          httpDelete(folderId);
+        };
+      }
+
+      function showContextMenu(event, id, isFile) {
+        var menuEl = document.createElement("div");
+        var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
+        var scrollLeft = document.body.scrollLeft || document.documentElement.scrollLeft;
+        var x = event.clientX + scrollLeft;
+        var y = event.clientY + scrollTop;
+
+        menuEl.className = "contextMenu";
+        menuEl.style.display = "block";
+        menuEl.style.left = x + "px";
+        menuEl.style.top = y + "px";
+
+        if (isFile) buildFileMenu(menuEl, id);
+        else buildFolderMenu(menuEl, id);
+
+        document.body.appendChild(menuEl);
+
+        var w = menuEl.offsetWidth;
+        var h = menuEl.offsetHeight;
+        menuEl.onmouseout = function (e) {
+          if (e.clientX < x || e.clientX > x + w || e.clientY < y || e.clientY > y + h) {
+            if (document.body.getElementsByClassName("contextMenu").length > 0)
+              document.body.removeChild(menuEl);
+          }
+        };
+      }
+
+      /* ── HTTP operations ── */
+
+      function makeResultHandler(xhr, targetPath) {
+        return function () {
+          setLoading(false);
+          if (200 != xhr.status) {
+            showHttpError(xhr);
+            return;
+          }
+          if (targetPath) {
+            var parent = getParentFolder(targetPath);
+            if (xhr.responseText && xhr.responseText != parent)
+              refreshPath(xhr.responseText);
+            refreshPath(parent);
+            attemptLoad(targetPath);
+          } else {
+            refreshPath(xhr.responseText);
+          }
+          refreshStatus();
+        };
+      }
+
+      function httpRename(oldPath, newPath) {
+        setLoading(true, "Renaming '" + oldPath + "' to '" + newPath + "'...");
+        if (!newPath.startsWith("/")) newPath = "/" + newPath;
+        var xhr = new XMLHttpRequest();
+        xhr.onload = makeResultHandler(xhr, newPath);
+        var fd = new FormData();
+        fd.append("path", newPath);
+        fd.append("src", oldPath);
+        xhr.open("PUT", "/edit");
+        xhr.send(fd);
+      }
+
+      function httpDelete(path) {
+        setLoading(true, "Deleting '" + path + "'...");
+        var xhr = new XMLHttpRequest();
+        xhr.onload = makeResultHandler(xhr);
+        var fd = new FormData();
+        fd.append("path", path);
+        xhr.open("DELETE", "/edit");
+        xhr.send(fd);
+      }
+
+      function httpUpload(file, destPath) {
+        setLoading(true, "Uploading '" + destPath + "'...");
+        if (!destPath.startsWith("/")) destPath = "/" + destPath;
+        var xhr = new XMLHttpRequest();
+        xhr.onload = makeResultHandler(xhr, destPath);
+        var fd = new FormData();
+        fd.append("data", file, destPath);
+        xhr.open("POST", "/edit");
+        xhr.send(fd);
+      }
+
+      function httpCreate(path) {
+        setLoading(true, "Creating '" + path + "'...");
+        if (!path.startsWith("/")) path = "/" + path;
+        var xhr = new XMLHttpRequest();
+        xhr.onload = makeResultHandler(xhr, path);
+        var fd = new FormData();
+        fd.append("path", path);
+        xhr.open("PUT", "/edit");
+        xhr.send(fd);
+      }
+
+      /* ── Directory listing ── */
+
+      function listDir(dirId, pendingDirs) {
+        setLoading(true, "Listing '" + dirId + "'...");
+        var xhr = new XMLHttpRequest();
+        xhr.onload = function () {
+          setLoading(false);
+          if (200 != xhr.status) {
+            showHttpError(xhr);
+            return;
+          }
+
+          // Remove existing child <ul> if present
+          var el = document.getElementById(dirId);
+          if (el) {
+            var lastChild = el.lastElementChild;
+            if (lastChild && lastChild.tagName == "UL") el.removeChild(lastChild);
+          }
+
+          // Build tree nodes
+          var items = JSON.parse(xhr.responseText);
+          items.sort(function (a, b) {
+            return a.type == b.type
+              ? a.name.localeCompare(b.name)
+              : a.type.localeCompare(b.type);
+          });
+
+          var ul = document.createElement("ul");
+          document.getElementById(dirId).appendChild(ul);
+
+          for (var idx = 0; idx < items.length; idx++) {
+            var item = items[idx];
+            var node;
+            if (item.type === "file") {
+              node = createFileNode(dirId, item.name, item.size);
+            } else {
+              node = createFolderNode(dirId, item.name);
+            }
+            ul.appendChild(node);
+          }
+
+          // Expand checkbox
+          var checkbox = document.getElementById(dirId).childNodes[0];
+          if (checkbox !== undefined && checkbox.checked !== undefined)
+            checkbox.checked = true;
+
+          // Process remaining pending dirs
+          if (pendingDirs && pendingDirs.length)
+            expandPendingDirs(pendingDirs);
+        };
+        xhr.open("GET", "/list?dir=" + dirId, true);
+        xhr.send(null);
+      }
+
+      function createFileNode(parentId, name, size) {
+        var li = document.createElement("li");
+        li.id = (parentId == "/" ? "" : parentId) + "/" + name;
+
+        var span = document.createElement("span");
+        if (isTextFile(name)) span.classList.add("txt");
+        else if (isImageFile(name)) span.classList.add("img");
+        span.innerHTML = name + " <i>(" + readableSize(size) + ")</i>";
+        li.appendChild(span);
+
+        li.onclick = function () { attemptLoad(li.id); };
+        li.oncontextmenu = function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          showContextMenu(e, li.id, true);
+        };
+        return li;
+      }
+
+      function createFolderNode(parentId, name, disabled) {
+        var li = document.createElement("li");
+        li.id = (parentId == "/" ? "" : parentId) + "/" + name;
+
+        var checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        if (disabled !== undefined && disabled) checkbox.disabled = "disabled";
+        li.appendChild(checkbox);
+
+        var label = document.createElement("label");
+        label.textContent = name;
+        li.appendChild(label);
+
+        checkbox.onchange = function () {
+          if (checkbox.checked) listDir(li.id);
+        };
+        label.onclick = function () {
+          if (checkbox.checked) checkbox.checked = false;
+          else {
+            checkbox.checked = true;
+            listDir(li.id);
+          }
+        };
+        li.oncontextmenu = function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          showContextMenu(e, li.id, false);
+        };
+        return li;
+      }
+
+      function expandPendingDirs(dirs) {
+        var next = dirs.pop();
+        if (next) listDir(next, dirs);
+      }
+
+      /* ── Path refresh ── */
+
+      function refreshPath(path) {
+        if ("SPIFFS" == fsInfo.type) {
+          console.log("Refreshing '/'...");
+          listDir("/");
+        } else {
+          console.log("Refreshing '" + path + "'...");
+          if (path.lastIndexOf("/") == -1) {
+            listDir("/");
+          } else {
+            var pending = [];
+            var current = path;
+            while (current.lastIndexOf("/") != -1 && !document.getElementById(current)) {
+              pending.push(current);
+              current = getParentFolder(current);
+            }
+            if (current == "") pending.push("/");
+            else pending.push(current);
+            expandPendingDirs(pending);
+          }
+        }
+      }
+
+      /* ── Build root and return public API ── */
+
+      root.className = "css-treeview";
+      root.id = "/";
+      document.getElementById(containerId).appendChild(root);
+
+      listDir("/");
+
+      this.clearMainPanel = clearMainPanel;
+      this.attemptLoad = attemptLoad;
+      this.refreshPath = refreshPath;
+      this.httpUpload = httpUpload;
+      this.httpCreate = httpCreate;
+
+      return this;
+    }
+
+    /* ────────────────────────────────────────────
+     *  Ace editor wrapper
+     * ──────────────────────────────────────────── */
+
+    function createEditor(containerId, file, lang, theme, contentType) {
+      if (file === undefined) file = "/index.htm";
+      if (lang === undefined) lang = detectLang(file);
+      if (theme === undefined) theme = "monokai";
+      if (contentType === undefined) contentType = (lang === "c_cpp") ? "text/plain" : "text/" + lang;
+
+      var activeXhr = null;
+      var aceEditor = ace.edit(containerId);
+
+      function detectLang(filename) {
+        var ext = /(?:\.([^.]+))?$/.exec(filename)[1];
+        if (ext === undefined) return "plain";
+        switch (ext) {
+          case "txt":  return "plain";
+          case "htm":  return "html";
+          case "js":   return "javascript";
+          case "c":
+          case "cpp":  return "c_cpp";
+          case "css":
+          case "scss":
+          case "php":
+          case "html":
+          case "json":
+          case "xml":  return ext;
+          default:     return "plain";
+        }
+      }
+
+      function onSaveComplete() {
+        setLoading(false);
+        if (200 != activeXhr.status) showHttpError(activeXhr);
+        tree.refreshPath(getParentFolder(file));
+        refreshStatus();
+      }
+
+      function onLoadComplete() {
+        setLoading(false);
+        document.getElementById("preview").style.display = "none";
+        document.getElementById("editor").style.display = "block";
+        document.getElementById("editorButtons").style.display = "inline";
+        if (200 == activeXhr.status) {
+          aceEditor.setValue(activeXhr.responseText);
+          aceEditor.clearSelection();
+          enableSaveDiscardBtns(false);
+        } else {
+          tree.clearMainPanel();
+        }
+      }
+
+      function loadFile(path) {
+        setLoading(true, "Loading '" + path + "'...");
+        activeXhr = new XMLHttpRequest();
+        activeXhr.onload = onLoadComplete;
+        activeXhr.open("GET", path, true);
+        activeXhr.send(null);
+      }
+
+      function saveFile(path, content, mime) {
+        setLoading(true, "Saving '" + path + "'...");
+        activeXhr = new XMLHttpRequest();
+        activeXhr.onload = onSaveComplete;
+        var fd = new FormData();
+        fd.append("data", new Blob([content], { type: mime }), path);
+        activeXhr.open("POST", "/edit");
+        activeXhr.send(fd);
+      }
+
+      /* ── Ace setup ── */
+
+      if (lang !== "plain")
+        aceEditor.getSession().setMode("ace/mode/" + lang);
+      aceEditor.setTheme("ace/theme/" + theme);
+      aceEditor.$blockScrolling = Infinity;
+      aceEditor.getSession().setUseSoftTabs(true);
+      aceEditor.getSession().setTabSize(2);
+      aceEditor.setHighlightActiveLine(true);
+      aceEditor.setShowPrintMargin(false);
+
+      aceEditor.commands.addCommand({
+        name: "save",
+        bindKey: { win: "Ctrl-S", mac: "Command-S" },
+        exec: function (e) { e.save(); },
+        readOnly: false
+      });
+
+      aceEditor.commands.addCommand({
+        name: "showKeyboardShortcuts",
+        bindKey: { win: "Ctrl-Alt-h", mac: "Command-Alt-h" },
+        exec: function (e) { e.showShortcuts(); }
+      });
+
+      aceEditor.session.on("change", function () {
+        enableSaveDiscardBtns(true);
+      });
+
+      /* ── Public methods ── */
+
+      aceEditor.loadUrl = function (path) {
+        document.getElementById("pathInput").value = path;
+        enableSaveDiscardBtns(false);
+        file = path;
+        lang = detectLang(file);
+        contentType = "text/" + lang;
+        if (lang !== "plain")
+          aceEditor.getSession().setMode("ace/mode/" + lang);
+        loadFile(file);
+      };
+
+      aceEditor.save = function () {
+        enableSaveDiscardBtns(false);
+        saveFile(file, aceEditor.getValue() + "", contentType);
+      };
+
+      aceEditor.discard = function () {
+        aceEditor.loadUrl(file);
+        enableSaveDiscardBtns(false);
+      };
+
+      aceEditor.showShortcuts = function () {
+        ace.config.loadModule("ace/ext/keybinding_menu", function (module) {
+          module.init(aceEditor);
+          aceEditor.showKeyboardShortcuts();
+        });
+      };
+
+      loadFile(file);
+      return aceEditor;
+    }
+
+    /* ────────────────────────────────────────────
+     *  Bootstrap
+     * ──────────────────────────────────────────── */
+
+    function onBodyLoad() {
+      var params = {};
+      window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, val) {
+        params[key] = val;
+      });
+
+      var editorInstance;
+      if (typeof ace !== "undefined") {
+        editorInstance = createEditor("editor", params.file, params.lang, params.theme);
+      }
+
+      tree = createTree("tree", editorInstance);
+      createHeader("header", tree, editorInstance);
+      refreshStatus();
+    }
+  </script>
+
+  <!-- Ace editor: load from CDN, fallback to local -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.9/ace.js" charset="utf-8"></script>
+  <script>
+    if (typeof ace === "undefined") {
+      console.log("Cannot load ace.js from the web, trying local copy");
+      var script = document.createElement("script");
+      script.src = "/edit/ace.js";
+      script.async = false;
+      document.head.appendChild(script);
+    }
+  </script>
+</head>
+
+<body onload="onBodyLoad()">
+  <div id="header"></div>
+  <div id="tree"></div>
+  <div id="editor"></div>
+  <div id="preview" style="display:none"></div>
+  <div id="loading">
+    <span id="loading-msg"></span><br />
+    <div class="spinner-anim">Loading...</div>
+  </div>
+  <iframe id="download-frame" style="display:none"></iframe>
+</body>
+</html>

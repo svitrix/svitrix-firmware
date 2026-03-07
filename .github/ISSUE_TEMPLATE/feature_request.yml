@@ -1,0 +1,50 @@
+name: Feature Request
+description: Suggest a new feature or improvement
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a feature! Please check existing issues to avoid duplicates.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: Is your feature request related to a problem?
+      placeholder: "I'm frustrated when..."
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: A clear description of what you want to happen.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Any alternative solutions or features you've considered.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      description: What part of the project does this affect?
+      options:
+        - Display / Effects
+        - Apps (Clock, Weather, etc.)
+        - Web Interface
+        - MQTT
+        - HTTP API
+        - Hardware / Sensors
+        - Other
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Any other context, mockups, or screenshots.
