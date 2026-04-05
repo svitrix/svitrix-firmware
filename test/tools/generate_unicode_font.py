@@ -152,26 +152,54 @@ def parse_old_glyphs(font_path):
     with open(font_path, 'r') as f:
         content = f.read()
 
-    # Try new UniGlyph format first: {codepoint, bitmapOffset, width, height, xAdvance, xOffset, yOffset}
+    # Try compact packed format: {codepoint, bitmapOffset, packed_byte}
     if 'SvitrixGlyphs[]' in content:
-        glyph_pattern = re.compile(
-            r'\{0x([0-9A-Fa-f]+),\s*(\d+),\s*(\d+),\s*(\d+),\s*(\d+),\s*(-?\d+),\s*(-?\d+)\}',
-        )
         start = content.find('SvitrixGlyphs[]')
         end = content.find('};', start)
         glyph_section = content[start:end]
 
+        # Detect format: packed has 3 fields with hex packed byte; old has 7 fields
+        packed_pattern = re.compile(
+            r'\{0x([0-9A-Fa-f]+),\s*(\d+),\s*0x([0-9A-Fa-f]+)\}',
+        )
+        old_pattern = re.compile(
+            r'\{0x([0-9A-Fa-f]+),\s*(\d+),\s*(\d+),\s*(\d+),\s*(\d+),\s*(-?\d+),\s*(-?\d+)\}',
+        )
+
+        yoff_table = [-5, -4, -3, -1]
         glyphs = []
-        for m in glyph_pattern.finditer(glyph_section):
-            glyphs.append({
-                'bitmapOffset': int(m.group(2)),
-                'width': int(m.group(3)),
-                'height': int(m.group(4)),
-                'xAdvance': int(m.group(5)),
-                'xOffset': int(m.group(6)),
-                'yOffset': int(m.group(7)),
-                '_codepoint': int(m.group(1), 16),  # Track original codepoint
-            })
+
+        packed_matches = list(packed_pattern.finditer(glyph_section))
+        old_matches = list(old_pattern.finditer(glyph_section))
+
+        if len(packed_matches) >= len(old_matches):
+            # Compact packed format
+            for m in packed_matches:
+                packed = int(m.group(3), 16)
+                h = (packed >> 5) & 0x07
+                xa = (packed >> 2) & 0x07
+                yo = yoff_table[packed & 0x03]
+                glyphs.append({
+                    'bitmapOffset': int(m.group(2)),
+                    'width': 8,
+                    'height': h,
+                    'xAdvance': xa,
+                    'xOffset': 0,
+                    'yOffset': yo,
+                    '_codepoint': int(m.group(1), 16),
+                })
+        else:
+            # Old 7-field UniGlyph format
+            for m in old_matches:
+                glyphs.append({
+                    'bitmapOffset': int(m.group(2)),
+                    'width': int(m.group(3)),
+                    'height': int(m.group(4)),
+                    'xAdvance': int(m.group(5)),
+                    'xOffset': int(m.group(6)),
+                    'yOffset': int(m.group(7)),
+                    '_codepoint': int(m.group(1), 16),
+                })
         return glyphs
 
     # Fallback: old GFXglyph format: {bitmapOffset, width, height, xAdvance, xOffset, yOffset}
@@ -228,7 +256,8 @@ def build_unicode_glyphs(old_glyphs):
         for g in old_glyphs:
             cp = g['_codepoint']
             # Keep only base glyphs (not aliases we added before)
-            is_ascii = 0x0020 <= cp <= 0x007E
+            # Exclude lowercase a-z — they'll be aliased to A-Z
+            is_ascii = 0x0020 <= cp <= 0x007E and not (0x0061 <= cp <= 0x007A)
             is_latin1 = 0x00A1 <= cp <= 0x00FF
             is_cyr_upper = 0x0410 <= cp <= 0x042F
             is_cyr_special = cp in (0x0490, 0x0404)
@@ -243,10 +272,10 @@ def build_unicode_glyphs(old_glyphs):
                     'yOffset': g['yOffset'],
                 })
     else:
-        # Old format: map by index
+        # Old format: map by index, exclude lowercase a-z (aliased to A-Z)
         for i, g in enumerate(old_glyphs):
             cp = old_index_to_unicode(i)
-            if cp is not None:
+            if cp is not None and not (0x0061 <= cp <= 0x007A):
                 result.append({
                     'codepoint': cp,
                     'bitmapOffset': g['bitmapOffset'],
@@ -256,6 +285,22 @@ def build_unicode_glyphs(old_glyphs):
                     'xOffset': g['xOffset'],
                     'yOffset': g['yOffset'],
                 })
+
+    # Add lowercase Latin aliases (a-z → same bitmaps as A-Z)
+    latin_upper_map = {g['codepoint']: g for g in result if 0x0041 <= g['codepoint'] <= 0x005A}
+    for upper_cp in range(0x0041, 0x005B):  # A-Z
+        lower_cp = upper_cp + 0x20  # a-z
+        if upper_cp in latin_upper_map:
+            g = latin_upper_map[upper_cp]
+            result.append({
+                'codepoint': lower_cp,
+                'bitmapOffset': g['bitmapOffset'],
+                'width': g['width'],
+                'height': g['height'],
+                'xAdvance': g['xAdvance'],
+                'xOffset': g['xOffset'],
+                'yOffset': g['yOffset'],
+            })
 
     # Add lowercase Cyrillic aliases (а-я → same bitmaps as А-Я)
     # Build a map of uppercase codepoint → glyph data
@@ -458,15 +503,17 @@ def build_unicode_glyphs(old_glyphs):
     return result
 
 
-def extract_bitmap_section(font_path):
-    """Extract the raw bitmap array source code from the old file."""
+def extract_bitmap_bytes(font_path):
+    """Extract raw bitmap bytes and per-byte comments from the old file."""
     with open(font_path, 'r') as f:
         content = f.read()
 
-    # Find bitmap array
     start = content.find('const uint8_t SvitrixBitmaps[] PROGMEM = {')
-    end = content.find('};', start) + 2
-    return content[start:end]
+    end = content.find('};', start)
+    section = content[start:end]
+    # Strip comments to get clean hex values
+    clean = re.sub(r'/\*.*?\*/', '', section)
+    return [int(x, 16) for x in re.findall(r'0x([0-9A-Fa-f]{2})', clean)]
 
 
 def extract_license(font_path):
@@ -486,24 +533,60 @@ def generate_font_header(font_path, output_path):
     print(f"Generated {len(unicode_glyphs)} Unicode glyphs (with aliases)")
 
     license_text = extract_license(font_path)
-    bitmap_section = extract_bitmap_section(font_path)
+    old_bitmap = extract_bitmap_bytes(font_path)
+
+    # ── Compact bitmaps: remove orphaned bytes, remap offsets ──
+    # Collect unique (offset, height) pairs actually used
+    used_spans = {}  # old_offset → height
+    for g in unicode_glyphs:
+        off = g['bitmapOffset']
+        h = g['height']
+        if off not in used_spans or used_spans[off] < h:
+            used_spans[off] = h
+
+    # Build new bitmap: copy only used spans, record old→new offset mapping
+    new_bitmap = []
+    offset_remap = {}  # old_offset → new_offset
+    for old_off in sorted(used_spans.keys()):
+        h = used_spans[old_off]
+        offset_remap[old_off] = len(new_bitmap)
+        new_bitmap.extend(old_bitmap[old_off:old_off + h])
+
+    # Update glyph offsets
+    for g in unicode_glyphs:
+        g['bitmapOffset'] = offset_remap[g['bitmapOffset']]
+
+    print(f"  Bitmap compacted: {len(old_bitmap)} → {len(new_bitmap)} bytes "
+          f"(-{len(old_bitmap) - len(new_bitmap)} orphaned)")
 
     lines = []
     lines.append(license_text)
     lines.append('')
-    lines.append('// SvitrixFont Version 20260405 — Unicode sparse glyph table')
+    lines.append('// SvitrixFont Version 20260406 — Unicode sparse glyph table')
     lines.append('')
     lines.append('#pragma once')
     lines.append('#include "UnicodeFont.h"')
     lines.append('')
 
-    # Bitmap array (unchanged)
-    lines.append(bitmap_section)
+    # Bitmap array (compacted)
+    lines.append('const uint8_t SvitrixBitmaps[] PROGMEM = {')
+    # Find which new offsets map to which glyph for comments
+    new_off_to_glyphs = {}
+    for g in unicode_glyphs:
+        off = g['bitmapOffset']
+        if off not in new_off_to_glyphs:
+            new_off_to_glyphs[off] = g
+    for i, byte in enumerate(new_bitmap):
+        comment = ''
+        if i in new_off_to_glyphs:
+            g = new_off_to_glyphs[i]
+            name = get_name(g['codepoint'])
+            comment = f' /*[{i}] 0x{g["codepoint"]:02X} {name} */'
+        lines.append(f'    0x{byte:02X},{comment}')
+    lines.append('};')
     lines.append('')
 
     # Unicode glyph table (compact: 5 bytes per glyph)
-    # packed byte: height[7:5] | xAdvance[4:2] | yOffIdx[1:0]
-    # yOffset index: {-5:0, -4:1, -3:2, -1:3}
     yoff_to_idx = {-5: 0, -4: 1, -3: 2, -1: 3}
 
     lines.append('/* {codepoint, bitmapOffset, packed: h[7:5]|xAdv[4:2]|yOff[1:0]} */')
