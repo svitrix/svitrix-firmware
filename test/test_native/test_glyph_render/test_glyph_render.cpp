@@ -122,14 +122,18 @@ void test_render_A_pixels_within_bounds(void)
 {
     renderGlyph(SvitrixFont, 'A', 0, 5, collectPixel, &pixels);
     const UniGlyph *g = findGlyph(SvitrixFont, 'A');
+    int8_t xo = SvitrixFont.xOffset;
+    uint8_t w = SvitrixFont.bitmapWidth;
+    uint8_t h = glyphHeight(g);
+    int8_t yo = glyphYOffset(g);
     for (int i = 0; i < pixels.count; i++)
     {
         // x should be within [xOffset, xOffset + width - 1]
-        TEST_ASSERT_TRUE(pixels.xs[i] >= g->xOffset);
-        TEST_ASSERT_TRUE(pixels.xs[i] < g->xOffset + g->width);
+        TEST_ASSERT_TRUE(pixels.xs[i] >= xo);
+        TEST_ASSERT_TRUE(pixels.xs[i] < xo + w);
         // y should be within [5 + yOffset, 5 + yOffset + height - 1]
-        TEST_ASSERT_TRUE(pixels.ys[i] >= 5 + g->yOffset);
-        TEST_ASSERT_TRUE(pixels.ys[i] < 5 + g->yOffset + g->height);
+        TEST_ASSERT_TRUE(pixels.ys[i] >= 5 + yo);
+        TEST_ASSERT_TRUE(pixels.ys[i] < 5 + yo + h);
     }
 }
 

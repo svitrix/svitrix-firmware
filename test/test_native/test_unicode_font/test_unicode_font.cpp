@@ -14,7 +14,7 @@ void test_find_space(void)
     const UniGlyph *g = findGlyph(SvitrixFont, 0x0020);
     TEST_ASSERT_NOT_NULL(g);
     TEST_ASSERT_EQUAL(0x0020, g->codepoint);
-    TEST_ASSERT_EQUAL(2, g->xAdvance);
+    TEST_ASSERT_EQUAL(2, glyphXAdvance(g));
 }
 
 void test_find_A(void)
@@ -22,21 +22,21 @@ void test_find_A(void)
     const UniGlyph *g = findGlyph(SvitrixFont, 'A');
     TEST_ASSERT_NOT_NULL(g);
     TEST_ASSERT_EQUAL(0x0041, g->codepoint);
-    TEST_ASSERT_EQUAL(4, g->xAdvance);
+    TEST_ASSERT_EQUAL(4, glyphXAdvance(g));
 }
 
 void test_find_I_narrow(void)
 {
     const UniGlyph *g = findGlyph(SvitrixFont, 'I');
     TEST_ASSERT_NOT_NULL(g);
-    TEST_ASSERT_EQUAL(2, g->xAdvance);
+    TEST_ASSERT_EQUAL(2, glyphXAdvance(g));
 }
 
 void test_find_M_wide(void)
 {
     const UniGlyph *g = findGlyph(SvitrixFont, 'M');
     TEST_ASSERT_NOT_NULL(g);
-    TEST_ASSERT_EQUAL(6, g->xAdvance);
+    TEST_ASSERT_EQUAL(6, glyphXAdvance(g));
 }
 
 void test_find_tilde(void)
@@ -55,21 +55,21 @@ void test_find_cyrillic_A(void)
     const UniGlyph *g = findGlyph(SvitrixFont, 0x0410); // А
     TEST_ASSERT_NOT_NULL(g);
     TEST_ASSERT_EQUAL(0x0410, g->codepoint);
-    TEST_ASSERT_EQUAL(4, g->xAdvance);
+    TEST_ASSERT_EQUAL(4, glyphXAdvance(g));
 }
 
 void test_find_cyrillic_Sh(void)
 {
     const UniGlyph *g = findGlyph(SvitrixFont, 0x0428); // Ш
     TEST_ASSERT_NOT_NULL(g);
-    TEST_ASSERT_EQUAL(6, g->xAdvance);
+    TEST_ASSERT_EQUAL(6, glyphXAdvance(g));
 }
 
 void test_find_cyrillic_Shch(void)
 {
     const UniGlyph *g = findGlyph(SvitrixFont, 0x0429); // Щ
     TEST_ASSERT_NOT_NULL(g);
-    TEST_ASSERT_EQUAL(7, g->xAdvance);
+    TEST_ASSERT_EQUAL(7, glyphXAdvance(g));
 }
 
 void test_find_cyrillic_Ya(void)
@@ -135,14 +135,14 @@ void test_find_ukrainian_I(void)
 {
     const UniGlyph *g = findGlyph(SvitrixFont, 0x0406); // І
     TEST_ASSERT_NOT_NULL(g);
-    TEST_ASSERT_EQUAL(2, g->xAdvance); // Same as Latin I
+    TEST_ASSERT_EQUAL(2, glyphXAdvance(g)); // Same as Latin I
 }
 
 void test_find_ukrainian_i_lower(void)
 {
     const UniGlyph *g = findGlyph(SvitrixFont, 0x0456); // і
     TEST_ASSERT_NOT_NULL(g);
-    TEST_ASSERT_EQUAL(2, g->xAdvance);
+    TEST_ASSERT_EQUAL(2, glyphXAdvance(g));
 }
 
 void test_find_ukrainian_Yi(void)
@@ -165,7 +165,7 @@ void test_find_degree(void)
 {
     const UniGlyph *g = findGlyph(SvitrixFont, 0x00B0); // °
     TEST_ASSERT_NOT_NULL(g);
-    TEST_ASSERT_EQUAL(3, g->xAdvance);
+    TEST_ASSERT_EQUAL(3, glyphXAdvance(g));
 }
 
 void test_find_a_dieresis(void)

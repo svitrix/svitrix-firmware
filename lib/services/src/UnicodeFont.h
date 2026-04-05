@@ -21,17 +21,30 @@ typedef uint8_t byte;
 #endif
 #endif
 
-/// A single glyph in a Unicode bitmap font.
+/// Compact glyph entry — 5 bytes instead of 9.
 /// Glyphs are stored sorted by codepoint for binary-search lookup.
+///
+/// Packed byte layout: [height:3][xAdvance:3][yOffIdx:2]
+///   height   (bits 7-5): glyph height in pixels (1-7)
+///   xAdvance (bits 4-2): cursor advance in pixels (0-7)
+///   yOffIdx  (bits 1-0): index into kYOffsets[] lookup table
+///
+/// Constant fields removed (all glyphs share these):
+///   width  = 8  (bitmap row = 1 byte, stored in UniFont::bitmapWidth)
+///   xOffset = 0 (stored in UniFont::xOffset)
 struct UniGlyph {
-    uint16_t codepoint;     ///< Unicode code point (U+0020 – U+FFFF)
-    uint16_t bitmapOffset;  ///< Byte offset into UniFont::bitmap
-    uint8_t  width;         ///< Bitmap width in pixels
-    uint8_t  height;        ///< Bitmap height in pixels
-    uint8_t  xAdvance;      ///< Cursor advance after drawing (pixels)
-    int8_t   xOffset;       ///< X offset from cursor to glyph upper-left
-    int8_t   yOffset;       ///< Y offset from cursor to glyph upper-left
+    uint16_t codepoint;    ///< Unicode code point (U+0020 – U+FFFF)
+    uint16_t bitmapOffset; ///< Byte offset into UniFont::bitmap
+    uint8_t  packed;       ///< height[7:5] | xAdvance[4:2] | yOffIdx[1:0]
 };
+
+/// yOffset lookup table (4 possible values, indexed by bits [1:0] of packed).
+static constexpr int8_t kYOffsets[] = {-5, -4, -3, -1};
+
+/// Inline accessors — work on both native and PROGMEM pointers.
+inline uint8_t glyphHeight(const UniGlyph *g) { return (UNI_READ_BYTE(&g->packed) >> 5) & 0x07; }
+inline uint8_t glyphXAdvance(const UniGlyph *g) { return (UNI_READ_BYTE(&g->packed) >> 2) & 0x07; }
+inline int8_t  glyphYOffset(const UniGlyph *g) { return kYOffsets[UNI_READ_BYTE(&g->packed) & 0x03]; }
 
 /// Unicode bitmap font: a bitmap array + sorted glyph table.
 struct UniFont {
@@ -39,6 +52,8 @@ struct UniFont {
     const UniGlyph *glyphs;     ///< Glyph array, sorted by codepoint
     uint16_t        glyphCount; ///< Number of entries in glyphs[]
     uint8_t         yAdvance;   ///< Newline distance (pixels)
+    uint8_t         bitmapWidth; ///< Bitmap row width in pixels (always 8 for this font)
+    int8_t          xOffset;    ///< X offset from cursor (always 0 for this font)
 };
 
 /// Find a glyph by Unicode codepoint using binary search.

@@ -501,30 +501,40 @@ def generate_font_header(font_path, output_path):
     lines.append(bitmap_section)
     lines.append('')
 
-    # Unicode glyph table
-    lines.append('/* {codepoint, bitmapOffset, width, height, xAdvance, xOffset, yOffset} */')
+    # Unicode glyph table (compact: 5 bytes per glyph)
+    # packed byte: height[7:5] | xAdvance[4:2] | yOffIdx[1:0]
+    # yOffset index: {-5:0, -4:1, -3:2, -1:3}
+    yoff_to_idx = {-5: 0, -4: 1, -3: 2, -1: 3}
+
+    lines.append('/* {codepoint, bitmapOffset, packed: h[7:5]|xAdv[4:2]|yOff[1:0]} */')
     lines.append(f'const UniGlyph SvitrixGlyphs[] PROGMEM = {{')
 
     for i, g in enumerate(unicode_glyphs):
         name = get_name(g['codepoint'])
-        # clang-format: no extra alignment padding
+        h = g['height']
+        xa = g['xAdvance']
+        yo = g['yOffset']
+        assert 0 <= h <= 7, f"height {h} out of range for glyph U+{g['codepoint']:04X}"
+        assert 0 <= xa <= 7, f"xAdvance {xa} out of range for glyph U+{g['codepoint']:04X}"
+        assert yo in yoff_to_idx, f"yOffset {yo} not in lookup table for glyph U+{g['codepoint']:04X}"
+        packed = (h << 5) | (xa << 2) | yoff_to_idx[yo]
         line = (
-            f"    {{0x{g['codepoint']:04X}, {g['bitmapOffset']}, "
-            f"{g['width']}, {g['height']}, {g['xAdvance']}, "
-            f"{g['xOffset']}, {g['yOffset']}}}, "
-            f"/*[{i}] {name} */"
+            f"    {{0x{g['codepoint']:04X}, {g['bitmapOffset']}, 0x{packed:02X}}}, "
+            f"/*[{i}] {name} h={h} xa={xa} yo={yo} */"
         )
         lines.append(line)
 
     lines.append('};')
     lines.append('')
 
-    # Font struct — clang-format compatible (no trailing alignment)
+    # Font struct
     lines.append('const UniFont SvitrixFont PROGMEM = {')
     lines.append('    (const uint8_t *)SvitrixBitmaps,')
     lines.append('    (const UniGlyph *)SvitrixGlyphs,')
     lines.append(f'    {len(unicode_glyphs)}, // glyphCount')
-    lines.append('    6,                // yAdvance')
+    lines.append('    6, // yAdvance')
+    lines.append('    8, // bitmapWidth')
+    lines.append('    0, // xOffset')
     lines.append('};')
     lines.append('')
 
@@ -539,7 +549,7 @@ def generate_font_header(font_path, output_path):
     latin_ext_count = sum(1 for g in unicode_glyphs if 0x0100 <= g['codepoint'] <= 0x024F)
     cyr_count = sum(1 for g in unicode_glyphs if 0x0400 <= g['codepoint'] <= 0x04FF)
     print(f"  ASCII: {ascii_count}, Latin-1: {latin1_count}, Latin Ext: {latin_ext_count}, Cyrillic: {cyr_count}")
-    print(f"  Total: {len(unicode_glyphs)} glyphs × 9 bytes = {len(unicode_glyphs) * 9} bytes")
+    print(f"  Total: {len(unicode_glyphs)} glyphs × 5 bytes = {len(unicode_glyphs) * 5} bytes")
 
 
 if __name__ == '__main__':
