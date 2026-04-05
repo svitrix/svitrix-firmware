@@ -118,3 +118,32 @@ uint8_t getGlyphAdvance(const UniFont &font, uint16_t codepoint, uint8_t default
         return UNI_READ_BYTE(&g->xAdvance);
     return defaultWidth;
 }
+
+uint8_t renderGlyph(const UniFont &font, uint16_t codepoint, int16_t cursorX, int16_t cursorY, PixelCallback pixelCb, void *userData)
+{
+    const UniGlyph *glyph = findGlyph(font, codepoint);
+    if (!glyph)
+        return 0;
+
+    const uint8_t *bitmap = font.bitmap;
+    uint16_t bo = UNI_READ_WORD(&glyph->bitmapOffset);
+    uint8_t w = UNI_READ_BYTE(&glyph->width);
+    uint8_t h = UNI_READ_BYTE(&glyph->height);
+    int8_t xo = static_cast<int8_t>(UNI_READ_BYTE(&glyph->xOffset));
+    int8_t yo = static_cast<int8_t>(UNI_READ_BYTE(&glyph->yOffset));
+
+    uint8_t bits = 0, bit = 0;
+    for (uint8_t yy = 0; yy < h; yy++)
+    {
+        for (uint8_t xx = 0; xx < w; xx++)
+        {
+            if (!(bit++ & 7))
+                bits = UNI_READ_BYTE(&bitmap[bo++]);
+            if (bits & 0x80)
+                pixelCb(cursorX + xo + xx, cursorY + yo + yy, userData);
+            bits <<= 1;
+        }
+    }
+
+    return UNI_READ_BYTE(&glyph->xAdvance);
+}

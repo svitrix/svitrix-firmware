@@ -59,3 +59,10 @@ float getUnicodeTextWidth(const UniFont &font, const char *text, byte textCase, 
 
 /// Get the xAdvance for a single codepoint. Returns defaultWidth if glyph not found.
 uint8_t getGlyphAdvance(const UniFont &font, uint16_t codepoint, uint8_t defaultWidth = 4);
+
+/// Callback for each pixel set by renderGlyph(). Coordinates are absolute (cursor + offset applied).
+typedef void (*PixelCallback)(int16_t x, int16_t y, void *userData);
+
+/// Render a single glyph's bitmap, calling pixelCb for each set pixel.
+/// @return xAdvance of the rendered glyph, or 0 if not found.
+uint8_t renderGlyph(const UniFont &font, uint16_t codepoint, int16_t cursorX, int16_t cursorY, PixelCallback pixelCb, void *userData);

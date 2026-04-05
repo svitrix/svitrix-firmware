@@ -183,42 +183,22 @@ void DisplayRenderer_::renderColoredText(int16_t x, int16_t y, const char *text,
 /// Core glyph renderer — draws a single character from SvitrixFont bitmap at the current cursor.
 /// Renders a single Unicode glyph at the current cursor position.
 /// Advances cursor_x by the glyph's xAdvance after drawing.
+static void matrixPixelCallback(int16_t x, int16_t y, void *userData)
+{
+    (void)userData;
+    matrix->drawPixel(x, y, textColor);
+}
+
 void DisplayRenderer_::matrixPrintGlyph(uint16_t codepoint)
 {
-    const UniGlyph *glyph = findGlyph(SvitrixFont, codepoint);
-    if (!glyph)
+    uint16_t cp = codepoint;
+    uint8_t adv = renderGlyph(SvitrixFont, cp, cursor_x, cursor_y, matrixPixelCallback, nullptr);
+    if (adv == 0)
     {
         // Fallback: try '?' glyph
-        glyph = findGlyph(SvitrixFont, '?');
-        if (!glyph)
-            return;
+        adv = renderGlyph(SvitrixFont, '?', cursor_x, cursor_y, matrixPixelCallback, nullptr);
     }
-
-    const uint8_t *bitmap = SvitrixFont.bitmap;
-    uint16_t bo = UNI_READ_WORD(&glyph->bitmapOffset);
-    uint8_t w = UNI_READ_BYTE(&glyph->width);
-    uint8_t h = UNI_READ_BYTE(&glyph->height);
-    int8_t xo = static_cast<int8_t>(UNI_READ_BYTE(&glyph->xOffset));
-    int8_t yo = static_cast<int8_t>(UNI_READ_BYTE(&glyph->yOffset));
-
-    uint8_t xx, yy, bits = 0, bit = 0;
-    for (yy = 0; yy < h; yy++)
-    {
-        for (xx = 0; xx < w; xx++)
-        {
-            if (!(bit++ & 7))
-            {
-                bits = UNI_READ_BYTE(&bitmap[bo++]);
-            }
-            if (bits & 0x80)
-            {
-                matrix->drawPixel(cursor_x + xo + xx, cursor_y + yo + yy, textColor);
-            }
-            bits <<= 1;
-        }
-    }
-
-    cursor_x += UNI_READ_BYTE(&glyph->xAdvance);
+    cursor_x += adv;
 }
 
 void DisplayRenderer_::matrixPrint(const char *str)
