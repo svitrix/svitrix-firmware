@@ -507,24 +507,25 @@ def generate_font_header(font_path, output_path):
 
     for i, g in enumerate(unicode_glyphs):
         name = get_name(g['codepoint'])
+        # clang-format: no extra alignment padding
         line = (
-            f"    {{0x{g['codepoint']:04X}, {g['bitmapOffset']:>4}, "
+            f"    {{0x{g['codepoint']:04X}, {g['bitmapOffset']}, "
             f"{g['width']}, {g['height']}, {g['xAdvance']}, "
-            f"{g['xOffset']:>2}, {g['yOffset']:>2}}}, "
-            f"/*[{i:>3}] {name} */"
+            f"{g['xOffset']}, {g['yOffset']}}}, "
+            f"/*[{i}] {name} */"
         )
         lines.append(line)
 
     lines.append('};')
     lines.append('')
 
-    # Font struct
-    lines.append(f'const UniFont SvitrixFont PROGMEM = {{')
-    lines.append(f'    (const uint8_t *)SvitrixBitmaps,')
-    lines.append(f'    (const UniGlyph *)SvitrixGlyphs,')
+    # Font struct — clang-format compatible (no trailing alignment)
+    lines.append('const UniFont SvitrixFont PROGMEM = {')
+    lines.append('    (const uint8_t *)SvitrixBitmaps,')
+    lines.append('    (const UniGlyph *)SvitrixGlyphs,')
     lines.append(f'    {len(unicode_glyphs)}, // glyphCount')
-    lines.append(f'    6  // yAdvance')
-    lines.append(f'}};')
+    lines.append('    6,                // yAdvance')
+    lines.append('};')
     lines.append('')
 
     with open(output_path, 'w') as f:
