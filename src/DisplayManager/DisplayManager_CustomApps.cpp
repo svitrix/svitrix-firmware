@@ -146,7 +146,7 @@ bool parseFragmentsText(const JsonArray& fragmentArray, std::vector<uint32_t>& c
             color = standardColor;
         }
 
-        fragments.push_back(utf8ascii(textFragment));
+        fragments.push_back(textFragment);
         colors.push_back(color);
     }
     return true;

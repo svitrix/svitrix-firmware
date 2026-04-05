@@ -159,7 +159,7 @@ void parseTextOrFragments(JsonObject doc, String& text, std::vector<uint32_t>& c
     }
     else if (doc.containsKey("text"))
     {
-        text = utf8ascii(doc["text"].as<String>());
+        text = doc["text"].as<String>();
     }
     else
     {

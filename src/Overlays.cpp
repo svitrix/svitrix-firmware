@@ -32,7 +32,7 @@ void MenuOverlay(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, GifPlay
 
     matrix->fillScreen(0);
     DisplayManager.setTextColor(0xFFFFFF);
-    DisplayManager.printText(0, 6, utf8ascii(MenuManager.menutext()).c_str(), true, 2);
+    DisplayManager.printText(0, 6, MenuManager.menutext().c_str(), true, 2);
 }
 
 void NotifyOverlay(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, GifPlayer *gifPlayer)
