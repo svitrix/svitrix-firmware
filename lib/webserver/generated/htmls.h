@@ -305,3 +305,132 @@ static const char update_html[] PROGMEM = R"EOF(
 </form></div></body></html>
 
 )EOF";
+
+
+static const char datafetcher_html[] PROGMEM = R"EOF(
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>SVITRIX - Data Fetcher</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#070b1e;color:#e0e0e0;font-family:system-ui,-apple-system,sans-serif;padding:20px;max-width:700px;margin:0 auto}
+h1{color:#f0b800;font-size:1.4em;margin-bottom:16px;text-align:center}
+.card{background:#111638;border:1px solid #1e2550;border-radius:10px;padding:16px;margin-bottom:12px}
+.card .name{color:#f0b800;font-weight:600;font-size:1.1em}
+.card .url{color:#888;font-size:.8em;word-break:break-all;margin:4px 0}
+.card .meta{display:flex;gap:12px;font-size:.85em;color:#aaa;margin-top:6px;flex-wrap:wrap}
+.card .meta span{background:#1a1f44;padding:2px 8px;border-radius:4px}
+.actions{display:flex;gap:8px;margin-top:10px}
+.btn{height:36px;padding:0 14px;border:1px solid #1e2550;border-radius:6px;font-size:.85em;cursor:pointer;transition:all .2s}
+.btn-sm{height:30px;padding:0 10px;font-size:.8em}
+.btn-primary{background:#f0b800;color:#070b1e;border-color:#f0b800;font-weight:600}
+.btn-primary:hover{background:#ffc620}
+.btn-default{background:#111638;color:#f0b800}
+.btn-default:hover{background:#1a1f44}
+.btn-danger{background:#111638;color:#e74c3c;border-color:#3a1520}
+.btn-danger:hover{background:#2a1020;color:#ff6b6b}
+.empty{text-align:center;color:#666;padding:40px 0}
+#addForm{display:none}
+#addForm.show{display:block}
+.form-row{margin-bottom:10px}
+.form-row label{display:block;font-size:.8em;color:#aaa;margin-bottom:3px}
+.form-row input{width:100%;height:36px;background:#0a0e24;border:1px solid #1e2550;border-radius:6px;color:#e0e0e0;padding:0 10px;font-size:.9em}
+.form-row input:focus{outline:none;border-color:#f0b800}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+.form-actions{display:flex;gap:8px;margin-top:14px}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1a1f44;color:#f0b800;padding:8px 20px;border-radius:6px;border:1px solid #1e2550;display:none;font-size:.9em;z-index:99}
+</style>
+</head>
+<body>
+<h1>Data Fetcher</h1>
+<div style="text-align:right;margin-bottom:12px">
+<button class="btn btn-primary" onclick="toggleForm()">+ Add Source</button>
+</div>
+
+<div id="addForm" class="card">
+<div class="form-row"><label>Name (unique ID)</label><input id="f_name" placeholder="btc"></div>
+<div class="form-row"><label>URL</label><input id="f_url" placeholder="https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd"></div>
+<div class="form-grid">
+<div class="form-row"><label>JSON Path</label><input id="f_path" placeholder="bitcoin.usd"></div>
+<div class="form-row"><label>Display Format</label><input id="f_fmt" placeholder="$%.0f"></div>
+<div class="form-row"><label>Icon</label><input id="f_icon" placeholder="bitcoin"></div>
+<div class="form-row"><label>Color</label><input id="f_color" placeholder="#F7931A"></div>
+<div class="form-row"><label>Interval (sec)</label><input id="f_int" type="number" value="900" min="60"></div>
+</div>
+<div class="form-actions">
+<button class="btn btn-primary" onclick="saveSource()">Save</button>
+<button class="btn btn-default" onclick="toggleForm()">Cancel</button>
+</div>
+</div>
+
+<div id="list"></div>
+<div id="toast" class="toast"></div>
+
+<script>
+var sources=[];
+function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.style.display='block';setTimeout(function(){t.style.display='none'},2000)}
+function toggleForm(){var f=document.getElementById('addForm');f.classList.toggle('show');if(f.classList.contains('show'))document.getElementById('f_name').focus()}
+function load(){
+fetch('/api/datafetcher').then(function(r){return r.json()}).then(function(d){
+sources=d;render()
+}).catch(function(){document.getElementById('list').innerHTML='<div class="empty">Failed to load</div>'})
+}
+function render(){
+var el=document.getElementById('list');
+if(!sources.length){el.innerHTML='<div class="empty">No data sources configured</div>';return}
+var h='';
+for(var i=0;i<sources.length;i++){var s=sources[i];
+h+='<div class="card"><div class="name">'+esc(s.name)+'</div>';
+h+='<div class="url">'+esc(s.url)+'</div>';
+h+='<div class="meta">';
+h+='<span>Path: '+esc(s.jsonPath)+'</span>';
+if(s.displayFormat)h+='<span>Fmt: '+esc(s.displayFormat)+'</span>';
+if(s.icon)h+='<span>Icon: '+esc(s.icon)+'</span>';
+if(s.color)h+='<span style="color:'+esc(s.color)+'">'+esc(s.color)+'</span>';
+h+='<span>Every '+s.interval+'s</span>';
+h+='</div><div class="actions">';
+h+='<button class="btn btn-sm btn-default" onclick="fetchNow(\''+esc(s.name)+'\')">Fetch Now</button>';
+h+='<button class="btn btn-sm btn-default" onclick="editSource('+i+')">Edit</button>';
+h+='<button class="btn btn-sm btn-danger" onclick="delSource(\''+esc(s.name)+'\')">Delete</button>';
+h+='</div></div>'}
+el.innerHTML=h}
+function esc(s){if(!s)return'';var d=document.createElement('div');d.textContent=s;return d.innerHTML}
+function saveSource(){
+var o={name:document.getElementById('f_name').value.trim(),
+url:document.getElementById('f_url').value.trim(),
+jsonPath:document.getElementById('f_path').value.trim(),
+displayFormat:document.getElementById('f_fmt').value.trim(),
+icon:document.getElementById('f_icon').value.trim(),
+color:document.getElementById('f_color').value.trim(),
+interval:parseInt(document.getElementById('f_int').value)||300};
+if(!o.name||!o.url||!o.jsonPath){toast('Name, URL and JSON Path required');return}
+fetch('/api/datafetcher',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(o)})
+.then(function(r){if(r.ok){toast('Saved');toggleForm();clearForm();load()}else toast('Error saving')})
+}
+function clearForm(){['f_name','f_url','f_path','f_fmt','f_icon','f_color'].forEach(function(id){document.getElementById(id).value=''});document.getElementById('f_int').value='900'}
+function editSource(i){
+var s=sources[i];
+document.getElementById('f_name').value=s.name;
+document.getElementById('f_url').value=s.url;
+document.getElementById('f_path').value=s.jsonPath;
+document.getElementById('f_fmt').value=s.displayFormat||'';
+document.getElementById('f_icon').value=s.icon||'';
+document.getElementById('f_color').value=s.color||'';
+document.getElementById('f_int').value=s.interval||300;
+var f=document.getElementById('addForm');if(!f.classList.contains('show'))f.classList.add('show');
+document.getElementById('f_name').focus()}
+function delSource(name){if(!confirm('Delete "'+name+'"?'))return;
+fetch('/api/datafetcher?name='+encodeURIComponent(name),{method:'DELETE'})
+.then(function(r){if(r.ok){toast('Deleted');load()}else toast('Error')})}
+function fetchNow(name){
+fetch('/api/datafetcher/fetch?name='+encodeURIComponent(name),{method:'POST'})
+.then(function(r){if(r.ok)toast('Fetching...');else toast('Error')})}
+load();
+</script>
+</body>
+</html>
+
+)EOF";
