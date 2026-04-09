@@ -14,6 +14,7 @@
 #include "ISound.h"
 #include "IPower.h"
 #include "IUpdater.h"
+#include "DataFetcher/DataFetcher.h"
 #include <WiFiUdp.h>
 #include <HTTPClient.h>
 #ifdef ENABLE_GAMES
@@ -171,6 +172,8 @@ void addHandler()
                    { request->send_P(200, "text/html", screen_html); });
     mws.addHandler("/backup", HTTP_GET, [](AsyncWebServerRequest *request)
                    { request->send_P(200, "text/html", backup_html); });
+    mws.addHandler("/datafetcher", HTTP_GET, [](AsyncWebServerRequest *request)
+                   { request->send_P(200, "text/html", datafetcher_html); });
     mws.addHandler("/api/previousapp", HTTP_POST, [](AsyncWebServerRequest *request)
                    { smNav_->previousApp(); request->send(200, "text/plain", "OK"); });
     mws.addHandler("/api/notify/dismiss", HTTP_ANY, [](AsyncWebServerRequest *request)
@@ -212,6 +215,36 @@ void addHandler()
                             }else{
                                 request->send(500, "text/plain", "ErrorParsingJson");
                             } });
+    // NOTE: more specific routes must be registered BEFORE the parent route,
+    // because ESPAsyncWebServer's canHandle() also matches by prefix ("/api/datafetcher/...")
+    mws.addHandler("/api/datafetcher/fetch", HTTP_POST, [](AsyncWebServerRequest *request)
+                   {
+                    if (request->hasParam("name")) {
+                        DataFetcher.forceFetch(request->getParam("name")->value());
+                        request->send(200, "text/plain", "OK");
+                    } else {
+                        request->send(400, "text/plain", "MissingName");
+                    } });
+    mws.addHandler("/api/datafetcher", HTTP_GET, [](AsyncWebServerRequest *request)
+                   { request->send(200, "application/json", DataFetcher.getSourcesAsJson()); });
+    mws.addHandlerWithBody("/api/datafetcher", HTTP_POST, [](AsyncWebServerRequest *request)
+                           {
+                            String body = getBody(request);
+                            if (DataFetcher.addSource(body.c_str()))
+                                request->send(200, "text/plain", "OK");
+                            else
+                                request->send(400, "text/plain", "Error"); });
+    mws.addHandler("/api/datafetcher", HTTP_DELETE, [](AsyncWebServerRequest *request)
+                   {
+                    if (request->hasParam("name")) {
+                        String name = request->getParam("name")->value();
+                        if (DataFetcher.removeSource(name))
+                            request->send(200, "text/plain", "OK");
+                        else
+                            request->send(404, "text/plain", "NotFound");
+                    } else {
+                        request->send(400, "text/plain", "MissingName");
+                    } });
     mws.addHandler("/api/stats", HTTP_GET, [](AsyncWebServerRequest *request)
                    { request->send(200, "application/json", smControl_->getStats()); });
     mws.addHandler("/api/screen", HTTP_GET, [](AsyncWebServerRequest *request)
