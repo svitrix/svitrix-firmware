@@ -20,6 +20,7 @@
     + [Dismiss Notification](#dismiss-notification)
     + [Switch Apps](#switch-apps)
     + [Switch to Specific App](#switch-to-specific-app)
+  * [Data Fetcher](#data-fetcher)
   * [Change Settings](#change-settings)
     + [JSON Properties](#json-properties-1)
   * [Update](#update)
@@ -168,7 +169,7 @@ Below are the properties you can utilize in the JSON object. **All keys are opti
 
 | Key | Type | Description | Default | Custom App | Notification |
 | --- | ---- | ----------- | ------- | ------- | ------- |
-| `text` | string | The text to display. Keep in mind the font does not have a fixed size and `I` uses less space than `W`. This affects when text will start scrolling. | N/A | X | X |
+| `text` | string | The text to display (UTF-8). Supports ASCII, Cyrillic (upper/lower), Ukrainian, and Latin Extended characters. The font has variable width — `I` uses less space than `W`, which affects when text starts scrolling. | N/A | X | X |
 | `textCase` | integer | Changes the Uppercase setting. 0=global setting, 1 = forces uppercase; 2 = shows as sent. | 0 | X | X |
 | `topText` | boolean | Draw the text on top. | false | X | X |
 | `textOffset` | integer | Sets an offset for the x position of a starting text. | 0 | X | X |
@@ -357,6 +358,59 @@ Directly transition to a desired app using its name.
 - `Battery`
 
 For custom apps, employ the name you designated in the topic or HTTP parameter. In MQTT, if `[PREFIX]/custom/test` is your topic, then `test` would be the app's name.
+
+
+## Data Fetcher
+
+The Data Fetcher allows SVITRIX to periodically pull data from external HTTP/HTTPS APIs and display the results as custom apps — no smart home system required.
+
+### Manage Data Sources
+
+| HTTP URL                          | Payload/Body | HTTP Method | Description |
+| --------------------------------- | ------------ | ----------- | ----------- |
+| `http://[IP]/api/datafetcher`     | -            | GET         | List all configured sources |
+| `http://[IP]/api/datafetcher`     | JSON         | POST        | Add or update a data source |
+| `http://[IP]/api/datafetcher?name=X` | -         | DELETE      | Remove a data source |
+| `http://[IP]/api/datafetcher/fetch?name=X` | -   | POST        | Force an immediate fetch |
+
+> **Note:** Data Fetcher is HTTP-only, no MQTT topics.
+
+### Source Configuration JSON
+
+| Key | Type | Required | Description | Default |
+| --- | ---- | -------- | ----------- | ------- |
+| `name` | string | Yes | Unique source ID, becomes the custom app name | - |
+| `url` | string | Yes | Full HTTP/HTTPS URL | - |
+| `jsonPath` | string | Yes | Dot-notation path to extract from JSON response (e.g., `"bitcoin.usd"`, `"data.0.price"`) | - |
+| `displayFormat` | string | No | printf-style format string (e.g., `"$%.0f"`, `"%.1f°C"`) | raw value |
+| `icon` | string | No | Icon name from the ICONS folder (without extension) | none |
+| `color` | string | No | Text color as hex `"#RRGGBB"` | global text color |
+| `interval` | integer | No | Polling interval in seconds (minimum 60) | 900 (15 min) |
+
+### Example
+
+Add a Bitcoin price tracker:
+
+```json
+{
+  "name": "btc",
+  "url": "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd",
+  "jsonPath": "bitcoin.usd",
+  "displayFormat": "$%.0f",
+  "icon": "btc",
+  "color": "#F7931A",
+  "interval": 300
+}
+```
+
+### Constraints
+
+- **Max 8 sources** can be configured simultaneously
+- **Max response size**: 4 KB — larger API responses will be rejected
+- **HTTPS**: supported, but without certificate validation (for arbitrary third-party APIs)
+- **Round-robin polling**: one source is checked per loop cycle to avoid blocking
+- Sources are persisted in flash and restored on boot
+- You can also configure sources via the [web interface](./webinterface) at `http://[IP]/datafetcher`
 
 
 ## Change Settings

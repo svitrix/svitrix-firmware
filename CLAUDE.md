@@ -9,7 +9,7 @@ C++ / Arduino framework / PlatformIO.
 
 ```bash
 pio run -e ulanzi          # Build firmware
-pio test -e native_test    # Run all tests (Unity, 21 suites, 368+ tests)
+pio test -e native_test    # Run all tests (Unity, 21 suites, 434 tests)
 ```
 
 Flash is ~97% full — watch binary size when adding features.
@@ -34,7 +34,7 @@ src/
   MenuManager.cpp/h           # On-device settings menu
   UpdateManager.cpp/h         # OTA firmware updates
   PowerManager.cpp/h          # Sleep/wake management
-  SvitrixFont.h               # Custom bitmap font
+  SvitrixFont.h               # Unicode sparse glyph table (336 glyphs, UTF-8, binary search)
 lib/
   interfaces/                 # 13 interfaces (IDisplayControl, INotifier, IPixelCanvas, etc.)
   services/                   # 12 service libraries (100% test coverage)
@@ -181,6 +181,7 @@ DisplayRenderer ← TextUtils, UnicodeFont, ColorUtils
 PeripheryManager← SensorCalc
 MQTTManager     ← MessageRouter, HADiscovery, AppRegistry, StatsBuilder, PlaceholderUtils
 Apps            ← ColorUtils, TimeEffects, TextUtils
+DataFetcher     ← (no lib/services dependencies)
 main.cpp        ← TextUtils (setTextFont at startup)
 ```
 

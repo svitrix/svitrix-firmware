@@ -17,7 +17,7 @@ DisplayManager_ (singleton, coordinator)
 |------|-----|---------|
 | `DisplayManager.h` | 307 | Public API: 4 interfaces + 79 delegation wrappers |
 | `DisplayManager.cpp` | 450 | Lifecycle, tick loop, power, brightness, buttons, matrix layout |
-| `DisplayRenderer.h/cpp` | 768 | Text (SvitrixFont), primitives, charts, JPEG/GIF, draw commands |
+| `DisplayRenderer.h/cpp` | 768 | Text (UnicodeFont + UTF-8), primitives, charts, JPEG/GIF, draw commands |
 | `NotificationManager.h/cpp` | 280 | Notification parsing/display, 3 RGB indicators, dismissal |
 | `DisplayManager_internal.h` | — | Shared globals (LED buffer, matrix, UI framework) |
 | `DisplayManager_CustomApps.cpp` | 745 | Custom app lifecycle: parse, persist, load, lifetime |
@@ -80,12 +80,12 @@ extern bool artnetMode, moodlightMode;
 
 Implements `IDisplayRenderer`. All methods are stateless, draw to shared globals.
 
-### Text Rendering
-- `printText(x, y, text, centered, textCase)` — single color, SvitrixFont
+### Text Rendering (UnicodeFont + UTF-8)
+- `printText(x, y, text, centered, textCase)` — UTF-8 text, decodes with `utf8NextCodepoint()`, renders each glyph via UnicodeFont
 - `HSVtext(x, y, text, clear, textCase)` — per-character rainbow (hue cycles)
 - `GradientText(x, y, text, c1, c2, clear, textCase)` — linear color interpolation
 - `renderColoredText(...)` — dispatcher: rainbow → HSV, gradient → Gradient, else solid+effects
-- `matrixPrint(codepoint)` — core glyph renderer via `renderGlyph()`
+- `matrixPrint(codepoint)` — core glyph renderer, calls `renderGlyph()` from UnicodeFont service (binary search lookup in SvitrixFont glyph table)
 
 ### Primitives
 - `drawPixel`, `drawLine` (Bresenham), `drawRect`, `drawFilledRect`
