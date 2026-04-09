@@ -1,251 +1,265 @@
 #include <unity.h>
-#include "TextUtils.h"
+#include "UnicodeFont.h"
 
-// Reset the static state between tests
-void setUp(void)
-{
-    // Feed a dummy ASCII char to reset the c1 static variable
-    utf8ascii((byte)0);
-}
-
+void setUp(void) {}
 void tearDown(void) {}
 
-// --- ASCII passthrough ---
+// ═══════════════════════════════════════════════════════════════
+// utf8NextCodepoint — single-byte ASCII
+// ═══════════════════════════════════════════════════════════════
 
-void test_ascii_letter_a(void)
+void test_ascii_A(void)
 {
-    TEST_ASSERT_EQUAL(0x41, utf8ascii((byte)0x41)); // 'A'
+    const char *p = "A";
+    TEST_ASSERT_EQUAL(0x41, utf8NextCodepoint(p));
+    TEST_ASSERT_EQUAL('\0', *p);
 }
 
-void test_ascii_letter_z(void)
+void test_ascii_z(void)
 {
-    TEST_ASSERT_EQUAL(0x7A, utf8ascii((byte)0x7A)); // 'z'
+    const char *p = "z";
+    TEST_ASSERT_EQUAL(0x7A, utf8NextCodepoint(p));
 }
 
 void test_ascii_space(void)
 {
-    TEST_ASSERT_EQUAL(0x20, utf8ascii((byte)0x20)); // ' '
+    const char *p = " ";
+    TEST_ASSERT_EQUAL(0x20, utf8NextCodepoint(p));
 }
 
 void test_ascii_digit(void)
 {
-    TEST_ASSERT_EQUAL(0x35, utf8ascii((byte)0x35)); // '5'
+    const char *p = "5";
+    TEST_ASSERT_EQUAL(0x35, utf8NextCodepoint(p));
 }
 
-// --- Latin-1 Supplement (0xC3 prefix) ---
+// ═══════════════════════════════════════════════════════════════
+// utf8NextCodepoint — 2-byte Latin Extended
+// ═══════════════════════════════════════════════════════════════
 
-void test_c3_a_umlaut(void)
+void test_latin_a_dieresis(void) // ä = C3 A4
 {
-    // ä = 0xC3 0xA4 → should return 0xA4 | 0xC0 = 0xE4
-    utf8ascii((byte)0xC3); // first byte sets c1
-    byte result = utf8ascii((byte)0xA4);
-    TEST_ASSERT_EQUAL_HEX8(0xE4, result);
+    const char *p = "\xC3\xA4";
+    TEST_ASSERT_EQUAL(0x00E4, utf8NextCodepoint(p));
+    TEST_ASSERT_EQUAL('\0', *p);
 }
 
-void test_c3_o_umlaut(void)
+void test_latin_o_dieresis(void) // ö = C3 B6
 {
-    // ö = 0xC3 0xB6 → 0xB6 | 0xC0 = 0xF6
-    utf8ascii((byte)0xC3);
-    byte result = utf8ascii((byte)0xB6);
-    TEST_ASSERT_EQUAL_HEX8(0xF6, result);
+    const char *p = "\xC3\xB6";
+    TEST_ASSERT_EQUAL(0x00F6, utf8NextCodepoint(p));
 }
 
-void test_c3_u_umlaut(void)
+void test_latin_u_dieresis(void) // ü = C3 BC
 {
-    // ü = 0xC3 0xBC → 0xBC | 0xC0 = 0xFC
-    utf8ascii((byte)0xC3);
-    byte result = utf8ascii((byte)0xBC);
-    TEST_ASSERT_EQUAL_HEX8(0xFC, result);
+    const char *p = "\xC3\xBC";
+    TEST_ASSERT_EQUAL(0x00FC, utf8NextCodepoint(p));
 }
 
-void test_c3_sharp_s(void)
+void test_latin_sharp_s(void) // ß = C3 9F
 {
-    // ß = 0xC3 0x9F → 0x9F | 0xC0 = 0xDF
-    utf8ascii((byte)0xC3);
-    byte result = utf8ascii((byte)0x9F);
-    TEST_ASSERT_EQUAL_HEX8(0xDF, result);
+    const char *p = "\xC3\x9F";
+    TEST_ASSERT_EQUAL(0x00DF, utf8NextCodepoint(p));
 }
 
-// --- Polish (0xC3 prefix special cases) ---
-
-void test_c3_polish_o_stroke_lower(void)
+void test_latin_o_acute(void) // ó = C3 B3
 {
-    // ó = 0xC3 0xB3 → 0x6F ('o')
-    utf8ascii((byte)0xC3);
-    byte result = utf8ascii((byte)0xB3);
-    TEST_ASSERT_EQUAL_HEX8(0x6F, result);
+    const char *p = "\xC3\xB3";
+    TEST_ASSERT_EQUAL(0x00F3, utf8NextCodepoint(p));
 }
 
-void test_c3_polish_o_stroke_upper(void)
+void test_degree(void) // ° = C2 B0
 {
-    // Ó = 0xC3 0x93 → 0x4F ('O')
-    utf8ascii((byte)0xC3);
-    byte result = utf8ascii((byte)0x93);
-    TEST_ASSERT_EQUAL_HEX8(0x4F, result);
+    const char *p = "\xC2\xB0";
+    TEST_ASSERT_EQUAL(0x00B0, utf8NextCodepoint(p));
 }
 
-// --- Cyrillic (0xD0 prefix) ---
+// ═══════════════════════════════════════════════════════════════
+// utf8NextCodepoint — 2-byte Cyrillic
+// ═══════════════════════════════════════════════════════════════
 
-void test_cyrillic_A(void)
+void test_cyrillic_A(void) // А = D0 90
 {
-    // А = 0xD0 0x90 → 0x90 - 17 = 0x7F
-    utf8ascii((byte)0xD0);
-    byte result = utf8ascii((byte)0x90);
-    TEST_ASSERT_EQUAL_HEX8(0x90 - 17, result);
+    const char *p = "\xD0\x90";
+    TEST_ASSERT_EQUAL(0x0410, utf8NextCodepoint(p));
 }
 
-void test_cyrillic_Ya(void)
+void test_cyrillic_Ya(void) // Я = D0 AF
 {
-    // Я = 0xD0 0xAF → 0xAF - 17 = 0x9E
-    utf8ascii((byte)0xD0);
-    byte result = utf8ascii((byte)0xAF);
-    TEST_ASSERT_EQUAL_HEX8(0xAF - 17, result);
+    const char *p = "\xD0\xAF";
+    TEST_ASSERT_EQUAL(0x042F, utf8NextCodepoint(p));
 }
 
-void test_cyrillic_a_lower(void)
+void test_cyrillic_a_lower(void) // а = D0 B0
 {
-    // а = 0xD0 0xB0 → 0xB0 - 49 = 0x7F
-    utf8ascii((byte)0xD0);
-    byte result = utf8ascii((byte)0xB0);
-    TEST_ASSERT_EQUAL_HEX8(0xB0 - 49, result);
+    const char *p = "\xD0\xB0";
+    TEST_ASSERT_EQUAL(0x0430, utf8NextCodepoint(p));
 }
 
-// --- Cyrillic (0xD1 prefix) ---
-
-void test_cyrillic_d1_range(void)
+void test_cyrillic_r_lower(void) // р = D1 80
 {
-    // Letters in 0xD1 0x80-0x8F range → ascii + 15
-    utf8ascii((byte)0xD1);
-    byte result = utf8ascii((byte)0x80);
-    TEST_ASSERT_EQUAL_HEX8(0x80 + 15, result);
+    const char *p = "\xD1\x80";
+    TEST_ASSERT_EQUAL(0x0440, utf8NextCodepoint(p));
 }
 
-// --- Ukrainian special letters ---
-
-void test_ukrainian_yo(void)
+void test_cyrillic_Yo(void) // Ё = D0 81
 {
-    // Ё = 0xD0 0x81 → 0x84
-    utf8ascii((byte)0xD0);
-    byte result = utf8ascii((byte)0x81);
-    TEST_ASSERT_EQUAL_HEX8(0x84, result);
+    const char *p = "\xD0\x81";
+    TEST_ASSERT_EQUAL(0x0401, utf8NextCodepoint(p));
 }
 
-void test_ukrainian_ye(void)
+void test_cyrillic_Ye(void) // Є = D0 84
 {
-    // Є = 0xD0 0x84 → 0xA0
-    utf8ascii((byte)0xD0);
-    byte result = utf8ascii((byte)0x84);
-    TEST_ASSERT_EQUAL_HEX8(0xA0, result);
+    const char *p = "\xD0\x84";
+    TEST_ASSERT_EQUAL(0x0404, utf8NextCodepoint(p));
 }
 
-void test_ukrainian_i(void)
+void test_cyrillic_I(void) // І = D0 86
 {
-    // І = 0xD0 0x86 → 0xA1
-    utf8ascii((byte)0xD0);
-    byte result = utf8ascii((byte)0x86);
-    TEST_ASSERT_EQUAL_HEX8(0xA1, result);
+    const char *p = "\xD0\x86";
+    TEST_ASSERT_EQUAL(0x0406, utf8NextCodepoint(p));
 }
 
-void test_ukrainian_yi(void)
+void test_cyrillic_Yi(void) // Ї = D0 87
 {
-    // Ї = 0xD0 0x87 → 0xEF
-    utf8ascii((byte)0xD0);
-    byte result = utf8ascii((byte)0x87);
-    TEST_ASSERT_EQUAL_HEX8(0xEF, result);
+    const char *p = "\xD0\x87";
+    TEST_ASSERT_EQUAL(0x0407, utf8NextCodepoint(p));
 }
 
-// --- Unknown high bytes return 0 ---
-
-void test_unknown_high_byte_returns_zero(void)
+void test_cyrillic_Ghe_upturn(void) // Ґ = D2 90
 {
-    // Unknown prefix should return 0
-    utf8ascii((byte)0xE0);
-    byte result = utf8ascii((byte)0x80);
-    TEST_ASSERT_EQUAL_HEX8(0, result);
+    const char *p = "\xD2\x90";
+    TEST_ASSERT_EQUAL(0x0490, utf8NextCodepoint(p));
 }
 
-// --- String version ---
+// ═══════════════════════════════════════════════════════════════
+// utf8NextCodepoint — 3-byte (Euro sign)
+// ═══════════════════════════════════════════════════════════════
 
-void test_string_ascii_passthrough(void)
+void test_euro_sign(void) // € = E2 82 AC
 {
-    String result = utf8ascii(String("Hello"));
-    TEST_ASSERT_TRUE(result == "Hello");
+    const char *p = "\xE2\x82\xAC";
+    TEST_ASSERT_EQUAL(0x20AC, utf8NextCodepoint(p));
 }
 
-void test_string_empty(void)
+// ═══════════════════════════════════════════════════════════════
+// utf8NextCodepoint — edge cases
+// ═══════════════════════════════════════════════════════════════
+
+void test_end_of_string(void)
 {
-    String result = utf8ascii(String(""));
-    TEST_ASSERT_EQUAL(0, result.length());
+    const char *p = "";
+    TEST_ASSERT_EQUAL(0, utf8NextCodepoint(p));
 }
 
-// --- adversarial: interrupted sequences, state corruption ---
-
-void test_interrupted_sequence_prefix_then_ascii(void)
+void test_null_pointer(void)
 {
-    // Send a Cyrillic prefix 0xD0, then an ASCII char instead of continuation.
-    // The ASCII char should reset state and pass through normally.
-    utf8ascii((byte)0xD0); // prefix — sets c1=0xD0, returns 0
-    byte result = utf8ascii((byte)0x41); // 'A' — ASCII resets c1, returns 0x41
-    TEST_ASSERT_EQUAL_HEX8(0x41, result);
+    const char *p = nullptr;
+    TEST_ASSERT_EQUAL(0, utf8NextCodepoint(p));
 }
 
-void test_double_prefix_no_corruption(void)
+void test_invalid_byte(void)
 {
-    // Two consecutive prefix bytes: 0xD0 then 0xD0 again.
-    // First 0xD0 sets c1. Second 0xD0: last=0xD0, switch matches D0 case,
-    // but 0xD0 is not in any valid continuation range → returns 0 (dropped).
-    utf8ascii((byte)0xD0); // sets c1=0xD0
-    byte result1 = utf8ascii((byte)0xD0); // last=0xD0, ascii=0xD0 → no match → 0
-    TEST_ASSERT_EQUAL_HEX8(0, result1);
-    // Now send a valid continuation for the SECOND 0xD0 prefix.
-    byte result2 = utf8ascii((byte)0x90); // А: 0x90-17 = 0x7F
-    TEST_ASSERT_EQUAL_HEX8(0x7F, result2);
+    const char *p = "\xFF";
+    uint16_t cp = utf8NextCodepoint(p);
+    TEST_ASSERT_EQUAL(0xFFFD, cp);
+}
+
+void test_truncated_sequence(void)
+{
+    const char data[] = {(char)0xC3, '\0'};
+    const char *p = data;
+    uint16_t cp = utf8NextCodepoint(p);
+    TEST_ASSERT_EQUAL(0xFFFD, cp);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// utf8NextCodepoint — multi-character iteration
+// ═══════════════════════════════════════════════════════════════
+
+void test_iterate_ascii_string(void)
+{
+    const char *p = "Hi!";
+    TEST_ASSERT_EQUAL('H', utf8NextCodepoint(p));
+    TEST_ASSERT_EQUAL('i', utf8NextCodepoint(p));
+    TEST_ASSERT_EQUAL('!', utf8NextCodepoint(p));
+    TEST_ASSERT_EQUAL(0, utf8NextCodepoint(p));
+}
+
+void test_iterate_mixed_string(void)
+{
+    const char *p = "A\xD0\x90"; // "AА"
+    TEST_ASSERT_EQUAL(0x0041, utf8NextCodepoint(p));
+    TEST_ASSERT_EQUAL(0x0410, utf8NextCodepoint(p));
+    TEST_ASSERT_EQUAL(0, utf8NextCodepoint(p));
+}
+
+// ═══════════════════════════════════════════════════════════════
+// utf8Length
+// ═══════════════════════════════════════════════════════════════
+
+void test_utf8_length_ascii(void)
+{
+    TEST_ASSERT_EQUAL(5, utf8Length("Hello"));
+}
+
+void test_utf8_length_cyrillic(void)
+{
+    // Привіт = 6 characters, 12 bytes
+    TEST_ASSERT_EQUAL(6, utf8Length("\xD0\x9F\xD1\x80\xD0\xB8\xD0\xB2\xD1\x96\xD1\x82"));
+}
+
+void test_utf8_length_empty(void)
+{
+    TEST_ASSERT_EQUAL(0, utf8Length(""));
+}
+
+void test_utf8_length_mixed(void)
+{
+    // A°C = 3 characters
+    TEST_ASSERT_EQUAL(3, utf8Length("A\xC2\xB0\x43"));
 }
 
 int main(int argc, char **argv)
 {
     UNITY_BEGIN();
 
-    // ASCII passthrough
-    RUN_TEST(test_ascii_letter_a);
-    RUN_TEST(test_ascii_letter_z);
+    RUN_TEST(test_ascii_A);
+    RUN_TEST(test_ascii_z);
     RUN_TEST(test_ascii_space);
     RUN_TEST(test_ascii_digit);
 
-    // German umlauts (0xC3)
-    RUN_TEST(test_c3_a_umlaut);
-    RUN_TEST(test_c3_o_umlaut);
-    RUN_TEST(test_c3_u_umlaut);
-    RUN_TEST(test_c3_sharp_s);
+    RUN_TEST(test_latin_a_dieresis);
+    RUN_TEST(test_latin_o_dieresis);
+    RUN_TEST(test_latin_u_dieresis);
+    RUN_TEST(test_latin_sharp_s);
+    RUN_TEST(test_latin_o_acute);
+    RUN_TEST(test_degree);
 
-    // Polish (0xC3 special cases)
-    RUN_TEST(test_c3_polish_o_stroke_lower);
-    RUN_TEST(test_c3_polish_o_stroke_upper);
-
-    // Cyrillic (0xD0)
     RUN_TEST(test_cyrillic_A);
     RUN_TEST(test_cyrillic_Ya);
     RUN_TEST(test_cyrillic_a_lower);
+    RUN_TEST(test_cyrillic_r_lower);
+    RUN_TEST(test_cyrillic_Yo);
+    RUN_TEST(test_cyrillic_Ye);
+    RUN_TEST(test_cyrillic_I);
+    RUN_TEST(test_cyrillic_Yi);
+    RUN_TEST(test_cyrillic_Ghe_upturn);
 
-    // Cyrillic (0xD1)
-    RUN_TEST(test_cyrillic_d1_range);
+    RUN_TEST(test_euro_sign);
 
-    // Ukrainian
-    RUN_TEST(test_ukrainian_yo);
-    RUN_TEST(test_ukrainian_ye);
-    RUN_TEST(test_ukrainian_i);
-    RUN_TEST(test_ukrainian_yi);
+    RUN_TEST(test_end_of_string);
+    RUN_TEST(test_null_pointer);
+    RUN_TEST(test_invalid_byte);
+    RUN_TEST(test_truncated_sequence);
 
-    // Edge cases
-    RUN_TEST(test_unknown_high_byte_returns_zero);
+    RUN_TEST(test_iterate_ascii_string);
+    RUN_TEST(test_iterate_mixed_string);
 
-    // String
-    RUN_TEST(test_string_ascii_passthrough);
-    RUN_TEST(test_string_empty);
-
-    // adversarial
-    RUN_TEST(test_interrupted_sequence_prefix_then_ascii);
-    RUN_TEST(test_double_prefix_no_corruption);
+    RUN_TEST(test_utf8_length_ascii);
+    RUN_TEST(test_utf8_length_cyrillic);
+    RUN_TEST(test_utf8_length_empty);
+    RUN_TEST(test_utf8_length_mixed);
 
     return UNITY_END();
 }

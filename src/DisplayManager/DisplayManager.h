@@ -196,10 +196,6 @@ class DisplayManager_ : public IButtonHandler, public IMatrixHost, public IDispl
     {
         renderer_.matrixPrint(str);
     }
-    void matrixPrint(char c)
-    {
-        renderer_.matrixPrint(c);
-    }
     void matrixPrint(String str)
     {
         renderer_.matrixPrint(str);

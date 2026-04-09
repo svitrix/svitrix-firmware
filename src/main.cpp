@@ -26,6 +26,8 @@
 #include "ServerManager.h"
 #include "MenuManager.h"
 #include "Globals.h"
+#include "TextUtils.h"
+#include "SvitrixFont.h"
 #include "UpdateManager.h"
 #include "PowerManager.h"
 #ifdef ENABLE_GAMES
@@ -73,6 +75,7 @@ void setup()
     digitalWrite(15, LOW);
     delay(2000);
     Serial.begin(115200);
+    setTextFont(&SvitrixFont);
     loadSettings();
     PeripheryManager.setup();
 

@@ -277,13 +277,13 @@ void TempApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_t x, 
     if (timeConfig.isCelsius)
     {
         DisplayManager.matrixPrint(sensorConfig.currentTemp, timeConfig.tempDecimalPlaces);
-        DisplayManager.matrixPrint(utf8ascii("°C"));
+        DisplayManager.matrixPrint("°C");
     }
     else
     {
         double tempF = (sensorConfig.currentTemp * 9 / 5) + 32;
         DisplayManager.matrixPrint(tempF, timeConfig.tempDecimalPlaces);
-        DisplayManager.matrixPrint(utf8ascii("°F"));
+        DisplayManager.matrixPrint("°F");
     }
 }
 
