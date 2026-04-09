@@ -83,3 +83,7 @@ test/
 - Language: Ukrainian (prompts often in Ukrainian, respond accordingly)
 - Concise communication preferred
 - Always verify changes with build + tests
+
+## Git
+
+- Do NOT add `Co-Authored-By` lines to commit messages

@@ -38,7 +38,6 @@ class DisplayRenderer_ : public IDisplayRenderer
     void renderColoredText(int16_t x, int16_t y, const char *text, bool rainbow, int gradient0, int gradient1, uint32_t color, uint32_t fade, uint32_t blink, byte textCase);
     void setCursor(int16_t x, int16_t y);
     void matrixPrint(const char *str);
-    void matrixPrint(char c);
     void matrixPrint(String str);
     void matrixPrint(char *str);
     void matrixPrint(char str[], size_t length);
@@ -57,4 +56,7 @@ class DisplayRenderer_ : public IDisplayRenderer
     void drawLineChart(int16_t x, int16_t y, const int data[], byte dataSize, bool withIcon, uint32_t color);
     void processDrawInstructions(int16_t x, int16_t y, String& drawInstructions);
     CRGB getPixelColor(int16_t x, int16_t y);
+
+  private:
+    void matrixPrintGlyph(uint16_t codepoint);
 };
