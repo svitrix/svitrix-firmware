@@ -22,7 +22,8 @@ function sidebarEn() {
       collapsed: false,
       items: [
         { text: 'Webinterface', link: '/webinterface' },
-        { text: 'Onscreen Menu', link: '/onscreen' }
+        { text: 'Onscreen Menu', link: '/onscreen' },
+        { text: 'Data Fetcher', link: '/datafetcher' }
       ]
     },
     {
@@ -64,7 +65,8 @@ function sidebarUk() {
       collapsed: false,
       items: [
         { text: 'Веб-інтерфейс', link: '/uk/webinterface' },
-        { text: 'Екранне меню', link: '/uk/onscreen' }
+        { text: 'Екранне меню', link: '/uk/onscreen' },
+        { text: 'Збирач даних', link: '/uk/datafetcher' }
       ]
     },
     {

@@ -14,6 +14,7 @@
 #include "Functions.h"
 #include "ColorUtils.h"
 #include <SvitrixFont.h>
+#include <UnicodeFont.h>
 #include "Overlays.h"
 #include <TJpg_Decoder.h>
 #include <ArduinoJson.h>
@@ -75,17 +76,17 @@ void DisplayRenderer_::printText(int16_t x, int16_t y, const char *text, bool ce
         setCursor(x, y);
     }
 
-    if ((displayConfig.uppercaseLetters && textCase == 0) || textCase == 1)
+    bool forceUpper = (displayConfig.uppercaseLetters && textCase == 0) || textCase == 1;
+    if (forceUpper)
     {
+        // Uppercase conversion: only applies to ASCII a-z in UTF-8 strings
         size_t length = strlen(text);
-        char upperText[length + 1]; // +1 for the null terminator
-
+        char upperText[length + 1];
         for (size_t i = 0; i < length; ++i)
         {
-            upperText[i] = toupper(text[i]);
+            upperText[i] = toupper(static_cast<unsigned char>(text[i]));
         }
-
-        upperText[length] = '\0'; // Null terminator
+        upperText[length] = '\0';
         matrixPrint(upperText);
     }
     else
@@ -101,23 +102,24 @@ void DisplayRenderer_::HSVtext(int16_t x, int16_t y, const char *text, bool clea
     if (clear)
         matrix->clear();
     static uint8_t hueOffset = 0;
+    bool forceUpper = (displayConfig.uppercaseLetters && textCase == 0) || textCase == 1;
+    uint16_t charCount = utf8Length(text);
     uint16_t xpos = 0;
-    for (uint16_t i = 0; i < strlen(text); i++)
+    uint16_t charIdx = 0;
+    const char *p = text;
+    uint16_t cp;
+
+    while ((cp = utf8NextCodepoint(p)) != 0)
     {
-        uint8_t hue = map(i, 0, strlen(text), 0, 360) + hueOffset;
+        if (forceUpper && cp >= 'a' && cp <= 'z')
+            cp -= 32;
+
+        uint8_t hue = map(charIdx, 0, charCount, 0, 360) + hueOffset;
         setTextColor(hsvToRgb(hue, 255, 255));
         setCursor(xpos + x, y);
-        if ((displayConfig.uppercaseLetters && textCase == 0) || textCase == 1)
-        {
-            matrixPrint(static_cast<char>(toupper(text[i])));
-        }
-        else
-        {
-            matrixPrint(text[i]);
-        }
-        char temp_str[2] = {'\0', '\0'};
-        temp_str[0] = text[i];
-        xpos += getTextWidth(temp_str, textCase);
+        matrixPrintGlyph(cp);
+        xpos += getGlyphAdvance(SvitrixFont, cp, 4);
+        charIdx++;
     }
     hueOffset++;
     if (clear)
@@ -131,29 +133,26 @@ void DisplayRenderer_::GradientText(int16_t x, int16_t y, const char *text, int 
     if (clear)
         matrix->clear();
 
+    bool forceUpper = (displayConfig.uppercaseLetters && textCase == 0) || textCase == 1;
+    uint16_t charCount = utf8Length(text);
     uint16_t xpos = 0;
-    uint16_t textLength = strlen(text);
+    uint16_t charIdx = 0;
+    const char *p = text;
+    uint16_t cp;
 
-    for (uint16_t i = 0; i < textLength; i++)
+    while ((cp = utf8NextCodepoint(p)) != 0)
     {
-        float t = (textLength > 1) ? static_cast<float>(i) / (textLength - 1) : 0.0f;
+        if (forceUpper && cp >= 'a' && cp <= 'z')
+            cp -= 32;
 
+        float t = (charCount > 1) ? static_cast<float>(charIdx) / (charCount - 1) : 0.0f;
         uint32_t TC = interpolateColor(color1, color2, t);
         setTextColor(TC);
 
         setCursor(xpos + x, y);
-        if ((displayConfig.uppercaseLetters && textCase == 0) || textCase == 1)
-        {
-            matrixPrint(static_cast<char>(toupper(text[i])));
-        }
-        else
-        {
-            matrixPrint(text[i]);
-        }
-
-        char temp_str[2] = {'\0', '\0'};
-        temp_str[0] = text[i];
-        xpos += getTextWidth(temp_str, textCase);
+        matrixPrintGlyph(cp);
+        xpos += getGlyphAdvance(SvitrixFont, cp, 4);
+        charIdx++;
     }
 
     if (clear)
@@ -182,61 +181,40 @@ void DisplayRenderer_::renderColoredText(int16_t x, int16_t y, const char *text,
 }
 
 /// Core glyph renderer — draws a single character from SvitrixFont bitmap at the current cursor.
+/// Renders a single Unicode glyph at the current cursor position.
 /// Advances cursor_x by the glyph's xAdvance after drawing.
-void DisplayRenderer_::matrixPrint(char c)
+static void matrixPixelCallback(int16_t x, int16_t y, void *userData)
 {
-    if (c == '\n')
-    {
-        cursor_y += SvitrixFont.yAdvance;
-        cursor_x = 0;
-        return;
-    }
-    else if (c == '\r')
-    {
-        return;
-    }
+    (void)userData;
+    matrix->drawPixel(x, y, textColor);
+}
 
-    c -= static_cast<uint8_t>(pgm_read_byte(&SvitrixFont.first));
-    GFXglyph *glyph = &SvitrixFont.glyph[c];
-    uint8_t *bitmap = SvitrixFont.bitmap;
-    uint16_t bo = glyph->bitmapOffset;
-    uint8_t w = glyph->width,
-            h = glyph->height;
-    int8_t xo = glyph->xOffset,
-           yo = glyph->yOffset;
-
-    uint8_t xx, yy, bits = 0, bit = 0;
-    for (yy = 0; yy < h; yy++)
+void DisplayRenderer_::matrixPrintGlyph(uint16_t codepoint)
+{
+    uint16_t cp = codepoint;
+    uint8_t adv = renderGlyph(SvitrixFont, cp, cursor_x, cursor_y, matrixPixelCallback, nullptr);
+    if (adv == 0)
     {
-        for (xx = 0; xx < w; xx++)
-        {
-            if (!(bit++ & 7))
-            {
-                bits = pgm_read_byte(&bitmap[bo++]);
-            }
-            if (bits & 0x80)
-            {
-                matrix->drawPixel(cursor_x + xo + xx, cursor_y + yo + yy, textColor);
-            }
-            bits <<= 1;
-        }
+        // Fallback: try '?' glyph
+        adv = renderGlyph(SvitrixFont, '?', cursor_x, cursor_y, matrixPixelCallback, nullptr);
     }
-
-    cursor_x += glyph->xAdvance;
+    cursor_x += adv;
 }
 
 void DisplayRenderer_::matrixPrint(const char *str)
 {
-    while (*str)
+    const char *p = str;
+    uint16_t cp;
+    while ((cp = utf8NextCodepoint(p)) != 0)
     {
-        char c = *str++;
-        if (c == '\n')
+        if (cp == '\n')
         {
             cursor_y += SvitrixFont.yAdvance;
+            cursor_x = 0;
         }
-        else if (c >= SvitrixFont.first && c <= SvitrixFont.last)
+        else if (cp != '\r')
         {
-            matrixPrint(c);
+            matrixPrintGlyph(cp);
         }
     }
 }
@@ -514,7 +492,7 @@ void DisplayRenderer_::processDrawInstructions(int16_t xOffset, int16_t yOffset,
                 uint32_t color = getColorFromJsonVariant(color7, colorConfig.textColor);
                 setTextColor(color);
                 setCursor(x + xOffset, y + yOffset + 5);
-                matrixPrint(utf8ascii(text).c_str());
+                matrixPrint(text.c_str());
             }
             else if (command == "db")
             {

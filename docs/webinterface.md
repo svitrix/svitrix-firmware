@@ -15,6 +15,7 @@ The web interface provides essential settings primarily needed for the initial s
 | **Update**     | Manually upload an update in the "Firmware" section. The required .bin file can be found in the [SVITRIX release section](https://github.com/svitrix/svitrix-firmware/releases).                     |
 | **LiveView**   | View your SVITRIX matrix live, take screenshots, and create animated GIFs.                                                                                                                     |
 | **Backup**     | The backup system compiles the entire flash memory into a zip file for download. You can restore this backup on another SVITRIX device.                                                        |
+| **DataFetcher**| Configure external HTTP data sources that automatically fetch and display data on the matrix. See [Data Fetcher](./datafetcher) for details.                                                    |
 | **Docs**       | A link to the official SVITRIX documentation.                                                                                                                                                |
 | **Flows**      | A link to the SVITRIX Flows website.                                                                                                                                                           |
 

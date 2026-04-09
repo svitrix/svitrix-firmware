@@ -1,6 +1,5 @@
 #pragma once
 
-#include <map>
 #include <FastLED_NeoMatrix.h>
 #include <Globals.h>
 #include <ArduinoJson.h>

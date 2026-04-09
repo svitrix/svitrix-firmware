@@ -26,8 +26,11 @@
 #include "ServerManager.h"
 #include "MenuManager.h"
 #include "Globals.h"
+#include "TextUtils.h"
+#include "SvitrixFont.h"
 #include "UpdateManager.h"
 #include "PowerManager.h"
+#include "DataFetcher/DataFetcher.h"
 #ifdef ENABLE_GAMES
 #include "Games/GameManager.h"
 #endif
@@ -73,6 +76,7 @@ void setup()
     digitalWrite(15, LOW);
     delay(2000);
     Serial.begin(115200);
+    setTextFont(&SvitrixFont);
     loadSettings();
     PeripheryManager.setup();
 
@@ -104,6 +108,7 @@ void setup()
     MenuManager.setDisplay(&DisplayManager.getRenderer(), &DisplayManager, &DisplayManager);
     ServerManager.setDisplay(&DisplayManager.getRenderer(), &DisplayManager, &DisplayManager, &DisplayManager.getNotifier());
     MQTTManager.setDisplay(&DisplayManager, &DisplayManager, &DisplayManager.getNotifier());
+    DataFetcher.setNavigation(&DisplayManager);
 
     // Wire up ISound, IPower, IUpdater interfaces (Phase 9.3)
     ServerManager.setServices(&PeripheryManager, &PowerManager, &UpdateManager);
@@ -120,6 +125,7 @@ void setup()
     assert(MenuManager.hasDisplay());
     assert(ServerManager.hasDisplay());
     assert(MQTTManager.hasDisplay());
+    assert(DataFetcher.hasNavigation());
     assert(ServerManager.hasServices());
     assert(MQTTManager.hasServices());
     assert(MenuManager.hasServices());
@@ -160,6 +166,7 @@ void setup()
             MQTTManager.setup();
             MQTTManager.tick();
         }
+        DataFetcher.setup();
     }
     else
     {
@@ -179,5 +186,6 @@ void loop()
     if (ServerManager.isConnected)
     {
         MQTTManager.tick();
+        DataFetcher.tick();
     }
 }
