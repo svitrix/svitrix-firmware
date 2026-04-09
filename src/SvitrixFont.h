@@ -969,31 +969,31 @@ const uint8_t SvitrixBitmaps[] PROGMEM = {
 
 /* {codepoint, bitmapOffset, packed: h[7:5]|xAdv[4:2]|yOff[1:0]} */
 const UniGlyph SvitrixGlyphs[] PROGMEM = {
-    {0x0020, 0, 0x28}, /*[0] space h=1 xa=2 yo=-5 */
-    {0x0021, 1, 0xA8}, /*[1] exclam h=5 xa=2 yo=-5 */
-    {0x0022, 6, 0x50}, /*[2] quotedbl h=2 xa=4 yo=-5 */
-    {0x0023, 8, 0xB0}, /*[3] numbersign h=5 xa=4 yo=-5 */
-    {0x0024, 13, 0xB0}, /*[4] dollar h=5 xa=4 yo=-5 */
-    {0x0025, 18, 0xB0}, /*[5] percent h=5 xa=4 yo=-5 */
-    {0x0026, 23, 0xB0}, /*[6] ampersand h=5 xa=4 yo=-5 */
-    {0x0027, 28, 0x48}, /*[7] quotesingle h=2 xa=2 yo=-5 */
-    {0x0028, 30, 0xAC}, /*[8] parenleft h=5 xa=3 yo=-5 */
-    {0x0029, 35, 0xAC}, /*[9] parenright h=5 xa=3 yo=-5 */
-    {0x002A, 40, 0x70}, /*[10] asterisk h=3 xa=4 yo=-5 */
-    {0x002B, 43, 0x71}, /*[11] plus h=3 xa=4 yo=-4 */
-    {0x002C, 46, 0x4F}, /*[12] comma h=2 xa=3 yo=-1 */
-    {0x002D, 48, 0x32}, /*[13] hyphen h=1 xa=4 yo=-3 */
-    {0x002E, 49, 0x2B}, /*[14] period h=1 xa=2 yo=-1 */
-    {0x002F, 50, 0xB0}, /*[15] slash h=5 xa=4 yo=-5 */
-    {0x0030, 55, 0xB0}, /*[16] 0 h=5 xa=4 yo=-5 */
-    {0x0031, 60, 0xB0}, /*[17] 1 h=5 xa=4 yo=-5 */
-    {0x0032, 65, 0xB0}, /*[18] 2 h=5 xa=4 yo=-5 */
-    {0x0033, 70, 0xB0}, /*[19] 3 h=5 xa=4 yo=-5 */
-    {0x0034, 75, 0xB0}, /*[20] 4 h=5 xa=4 yo=-5 */
-    {0x0035, 80, 0xB0}, /*[21] 5 h=5 xa=4 yo=-5 */
-    {0x0036, 85, 0xB0}, /*[22] 6 h=5 xa=4 yo=-5 */
-    {0x0037, 90, 0xB0}, /*[23] 7 h=5 xa=4 yo=-5 */
-    {0x0038, 95, 0xB0}, /*[24] 8 h=5 xa=4 yo=-5 */
+    {0x0020, 0, 0x28},   /*[0] space h=1 xa=2 yo=-5 */
+    {0x0021, 1, 0xA8},   /*[1] exclam h=5 xa=2 yo=-5 */
+    {0x0022, 6, 0x50},   /*[2] quotedbl h=2 xa=4 yo=-5 */
+    {0x0023, 8, 0xB0},   /*[3] numbersign h=5 xa=4 yo=-5 */
+    {0x0024, 13, 0xB0},  /*[4] dollar h=5 xa=4 yo=-5 */
+    {0x0025, 18, 0xB0},  /*[5] percent h=5 xa=4 yo=-5 */
+    {0x0026, 23, 0xB0},  /*[6] ampersand h=5 xa=4 yo=-5 */
+    {0x0027, 28, 0x48},  /*[7] quotesingle h=2 xa=2 yo=-5 */
+    {0x0028, 30, 0xAC},  /*[8] parenleft h=5 xa=3 yo=-5 */
+    {0x0029, 35, 0xAC},  /*[9] parenright h=5 xa=3 yo=-5 */
+    {0x002A, 40, 0x70},  /*[10] asterisk h=3 xa=4 yo=-5 */
+    {0x002B, 43, 0x71},  /*[11] plus h=3 xa=4 yo=-4 */
+    {0x002C, 46, 0x4F},  /*[12] comma h=2 xa=3 yo=-1 */
+    {0x002D, 48, 0x32},  /*[13] hyphen h=1 xa=4 yo=-3 */
+    {0x002E, 49, 0x2B},  /*[14] period h=1 xa=2 yo=-1 */
+    {0x002F, 50, 0xB0},  /*[15] slash h=5 xa=4 yo=-5 */
+    {0x0030, 55, 0xB0},  /*[16] 0 h=5 xa=4 yo=-5 */
+    {0x0031, 60, 0xB0},  /*[17] 1 h=5 xa=4 yo=-5 */
+    {0x0032, 65, 0xB0},  /*[18] 2 h=5 xa=4 yo=-5 */
+    {0x0033, 70, 0xB0},  /*[19] 3 h=5 xa=4 yo=-5 */
+    {0x0034, 75, 0xB0},  /*[20] 4 h=5 xa=4 yo=-5 */
+    {0x0035, 80, 0xB0},  /*[21] 5 h=5 xa=4 yo=-5 */
+    {0x0036, 85, 0xB0},  /*[22] 6 h=5 xa=4 yo=-5 */
+    {0x0037, 90, 0xB0},  /*[23] 7 h=5 xa=4 yo=-5 */
+    {0x0038, 95, 0xB0},  /*[24] 8 h=5 xa=4 yo=-5 */
     {0x0039, 100, 0xB0}, /*[25] 9 h=5 xa=4 yo=-5 */
     {0x003A, 105, 0x69}, /*[26] colon h=3 xa=2 yo=-4 */
     {0x003B, 108, 0x8D}, /*[27] semicolon h=4 xa=3 yo=-4 */
@@ -1311,7 +1311,7 @@ const UniFont SvitrixFont PROGMEM = {
     (const uint8_t *)SvitrixBitmaps,
     (const UniGlyph *)SvitrixGlyphs,
     336, // glyphCount
-    6, // yAdvance
-    8, // bitmapWidth
-    0, // xOffset
+    6,   // yAdvance
+    8,   // bitmapWidth
+    0,   // xOffset
 };
