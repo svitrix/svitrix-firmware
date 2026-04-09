@@ -190,12 +190,27 @@ Each module has detailed AI documentation:
 
 ```
 CLAUDE.md (root)                            ← you are here
+│
 ├── lib/interfaces/CLAUDE.md                ← 13 interfaces, methods, implementors, consumers
 ├── lib/services/CLAUDE.md                  ← 12 services, API, deps, test mapping
+├── lib/config/CLAUDE.md                    ← 13 config structs, all fields, defaults, persistence
 ├── lib/home-assistant-integration/CLAUDE.md← ArduinoHA fork, 7/17 entity types enabled
+├── lib/webserver/CLAUDE.md                 ← FSWebServer, WiFi, routes, HTML pipeline
+│
+├── src/CLAUDE.md                           ← standalone modules: ServerManager (33 endpoints),
+│                                              PeripheryManager (buttons, sensors, buzzer),
+│                                              MenuManager (13 menu items), UpdateManager (OTA),
+│                                              PowerManager (deep sleep), Globals (config store),
+│                                              AppContentRenderer (shared rendering pipeline)
 ├── src/DisplayManager/CLAUDE.md            ← 3 classes, 9 files, rendering, custom apps
 ├── src/MQTTManager/CLAUDE.md               ← 25 HA entities, 20 topics, 7 callbacks
-└── src/MatrixDisplayUi/CLAUDE.md           ← state machine, 10 transitions, indicators
+├── src/MatrixDisplayUi/CLAUDE.md           ← state machine, 10 transitions, indicators
+├── src/DataFetcher/CLAUDE.md               ← external HTTP data sources, round-robin polling
+│
+├── src/Apps/README.md                      ← native + custom app rendering
+├── src/Games/README.md                     ← GameManager, SlotMachine, SvitrixSays
+├── src/MelodyPlayer/README.md              ← RTTTL parser, async PWM playback
+└── src/effects/README.md                   ← 19 visual effects, weather overlays, IPixelCanvas
 ```
 
 ## Coding Conventions
@@ -227,6 +242,71 @@ CLAUDE.md (root)                            ← you are here
 - Concise communication preferred
 - Always verify changes with build + tests
 
-## Git
+## Git & Release Workflow
+
+### Commit rules
 
 - Do NOT add `Co-Authored-By` lines to commit messages
+- Use [Conventional Commits](https://www.conventionalcommits.org/) format:
+  - `feat: add temperature overlay` — new feature
+  - `fix: correct MQTT reconnect loop` — bug fix
+  - `refactor: extract notification queue` — code restructuring
+  - `docs: update MQTTManager CLAUDE.md` — documentation only
+  - `test: add ColorUtils edge cases` — tests only
+  - `chore: bump ArduinoHA to 2.0.1` — maintenance, deps, CI
+  - `perf: reduce DisplayRenderer draw calls` — performance
+- Scope is optional but encouraged: `feat(mqtt): add light entity support`
+- Breaking changes: add `!` after type — `refactor!: rename INotifier methods`
+- Keep subject line under 72 characters
+- Body: explain **why**, not **what** (the diff shows what)
+
+### Branching strategy
+
+```
+main              ← always stable, every commit is a tagged release
+  └── feature/*   ← short-lived branches for features/fixes
+```
+
+- `main` is the single long-lived branch
+- All work happens in `feature/*` branches, merged via PR
+- No `develop` branch — keep it simple for solo/small team
+- Add `develop` + `release/*` branches only when contributors appear
+
+### Versioning — Semantic Versioning with pre-release tags
+
+Format: `vMAJOR.MINOR.PATCH[-pre.N]`
+
+```
+v0.2.0-beta.1    ← first beta (from feature branch or main)
+v0.2.0-beta.2    ← beta bug fixes
+v0.2.0-rc.1      ← release candidate (feature freeze, only bug fixes)
+v0.2.0-rc.2      ← critical fix in RC
+v0.2.0           ← stable release (merged to main)
+```
+
+- **MAJOR** — breaking API/MQTT/config changes
+- **MINOR** — new features, new HA entities, new effects
+- **PATCH** — bug fixes, performance improvements
+
+### Release process
+
+1. Create `feature/*` branch from `main`
+2. Develop and test (`pio run -e ulanzi && pio test -e native_test`)
+3. When ready for beta testing: tag `v0.X.0-beta.1` on the branch
+4. When feature-complete: tag `v0.X.0-rc.1` (only bug fixes after this)
+5. Merge PR to `main`, tag `v0.X.0` on main
+6. Create GitHub Release from tag, attach `firmware.bin`
+
+### GitHub Releases
+
+- **Stable** (`v0.2.0`) — full release, marked as "Latest"
+- **Beta** (`v0.2.0-beta.1`) — mark as **pre-release** on GitHub
+- **RC** (`v0.2.0-rc.1`) — mark as **pre-release** on GitHub
+- Attach `.pio/build/ulanzi/firmware.bin` to each release
+- Release notes: list changes grouped by type (Features, Fixes, Breaking)
+
+### Tags
+
+- Always use annotated tags: `git tag -a v0.2.0 -m "v0.2.0: short description"`
+- Push tags explicitly: `git push origin v0.2.0`
+- Never delete or move published tags
