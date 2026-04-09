@@ -228,6 +228,16 @@ public:
     void addDeviceType(HABaseDeviceType *deviceType);
 
     /**
+     * Resets the registered device types counter to zero.
+     * Must be called before re-creating HA entities to prevent
+     * array overflow and stale pointer references.
+     *
+     * @note Does NOT delete the device type objects — caller must
+     *       free them before calling this method.
+     */
+    void resetDevicesCount();
+
+    /**
      * Publishes the MQTT message with given topic and payload.
      * Message won't be published if the connection with the MQTT broker is not established.
      * In this case method returns false.

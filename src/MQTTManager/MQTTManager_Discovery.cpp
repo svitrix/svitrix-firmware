@@ -9,6 +9,42 @@
  */
 #include "MQTTManager_internal.h"
 
+// ── Cleanup ─────────────────────────────────────────────────────────
+
+/// Delete all HA entity objects and reset their pointers to nullptr.
+/// Also resets HAMqtt's internal device type counter so entities can
+/// be re-registered on the next setup() call without overflow.
+static void destroyHAEntities()
+{
+    delete Matrix;      Matrix = nullptr;
+    delete Indikator1;  Indikator1 = nullptr;
+    delete Indikator2;  Indikator2 = nullptr;
+    delete Indikator3;  Indikator3 = nullptr;
+    delete BriMode;     BriMode = nullptr;
+    delete transEffect; transEffect = nullptr;
+    delete dismiss;     dismiss = nullptr;
+    delete nextApp;     nextApp = nullptr;
+    delete prevApp;     prevApp = nullptr;
+    delete doUpdate;    doUpdate = nullptr;
+    delete transition;  transition = nullptr;
+    delete battery;     battery = nullptr;
+    delete temperature; temperature = nullptr;
+    delete humidity;    humidity = nullptr;
+    delete illuminance; illuminance = nullptr;
+    delete uptime;      uptime = nullptr;
+    delete strength;    strength = nullptr;
+    delete version;     version = nullptr;
+    delete ram;         ram = nullptr;
+    delete curApp;      curApp = nullptr;
+    delete myOwnID;     myOwnID = nullptr;
+    delete ipAddr;      ipAddr = nullptr;
+    delete btnleft;     btnleft = nullptr;
+    delete btnmid;      btnmid = nullptr;
+    delete btnright;    btnright = nullptr;
+
+    mqtt.resetDevicesCount();
+}
+
 // ── Helper ──────────────────────────────────────────────────────────
 
 /// Apply metadata from a descriptor to an HASensor entity.
@@ -43,6 +79,8 @@ void MQTTManager_::setup()
 {
     if (haConfig.discovery)
     {
+        destroyHAEntities();
+
         if (systemConfig.debugMode)
             DEBUG_PRINTLN(F("Starting Homeassistant discovery"));
         mqtt.setDiscoveryPrefix(haConfig.prefix.c_str());
