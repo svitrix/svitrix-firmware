@@ -524,10 +524,10 @@ void FSWebServer::removeWhiteSpaces(String &str)
 
 void FSWebServer::handleSetup(AsyncWebServerRequest *request)
 {
-    AsyncWebServerResponse *response = request->beginResponse_P(200, "text/html",
-                                                                 (const uint8_t *)SETUP_HTML, SETUP_HTML_SIZE);
-    response->addHeader("Content-Encoding", "gzip");
-    request->send(response);
+    // Setup page now served from SPA — redirect to /settings
+    if (handleFileRead(request, "/web/index.html"))
+        return;
+    replyToCLient(request, NOT_FOUND, PSTR("SPA not found in /web/"));
 }
 #endif
 
@@ -951,14 +951,10 @@ void FSWebServer::handleFileDelete(AsyncWebServerRequest *request)
 
 void FSWebServer::handleGetEdit(AsyncWebServerRequest *request)
 {
-#ifdef INCLUDE_EDIT_HTM
-    AsyncWebServerResponse *response = request->beginResponse_P(200, "text/html",
-                                                                 (const uint8_t *)edit_htm_gz, sizeof(edit_htm_gz));
-    response->addHeader("Content-Encoding", "gzip");
-    request->send(response);
-#else
-    replyToCLient(request, NOT_FOUND, PSTR("FILE_NOT_FOUND"));
-#endif
+    // File manager now served from SPA — redirect to /files
+    if (handleFileRead(request, "/web/index.html"))
+        return;
+    replyToCLient(request, NOT_FOUND, PSTR("SPA not found in /web/"));
 }
 
 void FSWebServer::handleStatus(AsyncWebServerRequest *request)

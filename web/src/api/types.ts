@@ -106,3 +106,23 @@ export interface EffectInfo {
 export interface TransitionInfo {
   name: string;
 }
+
+export interface InfraConfig {
+  "Static IP": boolean;
+  "Local IP": string;
+  "Gateway": string;
+  "Subnet": string;
+  "Primary DNS": string;
+  "Secondary DNS": string;
+  "Broker": string;
+  "Port": number;
+  "Username": string;
+  "Password": string;
+  "Prefix": string;
+  "Homeassistant Discovery": boolean;
+  "NTP Server": string;
+  "Timezone": string;
+  "Auth Username": string;
+  "Auth Password": string;
+  [key: string]: unknown;
+}

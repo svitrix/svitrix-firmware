@@ -125,5 +125,13 @@ export const connectWifi = (ssid: string, password: string) => {
   return fetch("/connect", { method: "POST", body: form });
 };
 
-// Config file
+// Config file (DoNotTouch.json — network, MQTT, time, auth)
 export const getConfig = () => get<Record<string, unknown>>("/DoNotTouch.json");
+
+export async function saveConfig(config: Record<string, unknown>): Promise<void> {
+  const blob = new Blob([JSON.stringify(config, null, 2)], { type: "application/json" });
+  const form = new FormData();
+  form.append("data", blob, "/DoNotTouch.json");
+  await fetch("/edit", { method: "POST", body: form });
+  await fetch("/save", { method: "POST" });
+}

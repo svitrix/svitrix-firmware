@@ -13,14 +13,14 @@
 
 #define INCLUDE_EDIT_HTM
 #ifdef INCLUDE_EDIT_HTM
-#include "generated/edit_htm.h"
+// edit_htm.h removed — file manager now served from SPA in LittleFS /web/
 #endif
 
 #define INCLUDE_SETUP_HTM
 #ifdef INCLUDE_SETUP_HTM
 #define ARDUINOJSON_USE_LONG_LONG 1
 #include <ArduinoJson.h>
-#include "generated/setup_htm.h"
+// setup_htm.h removed — setup page now served from SPA in LittleFS /web/
 #endif
 
 #ifndef DEBUG_ESP_PORT
@@ -296,7 +296,7 @@ private:
     File m_uploadFile;
     bool m_fsOK = false;
     bool m_apmode = false;
-    char *m_apWebpage = (char *)"/setup";
+    char *m_apWebpage = (char *)"/settings";
     uint32_t m_timeout = 10000;
 
     bool checkDir(char *dirname, uint8_t levels);

@@ -310,11 +310,7 @@ void ServerManager_::setup()
         mws.addOptionBox("Time");
         mws.addOption("NTP Server", timeConfig.ntpServer);
         mws.addOption("Timezone", timeConfig.ntpTz);
-        mws.addHTML("<p>Find your timezone at <a href='https://github.com/nayarsystems/posix_tz_db/blob/master/zones.csv' target='_blank' rel='noopener noreferrer' style='color:#f0b800'>posix_tz_db</a>.</p>", "tz_link");
-        mws.addOptionBox("Icons");
-        mws.addHTML(custom_html, "icon_html");
-        mws.addCSS(custom_css);
-        mws.addJavascript(custom_script);
+        // Icon picker and timezone link now in SPA Settings page
         mws.addOptionBox("Auth");
         mws.addOption("Auth Username", authConfig.user);
         mws.addOption("Auth Password", authConfig.pass);
