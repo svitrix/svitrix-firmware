@@ -18,6 +18,9 @@ docs/node_modules
 docs/.vitepress/dist
 docs/.vitepress/cache
 
+# Build artifacts
+dist/
+
 # Web SPA
 web/node_modules
 data/web
