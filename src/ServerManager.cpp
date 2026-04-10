@@ -159,21 +159,7 @@ void addHandler()
                                } });
     mws.addHandler("/api/nextapp", HTTP_ANY, [](AsyncWebServerRequest *request)
                    { smNav_->nextApp(); request->send(200, "text/plain", "OK"); });
-    mws.addHandler("/fullscreen", HTTP_GET, [](AsyncWebServerRequest *request)
-                   {
-    String fps = "30";
-    if (request->hasParam("fps")) {
-        fps = request->getParam("fps")->value();
-    }
-    String finalHTML = screenfull_html;
-    finalHTML.replace("%%FPS%%", fps);
-    request->send(200, "text/html", finalHTML); });
-    mws.addHandler("/screen", HTTP_GET, [](AsyncWebServerRequest *request)
-                   { request->send_P(200, "text/html", screen_html); });
-    mws.addHandler("/backup", HTTP_GET, [](AsyncWebServerRequest *request)
-                   { request->send_P(200, "text/html", backup_html); });
-    mws.addHandler("/datafetcher", HTTP_GET, [](AsyncWebServerRequest *request)
-                   { request->send_P(200, "text/html", datafetcher_html); });
+    // HTML pages now served from SPA in LittleFS /web/
     mws.addHandler("/api/previousapp", HTTP_POST, [](AsyncWebServerRequest *request)
                    { smNav_->previousApp(); request->send(200, "text/plain", "OK"); });
     mws.addHandler("/api/notify/dismiss", HTTP_ANY, [](AsyncWebServerRequest *request)

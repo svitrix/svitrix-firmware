@@ -17,5 +17,9 @@ docs/node_modules
 docs/.vitepress/dist
 docs/.vitepress/cache
 
+# Web SPA
+web/node_modules
+data/web
+
 # Internal docs (not for public repo)
 ANALYSIS.md

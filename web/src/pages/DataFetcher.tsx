@@ -1,0 +1,210 @@
+import { useState, useEffect } from "preact/hooks";
+import {
+  getDataSources,
+  addDataSource,
+  deleteDataSource,
+  fetchDataSource,
+} from "../api/client";
+import type { DataSource } from "../api/types";
+import { toast } from "../components/Toast";
+
+const empty: DataSource = {
+  name: "",
+  url: "",
+  jsonPath: "",
+  displayFormat: "",
+  icon: "",
+  color: "#f0b800",
+  interval: 900,
+};
+
+export function DataFetcherPage(_props: { path?: string }) {
+  const [sources, setSources] = useState<DataSource[]>([]);
+  const [form, setForm] = useState<DataSource>({ ...empty });
+  const [showForm, setShowForm] = useState(false);
+  const [editing, setEditing] = useState(false);
+
+  const load = () => getDataSources().then(setSources);
+  useEffect(() => {
+    load();
+  }, []);
+
+  function upd(patch: Partial<DataSource>) {
+    setForm((f) => ({ ...f, ...patch }));
+  }
+
+  async function save() {
+    if (!form.name || !form.url || !form.jsonPath) {
+      toast("Name, URL, and JSON Path are required");
+      return;
+    }
+    try {
+      await addDataSource(form);
+      toast("Saved!");
+      setShowForm(false);
+      setForm({ ...empty });
+      setEditing(false);
+      load();
+    } catch {
+      toast("Error saving");
+    }
+  }
+
+  async function remove(name: string) {
+    if (!confirm(`Delete "${name}"?`)) return;
+    await deleteDataSource(name);
+    toast("Deleted");
+    load();
+  }
+
+  function edit(src: DataSource) {
+    setForm({ ...src });
+    setEditing(true);
+    setShowForm(true);
+  }
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <h2>Data Sources</h2>
+        <button
+          class="btn-primary"
+          onClick={() => {
+            setForm({ ...empty });
+            setEditing(false);
+            setShowForm(!showForm);
+          }}
+        >
+          {showForm ? "Cancel" : "+ Add Source"}
+        </button>
+      </div>
+
+      {showForm && (
+        <div class="card">
+          <h3 style={{ marginBottom: 12 }}>{editing ? "Edit Source" : "New Source"}</h3>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Name</label>
+                <input
+                  type="text"
+                  value={form.name}
+                  disabled={editing}
+                  onInput={(e) => upd({ name: (e.target as HTMLInputElement).value })}
+                  placeholder="btc"
+                />
+              </div>
+              <div class="form-group">
+                <label>Interval (sec)</label>
+                <input
+                  type="number"
+                  min={60}
+                  value={form.interval}
+                  onInput={(e) => upd({ interval: +(e.target as HTMLInputElement).value })}
+                />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>URL</label>
+              <input
+                type="text"
+                value={form.url}
+                onInput={(e) => upd({ url: (e.target as HTMLInputElement).value })}
+                placeholder="https://api.example.com/data"
+              />
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>JSON Path</label>
+                <input
+                  type="text"
+                  value={form.jsonPath}
+                  onInput={(e) => upd({ jsonPath: (e.target as HTMLInputElement).value })}
+                  placeholder="data.price"
+                />
+              </div>
+              <div class="form-group">
+                <label>Display Format</label>
+                <input
+                  type="text"
+                  value={form.displayFormat}
+                  onInput={(e) => upd({ displayFormat: (e.target as HTMLInputElement).value })}
+                  placeholder="$%.0f"
+                />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Icon Name</label>
+                <input
+                  type="text"
+                  value={form.icon}
+                  onInput={(e) => upd({ icon: (e.target as HTMLInputElement).value })}
+                  placeholder="bitcoin"
+                />
+              </div>
+              <div class="form-group">
+                <label>Color</label>
+                <input
+                  type="color"
+                  value={form.color}
+                  onInput={(e) => upd({ color: (e.target as HTMLInputElement).value })}
+                />
+              </div>
+            </div>
+            <button class="btn-primary" onClick={save}>
+              {editing ? "Update" : "Add"}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {sources.length === 0 && !showForm && (
+        <p style={{ color: "var(--text-dim)" }}>No data sources configured.</p>
+      )}
+
+      {sources.map((src) => (
+        <div class="card" key={src.name}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: 8,
+            }}
+          >
+            <strong style={{ color: "var(--accent)" }}>{src.name}</strong>
+            <div style={{ display: "flex", gap: 6 }}>
+              <button
+                onClick={() => fetchDataSource(src.name).then(() => toast("Fetched!"))}
+                style={{ padding: "4px 10px", fontSize: 12 }}
+              >
+                Fetch
+              </button>
+              <button
+                onClick={() => edit(src)}
+                style={{ padding: "4px 10px", fontSize: 12 }}
+              >
+                Edit
+              </button>
+              <button
+                class="btn-danger"
+                onClick={() => remove(src.name)}
+                style={{ padding: "4px 10px", fontSize: 12 }}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+          <div style={{ fontSize: 13, color: "var(--text-dim)" }}>
+            <div>URL: {src.url}</div>
+            <div>
+              Path: {src.jsonPath} | Format: {src.displayFormat || "—"} | Every {src.interval}s
+            </div>
+            {src.icon && <div>Icon: {src.icon}</div>}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}

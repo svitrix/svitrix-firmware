@@ -311,8 +311,12 @@ void FSWebServer::handleRequest(AsyncWebServerRequest *request)
     String _url = request->url();
     if (handleFileRead(request, _url))
         return;
-    else
-        replyToCLient(request, NOT_FOUND, PSTR(FILE_NOT_FOUND));
+
+    // SPA fallback: serve /web/index.html for non-API routes
+    if (!_url.startsWith("/api/") && handleFileRead(request, "/web/index.html"))
+        return;
+
+    replyToCLient(request, NOT_FOUND, PSTR(FILE_NOT_FOUND));
 }
 
 void FSWebServer::getIpAddress(AsyncWebServerRequest *request)
@@ -529,6 +533,9 @@ void FSWebServer::handleSetup(AsyncWebServerRequest *request)
 
 void FSWebServer::handleIndex(AsyncWebServerRequest *request)
 {
+    // SPA: serve from /web/ if available
+    if (handleFileRead(request, "/web/index.html"))
+        return;
     if (m_filesystem->exists("/index.htm"))
     {
         handleFileRead(request, "/index.htm");
