@@ -3,6 +3,16 @@ import preact from "@preact/preset-vite";
 import { compression } from "vite-plugin-compression2";
 import path from "path";
 
+// Device IP — override via .env.local: VITE_DEVICE_IP=192.168.1.42
+const deviceIP = process.env.VITE_DEVICE_IP || "192.168.50.92";
+const target = `http://${deviceIP}`;
+
+const proxyRoutes = [
+  "/api", "/list", "/edit", "/scan", "/status",
+  "/connect", "/restart", "/update", "/version",
+  "/save", "/DoNotTouch.json",
+];
+
 export default defineConfig({
   plugins: [
     preact(),
@@ -29,18 +39,6 @@ export default defineConfig({
     },
   },
   server: {
-    proxy: {
-      "/api": "http://192.168.50.92",
-      "/list": "http://192.168.50.92",
-      "/edit": "http://192.168.50.92",
-      "/scan": "http://192.168.50.92",
-      "/status": "http://192.168.50.92",
-      "/connect": "http://192.168.50.92",
-      "/restart": "http://192.168.50.92",
-      "/update": "http://192.168.50.92",
-      "/version": "http://192.168.50.92",
-      "/save": "http://192.168.50.92",
-      "/DoNotTouch.json": "http://192.168.50.92",
-    },
+    proxy: Object.fromEntries(proxyRoutes.map((r) => [r, target])),
   },
 });

@@ -49,7 +49,13 @@ Browser  ←→  ESP32
 
 ## Dev Proxy
 
-In dev mode, API requests are proxied to the real device at `192.168.50.92` (configured in `vite.config.ts`). Change the IP if your device has a different address.
+In dev mode, API requests are proxied to the real device. Default IP: `192.168.50.92`.
+
+To override, create `web/.env.local` (not committed to git):
+
+```
+VITE_DEVICE_IP=192.168.1.42
+```
 
 ## Bundle Size
 
