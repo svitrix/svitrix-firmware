@@ -78,8 +78,8 @@ Device state change → entity.setState() → HAMqtt.publish() → HA UI
 
 - **Max 26 entities** — hardcoded in `HAMqtt` constructor (3rd param)
 - **PubSubClient dependency** — `MQTT_MAX_PACKET_SIZE=8192` set in platformio.ini
-- **No modifications to library source** — only `ArduinoHADefines.h` exclusions customized
-- **Memory leak risk** — entity pointers allocated with `new` in Discovery, never `delete`-d (see issue #4)
+- **Minimal modifications to library source** — `ArduinoHADefines.h` exclusions + `HAMqtt::resetDevicesCount()` added to support safe entity re-creation
+- **Memory safe** — entity pointers freed by `destroyHAEntities()` before re-allocation in `MQTTManager::setup()`
 
 ## Files You Should NOT Edit
 
