@@ -13,6 +13,72 @@ static const char update_html[] PROGMEM = R"EOF(
 </form></div></body></html>
 )EOF";
 
+// Minimal WiFi setup page for AP mode (works without SPA in LittleFS)
+static const char wifi_setup_html[] PROGMEM = R"EOF(
+<!DOCTYPE html><html><head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'/>
+<title>Svitrix - WiFi Setup</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:#070b1e;color:#e8e8f0;display:flex;justify-content:center;align-items:center;min-height:100vh}
+.c{background:#0a0e27;border:1px solid #1e2550;border-radius:12px;padding:32px;max-width:400px;width:90%}
+h2{color:#f0b800;margin-bottom:20px;text-align:center}
+label{display:block;color:#8890b0;font-size:13px;margin:12px 0 4px}
+input[type=text],input[type=password]{width:100%;padding:10px;background:#111638;border:1px solid #1e2550;border-radius:8px;color:#e8e8f0;font-size:14px}
+input:focus{border-color:#f0b800;outline:0}
+button{width:100%;padding:12px;margin-top:16px;background:#f0b800;color:#070b1e;border:none;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer}
+button:hover{background:#ffd040}
+button:disabled{opacity:.5}
+.nets{max-height:200px;overflow-y:auto;margin:8px 0}
+.net{padding:8px 12px;border-bottom:1px solid #1e2550;cursor:pointer;font-size:13px;display:flex;justify-content:space-between}
+.net:hover{background:#111638}
+#msg{margin-top:12px;text-align:center;font-size:13px;color:#f0b800}
+.scan-btn{background:#111638;color:#f0b800;border:1px solid #1e2550;margin-top:8px}
+.scan-btn:hover{border-color:#f0b800}
+</style>
+</head><body><div class='c'>
+<h2>Svitrix WiFi Setup</h2>
+<button class='scan-btn' onclick='scan()' id='sb'>Scan Networks</button>
+<div class='nets' id='nets'></div>
+<label>SSID</label>
+<input type='text' id='ssid'>
+<label>Password</label>
+<input type='password' id='pass'>
+<button onclick='go()' id='cb'>Connect</button>
+<div id='msg'></div>
+</div><script>
+function scan(){
+  document.getElementById('sb').disabled=true;
+  document.getElementById('sb').textContent='Scanning...';
+  fetch('/scan').then(r=>r.json()).then(d=>{
+    let h='';
+    d.sort((a,b)=>b.rssi-a.rssi);
+    d.forEach(n=>{h+='<div class="net" onclick="pick(\''+n.ssid.replace(/'/g,"\\'")+'\')"><span>'+n.ssid+'</span><span>'+n.rssi+' dBm'+(n.secure?' 🔒':'')+'</span></div>'});
+    document.getElementById('nets').innerHTML=h||'<div style="padding:12px;color:#666">No networks found</div>';
+    document.getElementById('sb').disabled=false;
+    document.getElementById('sb').textContent='Scan Networks';
+  }).catch(()=>{
+    document.getElementById('sb').disabled=false;
+    document.getElementById('sb').textContent='Scan Networks';
+    document.getElementById('msg').textContent='Scan failed';
+  });
+}
+function pick(s){document.getElementById('ssid').value=s;document.getElementById('pass').focus()}
+function go(){
+  var s=document.getElementById('ssid').value,p=document.getElementById('pass').value;
+  if(!s){document.getElementById('msg').textContent='Enter SSID';return}
+  document.getElementById('cb').disabled=true;
+  document.getElementById('msg').textContent='Connecting...';
+  var f=new FormData();f.append('ssid',s);f.append('password',p);
+  fetch('/connect',{method:'POST',body:f}).then(r=>r.text()).then(t=>{
+    document.getElementById('msg').innerHTML=t+'<br>Device will reboot. Reconnect to your WiFi and open the new IP.';
+    setTimeout(()=>fetch('/restart'),3000);
+  }).catch(()=>{document.getElementById('msg').textContent='Connection failed';document.getElementById('cb').disabled=false});
+}
+scan();
+</script></body></html>
+)EOF";
+
 FSWebServer::FSWebServer(fs::FS &fs, AsyncWebServer &server)
 {
     m_filesystem = &fs;
@@ -324,6 +390,13 @@ void FSWebServer::handleRequest(AsyncWebServerRequest *request)
     if (!_url.startsWith("/api/") && handleFileRead(request, "/web/index.html"))
         return;
 
+    // Last resort: inline WiFi setup page (AP mode, no SPA)
+    if (!_url.startsWith("/api/"))
+    {
+        request->send_P(200, "text/html", wifi_setup_html);
+        return;
+    }
+
     replyToCLient(request, NOT_FOUND, PSTR(FILE_NOT_FOUND));
 }
 
@@ -471,11 +544,15 @@ void FSWebServer::handleIndex(AsyncWebServerRequest *request)
     if (m_filesystem->exists("/index.htm"))
     {
         handleFileRead(request, "/index.htm");
+        return;
     }
-    else if (m_filesystem->exists("/index.html"))
+    if (m_filesystem->exists("/index.html"))
     {
         handleFileRead(request, "/index.html");
+        return;
     }
+    // Fallback: minimal inline WiFi setup page (AP mode, no SPA uploaded)
+    request->send_P(200, "text/html", wifi_setup_html);
 }
 
 /*
