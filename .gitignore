@@ -5,6 +5,7 @@
 .vscode/ipch
 /Tools
 !tools/build_web.py
+!tools/dist.sh
 compile_commands.json
 
 # OS
