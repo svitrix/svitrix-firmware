@@ -1,7 +1,7 @@
 #include "ServerManager.h"
 #include "Globals.h"
 #include <esp-fs-webserver.h>
-#include "generated/htmls.h"
+#include <ArduinoJson.h>
 #include <Update.h>
 #include <ESPmDNS.h>
 #include <LittleFS.h>
@@ -293,27 +293,7 @@ void ServerManager_::setup()
     mws.setAuth(authConfig.user, authConfig.pass);
     if (isConnected)
     {
-        mws.addOptionBox("Network");
-        mws.addOption("Static IP", networkConfig.isStatic);
-        mws.addOption("Local IP", networkConfig.ip);
-        mws.addOption("Gateway", networkConfig.gateway);
-        mws.addOption("Subnet", networkConfig.subnet);
-        mws.addOption("Primary DNS", networkConfig.primaryDns);
-        mws.addOption("Secondary DNS", networkConfig.secondaryDns);
-        mws.addOptionBox("MQTT");
-        mws.addOption("Broker", mqttConfig.host);
-        mws.addOption("Port", mqttConfig.port);
-        mws.addOption("Username", mqttConfig.user);
-        mws.addOption("Password", mqttConfig.pass);
-        mws.addOption("Prefix", mqttConfig.prefix);
-        mws.addOption("Homeassistant Discovery", haConfig.discovery);
-        mws.addOptionBox("Time");
-        mws.addOption("NTP Server", timeConfig.ntpServer);
-        mws.addOption("Timezone", timeConfig.ntpTz);
-        // Icon picker and timezone link now in SPA Settings page
-        mws.addOptionBox("Auth");
-        mws.addOption("Auth Username", authConfig.user);
-        mws.addOption("Auth Password", authConfig.pass);
+        initConfigDefaults();
         mws.addHandlerWithBody("/save", HTTP_POST, saveHandler);
         addHandler();
         udp.begin(localUdpPort);
@@ -425,6 +405,34 @@ void ServerManager_::sendTCP(String message)
     {
         currentClient.print(message);
     }
+}
+
+void ServerManager_::initConfigDefaults()
+{
+    if (LittleFS.exists("/DoNotTouch.json"))
+        return; // Config already exists, don't overwrite user settings
+
+    DynamicJsonDocument doc(2048);
+    doc["Static IP"] = networkConfig.isStatic;
+    doc["Local IP"] = networkConfig.ip;
+    doc["Gateway"] = networkConfig.gateway;
+    doc["Subnet"] = networkConfig.subnet;
+    doc["Primary DNS"] = networkConfig.primaryDns;
+    doc["Secondary DNS"] = networkConfig.secondaryDns;
+    doc["Broker"] = mqttConfig.host;
+    doc["Port"] = mqttConfig.port;
+    doc["Username"] = mqttConfig.user;
+    doc["Password"] = mqttConfig.pass;
+    doc["Prefix"] = mqttConfig.prefix;
+    doc["Homeassistant Discovery"] = haConfig.discovery;
+    doc["NTP Server"] = timeConfig.ntpServer;
+    doc["Timezone"] = timeConfig.ntpTz;
+    doc["Auth Username"] = authConfig.user;
+    doc["Auth Password"] = authConfig.pass;
+
+    File file = LittleFS.open("/DoNotTouch.json", "w");
+    serializeJsonPretty(doc, file);
+    file.close();
 }
 
 void ServerManager_::loadSettings()
