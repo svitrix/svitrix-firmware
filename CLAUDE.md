@@ -8,11 +8,13 @@ C++ / Arduino framework / PlatformIO.
 ## Build & Test
 
 ```bash
-pio run -e ulanzi          # Build firmware
-pio test -e native_test    # Run all tests (Unity, 21 suites, 434 tests)
+pio run -e ulanzi          # Build firmware (auto-builds SPA via pre-build script)
+pio test -e native_test    # Run all tests (Unity, 24 suites, 434 tests)
+cd web && npm run dev      # SPA dev server (hot reload, proxies to device)
+cd web && npm run upload   # Build SPA + upload to device LittleFS
 ```
 
-Flash is ~97% full — watch binary size when adding features.
+Flash is ~96% full — watch binary size when adding features.
 
 ## Project Structure
 
@@ -41,9 +43,20 @@ lib/
   config/                     # Configuration defaults
   TJpg_Decoder/               # JPEG decoder (local fork)
   home-assistant-integration/ # ArduinoHA library (trimmed)
-  webserver/                  # Async web server wrapper
+  webserver/                  # Async web server wrapper (API routing, WiFi, OTA)
+web/                          # SPA (Preact + Vite + TypeScript)
+  src/
+    api/                      # Typed API client for all 38 REST endpoints
+    pages/                    # 6 pages: Screen, Settings, DataFetcher, Backup, Update, Files
+    components/               # Nav, Toast
+    styles/                   # Global CSS (dark theme)
+  vite.config.ts              # Build config: IIFE output, gzip, dev proxy
+data/
+  web/                        # SPA build output (gzipped, uploaded to LittleFS)
+tools/
+  build_web.py                # PlatformIO pre-build: auto-builds SPA if sources changed
 test/
-  test_native/                # 21 test suites (native C++ tests)
+  test_native/                # 24 test suites (native C++ tests)
 ```
 
 ## Architecture Rules
@@ -196,7 +209,8 @@ CLAUDE.md (root)                            ← you are here
 ├── lib/services/CLAUDE.md                  ← 12 services, API, deps, test mapping
 ├── lib/config/CLAUDE.md                    ← 13 config structs, all fields, defaults, persistence
 ├── lib/home-assistant-integration/CLAUDE.md← ArduinoHA fork, 7/17 entity types enabled
-├── lib/webserver/CLAUDE.md                 ← FSWebServer, WiFi, routes, HTML pipeline
+├── lib/webserver/CLAUDE.md                 ← FSWebServer, WiFi, routes, SPA fallback
+├── web/README.md                           ← SPA: Preact + Vite, 6 pages, dev workflow
 │
 ├── src/CLAUDE.md                           ← standalone modules: ServerManager (33 endpoints),
 │                                              PeripheryManager (buttons, sensors, buzzer),
