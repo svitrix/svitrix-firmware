@@ -30,5 +30,5 @@ repos:
           - '--suppress=toomanyconfigs'
           - '--enable=warning,style,performance'
           - '--inline-suppr'
-          - '--std=c++11'
+          - '--std=c++17'
         files: '^src/.*\.(cpp|h)$'
