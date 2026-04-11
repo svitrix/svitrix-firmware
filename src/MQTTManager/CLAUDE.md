@@ -39,7 +39,7 @@ void setServices(ISound*, IPower*, IUpdater*, IPeripheryProvider*);
 
 *battery only on ULANZI build
 
-All allocated with `new` in `setup()` when `haConfig.discovery == true`. **Known issue: never freed — see issue #4.**
+All allocated with `new` in `setup()` when `haConfig.discovery == true`. Freed by `destroyHAEntities()` at the start of each `setup()` call to prevent heap leaks on repeated invocations.
 
 ## MQTT Topics
 
@@ -97,7 +97,7 @@ All callbacks call `saveSettings()` after modifying config structs.
 ## Connection Lifecycle
 
 ```
-setup() → create 25 HA entities (if discovery enabled) → register callbacks
+setup() → destroyHAEntities() + resetDevicesCount() → create 25 HA entities (if discovery enabled) → register callbacks
   └→ connect() → mqtt.begin(host, port, user, pass)
        └→ onMqttConnected()
             ├─ Subscribe to ~20 command topics (30ms delay each)
