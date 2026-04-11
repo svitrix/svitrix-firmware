@@ -6,7 +6,7 @@ set -e
 cd "$(dirname "$0")/.."
 
 MKLITTLEFS="$HOME/.platformio/packages/tool-mklittlefs/mklittlefs"
-LITTLEFS_SIZE=0x40000  # 256 KB (from svitrix_partition.csv)
+LITTLEFS_SIZE=$((0x40000))  # 256 KB (from svitrix_partition.csv, offset 0x3C0000)
 FLASHER_DIR="docs/public/ulanzi_flasher/firmware"
 
 echo "=== Building SPA ==="
