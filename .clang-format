@@ -41,5 +41,5 @@ BreakConstructorInitializers: BeforeComma
 MaxEmptyLinesToKeep: 2
 KeepEmptyLinesAtTheStartOfBlocks: false
 
-Standard: c++11
+Standard: c++17
 ...

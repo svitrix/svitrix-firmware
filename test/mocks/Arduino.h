@@ -17,13 +17,12 @@ typedef uint8_t byte;
 #define constrain(amt, low, high) ((amt) < (low) ? (low) : ((amt) > (high) ? (high) : (amt)))
 #endif
 
-#ifndef min
-#define min(a, b) ((a) < (b) ? (a) : (b))
-#endif
+// Use inline templates instead of macros to avoid conflicts with std::min/std::max in C++17
+template <typename T>
+inline const T &min(const T &a, const T &b) { return (a < b) ? a : b; }
 
-#ifndef max
-#define max(a, b) ((a) > (b) ? (a) : (b))
-#endif
+template <typename T>
+inline const T &max(const T &a, const T &b) { return (a > b) ? a : b; }
 
 #ifndef F
 #define F(x) (x)

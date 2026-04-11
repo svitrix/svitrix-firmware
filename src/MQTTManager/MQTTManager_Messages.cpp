@@ -173,15 +173,16 @@ void processMqttMessage(const String& strTopic, const String& payloadCopy)
     }
 
     // Fall-through: update mqttValues map for stored topics
-    if (mqttValues.find(strTopic) != mqttValues.end())
+    auto it = mqttValues.find(strTopic);
+    if (it != mqttValues.end())
     {
-        mqttValues[strTopic] = payloadCopy;
+        it->second = payloadCopy;
         if (systemConfig.debugMode)
         {
             Serial.print("Updated existing topic: ");
             Serial.println(strTopic);
             Serial.print("New value: ");
-            Serial.println(mqttValues[strTopic]);
+            Serial.println(it->second);
         }
     }
 }
