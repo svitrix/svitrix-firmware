@@ -497,12 +497,19 @@ bool FSWebServer::handleFileRead(AsyncWebServerRequest *request, const String &u
 
     if (m_filesystem->exists(pathWithGz) || m_filesystem->exists(path))
     {
-        if (m_filesystem->exists(pathWithGz))
+        bool isGzip = m_filesystem->exists(pathWithGz);
+        const char *contentType = getContentType(uri.c_str()); // Use original path for content type
+        if (isGzip)
         {
             path += ".gz";
+            AsyncWebServerResponse *response = request->beginResponse(*m_filesystem, path, contentType);
+            response->addHeader("Content-Encoding", "gzip");
+            request->send(response);
         }
-        const char *contentType = getContentType(path.c_str());
-        request->send(*m_filesystem, path, contentType);
+        else
+        {
+            request->send(*m_filesystem, path, contentType);
+        }
         return true;
     }
     return false;
