@@ -3,13 +3,13 @@
 ## Project
 
 ESP32 firmware for Ulanzi TC001 Smart Pixel Clock (32x8 WS2812B LED matrix).
-C++ / Arduino framework / PlatformIO.
+C++17 / Arduino framework / PlatformIO.
 
 ## Build & Test
 
 ```bash
 pio run -e ulanzi          # Build firmware (auto-builds SPA via pre-build script)
-pio test -e native_test    # Run all tests (Unity, 24 suites, 434 tests)
+pio test -e native_test    # Run all tests (Unity, 25 suites, 445 tests)
 cd web && npm run dev      # SPA dev server (hot reload, proxies to device)
 cd web && npm run upload   # Build SPA + upload to device LittleFS
 ```
@@ -31,7 +31,7 @@ src/
   AppContent.h                # AppContentBase struct (shared rendering fields)
   AppContentRenderer.cpp      # Shared rendering pipeline for apps + notifications
   Globals.cpp/h               # Config structs, global state
-  ServerManager.cpp/h         # HTTP API (REST endpoints)
+  ServerManager.cpp/h         # HTTP API (35 REST endpoints)
   PeripheryManager.cpp/h      # Hardware: sensors, buzzer, buttons, battery, LDR
   MenuManager.cpp/h           # On-device settings menu
   UpdateManager.cpp/h         # OTA firmware updates
@@ -39,7 +39,7 @@ src/
   SvitrixFont.h               # Unicode sparse glyph table (336 glyphs, UTF-8, binary search)
 lib/
   interfaces/                 # 13 interfaces (IDisplayControl, INotifier, IPixelCanvas, etc.)
-  services/                   # 12 service libraries (100% test coverage)
+  services/                   # 13 service libraries (100% test coverage)
   config/                     # Configuration defaults
   TJpg_Decoder/               # JPEG decoder (local fork)
   home-assistant-integration/ # ArduinoHA library (trimmed)
@@ -56,7 +56,7 @@ data/
 tools/
   build_web.py                # PlatformIO pre-build: auto-builds SPA if sources changed
 test/
-  test_native/                # 24 test suites (native C++ tests)
+  test_native/                # 25 test suites (native C++ tests)
 ```
 
 ## Architecture Rules
@@ -91,7 +91,7 @@ All inter-module communication goes through interfaces wired in `main.cpp`.
 │       └── NeoMatrixCanvas     IPixelCanvas for effects              │
 │                                                                      │
 │  MQTTManager_ ────────────── MQTT broker + Home Assistant (25 HA)   │
-│  ServerManager_ ──────────── HTTP REST API (33 endpoints)           │
+│  ServerManager_ ──────────── HTTP REST API (35 endpoints)           │
 │  PeripheryManager_ ───────── sensors, buzzer, buttons, LDR, battery │
 │  MenuManager_ ────────────── on-device settings menu                │
 │  PowerManager_ ───────────── deep sleep / wake                      │
@@ -104,7 +104,7 @@ All inter-module communication goes through interfaces wired in `main.cpp`.
 │                        LIBRARIES                                     │
 │                                                                      │
 │  lib/interfaces/     13 pure virtual interfaces (decoupling layer)  │
-│  lib/services/       12 stateless utilities (100% test coverage)    │
+│  lib/services/       13 stateless utilities (100% test coverage)    │
 │  lib/config/         ConfigTypes — all config structs               │
 │  lib/home-assistant-integration/   ArduinoHA v2.0.0 (trimmed)      │
 │  lib/webserver/      ESPAsyncWebServer wrapper (API routing, WiFi)  │
@@ -160,7 +160,7 @@ MenuManager_         IButtonHandler      →       PeripheryManager (dispatcher)
                                                         │
           ┌─────────────┐                        ┌──────▼───────┐
           │  HTTP Client │◀─────────────────────▶│ ServerManager │
-          │  (REST API)  │  33 endpoints          │(IButtonRep)  │
+          │  (REST API)  │  35 endpoints          │(IButtonRep)  │
           └─────────────┘                        └──────────────┘
 
           ┌─────────────┐                        ┌──────────────┐
@@ -206,13 +206,13 @@ Each module has detailed AI documentation:
 CLAUDE.md (root)                            ← you are here
 │
 ├── lib/interfaces/CLAUDE.md                ← 13 interfaces, methods, implementors, consumers
-├── lib/services/CLAUDE.md                  ← 12 services, API, deps, test mapping
+├── lib/services/CLAUDE.md                  ← 13 services, API, deps, test mapping
 ├── lib/config/CLAUDE.md                    ← 13 config structs, all fields, defaults, persistence
 ├── lib/home-assistant-integration/CLAUDE.md← ArduinoHA fork, 7/17 entity types enabled
 ├── lib/webserver/CLAUDE.md                 ← FSWebServer, WiFi, routes, SPA fallback
 ├── web/README.md                           ← SPA: Preact + Vite, 6 pages, dev workflow
 │
-├── src/CLAUDE.md                           ← standalone modules: ServerManager (33 endpoints),
+├── src/CLAUDE.md                           ← standalone modules: ServerManager (35 endpoints),
 │                                              PeripheryManager (buttons, sensors, buzzer),
 │                                              MenuManager (13 menu items), UpdateManager (OTA),
 │                                              PowerManager (deep sleep), Globals (config store),
@@ -253,27 +253,99 @@ CLAUDE.md (root)                            ← you are here
 
 ## User Preferences
 
-- Language: Ukrainian (prompts often in Ukrainian, respond accordingly)
 - Concise communication preferred
 - Always verify changes with build + tests
 
 ## Git & Release Workflow
 
-### Commit rules
+### Commit rules — [Conventional Commits v1.0.0](https://www.conventionalcommits.org/en/v1.0.0/)
 
 - Do NOT add `Co-Authored-By` lines to commit messages
-- Use [Conventional Commits](https://www.conventionalcommits.org/) format:
-  - `feat: add temperature overlay` — new feature
-  - `fix: correct MQTT reconnect loop` — bug fix
-  - `refactor: extract notification queue` — code restructuring
-  - `docs: update MQTTManager CLAUDE.md` — documentation only
-  - `test: add ColorUtils edge cases` — tests only
-  - `chore: bump ArduinoHA to 2.0.1` — maintenance, deps, CI
-  - `perf: reduce DisplayRenderer draw calls` — performance
-- Scope is optional but encouraged: `feat(mqtt): add light entity support`
-- Breaking changes: add `!` after type — `refactor!: rename INotifier methods`
-- Keep subject line under 72 characters
-- Body: explain **why**, not **what** (the diff shows what)
+
+#### Format
+
+```
+<type>[(scope)][!]: <description>
+
+[body]
+
+[footer(s)]
+```
+
+- **Subject line** (`<type>[(scope)]: <description>`):
+  - Under 72 characters
+  - Lowercase type, imperative mood (`add`, not `added` or `adds`)
+  - No period at the end
+- **Body** (optional, blank line after subject):
+  - Explain **why**, not **what** (the diff shows what)
+  - Wrap at 72 characters
+- **Footer** (optional):
+  - `BREAKING CHANGE: <description>` — for detailed breaking change explanation
+  - `Refs: #123` — reference related issues
+
+#### Types
+
+| Type | When to use | Changelog section |
+|------|-------------|-------------------|
+| `feat` | New user-facing feature | **Features** |
+| `fix` | Bug fix | **Bug Fixes** |
+| `refactor` | Code restructuring (no behavior change) | — |
+| `perf` | Performance improvement | **Performance** |
+| `docs` | Documentation only | — |
+| `test` | Adding/fixing tests | — |
+| `chore` | Maintenance, deps, CI, tooling | — |
+| `build` | Build system, platformio.ini | — |
+| `ci` | CI/CD pipeline changes | — |
+| `style` | Formatting, whitespace (no logic) | — |
+
+#### Scope
+
+Optional but encouraged. Use module name in lowercase:
+
+`feat(mqtt): add light entity support`
+`fix(display): correct gamma on low brightness`
+`refactor(effects): extract IPixelCanvas`
+`docs(web): update SPA dev workflow`
+
+Common scopes: `mqtt`, `display`, `effects`, `web`, `server`, `menu`, `periphery`, `power`, `datafetcher`, `apps`, `config`, `font`
+
+#### Breaking changes
+
+Two ways to indicate:
+
+1. `!` after type/scope: `refactor(mqtt)!: rename INotifier methods`
+2. `BREAKING CHANGE:` footer for details:
+
+```
+refactor(mqtt)!: rename INotifier methods
+
+Renamed publishState() to syncState() across all callers.
+
+BREAKING CHANGE: INotifier::publishState() renamed to syncState().
+All MQTT topic consumers must update their integration code.
+```
+
+#### Examples
+
+```
+feat(datafetcher): add JSON path array index support
+
+Allow data sources to use array indices in jsonPath (e.g., "data.0.price").
+This enables fetching from APIs that return arrays instead of objects.
+
+Refs: #25
+```
+
+```
+fix(display): prevent crash on empty notification text
+
+Null text pointer caused segfault in DisplayRenderer::printText().
+Added nullptr check before UTF-8 decoding.
+```
+
+```
+chore: upgrade C++ standard from C++11 to C++17
+```
 
 ### Branching strategy
 
@@ -284,6 +356,7 @@ main              ← always stable, every commit is a tagged release
 
 - `main` is the single long-lived branch
 - All work happens in `feature/*` branches, merged via PR
+- **Squash merge only** — every PR becomes a single commit on main (`gh pr merge --squash`)
 - No `develop` branch — keep it simple for solo/small team
 - Add `develop` + `release/*` branches only when contributors appear
 
