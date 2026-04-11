@@ -28,12 +28,13 @@ export function BackupPage(_props: { path?: string }) {
       const files: { path: string; blob: Blob }[] = [];
       await collectFiles("/", files);
 
-      // Build a simple tar-like JSON manifest + files as a zip using JSZip if available,
-      // or fall back to downloading files individually
-      // For simplicity, download as a JSON backup of the file listing
       const backup: Record<string, string> = {};
       for (const f of files) {
-        backup[f.path] = await f.blob.text();
+        const buf = await f.blob.arrayBuffer();
+        const bytes = new Uint8Array(buf);
+        let binary = "";
+        for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+        backup[f.path] = btoa(binary);
       }
       const blob = new Blob([JSON.stringify(backup, null, 2)], {
         type: "application/json",
@@ -59,7 +60,10 @@ export function BackupPage(_props: { path?: string }) {
       let done = 0;
       for (const path of paths) {
         setBusy(`Restoring ${++done}/${paths.length}...`);
-        await uploadFile(path, backup[path]);
+        const binary = atob(backup[path]);
+        const bytes = new Uint8Array(binary.length);
+        for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+        await uploadFile(path, new Blob([bytes]));
       }
       toast("Restore complete! Rebooting...");
       await reboot();

@@ -90,7 +90,7 @@ export const listDir = (dir: string) =>
   get<FileEntry[]>(`/list?dir=${encodeURIComponent(dir)}`);
 
 export async function readFile(path: string): Promise<string> {
-  const res = await fetch(`/edit?file=${encodeURIComponent(path)}`);
+  const res = await fetch(path);
   return res.text();
 }
 
@@ -113,7 +113,11 @@ export async function createDir(path: string): Promise<Response> {
 }
 
 export async function deleteFile(path: string): Promise<Response> {
-  return del(`/edit?filename=${encodeURIComponent(path)}`);
+  return fetch("/edit", {
+    method: "DELETE",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: `path=${encodeURIComponent(path)}`,
+  });
 }
 
 // WiFi

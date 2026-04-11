@@ -889,7 +889,7 @@ void FSWebServer::handleGetEdit(AsyncWebServerRequest *request)
     // File manager now served from SPA — redirect to /files
     if (handleFileRead(request, "/index.html"))
         return;
-    replyToCLient(request, NOT_FOUND, PSTR("SPA not found in /web/"));
+    replyToCLient(request, NOT_FOUND, PSTR("SPA not found"));
 }
 
 void FSWebServer::handleStatus(AsyncWebServerRequest *request)

@@ -4,13 +4,13 @@ Async HTTP server for SVITRIX based on [ESPAsyncWebServer](https://github.com/me
 
 ## Architecture
 
-The web server is a **pure HTTP server** — it handles routing, WiFi, file operations, and OTA. All UI pages are served from the **Preact SPA** stored in LittleFS `/web/`.
+The web server is a **pure HTTP server** — it handles routing, WiFi, file operations, and OTA. All UI pages are served from the **Preact SPA** stored in LittleFS root.
 
 ```
 Browser request
   → API route (/api/*)     → ServerManager handler → JSON response
   → File route (/list, /edit) → FSWebServer handler → JSON/file
-  → SPA route (/, /settings, etc.) → LittleFS /web/index.html → client-side routing
+  → SPA route (/, /settings, etc.) → LittleFS /index.html → client-side routing
   → OTA (/update GET)      → inline update_html (1 KB PROGMEM fallback)
 ```
 
@@ -118,7 +118,7 @@ The SPA source lives in `web/` (project root) — see `web/README.md`.
 
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/` | SPA index from LittleFS `/web/` |
+| GET | `/` | SPA index from LittleFS root |
 | GET | `/setup` | Redirects to SPA |
 | GET | `/scan` | Scan WiFi networks |
 | POST | `/connect` | Connect to WiFi (form: `ssid`, `password`, `persistent`) |

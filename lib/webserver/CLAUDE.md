@@ -11,10 +11,10 @@ Async HTTP server wrapper around ESPAsyncWebServer. Provides WiFi management, ca
 
 ## Architecture
 
-All HTML pages are served from the **Preact SPA** stored in LittleFS `/web/`. The server's role is:
+All HTML pages are served from the **Preact SPA** stored in LittleFS root. The server's role is:
 1. Route registration for API endpoints (used by `ServerManager`)
-2. Serve SPA files from LittleFS (`/web/index.html.gz`, `/web/app.js.gz`, etc.)
-3. SPA fallback: non-API 404 → `/web/index.html` (client-side routing)
+2. Serve SPA files from LittleFS (`/index.html.gz`, `/app.js.gz`, etc.)
+3. SPA fallback: non-API 404 → `/index.html` (client-side routing)
 4. WiFi management (STA/AP mode, captive portal)
 5. LittleFS file operations (list, upload, delete, create)
 6. OTA firmware update (with inline `update_html` fallback)
@@ -69,7 +69,7 @@ Built-in at `/update` (GET = inline `update_html` fallback form, POST = firmware
 
 | Path | Description |
 |------|-------------|
-| `/` | SPA index: serves `/web/index.html` from LittleFS |
+| `/` | SPA index: serves `/index.html` from LittleFS |
 | `/setup` | Redirects to SPA (captive portal compatibility) |
 | `/scan` | WiFi network scan (JSON) |
 | `/connect` | WiFi connection (POST) |
@@ -84,7 +84,7 @@ Request flow for non-API paths:
 
 ```
 Request → handleFileRead(url)     → found? serve file
-        → /web/index.html         → found? serve SPA (client-side routing)
+        → /index.html             → found? serve SPA (client-side routing)
         → 404
 ```
 

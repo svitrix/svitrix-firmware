@@ -114,7 +114,7 @@ HTTP REST API server, WiFi connectivity, mDNS discovery, UDP device discovery, a
 
 - Route ordering matters — `/api/datafetcher/fetch` before `/api/datafetcher`
 - AP mode fallback at `192.168.4.1` — only `/version` endpoint registered
-- All HTML pages served from SPA in LittleFS `/web/` (not PROGMEM)
+- All HTML pages served from SPA in LittleFS root (not PROGMEM)
 - Auth via `mws.setAuth(user, pass)`
 - mDNS registers `http` and `svitrix` TCP services
 

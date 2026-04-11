@@ -34,7 +34,7 @@ The web interface is stored separately from the firmware in the LittleFS filesys
 cd web && npm run upload
 ```
 
-This builds the SPA and uploads it to the device's `/web/` directory. The SPA bundle is approximately 18 KB (gzip compressed) and includes all 6 pages.
+This builds the SPA and uploads it to the device's LittleFS root directory. The SPA bundle is approximately 18 KB (gzip compressed) and includes all 6 pages.
 
 ::: tip
 Once uploaded, the SPA persists across firmware updates. You only need to re-upload the SPA when the web interface itself is updated.
