@@ -21,7 +21,7 @@
 // ── Matrix dimensions ──────────────────────────────────────────────
 // Canonical definitions live in EffectTypes.h (kMatrixWidth/kMatrixHeight).
 // These macros exist for backward compat with code using MATRIX_WIDTH/HEIGHT.
-#include "effects/EffectTypes.h"
+#include "EffectTypes.h"
 #define MATRIX_WIDTH kMatrixWidth
 #define MATRIX_HEIGHT kMatrixHeight
 

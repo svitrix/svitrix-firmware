@@ -33,8 +33,9 @@
  */
 #include "MatrixDisplayUi.h"
 #include "MatrixDisplayUi_internal.h"
-#include "effects.h"
-#include "effects/NeoMatrixCanvas.h"
+#include "EffectRegistry.h"
+#include "WeatherOverlay.h"
+#include "NeoMatrixCanvas.h"
 #include "Globals.h"
 
 // ── Global state (shared via MatrixDisplayUi_internal.h) ────────────

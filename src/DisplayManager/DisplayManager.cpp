@@ -18,7 +18,7 @@
 #include "GifPlayer.h"
 #include "timer.h"
 #include "Apps.h"
-#include "effects.h"
+#include "EffectRegistry.h"
 #include "Overlays.h"
 #include <ArtnetWifi.h>
 #ifdef ENABLE_GAMES

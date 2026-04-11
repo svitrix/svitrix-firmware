@@ -14,7 +14,7 @@
 #include "INotifier.h"
 #include "IPeripheryProvider.h"
 #include <ArduinoJson.h>
-#include "effects.h"
+#include "EffectRegistry.h"
 #include "Overlays.h"
 #include "ColorUtils.h"
 #include "StatsBuilder.h"

@@ -3,7 +3,6 @@
 #include <map>
 #include <vector>
 #include "MatrixDisplayUi.h"
-#include "effects.h"
 #include "AppContent.h"
 
 struct CustomApp : AppContentBase

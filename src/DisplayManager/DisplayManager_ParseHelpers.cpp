@@ -12,7 +12,7 @@
 #include "DisplayManager_internal.h"
 #include "Globals.h"
 #include <ArduinoJson.h>
-#include "effects.h"
+#include "EffectRegistry.h"
 #include "ColorUtils.h"
 #include "Functions.h"
 

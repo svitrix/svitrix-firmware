@@ -17,7 +17,6 @@
 #include <LittleFS.h>
 #include "Apps.h"
 #include "Overlays.h"
-#include "effects.h"
 #include "ColorUtils.h"
 #include "Functions.h"
 #include "base64.hpp"

@@ -3,7 +3,6 @@
 #include <deque>
 #include <vector>
 #include "MatrixDisplayUi.h"
-#include "effects.h"
 #include "AppContent.h"
 
 uint32_t TextEffect(uint32_t color, uint32_t fade, uint32_t blink);

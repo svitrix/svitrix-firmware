@@ -17,7 +17,6 @@
 #include <LittleFS.h>
 #include <HTTPClient.h>
 #include "Overlays.h"
-#include "effects.h"
 #include "ColorUtils.h"
 #include "Functions.h"
 

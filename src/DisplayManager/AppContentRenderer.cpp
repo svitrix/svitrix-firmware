@@ -3,8 +3,8 @@
 #include "Functions.h"
 #include "Globals.h"
 #include "GifPlayer.h"
-#include "effects/NeoMatrixCanvas.h"
-#include "effects/WeatherOverlay.h"
+#include "NeoMatrixCanvas.h"
+#include "WeatherOverlay.h"
 
 int renderAppIcon(AppContentBase& app, GifPlayer *gifPlayer,
                   int16_t x, int16_t y, bool noScrolling, bool hasIcon,
