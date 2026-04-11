@@ -8,6 +8,10 @@
 !tools/dist.sh
 compile_commands.json
 
+# Claude Code
+.claude/settings.json
+.claude/settings.local.json
+
 # OS
 .DS_Store
 
