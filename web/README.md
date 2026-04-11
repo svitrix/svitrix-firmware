@@ -29,7 +29,7 @@ Browser  ←→  ESP32
   │  GET /       │  → LittleFS /web/index.html.gz (SPA shell)
   │  GET /app.js │  → LittleFS /web/app.js.gz (all pages)
   │              │
-  │  /api/*      │  → ServerManager JSON endpoints (38 routes)
+  │  /api/*      │  → ServerManager JSON endpoints (35 routes)
   │  /DoNotTouch │  → Config file (Network, MQTT, Time, Auth)
   │  /edit       │  → LittleFS file operations
   │  /scan       │  → WiFi network scan

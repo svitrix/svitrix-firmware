@@ -115,6 +115,13 @@ Reconnection handled internally by ArduinoHA. `onMqttConnected()` re-runs on eac
 - `StatsBuilder` — telemetry → JSON
 - `PlaceholderUtils` — `{{topic}}` substitution
 
+## Tests
+
+| Test Suite | What It Covers |
+|------------|---------------|
+| `test_ha_memory/` | destroy-and-reset pattern: `destroyHAEntities()` + `resetDevicesCount()` |
+| `test_ha_discovery/` | HADiscovery service: entity descriptors, ID generation |
+
 ## Key Design Patterns
 
 - **Singleton** with setter injection + assert guards

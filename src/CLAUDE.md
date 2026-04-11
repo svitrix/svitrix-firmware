@@ -31,7 +31,7 @@ HTTP REST API server, WiFi connectivity, mDNS discovery, UDP device discovery, a
 | `IPower` | Sleep/wake |
 | `IUpdater` | OTA firmware update |
 
-### HTTP Endpoints (33)
+### HTTP Endpoints (35)
 
 #### Device Control
 | Method | Path | Description |
