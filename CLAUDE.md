@@ -23,20 +23,24 @@ src/
   main.cpp                    # Composition root, dependency wiring
   Apps/                       # Native + custom app rendering (TimeApp, DateApp, etc.)
   DisplayManager/             # Display coordinator (3 classes), custom app lifecycle, settings
+                              #   + AppContentRenderer.cpp (shared rendering pipeline)
   MatrixDisplayUi/            # App framework: state machine, transitions, overlays, indicators
   MQTTManager/                # MQTT + Home Assistant auto-discovery (25 HA entities)
   MelodyPlayer/               # RTTTL parser + async PWM playback
+  ServerManager/              # HTTP API (35 REST endpoints)
+  PeripheryManager/           # Hardware: sensors, buzzer, buttons, battery, LDR
+  MenuManager/                # On-device settings menu
+  UpdateManager/              # OTA firmware updates
+  PowerManager/               # Sleep/wake management
+  Overlays/                   # Clock/date overlay rendering
   Games/                      # SlotMachine, SvitrixSays (disabled by default)
   effects/                    # 19 visual effects + weather overlays, IPixelCanvas abstraction
+  data/                       # Static data: SvitrixFont.h, cert.h, icons.h, Dictionary.cpp/h
+  contrib/                    # Third-party headers: GifPlayer.h, ArtnetWifi.h
   AppContent.h                # AppContentBase struct (shared rendering fields)
-  AppContentRenderer.cpp      # Shared rendering pipeline for apps + notifications
   Globals.cpp/h               # Config structs, global state
-  ServerManager.cpp/h         # HTTP API (35 REST endpoints)
-  PeripheryManager.cpp/h      # Hardware: sensors, buzzer, buttons, battery, LDR
-  MenuManager.cpp/h           # On-device settings menu
-  UpdateManager.cpp/h         # OTA firmware updates
-  PowerManager.cpp/h          # Sleep/wake management
-  SvitrixFont.h               # Unicode sparse glyph table (336 glyphs, UTF-8, binary search)
+  Functions.cpp/h             # Utility functions
+  timer.cpp/h                 # Background timer helpers
 lib/
   interfaces/                 # 13 interfaces (IDisplayControl, INotifier, IPixelCanvas, etc.)
   services/                   # 13 service libraries (100% test coverage)
@@ -212,7 +216,7 @@ CLAUDE.md (root)                            ← you are here
 ├── lib/webserver/CLAUDE.md                 ← FSWebServer, WiFi, routes, SPA fallback
 ├── web/README.md                           ← SPA: Preact + Vite, 6 pages, dev workflow
 │
-├── src/CLAUDE.md                           ← standalone modules: ServerManager (35 endpoints),
+├── src/CLAUDE.md                           ← module docs: ServerManager (35 endpoints),
 │                                              PeripheryManager (buttons, sensors, buzzer),
 │                                              MenuManager (13 menu items), UpdateManager (OTA),
 │                                              PowerManager (deep sleep), Globals (config store),
