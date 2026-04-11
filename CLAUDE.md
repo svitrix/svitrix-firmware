@@ -107,7 +107,7 @@ All inter-module communication goes through interfaces wired in `main.cpp`.
 │  lib/services/       12 stateless utilities (100% test coverage)    │
 │  lib/config/         ConfigTypes — all config structs               │
 │  lib/home-assistant-integration/   ArduinoHA v2.0.0 (trimmed)      │
-│  lib/webserver/      ESPAsyncWebServer wrapper + HTML pages         │
+│  lib/webserver/      ESPAsyncWebServer wrapper (API routing, WiFi)  │
 │  lib/TJpg_Decoder/   JPEG decoder (local fork)                     │
 └──────────────────────────────────────────────────────────────────────┘
 ```

@@ -2,47 +2,27 @@
 
 Async HTTP server for SVITRIX based on [ESPAsyncWebServer](https://github.com/me-no-dev/ESPAsyncWebServer).
 
+## Architecture
+
+The web server is a **pure HTTP server** — it handles routing, WiFi, file operations, and OTA. All UI pages are served from the **Preact SPA** stored in LittleFS `/web/`.
+
+```
+Browser request
+  → API route (/api/*)     → ServerManager handler → JSON response
+  → File route (/list, /edit) → FSWebServer handler → JSON/file
+  → SPA route (/, /settings, etc.) → LittleFS /web/index.html → client-side routing
+  → OTA (/update GET)      → inline update_html (1 KB PROGMEM fallback)
+```
+
 ## Directory Structure
 
 ```
 lib/webserver/
-├── pages/                          # Source HTML (edit these)
-│   ├── setup.html                  # Device configuration page (WiFi, settings)
-│   ├── edit.html                   # LittleFS file manager + Ace editor
-│   ├── screen.html                 # Live 32x8 matrix view + PNG/GIF export
-│   ├── screenfull.html             # Fullscreen matrix stream (WebSocket-like polling)
-│   ├── backup.html                 # Settings backup/restore
-│   ├── update.html                 # OTA firmware upload form
-│   └── custom_icons_fragment.html  # Icon picker (HTML + CSS + JS injected into /setup)
-├── generated/                      # Auto-generated headers (DO NOT edit)
-│   ├── setup_htm.h                 # Gzipped PROGMEM — setup.html
-│   ├── edit_htm.h                  # Gzipped PROGMEM — edit.html
-│   └── htmls.h                     # Raw PROGMEM — screen, screenfull, backup, update, icons
-├── esp-fs-webserver.h              # FSWebServer class declaration
-└── esp-fs-webserver.cpp            # FSWebServer implementation
+├── esp-fs-webserver.h     # FSWebServer class declaration
+└── esp-fs-webserver.cpp   # Implementation: WiFi, file ops, OTA, SPA routing
 ```
 
-## Editing Pages
-
-1. Edit the HTML file in `pages/`
-2. Regenerate headers:
-   ```bash
-   python3 tools/web_compress.py
-   ```
-3. Rebuild firmware:
-   ```bash
-   pio run -e ulanzi
-   ```
-
-To verify headers are up-to-date without writing:
-```bash
-python3 tools/web_compress.py --check
-```
-
-### Compression
-
-- `setup.html` and `edit.html` — gzip-compressed into byte arrays, served with `Content-Encoding: gzip`
-- All other pages — stored as raw `PROGMEM` strings via C++ raw string literals (`R"EOF(...)EOF"`)
+The SPA source lives in `web/` (project root) — see `web/README.md`.
 
 ## API Routes
 
@@ -104,46 +84,47 @@ python3 tools/web_compress.py --check
 | POST | `/api/r2d2` | JSON | Play R2D2 sound |
 | POST | `/api/moodlight` | JSON | Set moodlight |
 
+### DataFetcher
+
+| Method | Path | Body | Description |
+|--------|------|------|-------------|
+| GET | `/api/datafetcher` | — | List data sources |
+| POST | `/api/datafetcher` | JSON | Add data source |
+| DELETE | `/api/datafetcher` | query `?name=` | Delete data source |
+| POST | `/api/datafetcher/fetch` | query `?name=` | Force-fetch a source |
+
 ### OTA & System
 
 | Method | Path | Body | Description |
 |--------|------|------|-------------|
-| GET | `/update` | — | OTA upload form |
+| GET | `/update` | — | OTA upload form (inline HTML fallback) |
 | POST | `/update` | multipart | Upload firmware `.bin` / `.bin.gz` |
 | POST | `/api/doupdate` | JSON | Check and trigger remote update |
 | GET | `/version` | — | Firmware version string |
-| POST | `/save` | — | Apply configuration |
+| POST | `/save` | — | Apply `/DoNotTouch.json` configuration |
 
 ### File Manager
 
 | Method | Path | Body | Description |
 |--------|------|------|-------------|
-| GET | `/edit` | — | File manager page |
+| GET | `/edit` | — | Serves SPA (file manager at `/files`) |
 | GET | `/list?dir=/` | — | List directory contents |
 | GET | `/status` | — | Filesystem usage stats |
 | PUT | `/edit` | form (`path`) | Create file or directory |
 | POST | `/edit` | multipart | Upload file |
 | DELETE | `/edit` | form (`path`) | Delete file or directory |
 
-### Web Pages
-
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/` | Index (redirects to `/setup` if no index.htm) |
-| GET | `/setup` | Device configuration |
-| GET | `/screen` | Live matrix view |
-| GET | `/fullscreen?fps=30` | Fullscreen matrix stream |
-| GET | `/backup` | Settings backup/restore |
-
 ### WiFi & Captive Portal
 
 | Method | Path | Description |
 |--------|------|-------------|
+| GET | `/` | SPA index from LittleFS `/web/` |
+| GET | `/setup` | Redirects to SPA |
 | GET | `/scan` | Scan WiFi networks |
 | POST | `/connect` | Connect to WiFi (form: `ssid`, `password`, `persistent`) |
 | GET | `/ipaddress` | Current IP as JSON |
 | GET | `/restart` | Restart device |
-| GET | `/redirect` | Captive portal redirect |
+| GET | `/redirect` | Captive portal redirect to `/settings` |
 
 ## Authentication
 

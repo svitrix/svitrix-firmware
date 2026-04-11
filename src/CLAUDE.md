@@ -90,14 +90,17 @@ HTTP REST API server, WiFi connectivity, mDNS discovery, UDP device discovery, a
 | `DELETE` | `/api/datafetcher?name=X` | Remove data source |
 | `POST` | `/api/datafetcher/fetch?name=X` | Force-fetch a data source |
 
-#### Web Pages
+#### System
 | Method | Path | Description |
 |--------|------|-------------|
 | `GET` | `/version` | Firmware version string |
-| `GET` | `/screen` | Screen mirror HTML page |
-| `GET` | `/fullscreen?fps=N` | Fullscreen screen mirror |
-| `GET` | `/backup` | Backup/restore HTML page |
-| `GET` | `/datafetcher` | DataFetcher config HTML page |
+| `POST` | `/save` | Apply `/DoNotTouch.json` config to running system |
+
+### Config Initialization
+
+`initConfigDefaults()` — writes default values to `/DoNotTouch.json` on first boot (if file doesn't exist). Keys: `Static IP`, `Local IP`, `Gateway`, `Subnet`, `Primary DNS`, `Secondary DNS`, `Broker`, `Port`, `Username`, `Password`, `Prefix`, `Homeassistant Discovery`, `NTP Server`, `Timezone`, `Auth Username`, `Auth Password`.
+
+`loadSettings()` — reads `/DoNotTouch.json` and applies values to config structs, then calls `applyAllSettings()`.
 
 ### Communication Protocols
 
@@ -111,7 +114,7 @@ HTTP REST API server, WiFi connectivity, mDNS discovery, UDP device discovery, a
 
 - Route ordering matters — `/api/datafetcher/fetch` before `/api/datafetcher`
 - AP mode fallback at `192.168.4.1` — only `/version` endpoint registered
-- FSWebServer auto-generates `/setup` page from `addOption()`/`addOptionBox()` calls
+- All HTML pages served from SPA in LittleFS `/web/` (not PROGMEM)
 - Auth via `mws.setAuth(user, pass)`
 - mDNS registers `http` and `svitrix` TCP services
 
