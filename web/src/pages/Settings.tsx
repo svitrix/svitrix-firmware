@@ -172,10 +172,26 @@ export function SettingsPage(_props: { path?: string }) {
     setCfg((prev) => (prev ? { ...prev, [key]: val } : prev));
   }
 
+  // Firmware expects color fields as hex strings "#RRGGBB", not numbers
+  function prepareSettingsForSave(settings: Settings): Record<string, unknown> {
+    const colorKeys = [
+      "TCOL", "CHCOL", "CTCOL", "CBCOL", "WDCA", "WDCI",
+      "TIME_COL", "DATE_COL", "TEMP_COL", "HUM_COL", "BAT_COL",
+    ];
+    const out: Record<string, unknown> = { ...settings } as unknown as Record<string, unknown>;
+    for (const key of colorKeys) {
+      const v = (settings as unknown as Record<string, unknown>)[key];
+      if (typeof v === "number") {
+        out[key] = "#" + (v & 0xffffff).toString(16).padStart(6, "0");
+      }
+    }
+    return out;
+  }
+
   async function handleSaveDisplay() {
     setSaving(true);
     try {
-      await saveSettings(s!);
+      await saveSettings(prepareSettingsForSave(s!) as Partial<Settings>);
       toast("Display settings saved!");
     } catch {
       toast("Error saving");
