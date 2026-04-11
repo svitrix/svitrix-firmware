@@ -38,6 +38,10 @@ JSON-об'єкт має наступні властивості:
 | `new_year` | boolean | Відображає феєрверки та грає мелодію на Новий рік. | false |
 | `swap_buttons` | boolean | Міняє місцями ліву та праву апаратні кнопки. | false |
 | `ldr_on_ground` | boolean | Встановлює конфігурацію LDR на LDR-on-ground. | false |
+| `update_check` | boolean | Увімкнення автоматичної перевірки оновлень прошивки. | true |
+| `web_port` | integer | Змінює порт HTTP веб-сервера. | `80` |
+| `update_version_url` | string | Власний URL для перевірки версії прошивки. | вбудований |
+| `update_firmware_url` | string | Власний URL для завантаження файлу прошивки. | вбудований |
 
 
 #### Приклад:

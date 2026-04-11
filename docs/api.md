@@ -57,9 +57,8 @@ Retrieve the current matrix screen as an array of 24-bit colors:
 When triggering the MQTT API, SVITRIX sends the array to `[PREFIX]/screen`.
 
 **Extras:**
-- Access a live view of the screen in your browser: `http://[IP]/screen`.
-- Options to download a screenshot or generate a GIF from the current display content.
-- `http://[IP]/fullscreen` gives you a fullscreen liveview. Here you can optionally set the `fps` as parameter (standard 30).
+- Access a live view of the screen in your browser at `http://[IP]` (the main SPA page).
+- The Screen page renders the matrix in real-time on a canvas element with PNG download support.
 
 ## Power Control
 

@@ -38,6 +38,10 @@ The JSON object has the following properties:
 | `new_year` | boolean | Displays fireworks and plays a jingle at newyear. | false |
 | `swap_buttons` | boolean | Swaps the left and right hardware button. | false |
 | `ldr_on_ground` | boolean | Sets the LDR configuration to LDR-on-ground. | false |
+| `update_check` | boolean | Enables automatic firmware update checks. | true |
+| `web_port` | integer | Changes the HTTP web server port. | `80` |
+| `update_version_url` | string | Custom URL to check for firmware version. | built-in |
+| `update_firmware_url` | string | Custom URL to download firmware binary. | built-in |
 
 
 #### Example:
