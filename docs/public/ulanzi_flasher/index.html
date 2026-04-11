@@ -1,97 +1,430 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>SVITRIX</title>
-    <meta
-      name="description"
-      content="Install SVITRIX 3."
-    />
-    <meta name="viewport" content="width=device-width" />
+    <title>SVITRIX Flasher</title>
+    <meta name="description" content="Install SVITRIX firmware on Ulanzi TC001" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="dark light" />
     <style>
+      :root {
+        --bg: #1a1a2e;
+        --surface: #16213e;
+        --border: #0f3460;
+        --accent: #e94560;
+        --accent-hover: #ff6b81;
+        --text: #eee;
+        --text-muted: #a0a0b0;
+        --success: #4ecca3;
+        --warning: #f0a500;
+      }
+
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+
       body {
-        font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI",
-          Roboto, Ubuntu, sans-serif;
-        padding: 0;
-        margin: 0;
-        line-height: 1.4;
+        font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        min-height: 100vh;
       }
-      .content {
-        max-width: 600px;
+
+      .container {
+        max-width: 640px;
         margin: 0 auto;
-        padding: 12px;
+        padding: 24px 16px;
       }
-      h2 {
-        margin-top: 2em;
+
+      header {
+        text-align: center;
+        margin-bottom: 32px;
       }
-      h3 {
-        margin-top: 1.5em;
+
+      header h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        letter-spacing: 0.05em;
       }
-      a {
-        color: #03a9f4;
+
+      header p {
+        color: var(--text-muted);
+        margin-top: 4px;
       }
-      .invisible {
-        visibility: hidden;
+
+      .lang-switch {
+        text-align: right;
+        margin-bottom: 12px;
       }
-      .hidden {
-        display: none;
+
+      .lang-switch button {
+        background: none;
+        border: 1px solid var(--border);
+        color: var(--text-muted);
+        padding: 4px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.8rem;
+        margin-left: 4px;
+        transition: all 0.2s;
       }
+
+      .lang-switch button:hover,
+      .lang-switch button.active {
+        background: var(--accent);
+        color: #fff;
+        border-color: var(--accent);
+      }
+
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 20px;
+      }
+
+      .card h2 {
+        font-size: 1.15rem;
+        margin-bottom: 12px;
+      }
+
+      .install-section {
+        text-align: center;
+        padding: 32px 24px;
+      }
+
+      .install-section p {
+        color: var(--text-muted);
+        margin-bottom: 20px;
+      }
+
+      esp-web-install-button {
+        display: inline-block;
+      }
+
+      esp-web-install-button button,
+      esp-web-install-button::part(button) {
+        background: var(--accent);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 14px 36px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+
+      esp-web-install-button button:hover,
+      esp-web-install-button::part(button):hover {
+        background: var(--accent-hover);
+      }
+
       esp-web-install-button[install-unsupported] {
         visibility: inherit;
       }
-      .content pre {
-        max-width: 100%;
-        overflow-y: scroll;
+
+      .steps {
+        list-style: none;
+        counter-reset: step;
       }
-      .footer {
-        margin-top: 24px;
-        border-top: 1px solid #ccc;
-        padding-top: 24px;
-        text-align: center;
+
+      .steps li {
+        counter-increment: step;
+        padding: 8px 0 8px 40px;
+        position: relative;
+        border-left: 2px solid var(--border);
+        margin-left: 14px;
       }
-      .footer .initiative {
-        font-style: italic;
+
+      .steps li:last-child {
+        border-left-color: transparent;
+      }
+
+      .steps li::before {
+        content: counter(step);
+        position: absolute;
+        left: -13px;
+        top: 8px;
+        width: 24px;
+        height: 24px;
+        background: var(--accent);
+        color: #fff;
+        border-radius: 50%;
+        font-size: 0.8rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .steps li strong {
+        display: block;
+        margin-bottom: 2px;
+      }
+
+      .steps li span {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+      }
+
+      .includes {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .includes div {
+        background: var(--bg);
+        border-radius: 6px;
+        padding: 10px 12px;
+        font-size: 0.9rem;
+      }
+
+      .includes div::before {
+        content: "\2713  ";
+        color: var(--success);
+        font-weight: 700;
+      }
+
+      .note {
+        background: rgba(240, 165, 0, 0.1);
+        border: 1px solid var(--warning);
+        border-radius: 8px;
+        padding: 12px 16px;
+        font-size: 0.9rem;
         margin-top: 16px;
       }
-      table {
-        border-spacing: 0;
+
+      .note strong {
+        color: var(--warning);
       }
-      td {
-        padding: 8px;
-        border-bottom: 1px solid #ccc;
+
+      .requirements {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        margin-top: 8px;
       }
-      .radios li {
-        list-style: none;
-        line-height: 2em;
+
+      .footer {
+        text-align: center;
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        margin-top: 32px;
+        padding-top: 20px;
+        border-top: 1px solid var(--border);
       }
-      @media (prefers-color-scheme: dark) {
-        body {
-          background-color: #ffffff;
-          color: #4b4b4b;
-        }
-        a {
-          color: #58a6ff;
-        }
+
+      .footer a, a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+
+      .footer a:hover, a:hover {
+        color: var(--accent-hover);
       }
     </style>
-    <script type="module" src="https://esm.run/esp-web-tools@8.0.1/dist/web/install-button.js"></script>
+    <script
+      type="module"
+      src="https://esm.run/esp-web-tools@8.0.1/dist/web/install-button.js"
+    ></script>
   </head>
   <body>
-    <div class="content">
-      <h1 align="center">Ulanzi Flasher</h1>
-   
-      <p class="button-row" align="center">
-        <esp-web-install-button manifest="firmware/manifest.json"></esp-web-install-button>
-      </p>
+    <div class="container">
+      <div class="lang-switch">
+        <button onclick="setLang('en')" id="btn-en">EN</button>
+        <button onclick="setLang('uk')" id="btn-uk">UA</button>
+      </div>
 
+      <header>
+        <h1>SVITRIX</h1>
+        <p>
+          <span data-en>Firmware for Ulanzi TC001 Smart Pixel Clock</span>
+          <span data-uk>Прошивка для Ulanzi TC001 Smart Pixel Clock</span>
+        </p>
+      </header>
+
+      <!-- Install button -->
+      <div class="card install-section">
+        <p>
+          <span data-en>
+            Connect Ulanzi TC001 via USB-C and press the button below.<br />
+            Firmware and web interface are installed in a single step.
+          </span>
+          <span data-uk>
+            Підключіть Ulanzi TC001 через USB-C та натисніть кнопку нижче.<br />
+            Прошивка та веб-інтерфейс встановлюються за один крок.
+          </span>
+        </p>
+        <esp-web-install-button manifest="firmware/manifest.json">
+          <span slot="unsupported">
+            <span data-en>
+              Your browser does not support Web Serial.<br />
+              Use <strong>Chrome</strong> or <strong>Edge</strong> on desktop.
+            </span>
+            <span data-uk>
+              Ваш браузер не підтримує Web Serial.<br />
+              Використовуйте <strong>Chrome</strong> або <strong>Edge</strong> на десктопі.
+            </span>
+          </span>
+        </esp-web-install-button>
+        <p class="requirements">
+          <span data-en>Requires Chrome or Edge. Mobile browsers are not supported.</span>
+          <span data-uk>Потрібен Chrome або Edge. Мобільні браузери не підтримуються.</span>
+        </p>
+      </div>
+
+      <!-- What's included -->
+      <div class="card">
+        <h2>
+          <span data-en>What gets installed</span>
+          <span data-uk>Що встановлюється</span>
+        </h2>
+        <div class="includes">
+          <div>
+            <span data-en>Firmware</span>
+            <span data-uk>Прошивка</span>
+          </div>
+          <div>
+            <span data-en>Web interface (SPA)</span>
+            <span data-uk>Веб-інтерфейс (SPA)</span>
+          </div>
+          <div>Bootloader</div>
+          <div>
+            <span data-en>Partition table</span>
+            <span data-uk>Таблиця розділів</span>
+          </div>
+        </div>
+        <div class="note">
+          <span data-en>
+            <strong>Note:</strong> For the first installation, it is recommended to erase the device
+            (ESP Web Tools will offer this option). This ensures a clean install.
+          </span>
+          <span data-uk>
+            <strong>Примітка:</strong> При першій установці рекомендується стерти пристрій
+            (ESP Web Tools запропонує цю опцію). Це гарантує чисту установку.
+          </span>
+        </div>
+      </div>
+
+      <!-- Steps after install -->
+      <div class="card">
+        <h2>
+          <span data-en>After installation</span>
+          <span data-uk>Після встановлення</span>
+        </h2>
+        <ol class="steps">
+          <li>
+            <strong>
+              <span data-en>Connect to the WiFi access point</span>
+              <span data-uk>Підключіться до WiFi точки доступу</span>
+            </strong>
+            <span>
+              <span data-en>
+                The device will create a network <strong>SVITRIX_XXXX</strong>.
+                Connect to it from your phone or computer.
+              </span>
+              <span data-uk>
+                Пристрій створить мережу <strong>SVITRIX_XXXX</strong>.
+                Підключіться до неї з телефону або комп'ютера.
+              </span>
+            </span>
+          </li>
+          <li>
+            <strong>
+              <span data-en>Open the web interface</span>
+              <span data-uk>Відкрийте веб-інтерфейс</span>
+            </strong>
+            <span>
+              <span data-en>
+                Navigate to <strong>192.168.4.1</strong> in your browser.
+                The SVITRIX control panel will open.
+              </span>
+              <span data-uk>
+                Перейдіть за адресою <strong>192.168.4.1</strong> у браузері.
+                Відкриється панель керування SVITRIX.
+              </span>
+            </span>
+          </li>
+          <li>
+            <strong>
+              <span data-en>Configure WiFi</span>
+              <span data-uk>Налаштуйте WiFi</span>
+            </strong>
+            <span>
+              <span data-en>
+                In the Settings section, enter your home WiFi credentials.
+                The device will reboot and connect to your network.
+              </span>
+              <span data-uk>
+                У розділі Settings введіть дані вашої домашньої WiFi мережі.
+                Пристрій перезавантажиться та підключиться до неї.
+              </span>
+            </span>
+          </li>
+          <li>
+            <strong>
+              <span data-en>Done!</span>
+              <span data-uk>Готово!</span>
+            </strong>
+            <span>
+              <span data-en>
+                Find the device IP in your router and open it in a browser
+                for full access to settings.
+              </span>
+              <span data-uk>
+                Знайдіть IP пристрою в вашому роутері та відкрийте його в браузері
+                для повного доступу до налаштувань.
+              </span>
+            </span>
+          </li>
+        </ol>
+      </div>
+
+      <!-- Footer -->
       <div class="footer">
-        <a href="https://github.com/svitrix/svitrix-firmware"
-          >SVITRIX</a> 
- Installer powered by <a href="https://esphome.github.io/esp-web-tools/">ESP Web Tools</a>.
+        <a href="https://github.com/svitrix/svitrix-firmware">SVITRIX GitHub</a>
+        &middot;
+        Installer powered by
+        <a href="https://esphome.github.io/esp-web-tools/">ESP Web Tools</a>
+      </div>
     </div>
+
     <script>
-       
+      function detectLang() {
+        // Check ?lang= param first
+        var params = new URLSearchParams(window.location.search);
+        var lang = params.get('lang');
+        if (lang === 'uk' || lang === 'en') return lang;
+
+        // Check parent URL (iframe in VitePress docs)
+        try {
+          var parentPath = window.parent.location.pathname;
+          if (parentPath.indexOf('/uk/') !== -1) return 'uk';
+        } catch (e) {
+          // Cross-origin iframe — check referrer
+          if (document.referrer.indexOf('/uk/') !== -1) return 'uk';
+        }
+
+        return 'en';
+      }
+
+      function setLang(lang) {
+        document.documentElement.lang = lang;
+        var enEls = document.querySelectorAll('[data-en]');
+        var ukEls = document.querySelectorAll('[data-uk]');
+        for (var i = 0; i < enEls.length; i++) {
+          enEls[i].style.display = lang === 'en' ? '' : 'none';
+        }
+        for (var i = 0; i < ukEls.length; i++) {
+          ukEls[i].style.display = lang === 'uk' ? '' : 'none';
+        }
+        document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+        document.getElementById('btn-uk').classList.toggle('active', lang === 'uk');
+      }
+
+      setLang(detectLang());
     </script>
   </body>
 </html>

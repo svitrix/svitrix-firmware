@@ -8,7 +8,7 @@ The flasher installs both the firmware and the web interface (SPA) in a single s
 
 ## Ulanzi TC001 and custom builds flasher  
 
-<iframe src="/svitrix-firmware/ulanzi_flasher/index.html" width="100%" height="400" frameborder="0" style="border: 1px solid var(--vp-c-border); border-radius: 8px;"></iframe>
+<iframe src="/svitrix-firmware/ulanzi_flasher/index.html?lang=en" width="100%" height="400" frameborder="0" style="border: 1px solid var(--vp-c-border); border-radius: 8px;"></iframe>
 
 ## What gets flashed
 
