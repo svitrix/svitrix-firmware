@@ -1,5 +1,18 @@
 #include "esp-fs-webserver.h"
-#include "generated/htmls.h"
+
+// OTA update fallback page (must work without SPA in LittleFS)
+static const char update_html[] PROGMEM = R"EOF(
+<!DOCTYPE html><html><head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'/>
+<title>SVITRIX - Update</title>
+<style>body{font-family:system-ui,-apple-system,sans-serif;background:#070b1e;color:#e8e8f0;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0}.c{background:#0a0e27;border:1px solid #1e2550;border-radius:12px;padding:40px;text-align:center;max-width:480px;width:90%}h2{color:#f0b800;margin-bottom:24px}form{margin:16px 0}input[type=file]{color:#e8e8f0;margin:8px 0}input[type=submit]{background:#f0b800;color:#070b1e;border:none;border-radius:8px;padding:12px 24px;font-size:16px;font-weight:600;cursor:pointer;margin-top:8px}input[type=submit]:hover{background:#e8a800}hr{border-color:#1e2550;margin:24px 0}</style>
+</head><body><div class='c'><h2>Firmware Update</h2>
+<form method='POST' action='/update' enctype='multipart/form-data'>
+<input type='file' accept='.bin,.bin.gz' name='update'><br>
+<input type='submit' value='Upload Firmware'>
+</form></div></body></html>
+)EOF";
+
 
 FSWebServer::FSWebServer(fs::FS &fs, AsyncWebServer &server)
 {
@@ -134,7 +147,6 @@ bool FSWebServer::begin(int port, const char *path)
 
     m_fsOK = checkDir(m_basePath, 2);
 
-#ifdef INCLUDE_EDIT_HTM
     addHandler("/status", HTTP_GET, [this](AsyncWebServerRequest *r)
                { handleStatus(r); });
     addHandler("/list", HTTP_GET, [this](AsyncWebServerRequest *r)
@@ -164,7 +176,6 @@ bool FSWebServer::begin(int port, const char *path)
                 return;
             handleFileUpload(request, filename, index, data, len, final);
         });
-#endif
 
     webserver->onNotFound([this](AsyncWebServerRequest *request)
                           {
@@ -175,10 +186,8 @@ bool FSWebServer::begin(int port, const char *path)
                { replyOK(r); });
     addHandler("/", HTTP_GET, [this](AsyncWebServerRequest *r)
                { handleIndex(r); });
-#ifdef INCLUDE_SETUP_HTM
     addHandler("/setup", HTTP_GET, [this](AsyncWebServerRequest *r)
-               { handleSetup(r); });
-#endif
+               { handleIndex(r); }); // /setup redirects to SPA
     addHandler("/scan", HTTP_GET, [this](AsyncWebServerRequest *r)
                { handleScanNetworks(r); });
     addHandlerWithBody("/connect", HTTP_POST, [this](AsyncWebServerRequest *r)
@@ -311,8 +320,12 @@ void FSWebServer::handleRequest(AsyncWebServerRequest *request)
     String _url = request->url();
     if (handleFileRead(request, _url))
         return;
-    else
-        replyToCLient(request, NOT_FOUND, PSTR(FILE_NOT_FOUND));
+
+    // SPA fallback: serve /index.html for non-API routes
+    if (!_url.startsWith("/api/") && handleFileRead(request, "/index.html"))
+        return;
+
+    replyToCLient(request, NOT_FOUND, PSTR(FILE_NOT_FOUND));
 }
 
 void FSWebServer::getIpAddress(AsyncWebServerRequest *request)
@@ -451,98 +464,15 @@ void FSWebServer::handleScanNetworks(AsyncWebServerRequest *request)
     DebugPrintln(jsonList);
 }
 
-#ifdef INCLUDE_SETUP_HTM
-
-void FSWebServer::addDropdownList(const char *label, const char **array, size_t size)
-{
-    File file = m_filesystem->open("/DoNotTouch.json", "r");
-    int sz = file.size() * 1.33;
-    int docSize = max(sz, 2048);
-    DynamicJsonDocument doc((size_t)docSize);
-    if (file)
-    {
-        DeserializationError error = deserializeJson(doc, file);
-        if (error)
-        {
-            DebugPrintln(F("Failed to deserialize file, may be corrupted"));
-            DebugPrintln(error.c_str());
-            file.close();
-            return;
-        }
-        file.close();
-    }
-    else
-    {
-        DebugPrintln(F("File not found, will be created new configuration file"));
-    }
-
-    numOptions++;
-
-    if (doc.containsKey(label))
-        return;
-
-    JsonObject obj = doc.createNestedObject(label);
-    obj["selected"] = array[0];
-    JsonArray arr = obj.createNestedArray("values");
-    for (int i = 0; i < size; i++)
-    {
-        arr.add(array[i]);
-    }
-
-    file = m_filesystem->open("/DoNotTouch.json", "w");
-    if (serializeJsonPretty(doc, file) == 0)
-    {
-        DebugPrintln(F("Failed to write to file"));
-    }
-    file.close();
-}
-
-void FSWebServer::removeWhiteSpaces(String &str)
-{
-    const char noChars[] = {'\n', '\r', '\t'};
-    int pos = -1;
-    for (int i = 0; i < sizeof(noChars); i++)
-    {
-        pos = str.indexOf(noChars[i]);
-        while (pos > -1)
-        {
-            str.replace(String(noChars[i]), "");
-            pos = str.indexOf(noChars[i]);
-        }
-    }
-    pos = str.indexOf("  ");
-    while (pos > -1)
-    {
-        str.replace("  ", " ");
-        pos = str.indexOf("  ");
-    }
-}
-
-void FSWebServer::handleSetup(AsyncWebServerRequest *request)
-{
-    AsyncWebServerResponse *response = request->beginResponse_P(200, "text/html",
-                                                                 (const uint8_t *)SETUP_HTML, SETUP_HTML_SIZE);
-    response->addHeader("Content-Encoding", "gzip");
-    request->send(response);
-}
-#endif
-
 void FSWebServer::handleIndex(AsyncWebServerRequest *request)
 {
+    if (handleFileRead(request, "/index.html"))
+        return;
     if (m_filesystem->exists("/index.htm"))
     {
         handleFileRead(request, "/index.htm");
+        return;
     }
-    else if (m_filesystem->exists("/index.html"))
-    {
-        handleFileRead(request, "/index.html");
-    }
-#ifdef INCLUDE_SETUP_HTM
-    else
-    {
-        handleSetup(request);
-    }
-#endif
 }
 
 /*
@@ -561,12 +491,19 @@ bool FSWebServer::handleFileRead(AsyncWebServerRequest *request, const String &u
 
     if (m_filesystem->exists(pathWithGz) || m_filesystem->exists(path))
     {
-        if (m_filesystem->exists(pathWithGz))
+        bool isGzip = m_filesystem->exists(pathWithGz);
+        const char *contentType = getContentType(uri.c_str()); // Use original path for content type
+        if (isGzip)
         {
             path += ".gz";
+            AsyncWebServerResponse *response = request->beginResponse(*m_filesystem, path, contentType);
+            response->addHeader("Content-Encoding", "gzip");
+            request->send(response);
         }
-        const char *contentType = getContentType(path.c_str());
-        request->send(*m_filesystem, path, contentType);
+        else
+        {
+            request->send(*m_filesystem, path, contentType);
+        }
         return true;
     }
     return false;
@@ -776,8 +713,7 @@ void FSWebServer::setupOTA()
         });
 }
 
-// edit page, in usefull in some situation, but if you need to provide only a web interface, you can disable
-#ifdef INCLUDE_EDIT_HTM
+// File manager routes (list, create, delete, status, edit)
 
 void FSWebServer::handleFileList(AsyncWebServerRequest *request)
 {
@@ -944,14 +880,10 @@ void FSWebServer::handleFileDelete(AsyncWebServerRequest *request)
 
 void FSWebServer::handleGetEdit(AsyncWebServerRequest *request)
 {
-#ifdef INCLUDE_EDIT_HTM
-    AsyncWebServerResponse *response = request->beginResponse_P(200, "text/html",
-                                                                 (const uint8_t *)edit_htm_gz, sizeof(edit_htm_gz));
-    response->addHeader("Content-Encoding", "gzip");
-    request->send(response);
-#else
-    replyToCLient(request, NOT_FOUND, PSTR("FILE_NOT_FOUND"));
-#endif
+    // File manager now served from SPA — redirect to /files
+    if (handleFileRead(request, "/index.html"))
+        return;
+    replyToCLient(request, NOT_FOUND, PSTR("SPA not found"));
 }
 
 void FSWebServer::handleStatus(AsyncWebServerRequest *request)
@@ -990,4 +922,3 @@ void FSWebServer::handleStatus(AsyncWebServerRequest *request)
     json += "}";
     request->send(200, "application/json", json);
 }
-#endif // INCLUDE_EDIT_HTM

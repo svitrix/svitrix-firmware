@@ -28,6 +28,7 @@ class ServerManager_ : public IButtonReporter
     bool hasServices() const;
     void setup();
     void tick();
+    void initConfigDefaults();
     void loadSettings();
     void sendButton(byte btn, bool state) override;
     void erase();

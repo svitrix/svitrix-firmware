@@ -1,7 +1,7 @@
 #include "ServerManager.h"
 #include "Globals.h"
 #include <esp-fs-webserver.h>
-#include "generated/htmls.h"
+#include <ArduinoJson.h>
 #include <Update.h>
 #include <ESPmDNS.h>
 #include <LittleFS.h>
@@ -159,21 +159,7 @@ void addHandler()
                                } });
     mws.addHandler("/api/nextapp", HTTP_ANY, [](AsyncWebServerRequest *request)
                    { smNav_->nextApp(); request->send(200, "text/plain", "OK"); });
-    mws.addHandler("/fullscreen", HTTP_GET, [](AsyncWebServerRequest *request)
-                   {
-    String fps = "30";
-    if (request->hasParam("fps")) {
-        fps = request->getParam("fps")->value();
-    }
-    String finalHTML = screenfull_html;
-    finalHTML.replace("%%FPS%%", fps);
-    request->send(200, "text/html", finalHTML); });
-    mws.addHandler("/screen", HTTP_GET, [](AsyncWebServerRequest *request)
-                   { request->send_P(200, "text/html", screen_html); });
-    mws.addHandler("/backup", HTTP_GET, [](AsyncWebServerRequest *request)
-                   { request->send_P(200, "text/html", backup_html); });
-    mws.addHandler("/datafetcher", HTTP_GET, [](AsyncWebServerRequest *request)
-                   { request->send_P(200, "text/html", datafetcher_html); });
+    // HTML pages now served from SPA in LittleFS /web/
     mws.addHandler("/api/previousapp", HTTP_POST, [](AsyncWebServerRequest *request)
                    { smNav_->previousApp(); request->send(200, "text/plain", "OK"); });
     mws.addHandler("/api/notify/dismiss", HTTP_ANY, [](AsyncWebServerRequest *request)
@@ -307,31 +293,7 @@ void ServerManager_::setup()
     mws.setAuth(authConfig.user, authConfig.pass);
     if (isConnected)
     {
-        mws.addOptionBox("Network");
-        mws.addOption("Static IP", networkConfig.isStatic);
-        mws.addOption("Local IP", networkConfig.ip);
-        mws.addOption("Gateway", networkConfig.gateway);
-        mws.addOption("Subnet", networkConfig.subnet);
-        mws.addOption("Primary DNS", networkConfig.primaryDns);
-        mws.addOption("Secondary DNS", networkConfig.secondaryDns);
-        mws.addOptionBox("MQTT");
-        mws.addOption("Broker", mqttConfig.host);
-        mws.addOption("Port", mqttConfig.port);
-        mws.addOption("Username", mqttConfig.user);
-        mws.addOption("Password", mqttConfig.pass);
-        mws.addOption("Prefix", mqttConfig.prefix);
-        mws.addOption("Homeassistant Discovery", haConfig.discovery);
-        mws.addOptionBox("Time");
-        mws.addOption("NTP Server", timeConfig.ntpServer);
-        mws.addOption("Timezone", timeConfig.ntpTz);
-        mws.addHTML("<p>Find your timezone at <a href='https://github.com/nayarsystems/posix_tz_db/blob/master/zones.csv' target='_blank' rel='noopener noreferrer' style='color:#f0b800'>posix_tz_db</a>.</p>", "tz_link");
-        mws.addOptionBox("Icons");
-        mws.addHTML(custom_html, "icon_html");
-        mws.addCSS(custom_css);
-        mws.addJavascript(custom_script);
-        mws.addOptionBox("Auth");
-        mws.addOption("Auth Username", authConfig.user);
-        mws.addOption("Auth Password", authConfig.pass);
+        initConfigDefaults();
         mws.addHandlerWithBody("/save", HTTP_POST, saveHandler);
         addHandler();
         udp.begin(localUdpPort);
@@ -443,6 +405,34 @@ void ServerManager_::sendTCP(String message)
     {
         currentClient.print(message);
     }
+}
+
+void ServerManager_::initConfigDefaults()
+{
+    if (LittleFS.exists("/DoNotTouch.json"))
+        return; // Config already exists, don't overwrite user settings
+
+    DynamicJsonDocument doc(2048);
+    doc["Static IP"] = networkConfig.isStatic;
+    doc["Local IP"] = networkConfig.ip;
+    doc["Gateway"] = networkConfig.gateway;
+    doc["Subnet"] = networkConfig.subnet;
+    doc["Primary DNS"] = networkConfig.primaryDns;
+    doc["Secondary DNS"] = networkConfig.secondaryDns;
+    doc["Broker"] = mqttConfig.host;
+    doc["Port"] = mqttConfig.port;
+    doc["Username"] = mqttConfig.user;
+    doc["Password"] = mqttConfig.pass;
+    doc["Prefix"] = mqttConfig.prefix;
+    doc["Homeassistant Discovery"] = haConfig.discovery;
+    doc["NTP Server"] = timeConfig.ntpServer;
+    doc["Timezone"] = timeConfig.ntpTz;
+    doc["Auth Username"] = authConfig.user;
+    doc["Auth Password"] = authConfig.pass;
+
+    File file = LittleFS.open("/DoNotTouch.json", "w");
+    serializeJsonPretty(doc, file);
+    file.close();
 }
 
 void ServerManager_::loadSettings()

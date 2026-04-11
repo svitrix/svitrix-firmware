@@ -1,17 +1,25 @@
 # Web Server — AI Reference
 
-Async HTTP server wrapper around ESPAsyncWebServer. Provides WiFi management, captive portal, LittleFS file serving, OTA updates, and route registration used by `ServerManager`.
+Async HTTP server wrapper around ESPAsyncWebServer. Provides WiFi management, captive portal, LittleFS file serving, SPA routing, OTA updates, and route registration used by `ServerManager`.
 
 ## Files
 
 | File | Role |
 |------|------|
-| `esp-fs-webserver.h` | `FSWebServer` class declaration, `getBody()` helper, config option templates |
-| `esp-fs-webserver.cpp` | WiFi, captive portal, file ops, OTA, route registration |
-| `generated/setup_htm.h` | Gzipped PROGMEM — setup/config page (12 KB compressed) |
-| `generated/edit_htm.h` | Gzipped PROGMEM — LittleFS file manager with Ace editor |
-| `generated/htmls.h` | Raw PROGMEM strings — `screen_html`, `screenfull_html`, `backup_html`, `update_html`, `datafetcher_html`, plus custom icon picker |
-| `pages/*.html` | Source HTML files (7 pages) — edit these, then regenerate headers |
+| `esp-fs-webserver.h` | `FSWebServer` class declaration, `getBody()` helper |
+| `esp-fs-webserver.cpp` | WiFi, captive portal, file ops, OTA, SPA fallback, route registration |
+
+## Architecture
+
+All HTML pages are served from the **Preact SPA** stored in LittleFS root. The server's role is:
+1. Route registration for API endpoints (used by `ServerManager`)
+2. Serve SPA files from LittleFS (`/index.html.gz`, `/app.js.gz`, etc.)
+3. SPA fallback: non-API 404 → `/index.html` (client-side routing)
+4. WiFi management (STA/AP mode, captive portal)
+5. LittleFS file operations (list, upload, delete, create)
+6. OTA firmware update (with inline `update_html` fallback)
+
+Only `update_html` (~1 KB) is embedded in firmware as PROGMEM — a safety fallback for OTA if LittleFS is corrupted.
 
 ## FSWebServer Class
 
@@ -42,23 +50,11 @@ void setCaptiveWebage(const char *url);                                         
 void setAuth(const String &user, const String &pass);  // HTTP Basic Auth on all routes
 ```
 
-### Setup Page Options (`INCLUDE_SETUP_HTM`)
-
-Dynamic config form backed by `/DoNotTouch.json` on LittleFS:
-
-```cpp
-void addOptionBox(const char *boxTitle);
-void addOption(const char *label, T val, bool hidden = false, ...);
-void addDropdownList(const char *label, const char **array, size_t size);
-bool getOptionValue(const char *label, T &var);
-bool saveOptionValue(const char *label, T val);
-```
-
-### File Manager (`INCLUDE_EDIT_HTM`)
+### File Manager
 
 | Method | Path | Action |
 |--------|------|--------|
-| GET | `/edit` | File manager page |
+| GET | `/edit` | Serves SPA (file manager page at `/files`) |
 | GET | `/list?dir=/` | List directory (JSON) |
 | GET | `/status` | FS usage stats (JSON) |
 | PUT | `/edit` | Create file/directory |
@@ -67,29 +63,32 @@ bool saveOptionValue(const char *label, T val);
 
 ### OTA Update
 
-Built-in at `/update` (GET = upload form, POST = firmware upload via `Update` API). Reboots on success.
+Built-in at `/update` (GET = inline `update_html` fallback form, POST = firmware upload via `Update` API). Reboots on success.
 
 ## Built-in Routes (registered in `begin()`)
 
 | Path | Description |
 |------|-------------|
-| `/` | Index: serves `/index.htm`, falls back to `/setup` |
-| `/setup` | Device configuration page (gzipped PROGMEM) |
+| `/` | SPA index: serves `/index.html` from LittleFS |
+| `/setup` | Redirects to SPA (captive portal compatibility) |
 | `/scan` | WiFi network scan (JSON) |
 | `/connect` | WiFi connection (POST) |
 | `/ipaddress` | Current IP address |
 | `/restart` | Reboot device |
-| `/update` | OTA firmware upload |
-| `/redirect`, `/connecttest.txt`, `/hotspot-detect.html`, `/generate_204` | Captive portal redirects |
+| `/update` | OTA firmware upload (inline HTML fallback) |
+| `/redirect`, `/connecttest.txt`, `/hotspot-detect.html`, `/generate_204` | Captive portal redirects to `/settings` |
 
-## HTML Page Pipeline
+## SPA Routing
+
+Request flow for non-API paths:
 
 ```
-pages/*.html  →  python3 tools/web_compress.py  →  generated/*.h  →  PROGMEM in firmware
+Request → handleFileRead(url)     → found? serve file
+        → /index.html             → found? serve SPA (client-side routing)
+        → 404
 ```
 
-- `setup.html`, `edit.html` — gzip-compressed byte arrays, `Content-Encoding: gzip`
-- All others — raw C++ string literals (`R"EOF(...)EOF"`) as `PROGMEM`
+The SPA (`web/` directory) handles all page routing client-side via `preact-router`.
 
 ## CORS
 
@@ -105,8 +104,7 @@ Access-Control-Allow-Headers: *
 | Dependency | Usage |
 |------------|-------|
 | ESPAsyncWebServer | Underlying async HTTP server |
-| LittleFS | File storage and serving |
+| LittleFS | File storage and SPA serving |
 | DNSServer | Captive portal DNS in AP mode |
 | WiFi / esp_wifi | STA/AP connection management |
 | Update | OTA firmware flashing |
-| ArduinoJson v6 | `/DoNotTouch.json` config persistence |

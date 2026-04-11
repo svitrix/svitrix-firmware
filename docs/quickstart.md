@@ -28,7 +28,7 @@ Open a browser and navigate to:
 
 **http://192.168.4.1**
 
-Enter your home WiFi network name and password. After saving, the device will reboot and connect to your network.
+A WiFi setup page will appear. Scan for available networks, select yours, enter the password, and click Connect. The device will reboot and connect to your home WiFi.
 
 ## Step 4. Find the device on your network
 
@@ -38,7 +38,19 @@ Once connected to WiFi, the device's IP address will appear on the matrix displa
 If you missed the IP address on screen — look for the device in your router's connected devices list.
 :::
 
-## Step 5. Set up MQTT
+## Step 5. Upload the Web UI (developers only)
+
+If you're building from source, upload the SPA web interface to the device:
+
+```bash
+cd web && npm run upload
+```
+
+::: tip
+Pre-built firmware releases include this step in the online flasher. You only need this if you're building from source.
+:::
+
+## Step 6. Set up MQTT
 
 In the web interface, configure the connection to your MQTT broker. This enables control from HomeAssistant, IOBroker, NodeRed, and other smart home systems.
 
