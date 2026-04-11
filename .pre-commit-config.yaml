@@ -46,6 +46,7 @@ repos:
           - '--suppress=unusedFunction'
           - '--suppress=unmatchedSuppression'
           - '--suppress=toomanyconfigs'
+          - '--suppress=unknownMacro'
           - '--enable=warning,style,performance'
           - '--inline-suppr'
           - '--std=c++17'
