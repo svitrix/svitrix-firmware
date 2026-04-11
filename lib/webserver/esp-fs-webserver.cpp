@@ -321,8 +321,8 @@ void FSWebServer::handleRequest(AsyncWebServerRequest *request)
     if (handleFileRead(request, _url))
         return;
 
-    // SPA fallback: serve /web/index.html for non-API routes
-    if (!_url.startsWith("/api/") && handleFileRead(request, "/web/index.html"))
+    // SPA fallback: serve /index.html for non-API routes
+    if (!_url.startsWith("/api/") && handleFileRead(request, "/index.html"))
         return;
 
     replyToCLient(request, NOT_FOUND, PSTR(FILE_NOT_FOUND));
@@ -467,7 +467,7 @@ void FSWebServer::handleScanNetworks(AsyncWebServerRequest *request)
 void FSWebServer::handleIndex(AsyncWebServerRequest *request)
 {
     // SPA: serve from /web/ if available
-    if (handleFileRead(request, "/web/index.html"))
+    if (handleFileRead(request, "/index.html"))
         return;
     if (m_filesystem->exists("/index.htm"))
     {
@@ -887,7 +887,7 @@ void FSWebServer::handleFileDelete(AsyncWebServerRequest *request)
 void FSWebServer::handleGetEdit(AsyncWebServerRequest *request)
 {
     // File manager now served from SPA — redirect to /files
-    if (handleFileRead(request, "/web/index.html"))
+    if (handleFileRead(request, "/index.html"))
         return;
     replyToCLient(request, NOT_FOUND, PSTR("SPA not found in /web/"));
 }

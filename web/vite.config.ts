@@ -23,7 +23,7 @@ export default defineConfig({
     }),
   ],
   build: {
-    outDir: path.resolve(__dirname, "../data/web"),
+    outDir: path.resolve(__dirname, "../data"),
     emptyOutDir: true,
     target: "es2018",
     modulePreload: false,

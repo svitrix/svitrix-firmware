@@ -24,7 +24,7 @@ dist/
 
 # Web SPA
 web/node_modules
-data/web
+data/
 
 # Internal docs (not for public repo)
 ANALYSIS.md
