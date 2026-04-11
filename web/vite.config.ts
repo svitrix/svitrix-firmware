@@ -22,7 +22,7 @@ function fixScriptType() {
       for (const file of Object.values(bundle)) {
         if (file.type === "asset" && typeof file.source === "string" && file.source.includes("type=\"module\"")) {
           file.source = file.source
-            .replace(' type="module" crossorigin', "")
+            .replace(' type="module" crossorigin', " defer")
             .replace(' crossorigin', "");
         }
       }
