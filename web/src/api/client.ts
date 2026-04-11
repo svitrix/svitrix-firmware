@@ -121,7 +121,7 @@ export const scanWifi = () => get<Array<{ ssid: string; rssi: number; secure: nu
 export const connectWifi = (ssid: string, password: string) => {
   const form = new FormData();
   form.append("ssid", ssid);
-  form.append("pass", password);
+  form.append("password", password);
   return fetch("/connect", { method: "POST", body: form });
 };
 

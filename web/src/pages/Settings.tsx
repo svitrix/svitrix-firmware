@@ -110,12 +110,57 @@ export function SettingsPage(_props: { path?: string }) {
   const [iconId, setIconId] = useState("");
   const [iconPreview, setIconPreview] = useState("");
 
+  const [apiAvailable, setApiAvailable] = useState(true);
+
   useEffect(() => {
-    getSettings().then(setS);
-    getStats().then(setStats);
-    getTransitions().then(setTransitions);
+    getSettings()
+      .then(setS)
+      .catch(() => setApiAvailable(false));
+    getStats().then(setStats).catch(() => {});
+    getTransitions().then(setTransitions).catch(() => {});
     getConfig().then((c) => setCfg(c as InfraConfig)).catch(() => {});
   }, []);
+
+  // AP mode: show only WiFi setup when API is not available
+  if (!s && !apiAvailable) {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        <div class="card">
+          <h3 style={{ marginBottom: 12 }}>WiFi Setup</h3>
+          <p style={{ color: "var(--text-dim)", marginBottom: 12, fontSize: 13 }}>
+            Connect to your home WiFi network. After connecting, the device will reboot with full settings available.
+          </p>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            <button onClick={doScan} disabled={scanning}>
+              {scanning ? "Scanning..." : "Scan Networks"}
+            </button>
+            {networks.length > 0 && (
+              <div style={{ maxHeight: 150, overflow: "auto", fontSize: 13 }}>
+                {networks.map((n) => (
+                  <div
+                    key={n.ssid}
+                    style={{
+                      padding: "4px 8px",
+                      cursor: "pointer",
+                      borderBottom: "1px solid var(--border)",
+                    }}
+                    onClick={() => setWifiSsid(n.ssid)}
+                  >
+                    {n.ssid} ({n.rssi} dBm) {n.secure ? "🔒" : ""}
+                  </div>
+                ))}
+              </div>
+            )}
+            <div class="form-row">
+              <TextField label="SSID" value={wifiSsid} onChange={setWifiSsid} />
+              <TextField label="Password" value={wifiPass} onChange={setWifiPass} type="password" />
+            </div>
+            <button class="btn-primary" onClick={doConnect}>Connect</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (!s) return <p>Loading...</p>;
 
@@ -165,7 +210,12 @@ export function SettingsPage(_props: { path?: string }) {
     if (!wifiSsid) { toast("Enter SSID"); return; }
     try {
       await connectWifi(wifiSsid, wifiPass);
-      toast("Connecting... device will get new IP");
+      toast("Connecting to WiFi...");
+      // Device will reboot after connecting — wait and redirect
+      setTimeout(() => {
+        toast("Device rebooting... check matrix for new IP");
+        fetch("/restart").catch(() => {});
+      }, 3000);
     } catch {
       toast("Connection failed");
     }
