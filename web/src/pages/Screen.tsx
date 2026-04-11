@@ -17,29 +17,34 @@ export function ScreenPage(_props: { path?: string; default?: boolean }) {
     ctx.fillStyle = "#000";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+    let timer: ReturnType<typeof setTimeout>;
     async function poll() {
-      while (running.current) {
-        try {
-          const data = await getScreen();
-          for (let i = 0; i < COLS * ROWS; i++) {
-            const c = data[i];
-            const r = (c & 0xff0000) >> 16;
-            const g = (c & 0x00ff00) >> 8;
-            const b = c & 0x0000ff;
-            const col = i % COLS;
-            const row = Math.floor(i / COLS);
-            ctx.fillStyle = `rgb(${r},${g},${b})`;
-            ctx.fillRect(col * CELL, row * CELL, PIX, PIX);
-          }
-        } catch {
-          await new Promise((r) => setTimeout(r, 1000));
+      if (!running.current) return;
+      if (document.hidden) {
+        timer = setTimeout(poll, 500);
+        return;
+      }
+      try {
+        const data = await getScreen();
+        for (let i = 0; i < COLS * ROWS; i++) {
+          const c = data[i];
+          const r = (c & 0xff0000) >> 16;
+          const g = (c & 0x00ff00) >> 8;
+          const b = c & 0x0000ff;
+          const col = i % COLS;
+          const row = Math.floor(i / COLS);
+          ctx.fillStyle = `rgb(${r},${g},${b})`;
+          ctx.fillRect(col * CELL, row * CELL, PIX, PIX);
         }
-        await new Promise((r) => setTimeout(r, 100));
+        timer = setTimeout(poll, 100);
+      } catch {
+        timer = setTimeout(poll, 1000);
       }
     }
     poll();
     return () => {
       running.current = false;
+      clearTimeout(timer);
     };
   }, []);
 

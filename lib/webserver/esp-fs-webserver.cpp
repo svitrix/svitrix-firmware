@@ -466,17 +466,11 @@ void FSWebServer::handleScanNetworks(AsyncWebServerRequest *request)
 
 void FSWebServer::handleIndex(AsyncWebServerRequest *request)
 {
-    // SPA: serve from /web/ if available
     if (handleFileRead(request, "/index.html"))
         return;
     if (m_filesystem->exists("/index.htm"))
     {
         handleFileRead(request, "/index.htm");
-        return;
-    }
-    if (m_filesystem->exists("/index.html"))
-    {
-        handleFileRead(request, "/index.html");
         return;
     }
 }

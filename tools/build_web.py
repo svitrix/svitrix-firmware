@@ -1,7 +1,7 @@
 """
 PlatformIO pre-build script: builds the SPA in web/ before firmware compilation.
 
-Runs `npm run build` in web/ directory, which outputs gzipped files to data/web/.
+Runs `npm run build` in web/ directory, which outputs gzipped files to data/.
 These files are then uploaded to LittleFS via `pio run -t uploadfs`.
 
 Add to platformio.ini:
@@ -15,7 +15,7 @@ import os
 Import("env")
 
 web_dir = os.path.join(env["PROJECT_DIR"], "web")
-data_dir = os.path.join(env["PROJECT_DIR"], "data", "web")
+data_dir = os.path.join(env["PROJECT_DIR"], "data")
 
 
 def build_web(*args, **kwargs):

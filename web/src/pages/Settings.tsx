@@ -121,43 +121,49 @@ export function SettingsPage(_props: { path?: string }) {
     getConfig().then((c) => setCfg(c as InfraConfig)).catch(() => {});
   }, []);
 
+  function WifiSetup({ description }: { description?: string }) {
+    return (
+      <div class="card">
+        <h3 style={{ marginBottom: 12 }}>WiFi</h3>
+        {description && (
+          <p style={{ color: "var(--text-dim)", marginBottom: 12, fontSize: 13 }}>{description}</p>
+        )}
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          <button onClick={doScan} disabled={scanning}>
+            {scanning ? "Scanning..." : "Scan Networks"}
+          </button>
+          {networks.length > 0 && (
+            <div style={{ maxHeight: 150, overflow: "auto", fontSize: 13 }}>
+              {networks.map((n) => (
+                <div
+                  key={n.ssid}
+                  style={{
+                    padding: "4px 8px",
+                    cursor: "pointer",
+                    borderBottom: "1px solid var(--border)",
+                  }}
+                  onClick={() => setWifiSsid(n.ssid)}
+                >
+                  {n.ssid} ({n.rssi} dBm) {n.secure ? "🔒" : ""}
+                </div>
+              ))}
+            </div>
+          )}
+          <div class="form-row">
+            <TextField label="SSID" value={wifiSsid} onChange={setWifiSsid} />
+            <TextField label="Password" value={wifiPass} onChange={setWifiPass} type="password" />
+          </div>
+          <button class="btn-primary" onClick={doConnect}>Connect</button>
+        </div>
+      </div>
+    );
+  }
+
   // AP mode: show only WiFi setup when API is not available
   if (!s && !apiAvailable) {
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-        <div class="card">
-          <h3 style={{ marginBottom: 12 }}>WiFi Setup</h3>
-          <p style={{ color: "var(--text-dim)", marginBottom: 12, fontSize: 13 }}>
-            Connect to your home WiFi network. After connecting, the device will reboot with full settings available.
-          </p>
-          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            <button onClick={doScan} disabled={scanning}>
-              {scanning ? "Scanning..." : "Scan Networks"}
-            </button>
-            {networks.length > 0 && (
-              <div style={{ maxHeight: 150, overflow: "auto", fontSize: 13 }}>
-                {networks.map((n) => (
-                  <div
-                    key={n.ssid}
-                    style={{
-                      padding: "4px 8px",
-                      cursor: "pointer",
-                      borderBottom: "1px solid var(--border)",
-                    }}
-                    onClick={() => setWifiSsid(n.ssid)}
-                  >
-                    {n.ssid} ({n.rssi} dBm) {n.secure ? "🔒" : ""}
-                  </div>
-                ))}
-              </div>
-            )}
-            <div class="form-row">
-              <TextField label="SSID" value={wifiSsid} onChange={setWifiSsid} />
-              <TextField label="Password" value={wifiPass} onChange={setWifiPass} type="password" />
-            </div>
-            <button class="btn-primary" onClick={doConnect}>Connect</button>
-          </div>
-        </div>
+        <WifiSetup description="Connect to your home WiFi network. After connecting, the device will reboot with full settings available." />
       </div>
     );
   }
@@ -291,38 +297,7 @@ export function SettingsPage(_props: { path?: string }) {
       )}
 
       {/* WiFi */}
-      <div class="card">
-        <h3 style={{ marginBottom: 12 }}>WiFi</h3>
-        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-          <div style={{ display: "flex", gap: 8 }}>
-            <button onClick={doScan} disabled={scanning}>
-              {scanning ? "Scanning..." : "Scan Networks"}
-            </button>
-          </div>
-          {networks.length > 0 && (
-            <div style={{ maxHeight: 150, overflow: "auto", fontSize: 13 }}>
-              {networks.map((n) => (
-                <div
-                  key={n.ssid}
-                  style={{
-                    padding: "4px 8px",
-                    cursor: "pointer",
-                    borderBottom: "1px solid var(--border)",
-                  }}
-                  onClick={() => setWifiSsid(n.ssid)}
-                >
-                  {n.ssid} ({n.rssi} dBm) {n.secure ? "🔒" : ""}
-                </div>
-              ))}
-            </div>
-          )}
-          <div class="form-row">
-            <TextField label="SSID" value={wifiSsid} onChange={setWifiSsid} />
-            <TextField label="Password" value={wifiPass} onChange={setWifiPass} type="password" />
-          </div>
-          <button class="btn-primary" onClick={doConnect}>Connect</button>
-        </div>
-      </div>
+      <WifiSetup />
 
       {/* Network */}
       {cfg && (
