@@ -13,9 +13,27 @@ const proxyRoutes = [
   "/save", "/DoNotTouch.json",
 ];
 
+// Post-build: replace type="module" with plain script tag for IIFE compatibility
+function fixScriptType() {
+  return {
+    name: "fix-script-type",
+    enforce: "post" as const,
+    generateBundle(_: unknown, bundle: Record<string, { type: string; source?: string }>) {
+      for (const file of Object.values(bundle)) {
+        if (file.type === "asset" && typeof file.source === "string" && file.source.includes("type=\"module\"")) {
+          file.source = file.source
+            .replace(' type="module" crossorigin', "")
+            .replace(' crossorigin', "");
+        }
+      }
+    },
+  };
+}
+
 export default defineConfig({
   plugins: [
     preact(),
+    fixScriptType(),
     compression({
       algorithms: ["gzip"],
       include: /\.(js|css|html)$/,
