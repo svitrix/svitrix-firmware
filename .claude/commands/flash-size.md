@@ -44,17 +44,17 @@ Perform a detailed analysis of the firmware flash usage. This is critical — fl
 7. **Report:**
    ```
    === Flash Usage Report ===
-   
+
    Firmware partition:  3,932 KB total
    Firmware binary:     X,XXX KB (XX.X%)
    Free space:          XXX KB
-   
+
    LittleFS partition:  256 KB total
    Web assets:          XXX KB
    Icons/data:          XXX KB
-   
+
    RAM usage:           XXX KB / 320 KB (XX.X%)
-   
+
    Status: OK | WARNING (>90%) | CRITICAL (>95%)
    ```
 

@@ -1,12 +1,12 @@
 # Effects
 
 SVITRIX can show effects wherever you want
-- Notification and CustomApps. This will show the effect as the first layer, so you can still draw text over it.  
+- Notification and CustomApps. This will show the effect as the first layer, so you can still draw text over it.
 - Backgroundlayer. This will show the effect behind everything and in each app. You can add it via Hidden features.
-  
-Just call the name for your favorite effect.  
-SVITRIX sends all effect names once after start via MQTT to stats/effects. So you can create external selectors.  
-Its also accessible via HTTP /api/effects  
+
+Just call the name for your favorite effect.
+SVITRIX sends all effect names once after start via MQTT to stats/effects. So you can create external selectors.
+Its also accessible via HTTP /api/effects
 
 <table>
   <tr>
@@ -79,7 +79,7 @@ Its also accessible via HTTP /api/effects
 
 
 # Effect settings
-example:  
+example:
 ```json
 {
   "effect":"Plasma",
@@ -92,16 +92,16 @@ example:
 ```
 All settings keys are optional
 
-**speed:**  
-Mostly 3 as standard. Higher means faster.  
-**palette:**  
-A color palette is an array of 16 colors to create transitions between colors.   
-Build-in palettes: `Cloud, Lava, Ocean, Forest, Stripe, Party, Heat, Rainbow`  
-**blend:**  
-Interpolates between colors, creating a broad array of in-between hues for smooth color transitions.  
-  
-Standard values:  
-  
+**speed:**
+Mostly 3 as standard. Higher means faster.
+**palette:**
+A color palette is an array of 16 colors to create transitions between colors.
+Build-in palettes: `Cloud, Lava, Ocean, Forest, Stripe, Party, Heat, Rainbow`
+**blend:**
+Interpolates between colors, creating a broad array of in-between hues for smooth color transitions.
+
+Standard values:
+
 | Effect Name | Speed | Palette | Blend |
 |-------------|-------|---------|-----------|
 | Fade | 1 | Rainbow | true |
@@ -130,16 +130,16 @@ Standard values:
 
 This guide will show you how to create a custom color palette for use with SVITRIX effects.
 
-A color palette in SVITRIX is an array of 16 colors. Each color is represented as a `RGB` object, which contains red, green, and blue components. 
+A color palette in SVITRIX is an array of 16 colors. Each color is represented as a `RGB` object, which contains red, green, and blue components.
 
 SVITRIX uses these palettes to create transitions between colors in effects. The 16 colors in the palette are not the only colors that will be displayed. Instead, SVITRIX interpolates between these colors to create a wide spectrum of in-between hues. This creates smooth, visually pleasing color transitions in your effects.
 
 1. Create a text file with the `.txt` extension (for example, `sunny.txt`) in the `/PALETTES/` directory..
-2. In the text file, define 16 colors in hexadecimal format. Each color should be on a new line. A color is defined in the format `#RRGGBB`, where `RR` is the red component, `GG` is the green component, and `BB` is the blue component. Each component is a two-digit hexadecimal number (00 to FF). 
-  
+2. In the text file, define 16 colors in hexadecimal format. Each color should be on a new line. A color is defined in the format `#RRGGBB`, where `RR` is the red component, `GG` is the green component, and `BB` is the blue component. Each component is a two-digit hexadecimal number (00 to FF).
+
 For example, a sunny palette might look like this:
-Note, dont use comments in your palettes file.  
-  
+Note, dont use comments in your palettes file.
+
 ```
 0000FF   // Deep blue sky at the horizon's edge
 0047AB   // Lighter sky
@@ -162,10 +162,9 @@ FFFFFF   // White sun colors, very bright light
 Remember, the colors you define in your palette serve as key points in the color transitions. SVITRIX interpolates between these colors, creating a broad array of in-between hues for smooth color transitions in your animations. Experiment with different color placements in your palette to achieve different visual effects. You can use blend=false to not use interpolate colors.
 
 # Artnet (DMX)
-  
-SVITRIX supports Artnet out of the box.  
+
+SVITRIX supports Artnet out of the box.
 For [Jinx!](http://www.live-leds.de/) you can <a href="svitrix_light.jnx" download>download this template</a>. Just change the IP of both universes to your svitrix IP and you're ready to go.
 
-**For any Other Artnet controller:**    
+**For any Other Artnet controller:**
 Create 2 universes with 384 channels each. Also add a new matrix layout with 8 strings á 32 Strands and top left starting position. When you start to send data, SVITRIX will stop its normal operation and shows your data. 1s after you stop sending data, SVITRIX will return to normal operation.
-  

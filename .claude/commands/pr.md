@@ -39,35 +39,35 @@ Create a GitHub Pull Request from the current feature branch to main with a stru
 
    ```markdown
    ## Summary
-   
+
    <2-4 bullet points describing what this PR does and WHY>
-   
+
    ## Changes
-   
+
    <grouped by type, one bullet per logical change>
-   
+
    ### Features
    - description
-   
+
    ### Bug Fixes
    - description
-   
+
    ### Other
    - description
-   
+
    ## Breaking Changes
-   
+
    <only if applicable, otherwise omit section>
-   
+
    ## Binary Size
-   
+
    <if firmware .cpp/.h files changed>
    - Before: X bytes
-   - After: Y bytes  
+   - After: Y bytes
    - Delta: +/- Z bytes (X.X%)
-   
+
    ## Test Plan
-   
+
    - [ ] `pio test -e native_test` passes
    - [ ] `pio run -e ulanzi` builds successfully
    - [ ] Binary size within partition limit
