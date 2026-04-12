@@ -37,6 +37,11 @@ export interface Settings {
   TEMP: boolean;
   BAT: boolean;
   VOL: number;
+  NMODE: boolean;
+  NSTART: number;
+  NEND: number;
+  NBRI: number;
+  NCOL: number;
   BEFF: number;
 }
 
