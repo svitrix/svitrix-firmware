@@ -9,6 +9,7 @@
 #include "Apps_internal.h"
 #include "Functions.h"
 #include "icons.h"
+#include "LayoutEngine.h"
 #include <LittleFS.h>
 
 // ── Big-digit clock data ───────────────────────────────────────────
@@ -85,7 +86,6 @@ void TimeApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_t x, 
         char t[20];
         strftime(t, sizeof(t), timeformat, timer_localtime());
 
-        static uint16_t BIGTIME_BG_CURRENTFRAME = 0;
         static bool bigtimeChecked = false;
         if (!BIGTIME_BG_ISGIF && !bigtimeChecked)
         {
@@ -99,6 +99,7 @@ void TimeApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_t x, 
 
         if (BIGTIME_BG_ISGIF)
         {
+            static uint16_t BIGTIME_BG_CURRENTFRAME = 0;
             gifPlayer->playGif(0 + x, 0 + y, &BIGTIME_BG_GIF, BIGTIME_BG_CURRENTFRAME);
             BIGTIME_BG_CURRENTFRAME = gifPlayer->getFrame();
         }
@@ -127,7 +128,7 @@ void TimeApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_t x, 
     // Mode 6: binary clock
     if (timeConfig.timeMode == 6)
     {
-        struct tm *currentTime = timer_localtime();
+        const struct tm *currentTime = timer_localtime();
         int hour = currentTime->tm_hour;
         int minute = currentTime->tm_min;
         int second = currentTime->tm_sec;
@@ -267,24 +268,30 @@ void TempApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_t x, 
 
     applyNativeAppColor(colorConfig.tempColor);
 
-    matrix->drawRGBBitmap(x, y, icon_234, 8, 8);
+    LayoutMetrics m = LayoutEngine::computeLayout(appConfig.nativeIconLayout, 0);
 
-    if (timeConfig.tempDecimalPlaces > 0)
-        DisplayManager.setCursor(8 + x, 6 + y);
-    else
-        DisplayManager.setCursor(12 + x, 6 + y);
+    if (m.hasIcon)
+    {
+        matrix->drawRGBBitmap(x + m.iconX, y, icon_234, 8, 8);
+    }
 
+    String tempStr;
     if (timeConfig.isCelsius)
     {
-        DisplayManager.matrixPrint(sensorConfig.currentTemp, timeConfig.tempDecimalPlaces);
-        DisplayManager.matrixPrint("°C");
+        tempStr = String(sensorConfig.currentTemp, timeConfig.tempDecimalPlaces) + "\xB0" + "C";
     }
     else
     {
         double tempF = (sensorConfig.currentTemp * 9 / 5) + 32;
-        DisplayManager.matrixPrint(tempF, timeConfig.tempDecimalPlaces);
-        DisplayManager.matrixPrint("°F");
+        tempStr = String(tempF, timeConfig.tempDecimalPlaces) + "\xB0" + "F";
     }
+
+    uint16_t textWidth = getTextWidth(tempStr.c_str(), 0);
+    LayoutMetrics tm = LayoutEngine::computeLayout(appConfig.nativeIconLayout, textWidth);
+    int16_t textX = tm.textCenterX;
+
+    DisplayManager.setCursor(textX + x, 6 + y);
+    DisplayManager.matrixPrint(tempStr.c_str());
 }
 
 // ── HumApp ─────────────────────────────────────────────────────────
@@ -297,11 +304,20 @@ void HumApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_t x, i
 
     applyNativeAppColor(colorConfig.humColor);
 
-    matrix->drawRGBBitmap(x, y + 1, icon_2075, 8, 8);
-    DisplayManager.setCursor(14 + x, 6 + y);
-    int humidity = sensorConfig.currentHum;
-    DisplayManager.matrixPrint(humidity, 0);
-    DisplayManager.matrixPrint("%");
+    LayoutMetrics m = LayoutEngine::computeLayout(appConfig.nativeIconLayout, 0);
+
+    if (m.hasIcon)
+    {
+        matrix->drawRGBBitmap(x + m.iconX, y + 1, icon_2075, 8, 8);
+    }
+
+    String humStr = String(static_cast<int>(sensorConfig.currentHum)) + "%";
+    uint16_t textWidth = getTextWidth(humStr.c_str(), 0);
+    LayoutMetrics tm = LayoutEngine::computeLayout(appConfig.nativeIconLayout, textWidth);
+    int16_t textX = tm.textCenterX;
+
+    DisplayManager.setCursor(textX + x, 6 + y);
+    DisplayManager.matrixPrint(humStr.c_str());
 }
 
 // ── BatApp ─────────────────────────────────────────────────────────
@@ -314,8 +330,18 @@ void BatApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_t x, i
 
     applyNativeAppColor(colorConfig.batColor);
 
-    matrix->drawRGBBitmap(x, y, icon_1486, 8, 8);
-    DisplayManager.setCursor(14 + x, 6 + y);
-    DisplayManager.matrixPrint(batteryConfig.percent, 0);
-    DisplayManager.matrixPrint("%");
+    LayoutMetrics m = LayoutEngine::computeLayout(appConfig.nativeIconLayout, 0);
+
+    if (m.hasIcon)
+    {
+        matrix->drawRGBBitmap(x + m.iconX, y, icon_1486, 8, 8);
+    }
+
+    String batStr = String(static_cast<int>(batteryConfig.percent)) + "%";
+    uint16_t textWidth = getTextWidth(batStr.c_str(), 0);
+    LayoutMetrics tm = LayoutEngine::computeLayout(appConfig.nativeIconLayout, textWidth);
+    int16_t textX = tm.textCenterX;
+
+    DisplayManager.setCursor(textX + x, 6 + y);
+    DisplayManager.matrixPrint(batStr.c_str());
 }
