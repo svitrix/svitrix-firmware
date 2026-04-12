@@ -28,30 +28,6 @@ extern ArtnetWifi artnet;
 
 constexpr int MATRIX_PIN = 32;
 
-/// Returns true when the current local time falls within the configured night window.
-/// Handles overnight ranges (e.g. 21:00–06:00) that cross midnight.
-static bool isNightModeActive()
-{
-    if (!appConfig.nightMode)
-        return false;
-
-    const struct tm *now = timer_localtime();
-    if (!now)
-        return false;
-
-    uint16_t currentMinutes = static_cast<uint16_t>(now->tm_hour * 60 + now->tm_min);
-
-    if (appConfig.nightStart > appConfig.nightEnd)
-    {
-        // Crosses midnight: e.g. 21:00 (1260) → 06:00 (360)
-        return currentMinutes >= appConfig.nightStart || currentMinutes < appConfig.nightEnd;
-    }
-    else
-    {
-        // Same day range: e.g. 23:00 → 23:59
-        return currentMinutes >= appConfig.nightStart && currentMinutes < appConfig.nightEnd;
-    }
-}
 
 CRGB leds[MATRIX_WIDTH * MATRIX_HEIGHT];
 CRGB ledsCopy[MATRIX_WIDTH * MATRIX_HEIGHT];

@@ -6,8 +6,26 @@
 #include "EffectRegistry.h"
 #include "DisplayManager.h"
 #include "LayoutEngine.h"
+#include "timer.h"
 
 Preferences Settings;
+
+bool isNightModeActive()
+{
+    if (!appConfig.nightMode)
+        return false;
+
+    const struct tm *now = timer_localtime();
+    if (!now)
+        return false;
+
+    uint16_t currentMinutes = static_cast<uint16_t>(now->tm_hour * 60 + now->tm_min);
+
+    if (appConfig.nightStart > appConfig.nightEnd)
+        return currentMinutes >= appConfig.nightStart || currentMinutes < appConfig.nightEnd;
+    else
+        return currentMinutes >= appConfig.nightStart && currentMinutes < appConfig.nightEnd;
+}
 
 const char *getID()
 {

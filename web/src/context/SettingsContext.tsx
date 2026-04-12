@@ -15,7 +15,7 @@ import type { ComponentChildren } from "preact";
 
 const COLOR_KEYS = [
   "TCOL", "CHCOL", "CTCOL", "CBCOL", "WDCA", "WDCI",
-  "TIME_COL", "DATE_COL", "TEMP_COL", "HUM_COL", "BAT_COL",
+  "TIME_COL", "DATE_COL", "TEMP_COL", "HUM_COL", "BAT_COL", "NCOL",
 ];
 
 function prepareSettingsForSave(fields: Partial<Settings>): Record<string, unknown> {
