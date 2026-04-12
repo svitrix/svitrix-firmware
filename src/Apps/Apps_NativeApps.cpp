@@ -278,12 +278,12 @@ void TempApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_t x, 
     String tempStr;
     if (timeConfig.isCelsius)
     {
-        tempStr = String(sensorConfig.currentTemp, timeConfig.tempDecimalPlaces) + "\xB0" + "C";
+        tempStr = String(sensorConfig.currentTemp, timeConfig.tempDecimalPlaces) + "°C";
     }
     else
     {
         double tempF = (sensorConfig.currentTemp * 9 / 5) + 32;
-        tempStr = String(tempF, timeConfig.tempDecimalPlaces) + "\xB0" + "F";
+        tempStr = String(tempF, timeConfig.tempDecimalPlaces) + "°F";
     }
 
     uint16_t textWidth = getTextWidth(tempStr.c_str(), 0);
