@@ -365,8 +365,13 @@ export function SettingsPage(_props: { path?: string }) {
             label="Time Mode"
             value={s.TMODE}
             options={[
-              { value: 0, label: "24h" },
-              { value: 1, label: "12h" },
+              { value: 0, label: "Plain Text" },
+              { value: 1, label: "Calendar" },
+              { value: 2, label: "Calendar Top" },
+              { value: 3, label: "Calendar Alt" },
+              { value: 4, label: "Calendar Alt Top" },
+              { value: 5, label: "Big Digits" },
+              { value: 6, label: "Binary" },
             ]}
             onChange={(v) => upd({ TMODE: +v })}
           />
