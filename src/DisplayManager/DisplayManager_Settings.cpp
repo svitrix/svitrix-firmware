@@ -104,7 +104,7 @@ String DisplayManager_::getSettings()
 
 /// Applies a partial settings update from JSON. Only keys present in the payload are changed.
 /// Handles display, brightness, color, time format, app visibility, audio, gamma,
-/// color correction/temperature, game mode, and overlay settings.
+/// color correction/temperature, and overlay settings.
 /// Persists changes and reapplies all settings after parsing.
 void DisplayManager_::setNewSettings(const char *json)
 {

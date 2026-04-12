@@ -42,7 +42,7 @@ extern bool artnetMode, moodlightMode;
 
 ### Lifecycle
 - `setup()` — Init FastLED, NeoMatrix, UI framework, load settings
-- `tick()` — Main loop: dispatch to game/artnet/moodlight/UI
+- `tick()` — Main loop: dispatch to artnet/moodlight/UI
 - `gammaCorrection()` — Apply gamma + optional mirror to LED buffer
 
 ### tick() Dispatch Order

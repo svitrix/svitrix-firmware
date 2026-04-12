@@ -4,7 +4,7 @@
  *
  * Defines the shared globals (leds[], matrix, ui) and implements the main
  * lifecycle: setup() initializes FastLED/NeoMatrix hardware, tick() drives
- * the frame loop dispatching to games, Artnet, or the normal app UI.
+ * the frame loop dispatching to Artnet, moodlight, or the normal app UI.
  * Also handles button input, power on/off with sleep animation, matrix
  * layout switching, gamma correction, and the New Year easter egg.
  */
@@ -187,7 +187,7 @@ void DisplayManager_::setup()
 }
 
 /// Main display loop — called every frame from the Arduino loop().
-/// Dispatches to game engine, AP mode text, or the normal app UI framework.
+/// Dispatches to AP mode text, Artnet, moodlight, or the normal app UI framework.
 /// Also polls for incoming Artnet packets and checks the New Year easter egg.
 void DisplayManager_::tick()
 {

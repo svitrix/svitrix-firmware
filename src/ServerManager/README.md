@@ -2,7 +2,7 @@
 
 HTTP REST API server and primary external control interface (alongside MQTT).
 Handles WiFi connectivity, mDNS/UDP discovery, 35 REST endpoints for device
-control, and a TCP server for game controller input.
+control, and a TCP server.
 
 ## Key Files
 
@@ -16,7 +16,7 @@ control, and a TCP server for game controller input.
 - WiFi station + AP fallback (`192.168.4.1`)
 - mDNS registration (`http` + `svitrix` services)
 - UDP discovery (port 4210/4211) — responds to `FIND_SVITRIX`
-- TCP game input (port 8080) — single client, newline-delimited
+- TCP server (port 8080) — single client, newline-delimited
 - HTTP button callback to external URL on press/release
 - SPA served from LittleFS root
 

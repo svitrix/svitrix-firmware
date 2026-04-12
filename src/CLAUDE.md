@@ -8,7 +8,7 @@ Documentation for ServerManager, PeripheryManager, MenuManager, UpdateManager, a
 
 ## ServerManager
 
-HTTP REST API server, WiFi connectivity, mDNS discovery, UDP device discovery, and TCP game controller input. Primary external control interface alongside MQTT.
+HTTP REST API server, WiFi connectivity, mDNS discovery, UDP device discovery, and TCP server. Primary external control interface alongside MQTT.
 
 ### Files
 
@@ -108,7 +108,7 @@ HTTP REST API server, WiFi connectivity, mDNS discovery, UDP device discovery, a
 
 **UDP Discovery (port 4210):** listens for `"FIND_SVITRIX"`, responds on 4211 with hostname.
 
-**TCP Server (port 8080):** single-client, newline-delimited messages (unused — Games module removed).
+**TCP Server (port 8080):** single-client, newline-delimited messages.
 
 **HTTP Button Callback:** POST to `systemConfig.buttonCallback` URL on button press/release.
 
