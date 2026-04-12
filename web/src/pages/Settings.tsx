@@ -305,6 +305,19 @@ export function SettingsPage(_props: { path?: string }) {
           <Slider label="Brightness" min={0} max={255} value={s.BRI} onChange={(v) => upd({ BRI: v })} />
           <Slider label="Gamma" min={0.5} max={3} step={0.1} value={s.GAMMA} onChange={(v) => upd({ GAMMA: v })} />
           <Toggle label="Uppercase" checked={s.UPPERCASE} onChange={(v) => upd({ UPPERCASE: v })} />
+          <ColorField label="Text Color" value={s.TCOL} onChange={(v) => upd({ TCOL: v })} />
+          <FormRow>
+            <div class="form-group">
+              <label>Color Correction</label>
+              <input type="color" value={s.CCORRECTION}
+                onInput={(e) => upd({ CCORRECTION: (e.target as HTMLInputElement).value })} />
+            </div>
+            <div class="form-group">
+              <label>Color Temperature</label>
+              <input type="color" value={s.CTEMP}
+                onInput={(e) => upd({ CTEMP: (e.target as HTMLInputElement).value })} />
+            </div>
+          </FormRow>
         </div>
       </Card>
 
@@ -313,9 +326,18 @@ export function SettingsPage(_props: { path?: string }) {
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           <Toggle label="Time" checked={s.TIM} onChange={(v) => upd({ TIM: v })} />
           <Toggle label="Date" checked={s.DAT} onChange={(v) => upd({ DAT: v })} />
-          <Toggle label="Temperature" checked={s.TEMP} onChange={(v) => upd({ TEMP: v })} />
-          <Toggle label="Humidity" checked={s.HUM} onChange={(v) => upd({ HUM: v })} />
-          <Toggle label="Battery" checked={s.BAT} onChange={(v) => upd({ BAT: v })} />
+          <FormRow>
+            <Toggle label="Temperature" checked={s.TEMP} onChange={(v) => upd({ TEMP: v })} />
+            <ColorField label="Temp Color" value={s.TEMP_COL} onChange={(v) => upd({ TEMP_COL: v })} />
+          </FormRow>
+          <FormRow>
+            <Toggle label="Humidity" checked={s.HUM} onChange={(v) => upd({ HUM: v })} />
+            <ColorField label="Hum Color" value={s.HUM_COL} onChange={(v) => upd({ HUM_COL: v })} />
+          </FormRow>
+          <FormRow>
+            <Toggle label="Battery" checked={s.BAT} onChange={(v) => upd({ BAT: v })} />
+            <ColorField label="Battery Color" value={s.BAT_COL} onChange={(v) => upd({ BAT_COL: v })} />
+          </FormRow>
           <Slider label="App Duration" min={1} max={60} value={s.ATIME} onChange={(v) => upd({ ATIME: v })} unit="s" />
           <Toggle label="Auto Transition" checked={s.ATRANS} onChange={(v) => upd({ ATRANS: v })} />
           {transitions.length > 0 && (
@@ -350,37 +372,23 @@ export function SettingsPage(_props: { path?: string }) {
           />
           <Toggle label="Start on Monday" checked={s.SOM} onChange={(v) => upd({ SOM: v })} />
           <Toggle label="Celsius" checked={s.CEL} onChange={(v) => upd({ CEL: v })} />
-          <Toggle label="Show Weekday" checked={s.WD} onChange={(v) => upd({ WD: v })} />
-        </div>
-      </Card>
-
-      {/* Colors */}
-      <Card title="Colors">
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
-          <ColorField label="Text" value={s.TCOL} onChange={(v) => upd({ TCOL: v })} />
-          <ColorField label="Time" value={s.TIME_COL} onChange={(v) => upd({ TIME_COL: v })} />
-          <ColorField label="Date" value={s.DATE_COL} onChange={(v) => upd({ DATE_COL: v })} />
-          <ColorField label="Temp" value={s.TEMP_COL} onChange={(v) => upd({ TEMP_COL: v })} />
-          <ColorField label="Hum" value={s.HUM_COL} onChange={(v) => upd({ HUM_COL: v })} />
-          <ColorField label="Battery" value={s.BAT_COL} onChange={(v) => upd({ BAT_COL: v })} />
-          <ColorField label="Weekday Active" value={s.WDCA} onChange={(v) => upd({ WDCA: v })} />
-          <ColorField label="Weekday Inactive" value={s.WDCI} onChange={(v) => upd({ WDCI: v })} />
-          <ColorField label="Cal Header" value={s.CHCOL} onChange={(v) => upd({ CHCOL: v })} />
-          <ColorField label="Cal Text" value={s.CTCOL} onChange={(v) => upd({ CTCOL: v })} />
+          <FormRow>
+            <ColorField label="Time Color" value={s.TIME_COL} onChange={(v) => upd({ TIME_COL: v })} />
+            <ColorField label="Date Color" value={s.DATE_COL} onChange={(v) => upd({ DATE_COL: v })} />
+          </FormRow>
+          <FormRow>
+            <Toggle label="Show Weekday" checked={s.WD} onChange={(v) => upd({ WD: v })} />
+          </FormRow>
+          <FormRow>
+            <ColorField label="Weekday Active" value={s.WDCA} onChange={(v) => upd({ WDCA: v })} />
+            <ColorField label="Weekday Inactive" value={s.WDCI} onChange={(v) => upd({ WDCI: v })} />
+          </FormRow>
+          <FormRow>
+            <ColorField label="Cal Header" value={s.CHCOL} onChange={(v) => upd({ CHCOL: v })} />
+            <ColorField label="Cal Text" value={s.CTCOL} onChange={(v) => upd({ CTCOL: v })} />
+          </FormRow>
           <ColorField label="Cal Body" value={s.CBCOL} onChange={(v) => upd({ CBCOL: v })} />
         </div>
-        <FormRow style={{ marginTop: 12 }}>
-          <div class="form-group">
-            <label>Color Correction</label>
-            <input type="color" value={s.CCORRECTION}
-              onInput={(e) => upd({ CCORRECTION: (e.target as HTMLInputElement).value })} />
-          </div>
-          <div class="form-group">
-            <label>Color Temperature</label>
-            <input type="color" value={s.CTEMP}
-              onInput={(e) => upd({ CTEMP: (e.target as HTMLInputElement).value })} />
-          </div>
-        </FormRow>
       </Card>
 
       {/* Sound */}
