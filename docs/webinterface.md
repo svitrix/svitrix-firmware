@@ -9,7 +9,7 @@ Once SVITRIX is connected to your Wi-Fi network, access the web interface by ent
 | Page | Route | Description |
 |------|-------|-------------|
 | **Screen** | `/` | Live view of the 32x8 LED matrix with app navigation (previous/next), PNG download, and GIF recording. |
-| **Settings** | `/settings` | All device configuration: WiFi, Network (static IP), MQTT, NTP/Timezone, Authentication, Display (brightness, gamma, transitions), Apps (enable/disable, duration), Colors, Sound, and Icon Picker. |
+| **Settings** | `/settings` | Device configuration split into independent sections, each with its own Save button: WiFi, Network, MQTT, NTP/Timezone, Authentication, Display, Apps, Time & Date, Sound, Send Notification, and Icon Picker. Includes dark/light theme toggle. |
 | **Data Fetcher** | `/datafetcher` | Configure external HTTP data sources that automatically fetch and display data on the matrix. See [Data Fetcher](./datafetcher) for details. |
 | **Files** | `/files` | Built-in file manager to browse, upload, download, edit, and delete files on the device (icons, melodies, custom apps, palettes). |
 | **Backup** | `/backup` | Download all device files as a JSON backup, or restore from a previously downloaded backup. |
