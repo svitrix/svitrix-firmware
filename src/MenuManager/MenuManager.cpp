@@ -10,9 +10,6 @@
 #include "IUpdater.h"
 #include "timer.h"
 #include <icons.h>
-#ifdef ENABLE_GAMES
-#include "Games/GameManager.h"
-#endif
 
 enum MenuState
 {
@@ -426,15 +423,6 @@ void MenuManager_::selectButtonLong()
 {
     if (inMenu)
     {
-#ifdef ENABLE_GAMES
-        if (GameManager.isActive())
-        {
-            currentState = MainMenu;
-            inMenu = false;
-            GameManager.start(false);
-            return;
-        }
-#endif
         switch (currentState)
         {
         case BrightnessMenu:

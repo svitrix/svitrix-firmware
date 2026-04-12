@@ -31,9 +31,6 @@
 #include "UpdateManager.h"
 #include "PowerManager.h"
 #include "DataFetcher/DataFetcher.h"
-#ifdef ENABLE_GAMES
-#include "Games/GameManager.h"
-#endif
 #include "timer.h"
 #include <cassert>
 
@@ -100,11 +97,6 @@ void setup()
 
     // Wire up IDisplay interfaces (Phase 8, updated Phase 11: renderer + notifier split)
     UpdateManager.setDisplay(&DisplayManager.getRenderer());
-#ifdef ENABLE_GAMES
-    GameManager.setDisplay(&DisplayManager.getRenderer());
-    SlotMachine.setDisplay(&DisplayManager.getRenderer());
-    SvitrixSays.setDisplay(&DisplayManager.getRenderer());
-#endif
     MenuManager.setDisplay(&DisplayManager.getRenderer(), &DisplayManager, &DisplayManager);
     ServerManager.setDisplay(&DisplayManager.getRenderer(), &DisplayManager, &DisplayManager, &DisplayManager.getNotifier());
     MQTTManager.setDisplay(&DisplayManager, &DisplayManager, &DisplayManager.getNotifier());
@@ -117,11 +109,6 @@ void setup()
 
     // Verify all interface wiring is complete (Phase 10)
     assert(UpdateManager.hasDisplay());
-#ifdef ENABLE_GAMES
-    assert(GameManager.hasDisplay());
-    assert(SlotMachine.hasDisplay());
-    assert(SvitrixSays.hasDisplay());
-#endif
     assert(MenuManager.hasDisplay());
     assert(ServerManager.hasDisplay());
     assert(MQTTManager.hasDisplay());

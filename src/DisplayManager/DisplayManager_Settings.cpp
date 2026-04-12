@@ -21,9 +21,6 @@
 #include "Functions.h"
 #include <WiFi.h>
 #include "Dictionary.h"
-#ifdef ENABLE_GAMES
-#include "Games/GameManager.h"
-#endif
 
 /// Builds and returns the device status JSON: battery, sensors, uptime, WiFi RSSI,
 /// free RAM, brightness, indicator states, current app, firmware version, and IP address.
@@ -137,22 +134,6 @@ void DisplayManager_::setNewSettings(const char *json)
         if (doc.size() == 1)
             return;
     }
-
-#ifdef ENABLE_GAMES
-    if (doc.containsKey("GAMEMODE"))
-    {
-        bool gamemode = doc["GAMEMODE"];
-        GameManager.start(gamemode);
-        return;
-    }
-
-    if (doc.containsKey("GAME"))
-    {
-        int game = doc["GAME"];
-        GameManager.ChooseGame(game);
-        return;
-    }
-#endif
 
     timeConfig.timeMode = doc.containsKey("TMODE") ? doc["TMODE"].as<int>() : timeConfig.timeMode;
     appConfig.transEffect = doc.containsKey("TEFF") ? doc["TEFF"] : appConfig.transEffect;

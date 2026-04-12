@@ -21,9 +21,6 @@
 #include "EffectRegistry.h"
 #include "Overlays.h"
 #include <ArtnetWifi.h>
-#ifdef ENABLE_GAMES
-#include "Games/GameManager.h"
-#endif
 
 extern ArtnetWifi artnet;
 #include "GammaUtils.h"
@@ -194,16 +191,7 @@ void DisplayManager_::setup()
 /// Also polls for incoming Artnet packets and checks the New Year easter egg.
 void DisplayManager_::tick()
 {
-#ifdef ENABLE_GAMES
-    if (GameManager.isActive())
-    {
-        GameManager.tick();
-        matrix->show();
-        memcpy(ledsCopy, leds, sizeof(leds));
-    }
-    else
-#endif
-        if (systemConfig.apMode)
+    if (systemConfig.apMode)
     {
         HSVtext(2, 6, "AP MODE", true, 1);
     }
