@@ -62,7 +62,7 @@ src/
 ├── Apps/                             ← unchanged
 ├── DataFetcher/                      ← unchanged
 ├── MelodyPlayer/                     ← unchanged (rename deferred)
-├── Games/                            ← unchanged
+├── Games/                            ← DELETED (module removed)
 └── effects/                          ← unchanged
 ```
 

@@ -28,7 +28,6 @@
 
 ```
 tick()
-  ├─ IF game active → GameManager.tick()
   ├─ IF AP mode → HSVtext("AP MODE")
   ├─ IF artnet → (handled by DMX callback)
   ├─ IF moodlight → (handled by moodlight function)

@@ -8,9 +8,8 @@
 ```
  Implementor              Interface              Consumers
 ─────────────────────────────────────────────────────────────
- DisplayRenderer_    ── IDisplayRenderer ──►  UpdateManager, GameManager,
-                                              SlotMachine, SvitrixSays,
-                                              MenuManager, ServerManager
+ DisplayRenderer_    ── IDisplayRenderer ──►  UpdateManager, MenuManager,
+                                              ServerManager
 
  DisplayManager_     ── IDisplayControl ───►  MenuManager, ServerManager,
                                               MQTTManager

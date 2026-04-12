@@ -46,12 +46,11 @@ extern bool artnetMode, moodlightMode;
 - `gammaCorrection()` — Apply gamma + optional mirror to LED buffer
 
 ### tick() Dispatch Order
-1. GameManager active → `GameManager.tick()`
-2. AP mode → Show "AP MODE" text
-3. artnetMode → handled by DMX callback
-4. moodlightMode → handled by moodlight()
-5. Normal → `ui->update()` (app framework)
-6. Always: poll artnet, checkNewYear()
+1. AP mode → Show "AP MODE" text
+2. artnetMode → handled by DMX callback
+3. moodlightMode → handled by moodlight()
+4. Normal → `ui->update()` (app framework)
+5. Always: poll artnet, checkNewYear()
 
 ### Power & Brightness
 - `setBrightness(int)` — respects matrixOff + wakeup notifications

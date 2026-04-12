@@ -106,5 +106,5 @@ title  defaults           notes
 
 ## Integration
 
-Games call `PeripheryManager.playRTTTLString("melody_name:d=8,o=5,b=120:notes")`.
+Callers use `PeripheryManager.playRTTTLString("melody_name:d=8,o=5,b=120:notes")`.
 Flow: `playRTTTLString()` → `MelodyFactory.loadRtttlString()` → `MelodyPlayer.playAsync(melody)`.
