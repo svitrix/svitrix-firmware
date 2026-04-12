@@ -136,6 +136,7 @@ Shared configuration structs consumed by all modules. Single header, no logic, n
 | `timePerTransition` | int | `400` | Transition duration (ms) |
 | `timePerApp` | long | `7000` | Time per app before auto-transition (ms) |
 | `scrollSpeed` | uint8_t | `100` | Text scroll speed (ms per pixel) |
+| `nativeIconLayout` | IconLayout | `Left` | Icon position for native apps |
 | `blockNavigation` | bool | `false` | Block button navigation |
 
 ### AudioConfig

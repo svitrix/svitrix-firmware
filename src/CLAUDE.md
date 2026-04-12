@@ -333,7 +333,7 @@ Central configuration store and persistent settings. Defines all config structs 
 | `BrightnessConfig` | brightness, autoBrightness, min/max, ldrGamma/Factor | Brightness |
 | `ColorConfig` | textColor, timeColor, dateColor, batColor, tempColor, humColor, weekday, calendar | Colors |
 | `TimeConfig` | timeFormat, dateFormat, timeMode, startOnMonday, ntpServer, isCelsius | Time/date |
-| `AppConfig` | showTime/Date/Bat/Temp/Hum, autoTransition, transEffect, scrollSpeed | Apps |
+| `AppConfig` | showTime/Date/Bat/Temp/Hum, autoTransition, transEffect, scrollSpeed, nativeIconLayout | Apps |
 | `AudioConfig` | soundActive, soundVolume, bootSound | Audio |
 | `SystemConfig` | debugMode, hostname, deviceId, updateUrls, buttonCallback | System |
 

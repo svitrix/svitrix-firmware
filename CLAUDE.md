@@ -31,7 +31,7 @@ total:  4 MB used / 8 MB available — partition table can be expanded
 
 ```bash
 pio run -e ulanzi          # Build firmware (auto-builds SPA via pre-build script)
-pio test -e native_test    # Run all tests (Unity, 25 suites, 445 tests)
+pio test -e native_test    # Run all tests (Unity, 26 suites, 470 tests)
 cd web && npm run dev      # SPA dev server (hot reload, proxies to device)
 cd web && npm run upload   # Build SPA + upload to device LittleFS
 ```
@@ -64,7 +64,7 @@ src/
   timer.cpp/h                 # Background timer helpers
 lib/
   interfaces/                 # 13 interfaces (IDisplayControl, INotifier, IPixelCanvas, etc.)
-  services/                   # 13 service libraries (100% test coverage)
+  services/                   # 14 service libraries (100% test coverage)
   config/                     # Configuration defaults
   TJpg_Decoder/               # JPEG decoder (local fork)
   home-assistant-integration/ # ArduinoHA library (trimmed)
@@ -81,7 +81,7 @@ data/
 tools/
   build_web.py                # PlatformIO pre-build: auto-builds SPA if sources changed
 test/
-  test_native/                # 25 test suites (native C++ tests)
+  test_native/                # 26 test suites (native C++ tests)
 ```
 
 ## Architecture Rules
@@ -128,7 +128,7 @@ All inter-module communication goes through interfaces wired in `main.cpp`.
 │                        LIBRARIES                                     │
 │                                                                      │
 │  lib/interfaces/     13 pure virtual interfaces (decoupling layer)  │
-│  lib/services/       13 stateless utilities (100% test coverage)    │
+│  lib/services/       14 stateless utilities (100% test coverage)    │
 │  lib/config/         ConfigTypes — all config structs               │
 │  lib/home-assistant-integration/   ArduinoHA v2.0.0 (trimmed)      │
 │  lib/webserver/      ESPAsyncWebServer wrapper (API routing, WiFi)  │
@@ -217,7 +217,7 @@ DisplayManager  ← ColorUtils, TimeEffects, GammaUtils, TextUtils, StatsBuilder
 DisplayRenderer ← TextUtils, UnicodeFont, ColorUtils
 PeripheryManager← SensorCalc
 MQTTManager     ← MessageRouter, HADiscovery, AppRegistry, StatsBuilder, PlaceholderUtils
-Apps            ← ColorUtils, TimeEffects, TextUtils
+Apps            ← ColorUtils, TimeEffects, TextUtils, LayoutEngine
 DataFetcher     ← (no lib/services dependencies)
 main.cpp        ← TextUtils (setTextFont at startup)
 ```
@@ -230,7 +230,7 @@ Each module has detailed AI documentation:
 CLAUDE.md (root)                            ← you are here
 │
 ├── lib/interfaces/CLAUDE.md                ← 13 interfaces, methods, implementors, consumers
-├── lib/services/CLAUDE.md                  ← 13 services, API, deps, test mapping
+├── lib/services/CLAUDE.md                  ← 14 services, API, deps, test mapping
 ├── lib/config/CLAUDE.md                    ← 13 config structs, all fields, defaults, persistence
 ├── lib/home-assistant-integration/CLAUDE.md← ArduinoHA fork, 7/17 entity types enabled
 ├── lib/webserver/CLAUDE.md                 ← FSWebServer, WiFi, routes, SPA fallback
