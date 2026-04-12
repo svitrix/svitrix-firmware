@@ -33,7 +33,6 @@ src/
   UpdateManager/              # OTA firmware updates
   PowerManager/               # Sleep/wake management
   Overlays/                   # Clock/date overlay rendering
-  Games/                      # SlotMachine, SvitrixSays (disabled by default)
   effects/                    # 19 visual effects + weather overlays, IPixelCanvas abstraction
   data/                       # Static data: SvitrixFont.h, cert.h, icons.h, Dictionary.cpp/h
   contrib/                    # Third-party headers: GifPlayer.h, ArtnetWifi.h
@@ -101,7 +100,6 @@ All inter-module communication goes through interfaces wired in `main.cpp`.
 │  PowerManager_ ───────────── deep sleep / wake                      │
 │  UpdateManager_ ──────────── OTA firmware updates                   │
 │  DataFetcher_ ────────────── external HTTP data sources             │
-│  GameManager_ ────────────── games (disabled by default)            │
 └──────────────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────────────────────────────────────────────────┐
@@ -128,7 +126,7 @@ DisplayManager_      IDisplayControl     →       MenuManager, ServerManager, M
 DisplayManager_      IDisplayNavigation  →       MenuManager, ServerManager, MQTTManager, DataFetcher
 DisplayManager_      IMatrixHost         →       MatrixDisplayUi
 DisplayManager_      IButtonHandler      →       PeripheryManager (dispatcher)
-DisplayRenderer_     IDisplayRenderer    →       UpdateManager, GameManager, MenuManager, ServerManager
+DisplayRenderer_     IDisplayRenderer    →       UpdateManager, MenuManager, ServerManager
 NotificationManager_ IDisplayNotifier   →       ServerManager, MQTTManager
 MQTTManager_         INotifier           →       DisplayManager, NotificationManager
 MQTTManager_         IButtonReporter     →       PeripheryManager (dispatcher)
@@ -227,7 +225,6 @@ CLAUDE.md (root)                            ← you are here
 ├── src/DataFetcher/CLAUDE.md               ← external HTTP data sources, round-robin polling
 │
 ├── src/Apps/README.md                      ← native + custom app rendering
-├── src/Games/README.md                     ← GameManager, SlotMachine, SvitrixSays
 ├── src/MelodyPlayer/README.md              ← RTTTL parser, async PWM playback
 └── src/effects/README.md                   ← 19 visual effects, weather overlays, IPixelCanvas
 ```
