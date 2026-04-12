@@ -236,8 +236,8 @@ void DisplayManager_::tick()
         bool nightActive = isNightModeActive();
         if (nightActive)
         {
-            setAutoTransition(false);
-            // Override text and time color so the Time app renders in nightColor
+            if (appConfig.nightBlockTransition)
+                setAutoTransition(false);
             setTextColor(appConfig.nightColor);
         }
         else

@@ -98,6 +98,7 @@ String DisplayManager_::getSettings()
     doc["NEND"] = appConfig.nightEnd;
     doc["NBRI"] = appConfig.nightBrightness;
     doc["NCOL"] = appConfig.nightColor;
+    doc["NBTRANS"] = appConfig.nightBlockTransition;
     doc["TIM"] = appConfig.showTime;
     doc["DAT"] = appConfig.showDate;
     doc["HUM"] = appConfig.showHum;
@@ -162,6 +163,8 @@ void DisplayManager_::setNewSettings(const char *json)
         appConfig.nightBrightness = doc["NBRI"].as<uint8_t>();
     if (doc.containsKey("NCOL"))
         appConfig.nightColor = doc["NCOL"].as<uint32_t>();
+    if (doc.containsKey("NBTRANS"))
+        appConfig.nightBlockTransition = doc["NBTRANS"].as<bool>();
     timeConfig.isCelsius = doc.containsKey("CEL") ? doc["CEL"] : timeConfig.isCelsius;
     timeConfig.startOnMonday = doc.containsKey("SOM") ? doc["SOM"].as<bool>() : timeConfig.startOnMonday;
     displayConfig.matrixOff = doc.containsKey("MATP") ? !doc["MATP"].as<bool>() : displayConfig.matrixOff;

@@ -28,6 +28,7 @@ export function NightModeSection() {
       NEND: s.NEND,
       NBRI: s.NBRI,
       NCOL: s.NCOL,
+      NBTRANS: s.NBTRANS,
     });
     setSaving(false);
   }
@@ -77,6 +78,11 @@ export function NightModeSection() {
               label="Night Color"
               value={s.NCOL}
               onChange={(v) => updateSettings({ NCOL: v })}
+            />
+            <Toggle
+              label="Block Auto-Transition"
+              checked={s.NBTRANS}
+              onChange={(v) => updateSettings({ NBTRANS: v })}
             />
           </>
         )}

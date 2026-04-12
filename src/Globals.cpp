@@ -294,6 +294,7 @@ void loadSettings()
     appConfig.nightEnd = Settings.getUShort("NEND", 360);
     appConfig.nightBrightness = Settings.getUChar("NBRI", 5);
     appConfig.nightColor = Settings.getUInt("NCOL", 0xFF0000);
+    appConfig.nightBlockTransition = Settings.getBool("NBTRANS", true);
 #ifdef ULANZI
     appConfig.showBat = Settings.getBool("BAT", true);
 #endif
@@ -350,6 +351,7 @@ void saveSettings()
     Settings.putUShort("NEND", appConfig.nightEnd);
     Settings.putUChar("NBRI", appConfig.nightBrightness);
     Settings.putUInt("NCOL", appConfig.nightColor);
+    Settings.putBool("NBTRANS", appConfig.nightBlockTransition);
 #ifdef ULANZI
     Settings.putBool("BAT", appConfig.showBat);
 #endif
@@ -369,6 +371,6 @@ DisplayConfig displayConfig = {0, 42, false, false, false, true, -1};
 BrightnessConfig brightnessConfig = {120, 0, true, 2, 160, 3.0, 1.0, false};
 ColorConfig colorConfig = {0xFFFFFF, 0, 0, 0, 0, 0, 0xFFFFFF, 0x666666, 0xFF0000, 0x000000, 0xFFFFFF};
 TimeConfig timeConfig = {"%H:%M:%S", "%d.%m.%y", 1, false, "de.pool.ntp.org", "CET-1CEST,M3.5.0,M10.5.0/3", false, 0};
-AppConfig appConfig = {true, true, true, true, true, true, false, 1, 400, 7000, 100, IconLayout::Left, false, false, 1260, 360, 5, 0xFF0000};
+AppConfig appConfig = {true, true, true, true, true, true, false, 1, 400, 7000, 100, IconLayout::Left, false, false, 1260, 360, 5, 0xFF0000, true};
 AudioConfig audioConfig = {false, 30, ""};
 SystemConfig systemConfig = {true, 15, 80, "", false, 10000, false, false, "", "", false, false, "", ""};

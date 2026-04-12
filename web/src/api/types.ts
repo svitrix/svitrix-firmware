@@ -43,6 +43,7 @@ export interface Settings {
   NBRI: number;
   NCOL: number;
   BEFF: number;
+  NBTRANS: boolean;
 }
 
 export interface Stats {

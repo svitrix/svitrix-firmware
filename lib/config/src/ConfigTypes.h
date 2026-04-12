@@ -122,6 +122,7 @@ struct AppConfig {
     uint16_t nightEnd;        // 06:00 in minutes from midnight
     uint8_t nightBrightness;
     uint32_t nightColor;      // default: red (0xFF0000)
+    bool nightBlockTransition; // disable auto-transition in night mode
 };
 
 struct AudioConfig {
