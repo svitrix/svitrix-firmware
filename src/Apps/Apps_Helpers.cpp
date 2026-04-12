@@ -31,8 +31,26 @@ bool nativeAppGuard(const char *appName)
 
 /// Apply a per-app color if set (> 0), otherwise reset to global text color.
 /// @param colorValue Per-app color from colorConfig (0 = use global).
+/// Night mode overrides the color when active.
 void applyNativeAppColor(uint32_t colorValue)
 {
+    if (appConfig.nightMode)
+    {
+        const struct tm *now = timer_localtime();
+        uint16_t currentMinutes = now->tm_hour * 60 + now->tm_min;
+        bool nightActive;
+        if (appConfig.nightStart > appConfig.nightEnd)
+            nightActive = currentMinutes >= appConfig.nightStart || currentMinutes < appConfig.nightEnd;
+        else
+            nightActive = currentMinutes >= appConfig.nightStart && currentMinutes < appConfig.nightEnd;
+
+        if (nightActive)
+        {
+            DisplayManager.setTextColor(appConfig.nightColor);
+            return;
+        }
+    }
+
     if (colorValue > 0)
     {
         DisplayManager.setTextColor(colorValue);
