@@ -5,6 +5,7 @@
 #include "GifPlayer.h"
 #include "NeoMatrixCanvas.h"
 #include "WeatherOverlay.h"
+#include "LayoutEngine.h"
 
 int renderAppIcon(AppContentBase& app, GifPlayer *gifPlayer,
                   int16_t x, int16_t y, bool noScrolling, bool hasIcon,
@@ -16,31 +17,53 @@ int renderAppIcon(AppContentBase& app, GifPlayer *gifPlayer,
     {
         if (app.pushIcon > 0 && !noScrolling)
         {
-            if (app.iconPosition < 0 && app.iconWasPushed == false && app.scrollposition > 8)
+            if (app.layout == IconLayout::Right)
             {
-                app.iconPosition += movementFactor;
-            }
-            if (app.scrollposition < (9 - app.textOffset) && !app.iconWasPushed)
-            {
-                app.iconPosition = app.scrollposition - 9 + app.textOffset;
-
-                if (app.iconPosition <= -9 - app.textOffset)
+                // Mirror: icon pushes right off-screen
+                if (app.iconPosition > 0 && !app.iconWasPushed && app.scrollposition < -8)
                 {
-                    app.iconWasPushed = true;
+                    app.iconPosition -= movementFactor;
+                }
+                if (app.scrollposition > (-9 + app.textOffset) && !app.iconWasPushed)
+                {
+                    app.iconPosition = -(app.scrollposition + 9 - app.textOffset);
+                    if (app.iconPosition >= 9 + app.textOffset)
+                    {
+                        app.iconWasPushed = true;
+                    }
+                }
+            }
+            else
+            {
+                // Original Left behavior
+                if (app.iconPosition < 0 && app.iconWasPushed == false && app.scrollposition > 8)
+                {
+                    app.iconPosition += movementFactor;
+                }
+                if (app.scrollposition < (9 - app.textOffset) && !app.iconWasPushed)
+                {
+                    app.iconPosition = app.scrollposition - 9 + app.textOffset;
+                    if (app.iconPosition <= -9 - app.textOffset)
+                    {
+                        app.iconWasPushed = true;
+                    }
                 }
             }
         }
+
+        LayoutMetrics m = LayoutEngine::computeLayout(app.layout, 0);
+        int16_t drawX = x + m.iconX + app.iconPosition + app.iconOffset;
 
         if (app.isGif)
         {
             if (currentFrame)
             {
-                iconWidth = gifPlayer->playGif(x + app.iconPosition + app.iconOffset, y, &app.icon, *currentFrame);
+                iconWidth = gifPlayer->playGif(drawX, y, &app.icon, *currentFrame);
                 *currentFrame = gifPlayer->getFrame();
             }
             else
             {
-                iconWidth = gifPlayer->playGif(x + app.iconPosition + app.iconOffset, y, &app.icon);
+                iconWidth = gifPlayer->playGif(drawX, y, &app.icon);
             }
         }
         else
@@ -48,19 +71,29 @@ int renderAppIcon(AppContentBase& app, GifPlayer *gifPlayer,
             iconWidth = 8;
             if (!app.jpegDataBuffer.empty())
             {
-                DisplayManager.drawJPG(x + app.iconPosition + app.iconOffset, y, app.jpegDataBuffer.data(), app.jpegDataBuffer.size());
+                DisplayManager.drawJPG(drawX, y, app.jpegDataBuffer.data(), app.jpegDataBuffer.size());
             }
             else
             {
-                DisplayManager.drawJPG(x + app.iconPosition + app.iconOffset, y, app.icon);
+                DisplayManager.drawJPG(drawX, y, app.icon);
             }
         }
 
         if (!noScrolling)
         {
             int16_t lineY1 = (app.progress > -1) ? (6 + y) : (7 + y);
-            DisplayManager.drawLine(iconWidth + x + app.iconPosition + app.iconOffset, 0 + y,
-                                    iconWidth + x + app.iconPosition, lineY1, app.background);
+            if (m.iconOnRight)
+            {
+                // Separator on left side of icon
+                DisplayManager.drawLine(m.iconX + x + app.iconPosition - 1, 0 + y,
+                                        m.iconX + x + app.iconPosition - 1, lineY1, app.background);
+            }
+            else
+            {
+                // Separator on right side of icon (original)
+                DisplayManager.drawLine(iconWidth + x + app.iconPosition + app.iconOffset, 0 + y,
+                                        iconWidth + x + app.iconPosition, lineY1, app.background);
+            }
         }
     }
 
@@ -71,7 +104,9 @@ int renderAppIcon(AppContentBase& app, GifPlayer *gifPlayer,
 
     if (app.progress > -1)
     {
-        DisplayManager.drawProgressBar((hasIcon ? 8 : 0), 7 + y, app.progress, app.pColor, app.pbColor);
+        LayoutMetrics pm = LayoutEngine::computeLayout(app.layout, 0);
+        int16_t barStart = pm.hasIcon && !pm.iconOnRight ? 8 : 0;
+        DisplayManager.drawProgressBar(barStart, 7 + y, app.progress, app.pColor, app.pbColor);
     }
 
     if (app.barSize > 0)
@@ -107,7 +142,8 @@ void updateScrollAnimation(AppContentBase& app, bool hasIcon,
     else
     {
         ++app.scrollDelay;
-        if (hasIcon)
+        LayoutMetrics m = LayoutEngine::computeLayout(app.layout, 0);
+        if (m.hasIcon)
         {
             if (app.iconWasPushed && app.pushIcon == 1)
             {
@@ -115,7 +151,7 @@ void updateScrollAnimation(AppContentBase& app, bool hasIcon,
             }
             else
             {
-                app.scrollposition = 9 + app.textOffset;
+                app.scrollposition = m.textStartX + app.textOffset;
             }
         }
         else
@@ -128,11 +164,12 @@ void updateScrollAnimation(AppContentBase& app, bool hasIcon,
 int16_t calculateTextX(const AppContentBase& app,
                        uint16_t textWidth, bool hasIcon)
 {
+    LayoutMetrics m = LayoutEngine::computeLayout(app.layout, textWidth);
     if (app.center)
     {
-        return hasIcon ? ((24 - textWidth) / 2) + 9 : ((32 - textWidth) / 2);
+        return m.textCenterX;
     }
-    return hasIcon ? 9 : 0;
+    return m.textStartX;
 }
 
 void renderAppText(AppContentBase& app, int16_t x, int16_t y,
