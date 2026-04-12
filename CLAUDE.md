@@ -69,12 +69,14 @@ lib/
   TJpg_Decoder/               # JPEG decoder (local fork)
   home-assistant-integration/ # ArduinoHA library (trimmed)
   webserver/                  # Async web server wrapper (API routing, WiFi, OTA)
-web/                          # SPA (Preact + Vite + TypeScript)
+web/                          # SPA (Preact + Vite + TypeScript, strict mode)
   src/
-    api/                      # Typed API client for all 38 REST endpoints
-    pages/                    # 6 pages: Screen, Settings, DataFetcher, Backup, Update, Files
-    components/               # Nav, Toast
-    styles/                   # Global CSS (dark theme)
+    api/                      # Typed API client (~30 endpoints)
+    context/                  # SettingsContext (shared state provider)
+    components/               # Nav, Toast, ui/ (8 reusable components)
+    pages/                    # 6 pages (directory-per-page with index.ts)
+      settings/sections/      # 14 independent settings sections with partial save
+    styles/                   # CSS variables, dark/light themes
   vite.config.ts              # Build config: IIFE output, gzip, dev proxy
 data/
   web/                        # SPA build output (gzipped, uploaded to LittleFS)
