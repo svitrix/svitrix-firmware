@@ -2,6 +2,8 @@ name: Release
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 on:
   push:
@@ -73,3 +75,8 @@ jobs:
           name: v${{ steps.version.outputs.version }}
           generate_release_notes: true
           files: .pio/build/ulanzi/firmware.bin
+
+  deploy-docs:
+    name: Deploy documentation
+    needs: release
+    uses: ./.github/workflows/docs.yml
