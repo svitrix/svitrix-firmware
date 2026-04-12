@@ -104,9 +104,7 @@ export interface EffectInfo {
   name: string;
 }
 
-export interface TransitionInfo {
-  name: string;
-}
+export type TransitionInfo = string;
 
 export interface InfraConfig {
   "Static IP": boolean;

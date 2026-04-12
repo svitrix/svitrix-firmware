@@ -46,7 +46,7 @@ export function AppsSection() {
           <Select
             label="Transition Effect"
             value={s.TEFF}
-            options={transitions.map((t, i) => ({ value: i, label: t.name }))}
+            options={transitions.map((t, i) => ({ value: i, label: t }))}
             onChange={(v) => updateSettings({ TEFF: v as number })}
           />
         )}
