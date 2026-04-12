@@ -73,4 +73,50 @@ index.html.gz   ~0.2 KB   (minimal shell)
 - **Preact Router** — client-side routing
 - **Preact Signals** — reactive state (toast notifications)
 - **Vite** — build tool with gzip compression
-- **TypeScript** — typed API client
+- **TypeScript** — strict mode, typed API client
+- **CSS Modules** — scoped styles per component (`.module.css`)
+
+## Project Structure
+
+```
+src/
+  main.tsx                    # Entry point, router setup
+  api/
+    client.ts                 # Fetch-based API client (~30 endpoints)
+    types.ts                  # TypeScript interfaces
+  components/
+    Nav.tsx + Nav.module.css   # Navigation bar + theme toggle
+    Toast.tsx                 # Toast notifications (signal-based)
+    ui/                       # Reusable UI components (8)
+      Toggle.tsx              # On/off switch
+      TextField.tsx           # Text input with label
+      ColorField.tsx          # Color picker with hex conversion
+      Slider.tsx              # Range input with value display
+      Select.tsx              # Dropdown with typed onChange
+      Card.tsx                # Section card with title
+      FormRow.tsx             # 2-column grid layout
+      Button.tsx              # Primary/danger/default variants
+      index.ts                # Barrel export
+  context/
+    SettingsContext.tsx        # Shared state for settings + config
+  pages/
+    screen/                   # Live LED matrix preview
+    settings/                 # Device configuration
+      sections/               # 14 independent settings sections
+    data-fetcher/             # External API data sources
+    files/                    # LittleFS file manager
+    backup/                   # Config backup/restore
+    update/                   # OTA firmware upload
+  styles/
+    global.css                # CSS variables, resets, base elements
+```
+
+## Conventions
+
+- **Directory-per-page**: each page in its own directory with `index.ts` barrel export
+- **CSS Modules**: use `.module.css` files, no inline styles for static layout
+- **CSS variables**: use `var(--bg)`, `var(--accent)`, etc. for theming (dark/light)
+- **Preact**: use `class` not `className`, import from `preact` and `preact/hooks`
+- **Components**: reusable UI in `components/ui/`, page-specific in page directory
+- **Context**: shared state via `SettingsContext`, sections save only their own fields
+- **Types**: strict TypeScript, explicit interfaces for all API data
