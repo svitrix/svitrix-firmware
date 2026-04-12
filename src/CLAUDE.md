@@ -1,19 +1,21 @@
 # src/ Standalone Modules — AI Reference
 
-Documentation for modules that live as standalone `.cpp/.h` files in `src/` (no subdirectory).
+Documentation for ServerManager, PeripheryManager, MenuManager, UpdateManager, and PowerManager modules.
+
+> **Note (2026-04):** These modules were moved from loose `src/*.cpp/h` files into their own subdirectories (`src/ServerManager/`, `src/PeripheryManager/`, etc.) during the src/ reorganization. The detailed docs below remain here since these modules don't have their own `CLAUDE.md` files yet. Other restructuring: `AppContentRenderer.cpp` moved into `src/DisplayManager/`, `Overlays.cpp/h` moved to `src/Overlays/`, static data files moved to `src/data/`, third-party headers moved to `src/contrib/`.
 
 ---
 
 ## ServerManager
 
-HTTP REST API server, WiFi connectivity, mDNS discovery, UDP device discovery, and TCP game controller input. Primary external control interface alongside MQTT.
+HTTP REST API server, WiFi connectivity, mDNS discovery, UDP device discovery, and TCP server. Primary external control interface alongside MQTT.
 
 ### Files
 
 | File | LOC | Purpose |
 |------|-----|---------|
-| `ServerManager.h` | 39 | Public API, singleton, IButtonReporter |
-| `ServerManager.cpp` | 536 | WiFi setup, HTTP endpoints, UDP/TCP, settings loader |
+| `ServerManager/ServerManager.h` | 39 | Public API, singleton, IButtonReporter |
+| `ServerManager/ServerManager.cpp` | 536 | WiFi setup, HTTP endpoints, UDP/TCP, settings loader |
 
 ### Interfaces
 
@@ -106,7 +108,7 @@ HTTP REST API server, WiFi connectivity, mDNS discovery, UDP device discovery, a
 
 **UDP Discovery (port 4210):** listens for `"FIND_SVITRIX"`, responds on 4211 with hostname.
 
-**TCP Server (port 8080):** single-client, newline-delimited messages → `GameManager.ControllerInput()`.
+**TCP Server (port 8080):** single-client, newline-delimited messages.
 
 **HTTP Button Callback:** POST to `systemConfig.buttonCallback` URL on button press/release.
 
@@ -128,8 +130,8 @@ Hardware abstraction singleton. Manages physical buttons, I2C temperature/humidi
 
 | File | LOC | Purpose |
 |------|-----|---------|
-| `PeripheryManager.h` | 77 | Public API, singleton, IPeripheryProvider + ISound |
-| `PeripheryManager.cpp` | 541 | Hardware init, sensor loops, button dispatch, sound |
+| `PeripheryManager/PeripheryManager.h` | 77 | Public API, singleton, IPeripheryProvider + ISound |
+| `PeripheryManager/PeripheryManager.cpp` | 541 | Hardware init, sensor loops, button dispatch, sound |
 
 ### Interfaces
 
@@ -207,8 +209,8 @@ On-device settings menu rendered on the LED matrix. Adjusts display, time, audio
 
 | File | LOC | Purpose |
 |------|-----|---------|
-| `MenuManager.h` | 47 | Singleton, `IButtonHandler` implementation |
-| `MenuManager.cpp` | 491 | Menu state machine, 13 menu items, button handlers |
+| `MenuManager/MenuManager.h` | 47 | Singleton, `IButtonHandler` implementation |
+| `MenuManager/MenuManager.cpp` | 491 | Menu state machine, 13 menu items, button handlers |
 
 ### Menu Structure (13 items)
 
@@ -253,8 +255,8 @@ OTA firmware update manager. Checks remote server for new versions and performs 
 
 | File | LOC | Purpose |
 |------|-----|---------|
-| `UpdateManager.h` | 23 | Singleton, `IUpdater` implementation |
-| `UpdateManager.cpp` | 36 | Version check, firmware download, progress callbacks |
+| `UpdateManager/UpdateManager.h` | 23 | Singleton, `IUpdater` implementation |
+| `UpdateManager/UpdateManager.cpp` | 36 | Version check, firmware download, progress callbacks |
 
 ### OTA Flow
 
@@ -287,8 +289,8 @@ Deep sleep controller. Puts the ESP32 into `esp_deep_sleep` with timer and GPIO 
 
 | File | LOC | Purpose |
 |------|-----|---------|
-| `PowerManager.h` | 23 | Singleton, `IPower` implementation |
-| `PowerManager.cpp` | 36 | Sleep logic, JSON parser, wake source config |
+| `PowerManager/PowerManager.h` | 23 | Singleton, `IPower` implementation |
+| `PowerManager/PowerManager.cpp` | 36 | Sleep logic, JSON parser, wake source config |
 
 ### Wake Sources
 
@@ -367,7 +369,7 @@ Shared rendering data structure and pipeline used by both custom apps and notifi
 | File | Purpose |
 |------|---------|
 | `AppContent.h` | `AppContentBase` struct + free function declarations |
-| `AppContentRenderer.cpp` | Shared rendering functions (icon, text, scroll, overlay) |
+| `DisplayManager/AppContentRenderer.cpp` | Shared rendering functions (icon, text, scroll, overlay) |
 
 ### AppContentBase — Key Fields
 

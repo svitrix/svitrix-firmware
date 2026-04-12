@@ -8,8 +8,8 @@
  */
 #include "Apps_internal.h"
 #include "Functions.h"
-#include "effects.h"
-#include "effects/NeoMatrixCanvas.h"
+#include "EffectRegistry.h"
+#include "NeoMatrixCanvas.h"
 #include "MQTTManager.h"
 #include <LittleFS.h>
 

@@ -6,7 +6,7 @@
 
 | Interface | Methods | Implementor(s) | Consumers |
 |-----------|---------|-----------------|-----------|
-| **IDisplayRenderer** | 11 | DisplayRenderer_ | UpdateManager, GameManager, SlotMachine, SvitrixSays, MenuManager, ServerManager |
+| **IDisplayRenderer** | 11 | DisplayRenderer_ | UpdateManager, MenuManager, ServerManager |
 | **IDisplayControl** | 10 | DisplayManager_ | MenuManager, ServerManager, MQTTManager |
 | **IDisplayNavigation** | 12 | DisplayManager_ | MenuManager, ServerManager, MQTTManager, DataFetcher |
 | **IDisplayNotifier** | 9 | NotificationManager_ | ServerManager, MQTTManager |
@@ -158,15 +158,13 @@ These files use direct `#include` instead of interfaces (see issue #11):
 | Apps_Helpers.cpp | MQTTManager | INotifier |
 | AppContentRenderer.cpp | DisplayManager | IDisplayRenderer |
 | MenuManager.cpp | ServerManager | New interface or callback |
-| GameManager.cpp | ServerManager | New interface or callback |
 | Globals.cpp | DisplayManager | Remove dependency |
 
 ## Missing Interfaces (Suggested)
 
 | Interface | Why Needed |
 |-----------|-----------|
-| IServerConnectivity | MenuManager/GameManager need `isConnected()` — currently bypass via direct include |
-| IGameManager | ServerManager needs game start/control — currently bypasses |
+| IServerConnectivity | MenuManager needs `isConnected()` — currently bypasses via direct include |
 
 ## Rules for Adding New Interfaces
 

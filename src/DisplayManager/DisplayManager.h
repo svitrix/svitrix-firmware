@@ -4,7 +4,7 @@
  *
  * DisplayManager_ is a singleton that owns the 32x8 NeoPixel matrix and
  * coordinates all visual output: native apps, custom apps, notifications,
- * indicators, Artnet/DMX, moodlight mode, and games.
+ * indicators, Artnet/DMX, and moodlight mode.
  *
  * Phase 11 split:
  *   DisplayRenderer_       — implements IDisplayRenderer (text + drawing)
@@ -73,7 +73,7 @@ class DisplayManager_ : public IButtonHandler, public IMatrixHost, public IDispl
 
     // ── Lifecycle (DisplayManager.cpp) ─────────────────────────────
     void setup();                                    ///< Initialize hardware, NeoMatrix, UI framework
-    void tick();                                     ///< Main loop: dispatches to game/artnet/moodlight/UI
+    void tick();                                     ///< Main loop: dispatches to artnet/moodlight/UI
     void clearMatrix();                              ///< Clear + show
     void applyAllSettings() override;                ///< Apply all persisted settings to display/UI
     void setBrightness(int bri) override;            ///< Set brightness (respects matrixOff and wakeup)

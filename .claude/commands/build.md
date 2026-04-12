@@ -23,7 +23,7 @@ Run the complete local CI pipeline for Svitrix firmware. Execute each step seque
 3. **Check flash size:**
    After successful build, check `.pio/build/ulanzi/firmware.bin` size.
    Read the build output for RAM/Flash usage summary.
-   
+
    Thresholds (firmware partition is ~3.8MB):
    - **< 90%**: OK
    - **90-95%**: WARNING — flash space getting tight

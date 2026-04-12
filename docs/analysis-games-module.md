@@ -1,3 +1,5 @@
+> **Note:** The Games module was removed in v0.3.0. This document is kept for historical reference.
+
 # Games Module — Code Review & Analysis
 
 ## Overview

@@ -91,18 +91,19 @@ Full API reference: [API Reference](https://svitrix.github.io/svitrix-firmware/a
 
 ## DIY Hardware
 
-Build your own SVITRIX with an ESP32-WROOM board and a 32x8 WS2812B matrix:
+The Ulanzi TC001 uses an **ESP32-WROOM-32D** (8 MB flash, CH340 USB-Serial) with a 32x8 WS2812B-Mini matrix (256 LEDs).
 
-| GPIO | Function |
-|------|----------|
-| 32 | LED Matrix (WS2812B) |
-| 15 | Buzzer (passive piezo) |
-| 21/22 | I2C SDA/SCL (temp/humidity sensors) |
-| 26/27/14 | Left/Middle/Right buttons |
-| 34 | Battery voltage ADC |
-| 35 | LDR light sensor |
+| GPIO | Function | Notes |
+|------|----------|-------|
+| 32 | LED Matrix (WS2812B-Mini) | 256 LEDs, serpentine wiring |
+| 15 | Buzzer (passive piezo) | PWM via LEDC, needs pull-down at init |
+| 21/22 | I2C SDA/SCL | SHT3x (0x44) + DS1307 RTC (0x68) |
+| 26/27/14 | Left/Middle/Right buttons | Active LOW, internal pull-up |
+| 13 | Reset button (hidden) | 5s hold → factory reset |
+| 34 | Battery voltage ADC | 4400 mAh, voltage divider |
+| 35 | LDR light sensor (GL5516) | Ambient light detection |
 
-Supported I2C sensors: BME280, BMP280, HTU21DF, SHT31 (auto-detected at startup).
+Supported I2C sensors: BME280, BMP280, HTU21DF, SHT31 (auto-detected at startup). Full hardware reference: [Hardware Guide](https://svitrix.github.io/svitrix-firmware/hardware).
 
 ## FAQ
 

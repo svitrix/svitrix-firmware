@@ -18,4 +18,3 @@
 | Partitions | `partitions.bin` | 0x8000 | Таблиця розділів |
 | Firmware | `firmware.bin` | 0x10000 | Прошивка SVITRIX |
 | LittleFS | `littlefs.bin` | 0x3C0000 | Веб-інтерфейс (SPA) + стандартні файли |
-

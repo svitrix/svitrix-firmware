@@ -3,7 +3,7 @@
 #include <WiFi.h>
 #include <ArduinoJson.h>
 #include <LittleFS.h>
-#include "effects.h"
+#include "EffectRegistry.h"
 #include "DisplayManager.h"
 
 Preferences Settings;

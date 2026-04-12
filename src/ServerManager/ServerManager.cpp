@@ -17,9 +17,6 @@
 #include "DataFetcher/DataFetcher.h"
 #include <WiFiUdp.h>
 #include <HTTPClient.h>
-#ifdef ENABLE_GAMES
-#include "Games/GameManager.h"
-#endif
 #include <EEPROM.h>
 
 WiFiUDP udp;
@@ -379,9 +376,6 @@ void ServerManager_::tick()
             if (incomingByte == '\n')
             {
                 dataBuffer[bufferIndex] = '\0';
-#ifdef ENABLE_GAMES
-                GameManager.ControllerInput(dataBuffer);
-#endif
                 bufferIndex = 0;
             }
             else if (incomingByte != '\r')

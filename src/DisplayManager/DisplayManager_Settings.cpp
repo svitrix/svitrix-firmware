@@ -14,16 +14,13 @@
 #include "INotifier.h"
 #include "IPeripheryProvider.h"
 #include <ArduinoJson.h>
-#include "effects.h"
+#include "EffectRegistry.h"
 #include "Overlays.h"
 #include "ColorUtils.h"
 #include "StatsBuilder.h"
 #include "Functions.h"
 #include <WiFi.h>
 #include "Dictionary.h"
-#ifdef ENABLE_GAMES
-#include "Games/GameManager.h"
-#endif
 
 /// Builds and returns the device status JSON: battery, sensors, uptime, WiFi RSSI,
 /// free RAM, brightness, indicator states, current app, firmware version, and IP address.
@@ -107,7 +104,7 @@ String DisplayManager_::getSettings()
 
 /// Applies a partial settings update from JSON. Only keys present in the payload are changed.
 /// Handles display, brightness, color, time format, app visibility, audio, gamma,
-/// color correction/temperature, game mode, and overlay settings.
+/// color correction/temperature, and overlay settings.
 /// Persists changes and reapplies all settings after parsing.
 void DisplayManager_::setNewSettings(const char *json)
 {
@@ -137,22 +134,6 @@ void DisplayManager_::setNewSettings(const char *json)
         if (doc.size() == 1)
             return;
     }
-
-#ifdef ENABLE_GAMES
-    if (doc.containsKey("GAMEMODE"))
-    {
-        bool gamemode = doc["GAMEMODE"];
-        GameManager.start(gamemode);
-        return;
-    }
-
-    if (doc.containsKey("GAME"))
-    {
-        int game = doc["GAME"];
-        GameManager.ChooseGame(game);
-        return;
-    }
-#endif
 
     timeConfig.timeMode = doc.containsKey("TMODE") ? doc["TMODE"].as<int>() : timeConfig.timeMode;
     appConfig.transEffect = doc.containsKey("TEFF") ? doc["TEFF"] : appConfig.transEffect;

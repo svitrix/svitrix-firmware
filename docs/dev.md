@@ -2,7 +2,7 @@
 
 This section contains small setting options that the majority of users do not change or change very rarely and therefore saved the effort of creating an elaborate settings interface.
 
-All features are only applied at boot. So you have to restart svitrix after modifying.   
+All features are only applied at boot. So you have to restart svitrix after modifying.
 
 Create a `dev.json` in your filemanager.
 
@@ -26,8 +26,8 @@ The JSON object has the following properties:
 | `hum_offset` | float | Sets the offset for the internal humidity measurement | `0` |
 | `min_brightness` | integer | Sets minimum brightness level for the Autobrightness control | `2` |
 | `max_brightness` | integer | Sets maximum brightness level for the Autobrightness control. On high levels, this could result in overheating! | `180` |
-| `ldr_gamma` | float | Allows to set the gammacorrection of the brightness control | 3.0 |  
-| `ldr_factor` | float | This factor is calculated into the raw ldr value wich is 0-1023 | 1.0 |  
+| `ldr_gamma` | float | Allows to set the gammacorrection of the brightness control | 3.0 |
+| `ldr_factor` | float | This factor is calculated into the raw ldr value wich is 0-1023 | 1.0 |
 | `min_battery` | integer | Calibrates the minimum battery measurement by the given raw value. You will get that from the stats api | `475` |
 | `max_battery` | integer | Calibrates the maximum battery measurement by the given raw value. You will get that from the stats api | `665` |
 | `ha_prefix` | string | Sets the prefix for Homassistant discovery | `homeassistant` |

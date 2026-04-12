@@ -2,8 +2,30 @@
 
 ## Project
 
-ESP32 firmware for Ulanzi TC001 Smart Pixel Clock (32x8 WS2812B LED matrix).
+ESP32 firmware for Ulanzi TC001 Smart Pixel Clock (32x8 WS2812B-Mini LED matrix).
 C++17 / Arduino framework / PlatformIO.
+
+### Hardware (Ulanzi TC001)
+
+- **MCU**: ESP32-WROOM-32D (dual-core Xtensa LX6, 240 MHz)
+- **Flash**: 8 MB (current partition table uses only 4 MB — expandable)
+- **RAM**: 520 KB SRAM
+- **USB-Serial**: CH340
+- **LED Matrix**: 8×32 WS2812B-Mini (256 LEDs), GPIO32, serpentine wiring
+- **Buttons**: GPIO26 (left), GPIO27 (middle/wakeup), GPIO14 (right), GPIO13 (reset) — active LOW, internal pull-up
+- **Buzzer**: GPIO15, passive piezo, PWM via LEDC (`INPUT_PULLDOWN` at init)
+- **LDR**: GPIO35 (GL5516 photoresistor, ADC1_CH7)
+- **Battery**: 4400 mAh Li-ion, GPIO34 (ADC1_CH6, voltage divider)
+- **I2C** (GPIO21 SDA, GPIO22 SCL): SHT3x temp/humidity (0x44), DS1307 RTC (0x68)
+
+### Partition Layout (svitrix_partition.csv)
+
+```
+app0:   1.875 MB (active firmware)
+app1:   1.875 MB (OTA update slot)
+spiffs: 256 KB   (LittleFS — icons, SPA, configs)
+total:  4 MB used / 8 MB available — partition table can be expanded
+```
 
 ## Build & Test
 
@@ -14,7 +36,7 @@ cd web && npm run dev      # SPA dev server (hot reload, proxies to device)
 cd web && npm run upload   # Build SPA + upload to device LittleFS
 ```
 
-Flash is ~96% full — watch binary size when adding features.
+Flash chip is 8 MB, but the partition table uses only 4 MB. App partition is 1.875 MB. Partition table can be expanded when needed.
 
 ## Project Structure
 
@@ -23,20 +45,23 @@ src/
   main.cpp                    # Composition root, dependency wiring
   Apps/                       # Native + custom app rendering (TimeApp, DateApp, etc.)
   DisplayManager/             # Display coordinator (3 classes), custom app lifecycle, settings
+                              #   + AppContentRenderer.cpp (shared rendering pipeline)
   MatrixDisplayUi/            # App framework: state machine, transitions, overlays, indicators
   MQTTManager/                # MQTT + Home Assistant auto-discovery (25 HA entities)
   MelodyPlayer/               # RTTTL parser + async PWM playback
-  Games/                      # SlotMachine, SvitrixSays (disabled by default)
+  ServerManager/              # HTTP API (35 REST endpoints)
+  PeripheryManager/           # Hardware: sensors, buzzer, buttons, battery, LDR
+  MenuManager/                # On-device settings menu
+  UpdateManager/              # OTA firmware updates
+  PowerManager/               # Sleep/wake management
+  Overlays/                   # Clock/date overlay rendering
   effects/                    # 19 visual effects + weather overlays, IPixelCanvas abstraction
+  data/                       # Static data: SvitrixFont.h, cert.h, icons.h, Dictionary.cpp/h
+  contrib/                    # Third-party headers: GifPlayer.h, ArtnetWifi.h
   AppContent.h                # AppContentBase struct (shared rendering fields)
-  AppContentRenderer.cpp      # Shared rendering pipeline for apps + notifications
   Globals.cpp/h               # Config structs, global state
-  ServerManager.cpp/h         # HTTP API (35 REST endpoints)
-  PeripheryManager.cpp/h      # Hardware: sensors, buzzer, buttons, battery, LDR
-  MenuManager.cpp/h           # On-device settings menu
-  UpdateManager.cpp/h         # OTA firmware updates
-  PowerManager.cpp/h          # Sleep/wake management
-  SvitrixFont.h               # Unicode sparse glyph table (336 glyphs, UTF-8, binary search)
+  Functions.cpp/h             # Utility functions
+  timer.cpp/h                 # Background timer helpers
 lib/
   interfaces/                 # 13 interfaces (IDisplayControl, INotifier, IPixelCanvas, etc.)
   services/                   # 13 service libraries (100% test coverage)
@@ -97,7 +122,6 @@ All inter-module communication goes through interfaces wired in `main.cpp`.
 │  PowerManager_ ───────────── deep sleep / wake                      │
 │  UpdateManager_ ──────────── OTA firmware updates                   │
 │  DataFetcher_ ────────────── external HTTP data sources             │
-│  GameManager_ ────────────── games (disabled by default)            │
 └──────────────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────────────────────────────────────────────────┐
@@ -124,7 +148,7 @@ DisplayManager_      IDisplayControl     →       MenuManager, ServerManager, M
 DisplayManager_      IDisplayNavigation  →       MenuManager, ServerManager, MQTTManager, DataFetcher
 DisplayManager_      IMatrixHost         →       MatrixDisplayUi
 DisplayManager_      IButtonHandler      →       PeripheryManager (dispatcher)
-DisplayRenderer_     IDisplayRenderer    →       UpdateManager, GameManager, MenuManager, ServerManager
+DisplayRenderer_     IDisplayRenderer    →       UpdateManager, MenuManager, ServerManager
 NotificationManager_ IDisplayNotifier   →       ServerManager, MQTTManager
 MQTTManager_         INotifier           →       DisplayManager, NotificationManager
 MQTTManager_         IButtonReporter     →       PeripheryManager (dispatcher)
@@ -212,7 +236,7 @@ CLAUDE.md (root)                            ← you are here
 ├── lib/webserver/CLAUDE.md                 ← FSWebServer, WiFi, routes, SPA fallback
 ├── web/README.md                           ← SPA: Preact + Vite, 6 pages, dev workflow
 │
-├── src/CLAUDE.md                           ← standalone modules: ServerManager (35 endpoints),
+├── src/CLAUDE.md                           ← module docs: ServerManager (35 endpoints),
 │                                              PeripheryManager (buttons, sensors, buzzer),
 │                                              MenuManager (13 menu items), UpdateManager (OTA),
 │                                              PowerManager (deep sleep), Globals (config store),
@@ -223,7 +247,6 @@ CLAUDE.md (root)                            ← you are here
 ├── src/DataFetcher/CLAUDE.md               ← external HTTP data sources, round-robin polling
 │
 ├── src/Apps/README.md                      ← native + custom app rendering
-├── src/Games/README.md                     ← GameManager, SlotMachine, SvitrixSays
 ├── src/MelodyPlayer/README.md              ← RTTTL parser, async PWM playback
 └── src/effects/README.md                   ← 19 visual effects, weather overlays, IPixelCanvas
 ```

@@ -25,7 +25,6 @@ Scan recent code changes and update the corresponding CLAUDE.md / README.md file
    | `src/MatrixDisplayUi/` | `src/MatrixDisplayUi/CLAUDE.md` |
    | `src/DataFetcher/` | `src/DataFetcher/CLAUDE.md` |
    | `src/Apps/` | `src/Apps/README.md` |
-   | `src/Games/` | `src/Games/README.md` |
    | `src/MelodyPlayer/` | `src/MelodyPlayer/README.md` |
    | `src/effects/` | `src/effects/README.md` |
    | `src/ServerManager.*`, `src/PeripheryManager.*`, `src/MenuManager.*`, `src/Globals.*`, `src/AppContentRenderer.*` | `src/CLAUDE.md` |

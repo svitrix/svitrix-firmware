@@ -24,7 +24,6 @@ Analyze ALL changes on the current feature branch vs main and update every affec
    | `src/MatrixDisplayUi/` | `src/MatrixDisplayUi/CLAUDE.md` |
    | `src/DataFetcher/` | `src/DataFetcher/CLAUDE.md` |
    | `src/Apps/` | `src/Apps/README.md` |
-   | `src/Games/` | `src/Games/README.md` |
    | `src/MelodyPlayer/` | `src/MelodyPlayer/README.md` |
    | `src/effects/` | `src/effects/README.md` |
    | `src/ServerManager.*`, `src/PeripheryManager.*`, `src/MenuManager.*`, `src/Globals.*`, `src/AppContentRenderer.*`, `src/PowerManager.*`, `src/UpdateManager.*` | `src/CLAUDE.md` |
@@ -67,16 +66,16 @@ Analyze ALL changes on the current feature branch vs main and update every affec
    ```
    === Docs Sync Report ===
    Branch: feature/xxx (N commits ahead of main)
-   
+
    Updated:
    - src/MQTTManager/CLAUDE.md — added new entity X, updated topic list
    - lib/services/CLAUDE.md — added new service Y
    - CLAUDE.md (root) — updated entity count 25→26
-   
+
    No changes needed:
    - src/DisplayManager/CLAUDE.md
    - ...
-   
+
    Counts verified:
    - HA entities: 26 ✓
    - Effects: 19 ✓

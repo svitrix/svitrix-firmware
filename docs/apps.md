@@ -1,51 +1,51 @@
 # Native Apps
 ## Time
-The native Time app offers extensive customization options. Almost everything can be configured via the API, and most settings can also be adjusted through the SVITRIX app.   
-The time format can be customized to your preferences. By default, it is set to `HH:mm`.   
-If the selected format doesn't fit on the screen, it will automatically revert to this default.   
-You might notice some lines at the bottom of the screen. These lines represent the weekdays, with the current day highlighted brighter. It is also possible to deactive this weekday bar.  
-You can also customize the colors for the calendar icon, the weekday bar and also the textcolor with the [SettingsAPI](./api#change-settings) or the mobile App.    
+The native Time app offers extensive customization options. Almost everything can be configured via the API, and most settings can also be adjusted through the SVITRIX app.
+The time format can be customized to your preferences. By default, it is set to `HH:mm`.
+If the selected format doesn't fit on the screen, it will automatically revert to this default.
+You might notice some lines at the bottom of the screen. These lines represent the weekdays, with the current day highlighted brighter. It is also possible to deactive this weekday bar.
+You can also customize the colors for the calendar icon, the weekday bar and also the textcolor with the [SettingsAPI](./api#change-settings) or the mobile App.
 
-The `TMODE` setting determines the layout and style of the Time App. 
+The `TMODE` setting determines the layout and style of the Time App.
 
- **TMODE=0**  
-<img src="./assets/TMODE0.png" style="max-height:70px;">  
-Displays the time along with a weekday bar at the bottom of the screen.  
-  
-**TMODE=1**  
-<img src="./assets/TMODE1.png" style="max-height:70px;">   
-Shows the time with the weekday bar on the bottom and a calendar box that highlights the current day of the month.  
+ **TMODE=0**
+<img src="./assets/TMODE0.png" style="max-height:70px;">
+Displays the time along with a weekday bar at the bottom of the screen.
 
-**TMODE=2**  
-<img src="./assets/TMODE2.png" style="max-height:70px;">   
-Similar to `TMODE=1`, but places the weekday bar at the top.   
+**TMODE=1**
+<img src="./assets/TMODE1.png" style="max-height:70px;">
+Shows the time with the weekday bar on the bottom and a calendar box that highlights the current day of the month.
 
-**TMODE=3**  
-<img src="./assets/TMODE3.png" style="max-height:70px;">   
-Displays the time with the weekday bar at the bottom and a different calendar icon.  
+**TMODE=2**
+<img src="./assets/TMODE2.png" style="max-height:70px;">
+Similar to `TMODE=1`, but places the weekday bar at the top.
 
-**TMODE=4**  
-<img src="./assets/TMODE4.png" style="max-height:70px;">   
-Similar to `TMODE=3`, but places the weekday bar at the top.    
+**TMODE=3**
+<img src="./assets/TMODE3.png" style="max-height:70px;">
+Displays the time with the weekday bar at the bottom and a different calendar icon.
 
-**TMODE=5**  
-<img src="./assets/TMODE5.png" style="max-height:70px;">   
-Introduces a "big time" display, utilizing a large font for the time.  
-If a 32x8 GIF named `bigtime.gif` exists in the root directory, it will be played in the background.  
-Please note: Once the GIF is displayed in BigTime mode, it cannot be directly replaced because the file is in use.  
-To replace the icon, switch the mode to TMODE first, and then you'll be able to update the GIF.    
-If no GIF is found, the global textcolor is used.     
+**TMODE=4**
+<img src="./assets/TMODE4.png" style="max-height:70px;">
+Similar to `TMODE=3`, but places the weekday bar at the top.
 
-[You can get some bigtime GIFs examples here](https://github.com/svitrix/svitrix-firmware/tree/main/docs/assets/bigtime-gifs).   
+**TMODE=5**
+<img src="./assets/TMODE5.png" style="max-height:70px;">
+Introduces a "big time" display, utilizing a large font for the time.
+If a 32x8 GIF named `bigtime.gif` exists in the root directory, it will be played in the background.
+Please note: Once the GIF is displayed in BigTime mode, it cannot be directly replaced because the file is in use.
+To replace the icon, switch the mode to TMODE first, and then you'll be able to update the GIF.
+If no GIF is found, the global textcolor is used.
 
-**TMODE=6**  
-<img src="./assets/TMODE6.png" style="max-height:70px;">   
-Displays the time in **binary format**:  
-The top row shows the hour, the middle row shows the minutes, and the bottom row shows the seconds.  
-Each row has six dots, where lit dots represent binary "1" and white dots represent binary "0".  
-To read the time, convert the lit dots in each row to a decimal number.     
+[You can get some bigtime GIFs examples here](https://github.com/svitrix/svitrix-firmware/tree/main/docs/assets/bigtime-gifs).
 
-#### **Available Time Formats:**  
+**TMODE=6**
+<img src="./assets/TMODE6.png" style="max-height:70px;">
+Displays the time in **binary format**:
+The top row shows the hour, the middle row shows the minutes, and the bottom row shows the seconds.
+Each row has six dots, where lit dots represent binary "1" and white dots represent binary "0".
+To read the time, convert the lit dots in each row to a decimal number.
+
+#### **Available Time Formats:**
 | Format       | Example    | Description                                |
 |--------------|------------|--------------------------------------------|
 | `%H:%M:%S`   | `13:30:45` | 24-hour time with seconds                 |
@@ -59,11 +59,11 @@ To read the time, convert the lit dots in each row to a decimal number.
 
 ---
 ## Date
-<img src="./assets/DATE.png" style="max-height:100px;">  
+<img src="./assets/DATE.png" style="max-height:100px;">
 
-The Dateapp shows the current date of course. There are several dateformats 'DFORMAT' you can choose from:  
+The Dateapp shows the current date of course. There are several dateformats 'DFORMAT' you can choose from:
 
-#### **Available Date Formats:**  
+#### **Available Date Formats:**
 | Format       | Example    | Description            |
 |--------------|------------|------------------------|
 | `%d.%m.%y`   | `16.04.22` | Day.Month.Year (short) |
@@ -77,37 +77,37 @@ The Dateapp shows the current date of course. There are several dateformats 'DFO
 | `%m-%d-%y`   | `04-16-22` | Month-Day-Year         |
 
 ---
-## Temperature  
+## Temperature
 
-<img src="./assets/TEMP.png" style="max-height:100px;">  
+<img src="./assets/TEMP.png" style="max-height:100px;">
 
-The Temperature App displays the current reading from the integrated temperature sensor.  
-However, due to the sensor's placement inside the housing, the measurement may not be entirely accurate.   
-Factors such as the power board, LED matrix, brightness, color, and the number of lit pixels can affect the temperature reading.  
-For more precise messurement, you can utilize the [dev.json](./dev) to calibrate the temperature with the `temp_offset` key. 
-
----
-## Humidity  
-
-<img src="./assets/HUM.png" style="max-height:100px;">  
-
-The humidity App displays the current reading from the integrated humidity sensor.  
-However, due to the sensor's placement inside the housing, the measurement may not be entirely accurate.   
-Factors such as the power board, LED matrix, brightness, color, and the number of lit pixels can affect the humidity reading.  
-For more precise messurement, you can utilize the [dev.json](./dev) to calibrate the temperature with the `hum_offset` key. 
+The Temperature App displays the current reading from the integrated temperature sensor.
+However, due to the sensor's placement inside the housing, the measurement may not be entirely accurate.
+Factors such as the power board, LED matrix, brightness, color, and the number of lit pixels can affect the temperature reading.
+For more precise messurement, you can utilize the [dev.json](./dev) to calibrate the temperature with the `temp_offset` key.
 
 ---
-## Battery  
+## Humidity
 
-<img src="./assets/BAT.png" style="max-height:100px;">  
+<img src="./assets/HUM.png" style="max-height:100px;">
 
-The Battery App displays the current charge level of the integrated battery.  
+The humidity App displays the current reading from the integrated humidity sensor.
+However, due to the sensor's placement inside the housing, the measurement may not be entirely accurate.
+Factors such as the power board, LED matrix, brightness, color, and the number of lit pixels can affect the humidity reading.
+For more precise messurement, you can utilize the [dev.json](./dev) to calibrate the temperature with the `hum_offset` key.
+
+---
+## Battery
+
+<img src="./assets/BAT.png" style="max-height:100px;">
+
+The Battery App displays the current charge level of the integrated battery.
 Due to differences in battery batches and the degradation of the cheap battery over time, you may need to calibrate it manually.
 
-1. Use the [Status API](./api#status-retrieval) to retrieve the `bat_raw` readings.  
-2. Open the [dev.json](./dev) file to configure the `min_battery` and `max_battery` values:  
-   - **`min_battery`**: Enter the `bat_raw` value when the battery is empty.  
-   - **`max_battery`**: Enter the `bat_raw` value when the battery is fully charged.  
+1. Use the [Status API](./api#status-retrieval) to retrieve the `bat_raw` readings.
+2. Open the [dev.json](./dev) file to configure the `min_battery` and `max_battery` values:
+   - **`min_battery`**: Enter the `bat_raw` value when the battery is empty.
+   - **`max_battery`**: Enter the `bat_raw` value when the battery is fully charged.
 
 
 ---
@@ -130,22 +130,22 @@ There are numerous benefits to this approach:
 You can use any system you like which is able to build json strings and send them to a mqtt topic.
 
 ## SVITRIX FLOWS
-This is your go-to hub for sharing and discovering SVITRIX automations, also known as custom Apps for several services.  
-Enhance your SVITRIX experience, exchange ideas, and get inspired. Lets bring our creative automations to life together!  
-No login is necessary, neither for creating new flows. As a creator you will get a link with which you can always edit your flow. Keep it save!  
-You can upload your icons to your flow, and user can copy them directly to their SVITRIX with one click!  
-New flows are regularly moderated.  
-https://flows.svitrix.dev/   
-    
+This is your go-to hub for sharing and discovering SVITRIX automations, also known as custom Apps for several services.
+Enhance your SVITRIX experience, exchange ideas, and get inspired. Lets bring our creative automations to life together!
+No login is necessary, neither for creating new flows. As a creator you will get a link with which you can always edit your flow. Keep it save!
+You can upload your icons to your flow, and user can copy them directly to their SVITRIX with one click!
+New flows are regularly moderated.
+https://flows.svitrix.dev/
+
 
 ## Flow example with Node-RED
-[Node-RED](https://nodered.org/) serves as an ideal software solution for creating these applications.  
+[Node-RED](https://nodered.org/) serves as an ideal software solution for creating these applications.
 It is available as a standalone program or as a plugin for Home Assistant and ioBroker, allowing you to further enhance the capabilities of your SVITRIX system.
-    
+
 Here is a demo, please press the triangle to unfold.
 
 <details>
-  <summary>Example for adding a Youtube App as NodeRED flow</summary>    
+  <summary>Example for adding a Youtube App as NodeRED flow</summary>
   <pre><code class="language-json">
 [
   {
@@ -316,7 +316,7 @@ Here is a demo, please press the triangle to unfold.
     "userProps": "",
     "sessionExpiry": ""
   }
-]  
+]
   </code></pre>
 </details>
 
@@ -332,5 +332,3 @@ This Node-RED flow retrieves and displays the subscriber count of a specified Yo
 To use this flow, replace the "XXX" in the "Data" node with your YouTube API key and ensure that the MQTT broker settings in the "MQTT out" node are correct.
 The flow will then retrieve the subscriber count of the specified YouTube channel and display it on your SVITRIX device along with the icon.
 This Flow uses icon 5029 from LM (Just download it from the svitrix webinterface). You can change the icon in the flow to your favorite one.
-
-

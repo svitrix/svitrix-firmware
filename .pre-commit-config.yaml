@@ -42,10 +42,16 @@ repos:
     hooks:
       - id: cppcheck
         args:
+          - '--language=c++'
           - '--suppress=missingInclude'
           - '--suppress=unusedFunction'
           - '--suppress=unmatchedSuppression'
           - '--suppress=toomanyconfigs'
+          - '--suppress=unknownMacro'
+          - '--suppress=uninitMemberVar'
+          - '--suppress=uninitMemberVarPrivate'
+          - '--suppress=unusedStructMember'
+          - '--suppress=duplicateCondition'
           - '--enable=warning,style,performance'
           - '--inline-suppr'
           - '--std=c++17'

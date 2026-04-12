@@ -5,8 +5,8 @@
 #include "MenuManager.h"
 #include "PeripheryManager.h"
 #include <WiFi.h>
-#include "effects.h"
-#include "effects/NeoMatrixCanvas.h"
+#include "EffectRegistry.h"
+#include "NeoMatrixCanvas.h"
 #include "MQTTManager.h"
 
 std::deque<Notification> notifications;
