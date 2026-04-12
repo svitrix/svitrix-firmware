@@ -312,6 +312,20 @@ web/src/api/client.ts                  — new endpoint calls
 web/README.md                          — update if new page/section
 ```
 
+## Cross-module Impact Map
+
+When changing shared types or interfaces, these modules must also be checked:
+
+| If you change... | Also check / update... |
+|---|---|
+| `lib/config/ConfigTypes.h` fields | `Globals.cpp` (NVS), `ServerManager` (API), web UI (types + section), `MQTTManager` (HA entities), `lib/config/CLAUDE.md` |
+| `lib/interfaces/I*.h` methods | All implementors + consumers (see Interface Wiring table above), `lib/interfaces/CLAUDE.md` |
+| `src/effects/EffectRegistry` | `EffectRegistry.h` (kNumEffects), `src/effects/README.md`, web UI effect list |
+| `src/Apps/Apps_NativeApps.cpp` modes | `TimeDateSection.tsx`, `src/CLAUDE.md` (TimeApp docs) |
+| `IPixelCanvas` API | All 19 effects, `NeoMatrixCanvas.h`, `MockPixelCanvas.h`, effect tests |
+| `web/src/api/types.ts` Settings | `SettingsContext.tsx`, all settings-sections that use changed fields |
+| `src/MQTTManager/` HA entities | `src/MQTTManager/CLAUDE.md` (entity count + table), root CLAUDE.md (25 HA entities) |
+
 ## Coding Conventions
 
 - Build flags defined in `platformio.ini` — `-DULANZI` for hardware-specific code
