@@ -1,6 +1,6 @@
 # Services Library — AI Reference
 
-13 pure-logic utility libraries extracted from managers for testability. All stateless (except TextUtils), no hardware dependencies, 100% test coverage.
+14 pure-logic utility libraries extracted from managers for testability. All stateless (except TextUtils), no hardware dependencies, 100% test coverage.
 
 ## Service Map
 
@@ -19,6 +19,7 @@
 | **HADiscovery** | HA entity descriptors and ID generation | Yes | `get*Descriptors()`, `buildEntityId()`, `getTotalEntityCount()` |
 | **OverlayMapping** | Weather overlay enum ↔ string | Yes | `overlayToString()`, `overlayFromString()` |
 | **PlaceholderUtils** | `{{key}}` template substitution via callback | Yes | `replacePlaceholdersWith(input, getValue)` |
+| **LayoutEngine** | Icon/text position: left, right, none layouts | Yes | `computeLayout()`, `layoutToString()`, `layoutFromString()` |
 
 ## Dependency Graph
 
@@ -36,6 +37,7 @@ MessageRouter (standalone)
 HADiscovery (standalone)
 OverlayMapping (standalone)
 PlaceholderUtils (standalone)
+LayoutEngine (standalone)
 ```
 
 No inter-service circular dependencies. Most services are fully standalone.
@@ -49,6 +51,7 @@ No inter-service circular dependencies. Most services are fully standalone.
 | PeripheryManager | SensorCalc |
 | MQTTManager | MessageRouter, HADiscovery, AppRegistry, StatsBuilder, PlaceholderUtils |
 | Apps | ColorUtils, TimeEffects, TextUtils |
+| DisplayManager, Apps, Overlays | LayoutEngine |
 | main.cpp | TextUtils (`setTextFont(SvitrixFont)` — must be called at startup) |
 
 ## Test Coverage
@@ -70,6 +73,7 @@ Every service has dedicated tests in `test/test_native/`:
 | HADiscovery | `test_ha_discovery/` |
 | OverlayMapping | `test_overlay/` |
 | PlaceholderUtils | `test_placeholder_utils/` |
+| LayoutEngine | `test_layout_engine/` |
 
 Run all: `pio test -e native_test`
 

@@ -21,6 +21,7 @@
 #include "Functions.h"
 #include <WiFi.h>
 #include "Dictionary.h"
+#include "LayoutEngine.h"
 
 /// Builds and returns the device status JSON: battery, sensors, uptime, WiFi RSSI,
 /// free RAM, brightness, indicator states, current app, firmware version, and IP address.
@@ -91,6 +92,7 @@ String DisplayManager_::getSettings()
     doc["TEMP_COL"] = colorConfig.tempColor;
     doc["BAT_COL"] = colorConfig.batColor;
     doc["SSPEED"] = appConfig.scrollSpeed;
+    doc["NILAYOUT"] = layoutToString(appConfig.nativeIconLayout);
     doc["TIM"] = appConfig.showTime;
     doc["DAT"] = appConfig.showDate;
     doc["HUM"] = appConfig.showHum;
@@ -140,6 +142,10 @@ void DisplayManager_::setNewSettings(const char *json)
     appConfig.timePerTransition = doc.containsKey("TSPEED") ? doc["TSPEED"] : appConfig.timePerTransition;
     brightnessConfig.brightness = doc.containsKey("BRI") ? doc["BRI"] : brightnessConfig.brightness;
     appConfig.scrollSpeed = doc.containsKey("SSPEED") ? doc["SSPEED"] : appConfig.scrollSpeed;
+    if (doc.containsKey("NILAYOUT"))
+    {
+        appConfig.nativeIconLayout = layoutFromString(doc["NILAYOUT"].as<String>());
+    }
     timeConfig.isCelsius = doc.containsKey("CEL") ? doc["CEL"] : timeConfig.isCelsius;
     timeConfig.startOnMonday = doc.containsKey("SOM") ? doc["SOM"].as<bool>() : timeConfig.startOnMonday;
     displayConfig.matrixOff = doc.containsKey("MATP") ? !doc["MATP"].as<bool>() : displayConfig.matrixOff;

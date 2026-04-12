@@ -333,7 +333,7 @@ Central configuration store and persistent settings. Defines all config structs 
 | `BrightnessConfig` | brightness, autoBrightness, min/max, ldrGamma/Factor | Brightness |
 | `ColorConfig` | textColor, timeColor, dateColor, batColor, tempColor, humColor, weekday, calendar | Colors |
 | `TimeConfig` | timeFormat, dateFormat, timeMode, startOnMonday, ntpServer, isCelsius | Time/date |
-| `AppConfig` | showTime/Date/Bat/Temp/Hum, autoTransition, transEffect, scrollSpeed | Apps |
+| `AppConfig` | showTime/Date/Bat/Temp/Hum, autoTransition, transEffect, scrollSpeed, nativeIconLayout | Apps |
 | `AudioConfig` | soundActive, soundVolume, bootSound | Audio |
 | `SystemConfig` | debugMode, hostname, deviceId, updateUrls, buttonCallback | System |
 
@@ -385,6 +385,7 @@ Shared rendering data structure and pipeline used by both custom apps and notifi
 | `pushIcon` | byte | Icon push animation mode |
 | `progress` / `pColor` / `pbColor` | int/uint32_t | Progress bar |
 | `barData[16]` / `lineData[16]` | int | Bar/line chart data |
+| `layout` | IconLayout | Icon/text positioning: Left, Right, None |
 | `effect` | int | Background effect index |
 | `overlay` | OverlayEffect | Weather overlay |
 | `drawInstructions` | String | JSON draw commands |

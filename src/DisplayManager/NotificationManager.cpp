@@ -63,7 +63,8 @@ bool NotificationManager_::generateNotification(uint8_t source, const char *json
                          newNotification.rainbow, newNotification.pushIcon, newNotification.textCase,
                          newNotification.iconOffset, newNotification.textOffset, newNotification.scrollSpeed,
                          newNotification.topText, newNotification.fade, newNotification.blink, newNotification.center,
-                         newNotification.noScrolling, newNotification.repeat, newNotification.drawInstructions);
+                         newNotification.noScrolling, newNotification.repeat, newNotification.drawInstructions,
+                         newNotification.layout);
     newNotification.color = parseAppColor(obj);
     parseTextOrFragments(obj, newNotification.text, newNotification.colors, newNotification.fragments, newNotification.color);
 

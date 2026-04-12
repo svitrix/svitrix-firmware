@@ -206,6 +206,7 @@ Below are the properties you can utilize in the JSON object. **All keys are opti
 | `effect` | string | Shows an [effect](./effects) as background. The effect can be removed by sending an empty string for effect. |  | X | X |
 | `effectSettings` | json map | Changes color and speed of the [effect](./effects). |  | X | X |
 | `save` | boolean | Saves your custom app into flash and reloads it after boot. Avoid this for custom apps with high update frequencies because the ESP's flash memory has limited write cycles. |  | X |  |
+| `layout` | string | Controls icon positioning: `"left"` (default), `"right"`, or `"none"`. When set to `"right"`, the icon appears on the right side of the display. When set to `"none"`, the icon is hidden and text uses the full 32-pixel width. | `"left"` | X | X |
 | `overlay`| string  | Sets an effect overlay (cannot be used with global overlays). |  | X | X |
 
 **Color**: Accepts a hex string or an R,G,B array: `"#FFFFFF"` or `[255,255,0]`.
@@ -454,6 +455,7 @@ You can adjust each property in the JSON object according to your preferences. I
 | `HUM_COL`     | string/array of ints      | Text color of the humidity app. Use 0 for global text color.                                        | RGB array or hex color                             | N/A     |
 | `BAT_COL`     | string/array of ints      | Text color of the battery app. Use 0 for global text color.                                         | RGB array or hex color                             | N/A     |
 | `SSPEED`      | integer                   | Scroll speed modification.                                                                          | Percentage of original scroll speed                | 100     |
+| `NILAYOUT`    | string                    | Icon layout for native apps (Temperature, Humidity, Battery). Controls icon position.               | `"left"`, `"right"`, `"none"`                      | `"left"` |
 | `TIM`         | boolean                   | Enable or disable the native time app (requires reboot).                                            | `true`/`false`                                     | true    |
 | `DAT`         | boolean                   | Enable or disable the native date app (requires reboot).                                            | `true`/`false`                                     | true    |
 | `HUM`         | boolean                   | Enable or disable the native humidity app (requires reboot).                                        | `true`/`false`                                     | true    |

@@ -16,6 +16,7 @@
 #include "MatrixDisplayUi.h"
 #include "GifPlayer.h"
 #include "OverlayMapping.h"
+#include "LayoutEngine.h"
 #include <vector>
 
 // ── Matrix dimensions ──────────────────────────────────────────────
@@ -66,7 +67,8 @@ void parseCommonAppFields(JsonObject doc, int& effect, OverlayEffect& overlay,
                           bool& rainbow, byte& pushIcon, byte& textCase,
                           int& iconOffset, int& textOffset, float& scrollSpeed,
                           bool& topText, int& fade, int& blink, bool& center,
-                          bool& noScrolling, int16_t& repeat, String& drawInstructions);
+                          bool& noScrolling, int16_t& repeat, String& drawInstructions,
+                          IconLayout& layout);
 uint32_t parseAppColor(JsonObject doc);
 uint32_t parseBackground(JsonObject doc);
 

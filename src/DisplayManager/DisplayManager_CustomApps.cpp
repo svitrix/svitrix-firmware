@@ -352,7 +352,8 @@ bool DisplayManager_::generateCustomPage(const String& name, JsonObject doc, boo
                          customApp.rainbow, customApp.pushIcon, customApp.textCase,
                          customApp.iconOffset, customApp.textOffset, customApp.scrollSpeed,
                          customApp.topText, customApp.fade, customApp.blink, customApp.center,
-                         customApp.noScrolling, customApp.repeat, customApp.drawInstructions);
+                         customApp.noScrolling, customApp.repeat, customApp.drawInstructions,
+                         customApp.layout);
 
     // Color with hasCustomColor tracking (CustomApp-specific)
     if (doc.containsKey("color"))
@@ -534,7 +535,7 @@ bool DisplayManager_::switchToApp(const char *json)
     }
 
     String name = doc["name"].as<String>();
-    bool fast = doc["fast"] | false;
+    bool fast = doc["fast"].as<bool>();
     doc.clear();
     int index = findAppIndexByName(name);
     if (index > -1)
@@ -593,7 +594,7 @@ void DisplayManager_::updateAppVector(const char *json)
     for (JsonObject appObj : appArray)
     {
         String appName = appObj["name"].as<String>();
-        bool show = appObj["show"].as<bool>();
+        bool showApp = appObj["show"].as<bool>();
         int position = appObj.containsKey("pos") ? appObj["pos"].as<int>() : Apps.size();
 
         auto appIt = std::find_if(Apps.begin(), Apps.end(), [&appName](const std::pair<String, AppCallback>& app)
@@ -601,7 +602,7 @@ void DisplayManager_::updateAppVector(const char *json)
 
         std::pair<String, AppCallback> nativeApp = getNativeAppByName(appName);
 
-        if (!show)
+        if (!showApp)
         {
             if (appIt != Apps.end())
             {
@@ -682,7 +683,7 @@ String DisplayManager_::getAppsWithIcon()
         JsonObject appObject = jsonArray.createNestedObject();
         appObject["name"] = app.first;
 
-        CustomApp *customApp = getCustomAppByName(app.first);
+        const CustomApp *customApp = getCustomAppByName(app.first);
         if (customApp != nullptr)
         {
             appObject["icon"] = customApp->iconName;
@@ -708,13 +709,12 @@ void DisplayManager_::reorderApps(const String& jsonString)
     std::vector<std::pair<String, AppCallback>> reorderedApps;
     for (const String& appName : jsonArray)
     {
-        for (const auto& app : Apps)
+        auto it = std::find_if(Apps.begin(), Apps.end(),
+                               [&appName](const std::pair<String, AppCallback>& app)
+                               { return app.first == appName; });
+        if (it != Apps.end())
         {
-            if (app.first == appName)
-            {
-                reorderedApps.push_back(app);
-                break;
-            }
+            reorderedApps.push_back(*it);
         }
     }
     Apps = reorderedApps;
