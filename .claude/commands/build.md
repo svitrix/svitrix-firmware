@@ -36,3 +36,10 @@ Run the complete local CI pipeline for Svitrix firmware. Execute each step seque
    Firmware:  XXX KB / 3932 KB (XX%)
    Status:    OK | WARNING | CRITICAL
    ```
+
+## Done when
+
+- [ ] All test suites pass (zero failures)
+- [ ] Firmware builds without errors
+- [ ] Flash usage reported with threshold status
+- [ ] Summary table printed

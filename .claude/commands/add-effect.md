@@ -60,3 +60,14 @@ int16_t getHeight();  // 8
 void fill(CRGB color);
 void clear();
 ```
+
+## Done when
+
+- [ ] Effect function compiles and follows IPixelCanvas API (no direct FastLED access)
+- [ ] Effect registered in EffectRegistry.cpp, kNumEffects incremented
+- [ ] Test exists in test/test_native/test_effects/ using MockPixelCanvas
+- [ ] `pio test -e native_test` — all tests pass
+- [ ] `pio run -e ulanzi` — builds successfully
+- [ ] Flash size < 95% of partition
+- [ ] `src/effects/README.md` updated with new effect row
+- [ ] Effect count in root `CLAUDE.md` updated

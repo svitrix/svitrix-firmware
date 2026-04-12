@@ -91,3 +91,10 @@ Create a GitHub Pull Request from the current feature branch to main with a stru
 - Test Plan checkboxes should be specific to the actual changes
 - If the branch has only doc/config changes, simplify the template accordingly
 - Do NOT auto-merge — just create the PR
+
+## Done when
+
+- [ ] Branch pushed to origin
+- [ ] PR created with title in conventional commit format
+- [ ] PR body has Summary, Changes, and Test Plan sections
+- [ ] PR URL printed to user
