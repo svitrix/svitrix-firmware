@@ -121,7 +121,20 @@ export async function deleteFile(path: string): Promise<Response> {
 }
 
 // WiFi
-export const scanWifi = () => get<Array<{ ssid: string; rssi: number; secure: number }>>("/scan");
+export async function scanWifi(): Promise<Array<{ ssid: string; rssi: number; secure: number }>> {
+  const maxAttempts = 15;
+  for (let i = 0; i < maxAttempts; i++) {
+    const res = await fetch("/scan");
+    if (res.status === 200) return res.json();
+    // 202 = scanning in progress, wait and retry
+    if (res.status === 202) {
+      await new Promise((r) => setTimeout(r, 1000));
+      continue;
+    }
+    throw new Error(`Scan failed: ${res.status}`);
+  }
+  throw new Error("Scan timeout");
+}
 export const connectWifi = (ssid: string, password: string) => {
   const form = new FormData();
   form.append("ssid", ssid);

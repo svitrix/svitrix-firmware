@@ -429,39 +429,56 @@ void FSWebServer::doWifiConnection(AsyncWebServerRequest *request)
 
 void FSWebServer::handleScanNetworks(AsyncWebServerRequest *request)
 {
-    String jsonList = "[";
-    DebugPrint("Scanning WiFi networks...");
-    int n = WiFi.scanNetworks();
-    DebugPrintln(" complete.");
+    int n = WiFi.scanComplete();
+
+    if (n == WIFI_SCAN_FAILED)
+    {
+        // No scan running — start async scan
+        DebugPrintln("Starting async WiFi scan...");
+        WiFi.scanNetworks(true);
+        request->send(202, "text/json", "{\"status\":\"scanning\"}");
+        return;
+    }
+
+    if (n == WIFI_SCAN_RUNNING)
+    {
+        // Scan in progress — tell client to retry
+        request->send(202, "text/json", "{\"status\":\"scanning\"}");
+        return;
+    }
+
+    // Scan complete — build results
     if (n == 0)
     {
-        DebugPrintln("no networks found");
+        DebugPrintln("No networks found");
+        WiFi.scanDelete();
         request->send(200, "text/json", "[]");
         return;
     }
-    else
-    {
-        DebugPrint(n);
-        DebugPrintln(" networks found:");
 
-        for (int i = 0; i < n; ++i)
-        {
-            String ssid = WiFi.SSID(i);
-            int rssi = WiFi.RSSI(i);
-            String security = WiFi.encryptionType(i) == WIFI_AUTH_OPEN ? "none" : "enabled";
-            jsonList += "{\"ssid\":\"";
-            jsonList += ssid;
-            jsonList += "\",\"strength\":\"";
-            jsonList += rssi;
-            jsonList += "\",\"security\":";
-            jsonList += security == "none" ? "false" : "true";
-            jsonList += ssid.equals(WiFi.SSID()) ? ",\"selected\": true" : "";
-            jsonList += i < n - 1 ? "}," : "}";
-        }
-        jsonList += "]";
+    DebugPrint(n);
+    DebugPrintln(" networks found");
+
+    String jsonList = "[";
+    for (int i = 0; i < n; ++i)
+    {
+        String ssid = WiFi.SSID(i);
+        int rssi = WiFi.RSSI(i);
+        bool open = WiFi.encryptionType(i) == WIFI_AUTH_OPEN;
+        jsonList += "{\"ssid\":\"";
+        jsonList += ssid;
+        jsonList += "\",\"strength\":\"";
+        jsonList += rssi;
+        jsonList += "\",\"security\":";
+        jsonList += open ? "false" : "true";
+        if (ssid.equals(WiFi.SSID()))
+            jsonList += ",\"selected\":true";
+        jsonList += i < n - 1 ? "}," : "}";
     }
+    jsonList += "]";
+
+    WiFi.scanDelete();
     request->send(200, "text/json", jsonList);
-    DebugPrintln(jsonList);
 }
 
 void FSWebServer::handleIndex(AsyncWebServerRequest *request)
