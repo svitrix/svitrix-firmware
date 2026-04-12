@@ -86,6 +86,7 @@ export interface FileEntry {
 export interface Notification {
   text: string;
   icon?: string;
+  layout?: "left" | "right" | "none";
   duration?: number;
   color?: string | [number, number, number];
   rainbow?: boolean;

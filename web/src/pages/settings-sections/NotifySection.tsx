@@ -1,7 +1,7 @@
 import { useState } from "preact/hooks";
 import { sendNotify, dismissNotify } from "../../api/client";
 import type { Notification } from "../../api/types";
-import { Card, TextField, ColorField, Toggle, Slider, Button, FormRow } from "../../components/ui";
+import { Card, TextField, ColorField, Toggle, Slider, Select, Button, FormRow } from "../../components/ui";
 import { toast } from "../../components/Toast";
 
 export function NotifySection() {
@@ -27,6 +27,7 @@ export function NotifySection() {
     try {
       const payload: Notification = { text: notif.text };
       if (notif.icon) payload.icon = notif.icon;
+      if (notif.layout && notif.layout !== "left") payload.layout = notif.layout;
       if (notif.duration && notif.duration !== 5) payload.duration = notif.duration;
       if (notif.rainbow) payload.rainbow = true;
       if (notif.color && !notif.rainbow) payload.color = notif.color;
@@ -66,15 +67,25 @@ export function NotifySection() {
             onChange={(v) => upd({ icon: v })}
             placeholder="Icon ID or name"
           />
-          <Slider
-            label="Duration"
-            min={1}
-            max={60}
-            value={notif.duration || 5}
-            onChange={(v) => upd({ duration: v })}
-            unit="s"
+          <Select
+            label="Icon Layout"
+            value={notif.layout || "left"}
+            options={[
+              { value: "left", label: "Left" },
+              { value: "right", label: "Right" },
+              { value: "none", label: "None" },
+            ]}
+            onChange={(v) => upd({ layout: v as "left" | "right" | "none" })}
           />
         </FormRow>
+        <Slider
+          label="Duration"
+          min={1}
+          max={60}
+          value={notif.duration || 5}
+          onChange={(v) => upd({ duration: v })}
+          unit="s"
+        />
         <FormRow>
           <Toggle
             label="Rainbow"
