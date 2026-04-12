@@ -4,9 +4,9 @@ import {
   addDataSource,
   deleteDataSource,
   fetchDataSource,
-} from "../api/client";
-import type { DataSource } from "../api/types";
-import { toast } from "../components/Toast";
+} from "../../api/client";
+import type { DataSource } from "../../api/types";
+import { toast } from "../../components/Toast";
 import styles from "./DataFetcher.module.css";
 
 const empty: DataSource = {

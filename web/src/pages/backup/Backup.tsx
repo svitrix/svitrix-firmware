@@ -1,7 +1,7 @@
 import { useState } from "preact/hooks";
-import { listDir, uploadFile, reboot } from "../api/client";
-import type { FileEntry } from "../api/types";
-import { toast } from "../components/Toast";
+import { listDir, uploadFile, reboot } from "../../api/client";
+import type { FileEntry } from "../../api/types";
+import { toast } from "../../components/Toast";
 import styles from "./Backup.module.css";
 
 async function collectFiles(

@@ -1,5 +1,5 @@
-import { useSettings } from "../../context/SettingsContext";
-import { TextField, Card } from "../../components/ui";
+import { useSettings } from "../../../context/SettingsContext";
+import { TextField, Card } from "../../../components/ui";
 import styles from "./sections.module.css";
 
 export function NtpSection() {

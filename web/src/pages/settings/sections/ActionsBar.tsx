@@ -1,7 +1,7 @@
-import { useSettings } from "../../context/SettingsContext";
-import { resetSettings, reboot } from "../../api/client";
-import { toast } from "../../components/Toast";
-import { Button } from "../../components/ui";
+import { useSettings } from "../../../context/SettingsContext";
+import { resetSettings, reboot } from "../../../api/client";
+import { toast } from "../../../components/Toast";
+import { Button } from "../../../components/ui";
 import styles from "./sections.module.css";
 
 export function ActionsBar() {

@@ -1,4 +1,4 @@
-import { useSettings } from "../../context/SettingsContext";
+import { useSettings } from "../../../context/SettingsContext";
 import styles from "./sections.module.css";
 
 export function StatsBar() {

@@ -1,5 +1,5 @@
 import { useState } from "preact/hooks";
-import { toast } from "../components/Toast";
+import { toast } from "../../components/Toast";
 import styles from "./Update.module.css";
 
 export function UpdatePage(_props: { path?: string }) {

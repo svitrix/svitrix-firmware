@@ -1,7 +1,7 @@
 import { useState } from "preact/hooks";
-import { uploadFile } from "../../api/client";
-import { toast } from "../../components/Toast";
-import { TextField, Card, FormRow, Button } from "../../components/ui";
+import { uploadFile } from "../../../api/client";
+import { toast } from "../../../components/Toast";
+import { TextField, Card, FormRow, Button } from "../../../components/ui";
 import styles from "./sections.module.css";
 
 export function IconPickerSection() {

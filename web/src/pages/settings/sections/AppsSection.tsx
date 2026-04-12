@@ -1,6 +1,6 @@
 import { useState } from "preact/hooks";
-import { useSettings } from "../../context/SettingsContext";
-import { Toggle, Slider, ColorField, Select, Card, FormRow, Button } from "../../components/ui";
+import { useSettings } from "../../../context/SettingsContext";
+import { Toggle, Slider, ColorField, Select, Card, FormRow, Button } from "../../../components/ui";
 import styles from "./sections.module.css";
 
 export function AppsSection() {

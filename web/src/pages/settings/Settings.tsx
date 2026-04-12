@@ -1,4 +1,4 @@
-import { SettingsProvider, useSettings } from "../context/SettingsContext";
+import { SettingsProvider, useSettings } from "../../context/SettingsContext";
 import styles from "./Settings.module.css";
 import {
   StatsBar,
@@ -15,7 +15,7 @@ import {
   IconPickerSection,
   ActionsBar,
   NotifySection,
-} from "./settings-sections";
+} from "./sections";
 
 function SettingsContent() {
   const { settings, apiAvailable, loading } = useSettings();

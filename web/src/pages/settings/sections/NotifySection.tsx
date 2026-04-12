@@ -1,8 +1,8 @@
 import { useState } from "preact/hooks";
-import { sendNotify, dismissNotify } from "../../api/client";
-import type { Notification } from "../../api/types";
-import { Card, TextField, ColorField, Toggle, Slider, Select, Button, FormRow } from "../../components/ui";
-import { toast } from "../../components/Toast";
+import { sendNotify, dismissNotify } from "../../../api/client";
+import type { Notification } from "../../../api/types";
+import { Card, TextField, ColorField, Toggle, Slider, Select, Button, FormRow } from "../../../components/ui";
+import { toast } from "../../../components/Toast";
 import styles from "./sections.module.css";
 
 export function NotifySection() {

@@ -1,6 +1,6 @@
 import { useState } from "preact/hooks";
-import { useSettings } from "../../context/SettingsContext";
-import { Button } from "../../components/ui";
+import { useSettings } from "../../../context/SettingsContext";
+import { Button } from "../../../components/ui";
 
 export function InfraSaveButton() {
   const { config, saveInfraConfig } = useSettings();

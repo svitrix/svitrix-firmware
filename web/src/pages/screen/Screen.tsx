@@ -1,5 +1,5 @@
 import { useRef, useEffect } from "preact/hooks";
-import { getScreen, nextApp, previousApp } from "../api/client";
+import { getScreen, nextApp, previousApp } from "../../api/client";
 import styles from "./Screen.module.css";
 
 const COLS = 32;

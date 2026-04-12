@@ -1,7 +1,7 @@
 import { useState } from "preact/hooks";
-import { scanWifi, connectWifi } from "../../api/client";
-import { toast } from "../../components/Toast";
-import { TextField, Card, FormRow, Button } from "../../components/ui";
+import { scanWifi, connectWifi } from "../../../api/client";
+import { toast } from "../../../components/Toast";
+import { TextField, Card, FormRow, Button } from "../../../components/ui";
 import styles from "./sections.module.css";
 
 export function WifiSection({ apMode }: { apMode?: boolean }) {

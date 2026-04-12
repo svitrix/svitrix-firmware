@@ -5,9 +5,9 @@ import {
   uploadFile,
   deleteFile,
   createDir,
-} from "../api/client";
-import type { FileEntry } from "../api/types";
-import { toast } from "../components/Toast";
+} from "../../api/client";
+import type { FileEntry } from "../../api/types";
+import { toast } from "../../components/Toast";
 import styles from "./Files.module.css";
 
 export function FilesPage(_props: { path?: string }) {
