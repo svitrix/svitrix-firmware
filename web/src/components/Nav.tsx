@@ -2,6 +2,16 @@ import { route } from "preact-router";
 import { signal } from "@preact/signals";
 
 const currentPath = signal(window.location.pathname);
+const theme = signal<"dark" | "light">(
+  (localStorage.getItem("theme") as "dark" | "light") || "dark"
+);
+document.documentElement.setAttribute("data-theme", theme.value);
+
+export function toggleTheme() {
+  theme.value = theme.value === "dark" ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", theme.value);
+  localStorage.setItem("theme", theme.value);
+}
 
 window.addEventListener("popstate", () => {
   currentPath.value = window.location.pathname;
@@ -54,6 +64,14 @@ export function Nav() {
           {l.label}
         </a>
       ))}
+      <button
+        class="theme-toggle"
+        onClick={toggleTheme}
+        title="Toggle theme"
+        style={{ marginLeft: "auto" }}
+      >
+        {theme.value === "dark" ? "\u2600" : "\u263D"}
+      </button>
     </nav>
   );
 }
