@@ -3,6 +3,7 @@
 #include <vector>
 #include <FS.h>
 #include "OverlayMapping.h"
+#include "LayoutEngine.h"
 
 class FastLED_NeoMatrix;
 class GifPlayer;
@@ -44,6 +45,7 @@ struct AppContentBase
     bool topText = true;
     bool noScrolling = true;
     OverlayEffect overlay = NONE;
+    IconLayout layout = IconLayout::Left;
     int gradient[2] = {0};
     std::vector<uint8_t> jpegDataBuffer;
 };

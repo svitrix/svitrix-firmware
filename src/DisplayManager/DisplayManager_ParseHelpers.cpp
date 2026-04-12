@@ -15,6 +15,7 @@
 #include "EffectRegistry.h"
 #include "ColorUtils.h"
 #include "Functions.h"
+#include "LayoutEngine.h"
 
 // Forward declarations
 bool parseFragmentsText(const JsonArray& fragmentArray, std::vector<uint32_t>& colors, std::vector<String>& fragments, uint32_t standardColor); // DisplayManager_CustomApps.cpp
@@ -53,7 +54,7 @@ void decodeBase64Icon(const String& data, std::vector<uint8_t>& buffer)
 {
     unsigned int estimatedSize = (data.length() * 3) / 4;
     buffer.resize(estimatedSize);
-    unsigned int decoded = decode_base64((const unsigned char *)data.c_str(), buffer.data());
+    unsigned int decoded = decode_base64(reinterpret_cast<const unsigned char *>(data.c_str()), buffer.data());
     buffer.resize(decoded);
 }
 
@@ -71,6 +72,7 @@ void parseProgressBar(JsonObject doc, int& progress, uint32_t& pColor, uint32_t&
 /// Extracts bar/line chart data arrays from JSON keys "bar" and "line" (max 16 points each).
 /// Applies autoscale (default on) to normalize values to 0-8 range for the 8px display height.
 /// Also reads "barBC" for bar chart background color.
+// cppcheck-suppress constParameterReference
 void parseChartData(JsonObject doc, int *barData, int& barSize, int *lineData, int& lineSize, uint32_t& barBG)
 {
     bool autoscale = doc.containsKey("autoscale") ? doc["autoscale"].as<bool>() : true;
@@ -82,6 +84,7 @@ void parseChartData(JsonObject doc, int *barData, int& barSize, int *lineData, i
     for (int i = 0; i < 2; i++)
     {
         const char *key = dataKeys[i];
+        // cppcheck-suppress variableScope
         int *dataArray = dataArrays[i];
         int *dataSize = dataSizeArrays[i];
 
@@ -174,7 +177,8 @@ void parseCommonAppFields(JsonObject doc, int& effect, OverlayEffect& overlay,
                           bool& rainbow, byte& pushIcon, byte& textCase,
                           int& iconOffset, int& textOffset, float& scrollSpeed,
                           bool& topText, int& fade, int& blink, bool& center,
-                          bool& noScrolling, int16_t& repeat, String& drawInstructions)
+                          bool& noScrolling, int16_t& repeat, String& drawInstructions,
+                          IconLayout& layout)
 {
     drawInstructions = doc.containsKey("draw") ? doc["draw"].as<String>() : "";
 
@@ -205,6 +209,8 @@ void parseCommonAppFields(JsonObject doc, int& effect, OverlayEffect& overlay,
     {
         repeat = -1;
     }
+
+    layout = doc.containsKey("layout") ? layoutFromString(doc["layout"].as<String>()) : IconLayout::Left;
 }
 
 /// Returns the "color" field from JSON, or the global text color if not present.
