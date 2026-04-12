@@ -1,0 +1,79 @@
+/* Shared styles for all settings sections */
+
+/* Vertical flex stack — replaces display:flex + flex-direction:column + gap:10px */
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Stats bar */
+.statsBar {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 13px;
+}
+
+/* Hint / helper text */
+.hint {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+/* Hint with top spacing */
+.hintMt {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-top: 8px;
+}
+
+/* Action button row */
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Network scan list */
+.networkList {
+  max-height: 150px;
+  overflow: auto;
+  font-size: 13px;
+}
+
+.networkItem {
+  padding: 4px 8px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Icon picker preview box */
+.iconPreview {
+  width: 150px;
+  height: 150px;
+  background: #000;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconPreviewImg {
+  image-rendering: pixelated;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Inline button group inside a form-group */
+.btnGroup {
+  display: flex;
+  gap: 6px;
+}
+
+/* form-group aligned to bottom (flex-end) */
+.formGroupEnd {
+  justify-content: flex-end;
+}

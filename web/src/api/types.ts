@@ -86,6 +86,7 @@ export interface FileEntry {
 export interface Notification {
   text: string;
   icon?: string;
+  layout?: "left" | "right" | "none";
   duration?: number;
   color?: string | [number, number, number];
   rainbow?: boolean;
@@ -103,9 +104,7 @@ export interface EffectInfo {
   name: string;
 }
 
-export interface TransitionInfo {
-  name: string;
-}
+export type TransitionInfo = string;
 
 export interface InfraConfig {
   "Static IP": boolean;
@@ -124,5 +123,4 @@ export interface InfraConfig {
   "Timezone": string;
   "Auth Username": string;
   "Auth Password": string;
-  [key: string]: unknown;
 }

@@ -120,7 +120,7 @@ The SPA source lives in `web/` (project root) — see `web/README.md`.
 |--------|------|-------------|
 | GET | `/` | SPA index from LittleFS root |
 | GET | `/setup` | Redirects to SPA |
-| GET | `/scan` | Scan WiFi networks |
+| GET | `/scan` | Async WiFi scan (202 while scanning, 200 with results) |
 | POST | `/connect` | Connect to WiFi (form: `ssid`, `password`, `persistent`) |
 | GET | `/ipaddress` | Current IP as JSON |
 | GET | `/restart` | Restart device |

@@ -1,5 +1,6 @@
 import { useRef, useEffect } from "preact/hooks";
-import { getScreen, nextApp, previousApp } from "../api/client";
+import { getScreen, nextApp, previousApp } from "../../api/client";
+import styles from "./Screen.module.css";
 
 const COLS = 32;
 const ROWS = 8;
@@ -57,7 +58,7 @@ export function ScreenPage(_props: { path?: string; default?: boolean }) {
 
   return (
     <div>
-      <div style={{ display: "flex", gap: 8, marginBottom: 12, flexWrap: "wrap" }}>
+      <div class={styles.controls}>
         <button onClick={() => previousApp()}>&#9664; Prev</button>
         <button onClick={() => nextApp()}>Next &#9654;</button>
         <button onClick={downloadPng}>Download PNG</button>
@@ -66,14 +67,7 @@ export function ScreenPage(_props: { path?: string; default?: boolean }) {
         ref={canvasRef}
         width={COLS * CELL}
         height={ROWS * CELL}
-        style={{
-          display: "block",
-          background: "#000",
-          borderRadius: "var(--radius)",
-          border: "1px solid var(--border)",
-          maxWidth: "100%",
-          height: "auto",
-        }}
+        class={styles.canvas}
       />
     </div>
   );

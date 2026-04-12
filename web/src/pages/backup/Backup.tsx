@@ -1,7 +1,8 @@
 import { useState } from "preact/hooks";
-import { listDir, uploadFile, reboot } from "../api/client";
-import type { FileEntry } from "../api/types";
-import { toast } from "../components/Toast";
+import { listDir, uploadFile, reboot } from "../../api/client";
+import type { FileEntry } from "../../api/types";
+import { toast } from "../../components/Toast";
+import styles from "./Backup.module.css";
 
 async function collectFiles(
   dir: string,
@@ -74,12 +75,12 @@ export function BackupPage(_props: { path?: string }) {
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+    <div class={styles.page}>
       <h2>Backup & Restore</h2>
 
       <div class="card">
-        <h3 style={{ marginBottom: 12 }}>Backup</h3>
-        <p style={{ color: "var(--text-dim)", marginBottom: 12, fontSize: 13 }}>
+        <h3 class={styles.cardHeading}>Backup</h3>
+        <p class={styles.hint}>
           Download all files from device filesystem as a JSON backup.
         </p>
         <button class="btn-primary" onClick={doBackup} disabled={!!busy}>
@@ -88,8 +89,8 @@ export function BackupPage(_props: { path?: string }) {
       </div>
 
       <div class="card">
-        <h3 style={{ marginBottom: 12 }}>Restore</h3>
-        <p style={{ color: "var(--text-dim)", marginBottom: 12, fontSize: 13 }}>
+        <h3 class={styles.cardHeading}>Restore</h3>
+        <p class={styles.hint}>
           Upload a previously downloaded backup file. Device will reboot after restore.
         </p>
         <input

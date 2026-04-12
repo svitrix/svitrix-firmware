@@ -2,19 +2,20 @@ import { render } from "preact";
 import Router from "preact-router";
 import { Nav } from "./components/Nav";
 import { ToastContainer } from "./components/Toast";
-import { ScreenPage } from "./pages/Screen";
-import { SettingsPage } from "./pages/Settings";
-import { DataFetcherPage } from "./pages/DataFetcher";
-import { BackupPage } from "./pages/Backup";
-import { UpdatePage } from "./pages/Update";
-import { FilesPage } from "./pages/Files";
+import { ScreenPage } from "./pages/screen";
+import { SettingsPage } from "./pages/settings";
+import { DataFetcherPage } from "./pages/data-fetcher";
+import { BackupPage } from "./pages/backup";
+import { UpdatePage } from "./pages/update";
+import { FilesPage } from "./pages/files";
 import "./styles/global.css";
+import styles from "./main.module.css";
 
 function App() {
   return (
     <div>
       <Nav />
-      <main style={{ padding: "16px", maxWidth: 900, margin: "0 auto" }}>
+      <main class={styles.main}>
         <Router>
           <ScreenPage path="/" />
           <SettingsPage path="/settings" />

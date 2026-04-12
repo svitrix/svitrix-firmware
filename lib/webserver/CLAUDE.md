@@ -71,7 +71,7 @@ Built-in at `/update` (GET = inline `update_html` fallback form, POST = firmware
 |------|-------------|
 | `/` | SPA index: serves `/index.html` from LittleFS |
 | `/setup` | Redirects to SPA (captive portal compatibility) |
-| `/scan` | WiFi network scan (JSON) |
+| `/scan` | WiFi network scan (async: 202 while scanning, 200 with results) |
 | `/connect` | WiFi connection (POST) |
 | `/ipaddress` | Current IP address |
 | `/restart` | Reboot device |

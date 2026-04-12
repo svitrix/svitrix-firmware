@@ -5,9 +5,10 @@ import {
   uploadFile,
   deleteFile,
   createDir,
-} from "../api/client";
-import type { FileEntry } from "../api/types";
-import { toast } from "../components/Toast";
+} from "../../api/client";
+import type { FileEntry } from "../../api/types";
+import { toast } from "../../components/Toast";
+import styles from "./Files.module.css";
 
 export function FilesPage(_props: { path?: string }) {
   const [cwd, setCwd] = useState("/");
@@ -86,12 +87,12 @@ export function FilesPage(_props: { path?: string }) {
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+    <div class={styles.page}>
+      <div class={styles.header}>
         <h2>Files</h2>
-        <div style={{ display: "flex", gap: 6 }}>
+        <div class={styles.headerBtns}>
           <button onClick={handleNewDir}>New Dir</button>
-          <label class="btn-primary" style={{ display: "inline-flex", alignItems: "center", cursor: "pointer", padding: "8px 16px", borderRadius: "var(--radius)" }}>
+          <label class={`btn-primary ${styles.uploadLabel}`}>
             Upload
             <input
               type="file"
@@ -106,11 +107,8 @@ export function FilesPage(_props: { path?: string }) {
       </div>
 
       {/* Breadcrumb */}
-      <div style={{ fontSize: 13, color: "var(--text-dim)" }}>
-        <span
-          style={{ cursor: "pointer", color: "var(--accent)" }}
-          onClick={() => load("/")}
-        >
+      <div class={styles.breadcrumb}>
+        <span class={styles.breadcrumbLink} onClick={() => load("/")}>
           /
         </span>
         {cwd
@@ -120,10 +118,7 @@ export function FilesPage(_props: { path?: string }) {
             const path = "/" + arr.slice(0, i + 1).join("/");
             return (
               <span key={path}>
-                <span
-                  style={{ cursor: "pointer", color: "var(--accent)" }}
-                  onClick={() => load(path)}
-                >
+                <span class={styles.breadcrumbLink} onClick={() => load(path)}>
                   {part}
                 </span>
                 {i < arr.length - 1 && " / "}
@@ -133,41 +128,23 @@ export function FilesPage(_props: { path?: string }) {
       </div>
 
       {/* File list */}
-      <div class="card" style={{ padding: 0 }}>
+      <div class={`card ${styles.fileList}`}>
         {cwd !== "/" && (
-          <div
-            style={{
-              padding: "8px 16px",
-              borderBottom: "1px solid var(--border)",
-              cursor: "pointer",
-              color: "var(--text-dim)",
-            }}
-            onClick={goUp}
-          >
+          <div class={styles.fileListRowNav} onClick={goUp}>
             ..
           </div>
         )}
         {entries.map((e) => (
-          <div
-            key={e.name}
-            style={{
-              padding: "8px 16px",
-              borderBottom: "1px solid var(--border)",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
+          <div key={e.name} class={styles.fileListRow}>
             <span
-              style={{ cursor: "pointer", color: e.type === "dir" ? "var(--accent)" : "var(--text)" }}
+              class={`${styles.fileName} ${e.type === "dir" ? styles.fileNameDir : styles.fileNameFile}`}
               onClick={() => (e.type === "dir" ? openDir(e.name) : openFile(e.name))}
             >
               {e.type === "dir" ? "📁 " : "📄 "}
               {e.name}
             </span>
             <button
-              class="btn-danger"
-              style={{ padding: "2px 8px", fontSize: 12 }}
+              class={`btn-danger ${styles.btnDel}`}
               onClick={() => handleDelete(e.name, e.type)}
             >
               Del
@@ -175,7 +152,7 @@ export function FilesPage(_props: { path?: string }) {
           </div>
         ))}
         {entries.length === 0 && (
-          <div style={{ padding: "16px", color: "var(--text-dim)", textAlign: "center" }}>
+          <div class={styles.emptyDir}>
             Empty directory
           </div>
         )}
@@ -184,18 +161,11 @@ export function FilesPage(_props: { path?: string }) {
       {/* Editor */}
       {content !== null && (
         <div class="card">
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: 8,
-            }}
-          >
-            <span style={{ fontSize: 13, color: "var(--text-dim)" }}>
+          <div class={styles.editorHeader}>
+            <span class={styles.editorPath}>
               {editPath} {modified && "*"}
             </span>
-            <div style={{ display: "flex", gap: 6 }}>
+            <div class={styles.editorBtns}>
               <button class="btn-primary" onClick={saveFile} disabled={!modified}>
                 Save
               </button>
@@ -215,13 +185,7 @@ export function FilesPage(_props: { path?: string }) {
               setContent((e.target as HTMLTextAreaElement).value);
               setModified(true);
             }}
-            style={{
-              width: "100%",
-              minHeight: 300,
-              fontFamily: "monospace",
-              fontSize: 13,
-              resize: "vertical",
-            }}
+            class={styles.textarea}
           />
         </div>
       )}

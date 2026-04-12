@@ -5,17 +5,30 @@
 }
 
 :root {
-  --bg: #070b1e;
-  --bg-card: #0a0e27;
-  --bg-input: #111638;
-  --border: #1e2550;
-  --text: #e8e8f0;
-  --text-dim: #8888a0;
+  --bg: #0f1117;
+  --bg-card: #1a1d2e;
+  --bg-input: #252940;
+  --border: #363b5c;
+  --text: #e0e0e8;
+  --text-dim: #9090a8;
   --accent: #f0b800;
   --accent-hover: #ffd040;
   --danger: #e04040;
   --success: #40c040;
   --radius: 8px;
+}
+
+[data-theme="light"] {
+  --bg: #e8eaef;
+  --bg-card: #f5f5f8;
+  --bg-input: #eaedf2;
+  --border: #c0c5d0;
+  --text: #2a2a3a;
+  --text-dim: #5a6070;
+  --accent: #c89500;
+  --accent-hover: #a67c00;
+  --danger: #cc2020;
+  --success: #1a8a3a;
 }
 
 html, body {
@@ -143,6 +156,21 @@ label {
   font-weight: 600;
   z-index: 1000;
   animation: fadeIn 0.2s;
+}
+
+.theme-toggle {
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 4px;
+  font-size: 18px;
+  line-height: 1;
+  color: var(--text-dim);
+}
+.theme-toggle:hover {
+  color: var(--accent);
+  border: none;
+  background: none;
 }
 
 @keyframes fadeIn {

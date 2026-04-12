@@ -1,0 +1,1 @@
+export { DataFetcherPage } from "./DataFetcher";

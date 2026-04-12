@@ -1,0 +1,51 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.formStack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.formHeading {
+  margin-bottom: 12px;
+}
+
+.sourceHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.sourceName {
+  color: var(--accent);
+}
+
+.sourceBtns {
+  display: flex;
+  gap: 6px;
+}
+
+.btnSmall {
+  padding: 4px 10px;
+  font-size: 12px;
+}
+
+.sourceMeta {
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+.empty {
+  color: var(--text-dim);
+}
