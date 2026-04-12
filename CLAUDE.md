@@ -253,6 +253,65 @@ CLAUDE.md (root)                            ← you are here
 └── src/effects/README.md                   ← 19 visual effects, weather overlays, IPixelCanvas
 ```
 
+## Common Change Patterns
+
+Typical multi-file changes and which files they touch. Read relevant module CLAUDE.md for details.
+
+### Add new visual effect
+```
+src/effects/<Category>Effects.h/.cpp  — effect function (IPixelCanvas API)
+src/effects/EffectRegistry.h          — bump kNumEffects
+src/effects/EffectRegistry.cpp        — register in effects[] array
+test/test_native/test_effects/        — test with MockPixelCanvas
+src/effects/README.md                 — add to effects table
+CLAUDE.md (root)                      — update "19 effects" count
+```
+
+### Add new Time Mode (TMODE)
+```
+src/Apps/Apps_NativeApps.cpp           — new if (timeConfig.timeMode == N) block
+web/src/pages/settings-sections/TimeDateSection.tsx — new option in Select
+src/CLAUDE.md                          — update TimeApp mode list
+```
+
+### Add new config field
+```
+lib/config/src/ConfigTypes.h           — add field to struct
+src/Globals.cpp                        — NVS load/save + default
+src/ServerManager/ServerManager.cpp    — expose via GET/POST /api/settings
+web/src/api/types.ts                   — add to Settings interface
+web/src/context/SettingsContext.tsx     — add to save payload
+web/src/pages/settings-sections/*.tsx  — UI control
+lib/config/CLAUDE.md                   — update struct table
+```
+
+### Add new MQTT / Home Assistant entity
+```
+→ use /add-ha-entity command (covers all 25+ entity checklist items)
+```
+
+### Add new native app
+```
+src/Apps/Apps_NativeApps.cpp           — render function
+src/Apps/Apps.h                        — declare function
+src/DisplayManager/DisplayManager.cpp  — register in app loop
+src/Apps/README.md                     — add to app table
+```
+
+### Add new service library
+```
+→ use /add-service command (covers lib/services/ pattern)
+```
+
+### Modify web UI page/section
+```
+web/src/pages/ or settings-sections/   — component
+web/src/api/types.ts                   — types if new API fields
+web/src/context/SettingsContext.tsx     — state if new settings
+web/src/api/client.ts                  — new endpoint calls
+web/README.md                          — update if new page/section
+```
+
 ## Coding Conventions
 
 - Build flags defined in `platformio.ini` — `-DULANZI` for hardware-specific code
