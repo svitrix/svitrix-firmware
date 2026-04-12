@@ -59,7 +59,7 @@ String DisplayManager_::getStats()
 /// Used by the HTTP API and MQTT to expose current configuration.
 String DisplayManager_::getSettings()
 {
-    StaticJsonDocument<1024> doc;
+    StaticJsonDocument<2048> doc;
     doc["MATP"] = !displayConfig.matrixOff;
     doc["ABRI"] = brightnessConfig.autoBrightness;
     doc["BRI"] = brightnessConfig.brightness;
@@ -93,6 +93,11 @@ String DisplayManager_::getSettings()
     doc["BAT_COL"] = colorConfig.batColor;
     doc["SSPEED"] = appConfig.scrollSpeed;
     doc["NILAYOUT"] = layoutToString(appConfig.nativeIconLayout);
+    doc["NMODE"] = appConfig.nightMode;
+    doc["NSTART"] = appConfig.nightStart;
+    doc["NEND"] = appConfig.nightEnd;
+    doc["NBRI"] = appConfig.nightBrightness;
+    doc["NCOL"] = appConfig.nightColor;
     doc["TIM"] = appConfig.showTime;
     doc["DAT"] = appConfig.showDate;
     doc["HUM"] = appConfig.showHum;
@@ -147,6 +152,16 @@ void DisplayManager_::setNewSettings(const char *json)
     {
         appConfig.nativeIconLayout = layoutFromString(doc["NILAYOUT"].as<String>());
     }
+    if (doc.containsKey("NMODE"))
+        appConfig.nightMode = doc["NMODE"].as<bool>();
+    if (doc.containsKey("NSTART"))
+        appConfig.nightStart = doc["NSTART"].as<uint16_t>();
+    if (doc.containsKey("NEND"))
+        appConfig.nightEnd = doc["NEND"].as<uint16_t>();
+    if (doc.containsKey("NBRI"))
+        appConfig.nightBrightness = doc["NBRI"].as<uint8_t>();
+    if (doc.containsKey("NCOL"))
+        appConfig.nightColor = doc["NCOL"].as<uint32_t>();
     timeConfig.isCelsius = doc.containsKey("CEL") ? doc["CEL"] : timeConfig.isCelsius;
     timeConfig.startOnMonday = doc.containsKey("SOM") ? doc["SOM"].as<bool>() : timeConfig.startOnMonday;
     displayConfig.matrixOff = doc.containsKey("MATP") ? !doc["MATP"].as<bool>() : displayConfig.matrixOff;

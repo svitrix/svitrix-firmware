@@ -28,6 +28,31 @@ extern ArtnetWifi artnet;
 
 constexpr int MATRIX_PIN = 32;
 
+/// Returns true when the current local time falls within the configured night window.
+/// Handles overnight ranges (e.g. 21:00–06:00) that cross midnight.
+static bool isNightModeActive()
+{
+    if (!appConfig.nightMode)
+        return false;
+
+    const struct tm *now = timer_localtime();
+    if (!now)
+        return false;
+
+    uint16_t currentMinutes = static_cast<uint16_t>(now->tm_hour * 60 + now->tm_min);
+
+    if (appConfig.nightStart > appConfig.nightEnd)
+    {
+        // Crosses midnight: e.g. 21:00 (1260) → 06:00 (360)
+        return currentMinutes >= appConfig.nightStart || currentMinutes < appConfig.nightEnd;
+    }
+    else
+    {
+        // Same day range: e.g. 23:00 → 23:59
+        return currentMinutes >= appConfig.nightStart && currentMinutes < appConfig.nightEnd;
+    }
+}
+
 CRGB leds[MATRIX_WIDTH * MATRIX_HEIGHT];
 CRGB ledsCopy[MATRIX_WIDTH * MATRIX_HEIGHT];
 float actualBri;
@@ -94,8 +119,9 @@ const String& DisplayManager_::getCurrentApp() const
     return currentApp;
 }
 
-/// Sets matrix brightness, respecting matrixOff state.
+/// Sets matrix brightness, respecting matrixOff state and night mode.
 /// When display is off, brightness stays 0 unless the front notification has wakeup=true.
+/// When night mode is active, brightness is clamped to nightBrightness.
 void DisplayManager_::setBrightness(int bri)
 {
     bool wakeup = false;
@@ -110,6 +136,8 @@ void DisplayManager_::setBrightness(int bri)
     }
     else
     {
+        if (isNightModeActive())
+            bri = appConfig.nightBrightness;
         matrix->setBrightness(bri);
         actualBri = bri;
     }
@@ -205,6 +233,18 @@ void DisplayManager_::tick()
     }
     else
     {
+        bool nightActive = isNightModeActive();
+        if (nightActive)
+        {
+            setAutoTransition(false);
+            // Override text and time color so the Time app renders in nightColor
+            setTextColor(appConfig.nightColor);
+        }
+        else
+        {
+            setAutoTransition(appConfig.autoTransition);
+            setTextColor(colorConfig.textColor);
+        }
         ui->update();
         if (ui->getUiState()->appState == IN_TRANSITION && !appIsSwitching)
         {
