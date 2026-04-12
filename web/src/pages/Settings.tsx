@@ -13,6 +13,7 @@ import {
   SoundSection,
   IconPickerSection,
   ActionsBar,
+  NotifySection,
 } from "./settings-sections";
 
 function SettingsContent() {
@@ -43,6 +44,7 @@ function SettingsContent() {
       <AppsSection />
       <TimeDateSection />
       <SoundSection />
+      <NotifySection />
       <IconPickerSection />
       <ActionsBar />
     </div>
