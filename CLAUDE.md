@@ -2,8 +2,30 @@
 
 ## Project
 
-ESP32 firmware for Ulanzi TC001 Smart Pixel Clock (32x8 WS2812B LED matrix).
+ESP32 firmware for Ulanzi TC001 Smart Pixel Clock (32x8 WS2812B-Mini LED matrix).
 C++17 / Arduino framework / PlatformIO.
+
+### Hardware (Ulanzi TC001)
+
+- **MCU**: ESP32-WROOM-32D (dual-core Xtensa LX6, 240 MHz)
+- **Flash**: 8 MB (current partition table uses only 4 MB — expandable)
+- **RAM**: 520 KB SRAM
+- **USB-Serial**: CH340
+- **LED Matrix**: 8×32 WS2812B-Mini (256 LEDs), GPIO32, serpentine wiring
+- **Buttons**: GPIO26 (left), GPIO27 (middle/wakeup), GPIO14 (right), GPIO13 (reset) — active LOW, internal pull-up
+- **Buzzer**: GPIO15, passive piezo, PWM via LEDC (`INPUT_PULLDOWN` at init)
+- **LDR**: GPIO35 (GL5516 photoresistor, ADC1_CH7)
+- **Battery**: 4400 mAh Li-ion, GPIO34 (ADC1_CH6, voltage divider)
+- **I2C** (GPIO21 SDA, GPIO22 SCL): SHT3x temp/humidity (0x44), DS1307 RTC (0x68)
+
+### Partition Layout (svitrix_partition.csv)
+
+```
+app0:   1.875 MB (active firmware)
+app1:   1.875 MB (OTA update slot)
+spiffs: 256 KB   (LittleFS — icons, SPA, configs)
+total:  4 MB used / 8 MB available — partition table can be expanded
+```
 
 ## Build & Test
 
@@ -14,7 +36,7 @@ cd web && npm run dev      # SPA dev server (hot reload, proxies to device)
 cd web && npm run upload   # Build SPA + upload to device LittleFS
 ```
 
-Flash is ~96% full — watch binary size when adding features.
+Flash chip is 8 MB, but the partition table uses only 4 MB. App partition is 1.875 MB. Partition table can be expanded when needed.
 
 ## Project Structure
 

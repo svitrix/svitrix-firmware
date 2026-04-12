@@ -3,19 +3,83 @@
   "author": "Svitrix",
   "editor": "wokwi",
   "parts": [
-    { "type": "wokwi-esp32-devkit-v1", "id": "esp", "top": -78, "left": 44, "attrs": {} },
+    {
+      "type": "wokwi-esp32-devkit-v1",
+      "id": "esp",
+      "top": 0,
+      "left": 200,
+      "attrs": {}
+    },
     {
       "type": "wokwi-neopixel-matrix",
       "id": "matrix",
-      "top": -250,
-      "left": -180,
+      "top": -340,
+      "left": -20,
       "attrs": { "rows": "8", "cols": "32", "pixelSpacing": "8" }
     },
-    { "type": "wokwi-pushbutton", "id": "btn_up", "top": 100, "left": -80, "attrs": { "label": "UP (Left)", "color": "green" } },
-    { "type": "wokwi-pushbutton", "id": "btn_sel", "top": 100, "left": 40, "attrs": { "label": "SELECT (Mid)", "color": "blue" } },
-    { "type": "wokwi-pushbutton", "id": "btn_down", "top": 100, "left": 160, "attrs": { "label": "DOWN (Right)", "color": "red" } },
-    { "type": "wokwi-buzzer", "id": "buzzer", "top": -250, "left": 300, "attrs": {} },
-    { "type": "wokwi-photoresistor-sensor", "id": "ldr", "top": -250, "left": 450, "attrs": {} }
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btn_up",
+      "top": 420,
+      "left": 80,
+      "attrs": { "label": "UP (Left)", "color": "green" }
+    },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btn_sel",
+      "top": 420,
+      "left": 240,
+      "attrs": { "label": "SELECT (Mid)", "color": "blue" }
+    },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btn_down",
+      "top": 420,
+      "left": 400,
+      "attrs": { "label": "DOWN (Right)", "color": "red" }
+    },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btn_reset",
+      "top": 420,
+      "left": 560,
+      "attrs": { "label": "RESET", "color": "orange" }
+    },
+    {
+      "type": "wokwi-buzzer",
+      "id": "buzzer",
+      "top": -120,
+      "left": 580,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-photoresistor-sensor",
+      "id": "ldr",
+      "top": 60,
+      "left": 580,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-slide-potentiometer",
+      "id": "battery",
+      "top": 240,
+      "left": 580,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-dht22",
+      "id": "dht",
+      "top": -120,
+      "left": -180,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-ds1307",
+      "id": "rtc",
+      "top": 100,
+      "left": -180,
+      "attrs": {}
+    }
   ],
   "connections": [
     ["esp:TX0", "$serialMonitor:RX", "", []],
@@ -34,11 +98,28 @@
     ["btn_down:1.l", "esp:D14", "red", ["v0"]],
     ["btn_down:2.l", "esp:GND.1", "black", ["v0"]],
 
+    ["btn_reset:1.l", "esp:D13", "orange", ["v0"]],
+    ["btn_reset:2.l", "esp:GND.1", "black", ["v0"]],
+
     ["buzzer:1", "esp:D15", "orange", ["v0"]],
     ["buzzer:2", "esp:GND.1", "black", ["v0"]],
 
     ["ldr:VCC", "esp:3V3", "red", ["v0"]],
     ["ldr:GND", "esp:GND.1", "black", ["v0"]],
-    ["ldr:AO", "esp:D35", "purple", ["v0"]]
+    ["ldr:AO", "esp:D35", "purple", ["v0"]],
+
+    ["battery:SIG", "esp:D34", "yellow", ["v0"]],
+    ["battery:VCC", "esp:3V3", "red", ["v0"]],
+    ["battery:GND", "esp:GND.1", "black", ["v0"]],
+
+    ["dht:SDA", "esp:D21", "cyan", ["v0"]],
+    ["dht:SCL", "esp:D22", "cyan", ["v0"]],
+    ["dht:VCC", "esp:3V3", "red", ["v0"]],
+    ["dht:GND", "esp:GND.1", "black", ["v0"]],
+
+    ["rtc:SDA", "esp:D21", "cyan", ["v0"]],
+    ["rtc:SCL", "esp:D22", "cyan", ["v0"]],
+    ["rtc:VCC", "esp:3V3", "red", ["v0"]],
+    ["rtc:GND", "esp:GND.1", "black", ["v0"]]
   ]
 }
