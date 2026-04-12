@@ -40,6 +40,106 @@ This builds the SPA and uploads it to the device's LittleFS root directory. The 
 Once uploaded, the SPA persists across firmware updates. You only need to re-upload the SPA when the web interface itself is updated.
 :::
 
+## Settings Guide
+
+The Settings page is organized into independent sections. Each section has its own **Save** button — you only save what you changed.
+
+A **dark/light theme toggle** (☀/☽) is available in the top-right corner of the navigation bar. Your preference is saved in the browser.
+
+### Stats Bar
+
+A read-only bar at the top showing real-time device info: firmware version, free RAM, WiFi signal strength, ambient light (lux), uptime, temperature, humidity, and current brightness.
+
+### WiFi
+
+Scan for available networks, select one, and enter the password to connect. The device reboots after connecting.
+
+### Network
+
+Enable **Static IP** to configure a fixed IP address, gateway, subnet, and DNS server instead of DHCP.
+
+### MQTT
+
+Connect to an MQTT broker for Home Assistant integration and remote control:
+- **Broker** — hostname or IP of your MQTT broker
+- **Port** — default 1883
+- **Username / Password** — broker credentials
+- **Prefix** — MQTT topic prefix (default: device ID)
+- **Home Assistant Discovery** — enable auto-discovery of device entities in HA
+
+### NTP & Timezone
+
+- **NTP Server** — time server (default: `pool.ntp.org`)
+- **Timezone** — POSIX timezone string (find yours at [posix_tz_db](https://github.com/nayarsystems/posix_tz_db/blob/master/zones.csv))
+
+### Authentication
+
+See the [Authentication](#authentication) section below.
+
+### Display
+
+- **Matrix Power** — turn the LED matrix on/off
+- **Auto Brightness** — automatically adjust brightness based on ambient light
+- **Brightness** — manual brightness level (0–255)
+- **Gamma** — gamma correction curve (0.5–3.0)
+- **Uppercase** — force all text to uppercase
+- **Text Color** — default text color for all apps
+- **Color Correction / Color Temperature** — advanced LED color tuning
+
+### Apps
+
+Toggle built-in apps on/off, each with its own color picker:
+- **Time**, **Date**, **Temperature** (with color), **Humidity** (with color), **Battery** (with color)
+
+App behavior:
+- **App Duration** — how long each app shows before switching (1–60s)
+- **Auto Transition** — automatically cycle through apps
+- **Transition Effect** — visual effect when switching apps (None, Slide, Dim, Zoom, etc.)
+- **Transition Speed** — how fast the transition animation plays (100–2000ms)
+- **Scroll Speed** — text scroll speed for long text
+- **Block Navigation** — disable button navigation between apps
+
+### Time & Date
+
+- **Time Format / Date Format** — strftime format strings (e.g., `%H:%M`, `%d.%m.%y`)
+- **Time Mode** — display style: Plain Text, Calendar, Calendar Top, Calendar Alt, Big Digits, or Binary
+- **Start on Monday** — week starts on Monday instead of Sunday
+- **Celsius** — show temperature in °C (off = °F)
+- **Time / Date Color** — individual colors for time and date apps
+- **Show Weekday** — show weekday indicator bar
+- **Weekday Active / Inactive Color** — colors for weekday dots
+- **Calendar Header / Text / Body Color** — colors for the calendar box
+
+### Sound
+
+- **Sound Enabled** — enable/disable the buzzer
+- **Volume** — buzzer volume level (0–30)
+
+### Send Notification
+
+Send a one-time message to the display:
+- **Text** — message to show (required)
+- **Icon** — icon ID or filename from `/ICONS/`
+- **Icon Layout** — position the icon on the left, right, or hide it
+- **Duration** — how long the notification shows (1–60s)
+- **Rainbow** — cycle text through rainbow colors
+- **Color** — text color (when rainbow is off)
+- **Sound** — play a sound file from `/MELODIES/`
+- **RTTTL** — play a melody in [RTTTL format](https://en.wikipedia.org/wiki/Ring_Tone_Text_Transfer_Language)
+
+### Icon Picker
+
+Download icons from the [LaMetric icon library](https://developer.lametric.com/icons):
+1. Enter the icon ID number
+2. Click **Preview** to see it
+3. Click **Download** to save it to the device's `/ICONS/` folder
+
+### Actions
+
+- **Save Display Settings** — saves all display-related settings at once (fallback if individual Save buttons were skipped)
+- **Reset Defaults** — restore all settings to factory defaults (requires confirmation)
+- **Reboot** — restart the device (requires confirmation)
+
 ## Authentication
 
 You can set a username and password in Settings → Authentication. When configured, every page, API call, and the SVITRIX app will require these credentials. Leave both fields empty to disable authentication.
