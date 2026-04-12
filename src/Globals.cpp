@@ -5,6 +5,7 @@
 #include <LittleFS.h>
 #include "EffectRegistry.h"
 #include "DisplayManager.h"
+#include "LayoutEngine.h"
 
 Preferences Settings;
 
@@ -286,6 +287,7 @@ void loadSettings()
     appConfig.showHum = Settings.getBool("HUM", true);
     displayConfig.matrixLayout = Settings.getUInt("MAT", 0);
     appConfig.scrollSpeed = Settings.getUInt("SSPEED", 100);
+    appConfig.nativeIconLayout = static_cast<IconLayout>(Settings.getUChar("NILAYOUT", 0));
 #ifdef ULANZI
     appConfig.showBat = Settings.getBool("BAT", true);
 #endif
@@ -335,6 +337,7 @@ void saveSettings()
     Settings.putBool("TEMP", appConfig.showTemp);
     Settings.putBool("HUM", appConfig.showHum);
     Settings.putUInt("SSPEED", appConfig.scrollSpeed);
+    Settings.putUChar("NILAYOUT", static_cast<uint8_t>(appConfig.nativeIconLayout));
 #ifdef ULANZI
     Settings.putBool("BAT", appConfig.showBat);
 #endif
@@ -354,6 +357,6 @@ DisplayConfig displayConfig = {0, 42, false, false, false, true, -1};
 BrightnessConfig brightnessConfig = {120, 0, true, 2, 160, 3.0, 1.0, false};
 ColorConfig colorConfig = {0xFFFFFF, 0, 0, 0, 0, 0, 0xFFFFFF, 0x666666, 0xFF0000, 0x000000, 0xFFFFFF};
 TimeConfig timeConfig = {"%H:%M:%S", "%d.%m.%y", 1, false, "de.pool.ntp.org", "CET-1CEST,M3.5.0,M10.5.0/3", false, 0};
-AppConfig appConfig = {true, true, true, true, true, true, false, 1, 400, 7000, 100, false};
+AppConfig appConfig = {true, true, true, true, true, true, false, 1, 400, 7000, 100, IconLayout::Left, false};
 AudioConfig audioConfig = {false, 30, ""};
 SystemConfig systemConfig = {true, 15, 80, "", false, 10000, false, false, "", "", false, false, "", ""};

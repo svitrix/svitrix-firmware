@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Arduino.h>
+#include "LayoutEngine.h"
 
 struct AuthConfig {
     String user;
@@ -114,6 +115,7 @@ struct AppConfig {
     int timePerTransition;
     long timePerApp;
     uint8_t scrollSpeed;
+    IconLayout nativeIconLayout;
     bool blockNavigation;
 };
 

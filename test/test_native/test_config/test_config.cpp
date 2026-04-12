@@ -177,7 +177,7 @@ void test_time_config_defaults()
 
 void test_app_config_defaults()
 {
-    AppConfig cfg = {true, true, true, true, true, true, false, 1, 400, 7000, 100, false};
+    AppConfig cfg = {true, true, true, true, true, true, false, 1, 400, 7000, 100, IconLayout::Left, false};
     TEST_ASSERT_TRUE(cfg.showTime);
     TEST_ASSERT_TRUE(cfg.showDate);
     TEST_ASSERT_TRUE(cfg.showBat);

@@ -5,9 +5,11 @@
 #include "MenuManager.h"
 #include "PeripheryManager.h"
 #include <WiFi.h>
+#include <numeric>
 #include "EffectRegistry.h"
 #include "NeoMatrixCanvas.h"
 #include "MQTTManager.h"
+#include "LayoutEngine.h"
 
 std::deque<Notification> notifications;
 bool notifyFlag = false;
@@ -96,17 +98,20 @@ void NotifyOverlay(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, GifPl
     uint16_t textWidth = 0;
     if (!notifications[0].fragments.empty())
     {
-        for (const auto& fragment : notifications[0].fragments)
-        {
-            textWidth += getTextWidth(fragment.c_str(), notifications[0].textCase);
-        }
+        const auto& frags = notifications[0].fragments;
+        textWidth = std::accumulate(frags.begin(), frags.end(), uint16_t{0},
+                                    [&](uint16_t sum, const String& f)
+                                    {
+                                        return static_cast<uint16_t>(sum + getTextWidth(f.c_str(), notifications[0].textCase));
+                                    });
     }
     else
     {
         textWidth = getTextWidth(notifications[0].text.c_str(), notifications[0].textCase);
     }
 
-    uint16_t availableWidth = hasIcon ? 24 : 32;
+    LayoutMetrics lm = LayoutEngine::computeLayout(notifications[0].layout, 0);
+    uint16_t availableWidth = lm.textAvailableWidth;
     bool noScrolling = (textWidth <= availableWidth);
 
     // Icon + charts + progress (top text layer)
@@ -117,7 +122,10 @@ void NotifyOverlay(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, GifPl
     if (textWidth > availableWidth && notifications[0].scrollposition + notifications[0].textOffset <= (-textWidth))
     {
         notifications[0].scrollDelay = 0;
-        notifications[0].scrollposition = 9 + notifications[0].textOffset;
+        {
+            LayoutMetrics sm = LayoutEngine::computeLayout(notifications[0].layout, 0);
+            notifications[0].scrollposition = sm.textStartX + notifications[0].textOffset;
+        }
 
         if (notifications[0].pushIcon == 2)
             notifications[0].iconWasPushed = false;

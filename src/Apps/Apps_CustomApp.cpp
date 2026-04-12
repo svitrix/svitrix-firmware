@@ -11,6 +11,7 @@
 #include "EffectRegistry.h"
 #include "NeoMatrixCanvas.h"
 #include "MQTTManager.h"
+#include "LayoutEngine.h"
 #include <LittleFS.h>
 
 // ── Custom app renderer ────────────────────────────────────────────
@@ -23,7 +24,7 @@
 /// @param state     Current UI state (app state, transition info).
 /// @param x, y      Top-left rendering origin.
 /// @param gifPlayer GIF decoder for animated icons.
-void ShowCustomApp(const String& name, FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_t x, int16_t y, GifPlayer *gifPlayer)
+void ShowCustomApp(const String& name, FastLED_NeoMatrix *matrix, const MatrixDisplayUiState *state, int16_t x, int16_t y, GifPlayer *gifPlayer)
 {
     if (notifyFlag)
         return;
@@ -53,7 +54,7 @@ void ShowCustomApp(const String& name, FastLED_NeoMatrix *matrix, MatrixDisplayU
     if ((ca->iconName.length() > 0) && !ca->icon && !ca->iconNotFound)
     {
         const char *extensions[] = {".jpg", ".gif"};
-        bool isGifFlags[] = {false, true};
+        const bool isGifFlags[] = {false, true};
         bool found = false;
 
         for (int i = 0; i < 2; i++)
@@ -93,7 +94,8 @@ void ShowCustomApp(const String& name, FastLED_NeoMatrix *matrix, MatrixDisplayU
         textWidth = getTextWidth(replacedText.c_str(), ca->textCase);
     }
 
-    uint16_t availableWidth = hasIcon ? 24 : 32;
+    LayoutMetrics lm = LayoutEngine::computeLayout(ca->layout, 0);
+    uint16_t availableWidth = lm.textAvailableWidth;
     bool noScrolling = textWidth <= availableWidth;
 
     // Icon + charts + progress (top text layer)
@@ -120,7 +122,10 @@ void ShowCustomApp(const String& name, FastLED_NeoMatrix *matrix, MatrixDisplayU
                 ca->currentRepeat = 0;
                 DisplayManager.nextApp();
                 ca->scrollDelay = 0;
-                ca->scrollposition = 9 + ca->textOffset;
+                {
+                    LayoutMetrics sm = LayoutEngine::computeLayout(ca->layout, 0);
+                    ca->scrollposition = sm.textStartX + ca->textOffset;
+                }
                 return;
             }
             else if (ca->repeat > 0)
@@ -128,7 +133,10 @@ void ShowCustomApp(const String& name, FastLED_NeoMatrix *matrix, MatrixDisplayU
                 ++ca->currentRepeat;
             }
             ca->scrollDelay = 0;
-            ca->scrollposition = 9 + ca->textOffset;
+            {
+                LayoutMetrics sm = LayoutEngine::computeLayout(ca->layout, 0);
+                ca->scrollposition = sm.textStartX + ca->textOffset;
+            }
         }
     }
 
