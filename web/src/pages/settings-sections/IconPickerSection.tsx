@@ -66,7 +66,7 @@ export function IconPickerSection() {
           }}>
             <img
               src={iconPreview}
-              style={{ imageRendering: "pixelated", maxWidth: 150, maxHeight: 150 }}
+              style={{ imageRendering: "pixelated", width: "100%", height: "100%", objectFit: "contain" }}
               onError={() => { setIconPreview(""); toast("Icon not found"); }}
             />
           </div>
