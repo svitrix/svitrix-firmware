@@ -2,13 +2,14 @@ import { useSettings } from "../../context/SettingsContext";
 import { resetSettings, reboot } from "../../api/client";
 import { toast } from "../../components/Toast";
 import { Button } from "../../components/ui";
+import styles from "./sections.module.css";
 
 export function ActionsBar() {
   const { settings, saveDisplaySettings, reload } = useSettings();
   if (!settings) return null;
 
   return (
-    <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+    <div class={styles.actions}>
       <Button variant="primary" onClick={async () => {
         await saveDisplaySettings(settings);
       }}>

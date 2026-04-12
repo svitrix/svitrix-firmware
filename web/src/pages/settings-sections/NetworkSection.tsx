@@ -1,5 +1,6 @@
 import { useSettings } from "../../context/SettingsContext";
 import { Toggle, TextField, Card, FormRow } from "../../components/ui";
+import styles from "./sections.module.css";
 
 export function NetworkSection() {
   const { config, updateConfig } = useSettings();
@@ -7,7 +8,7 @@ export function NetworkSection() {
 
   return (
     <Card title="Network">
-      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      <div class={styles.stack}>
         <Toggle
           label="Static IP"
           checked={!!config["Static IP"]}

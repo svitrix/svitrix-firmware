@@ -1,5 +1,6 @@
 import { useSettings } from "../../context/SettingsContext";
 import { TextField, Card, FormRow } from "../../components/ui";
+import styles from "./sections.module.css";
 
 export function AuthSection() {
   const { config, updateConfig } = useSettings();
@@ -11,7 +12,7 @@ export function AuthSection() {
         <TextField label="Username" value={config["Auth Username"] || ""} onChange={(v) => updateConfig("Auth Username", v)} />
         <TextField label="Password" value={config["Auth Password"] || ""} onChange={(v) => updateConfig("Auth Password", v)} type="password" />
       </FormRow>
-      <p style={{ fontSize: 12, color: "var(--text-dim)", marginTop: 8 }}>
+      <p class={styles.hintMt}>
         Leave empty to disable HTTP authentication.
       </p>
     </Card>

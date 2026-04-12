@@ -1,5 +1,6 @@
 import { useState } from "preact/hooks";
 import { toast } from "../components/Toast";
+import styles from "./Update.module.css";
 
 export function UpdatePage(_props: { path?: string }) {
   const [uploading, setUploading] = useState(false);
@@ -26,12 +27,12 @@ export function UpdatePage(_props: { path?: string }) {
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+    <div class={styles.page}>
       <h2>Firmware Update</h2>
 
       <div class="card">
-        <h3 style={{ marginBottom: 12 }}>OTA Update</h3>
-        <p style={{ color: "var(--text-dim)", marginBottom: 12, fontSize: 13 }}>
+        <h3 class={styles.cardHeading}>OTA Update</h3>
+        <p class={styles.hint}>
           Select a firmware .bin file to upload. The device will reboot automatically after a
           successful update.
         </p>
@@ -45,7 +46,7 @@ export function UpdatePage(_props: { path?: string }) {
           }}
         />
         {progress && (
-          <p style={{ marginTop: 12, color: "var(--accent)" }}>{progress}</p>
+          <p class={styles.progress}>{progress}</p>
         )}
       </div>
     </div>

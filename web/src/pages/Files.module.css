@@ -1,0 +1,101 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.headerBtns {
+  display: flex;
+  gap: 6px;
+}
+
+.uploadLabel {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: var(--radius);
+}
+
+.breadcrumb {
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+.breadcrumbLink {
+  cursor: pointer;
+  color: var(--accent);
+}
+
+.fileList {
+  padding: 0;
+}
+
+.fileListRow {
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.fileListRowNav {
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  color: var(--text-dim);
+}
+
+.fileName {
+  cursor: pointer;
+}
+
+.fileNameDir {
+  color: var(--accent);
+}
+
+.fileNameFile {
+  color: var(--text);
+}
+
+.btnDel {
+  padding: 2px 8px;
+  font-size: 12px;
+}
+
+.emptyDir {
+  padding: 16px;
+  color: var(--text-dim);
+  text-align: center;
+}
+
+.editorHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.editorPath {
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+.editorBtns {
+  display: flex;
+  gap: 6px;
+}
+
+.textarea {
+  width: 100%;
+  min-height: 300px;
+  font-family: monospace;
+  font-size: 13px;
+  resize: vertical;
+}

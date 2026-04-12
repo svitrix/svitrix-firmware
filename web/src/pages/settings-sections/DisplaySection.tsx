@@ -1,6 +1,7 @@
 import { useState } from "preact/hooks";
 import { useSettings } from "../../context/SettingsContext";
 import { Toggle, Slider, ColorField, Card, FormRow, Button } from "../../components/ui";
+import styles from "./sections.module.css";
 
 export function DisplaySection() {
   const { settings, updateSettings, saveDisplaySettings } = useSettings();
@@ -20,7 +21,7 @@ export function DisplaySection() {
 
   return (
     <Card title="Display">
-      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      <div class={styles.stack}>
         <Toggle label="Matrix Power" checked={s.MATP} onChange={(v) => updateSettings({ MATP: v })} />
         <Toggle label="Auto Brightness" checked={s.ABRI} onChange={(v) => updateSettings({ ABRI: v })} />
         <Slider label="Brightness" min={0} max={255} value={s.BRI} onChange={(v) => updateSettings({ BRI: v })} />

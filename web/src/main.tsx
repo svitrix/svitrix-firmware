@@ -9,12 +9,13 @@ import { BackupPage } from "./pages/Backup";
 import { UpdatePage } from "./pages/Update";
 import { FilesPage } from "./pages/Files";
 import "./styles/global.css";
+import styles from "./main.module.css";
 
 function App() {
   return (
     <div>
       <Nav />
-      <main style={{ padding: "16px", maxWidth: 900, margin: "0 auto" }}>
+      <main class={styles.main}>
         <Router>
           <ScreenPage path="/" />
           <SettingsPage path="/settings" />

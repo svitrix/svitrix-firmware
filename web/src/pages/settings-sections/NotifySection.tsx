@@ -3,6 +3,7 @@ import { sendNotify, dismissNotify } from "../../api/client";
 import type { Notification } from "../../api/types";
 import { Card, TextField, ColorField, Toggle, Slider, Select, Button, FormRow } from "../../components/ui";
 import { toast } from "../../components/Toast";
+import styles from "./sections.module.css";
 
 export function NotifySection() {
   const [notif, setNotif] = useState<Notification>({
@@ -53,7 +54,7 @@ export function NotifySection() {
 
   return (
     <Card title="Send Notification">
-      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      <div class={styles.stack}>
         <TextField
           label="Text"
           value={notif.text}
@@ -114,7 +115,7 @@ export function NotifySection() {
             placeholder="RTTTL string (optional)"
           />
         </FormRow>
-        <div style={{ display: "flex", gap: 8 }}>
+        <div class={styles.actions}>
           <Button variant="primary" onClick={handleSend} loading={sending}>
             Send
           </Button>

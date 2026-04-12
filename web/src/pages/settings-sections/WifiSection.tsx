@@ -2,6 +2,7 @@ import { useState } from "preact/hooks";
 import { scanWifi, connectWifi } from "../../api/client";
 import { toast } from "../../components/Toast";
 import { TextField, Card, FormRow, Button } from "../../components/ui";
+import styles from "./sections.module.css";
 
 export function WifiSection({ apMode }: { apMode?: boolean }) {
   const [networks, setNetworks] = useState<Array<{ ssid: string; rssi: number; secure: number }>>([]);
@@ -40,20 +41,16 @@ export function WifiSection({ apMode }: { apMode?: boolean }) {
 
   return (
     <Card title="WiFi" subtitle={subtitle}>
-      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      <div class={styles.stack}>
         <Button onClick={doScan} disabled={scanning}>
           {scanning ? "Scanning..." : "Scan Networks"}
         </Button>
         {networks.length > 0 && (
-          <div style={{ maxHeight: 150, overflow: "auto", fontSize: 13 }}>
+          <div class={styles.networkList}>
             {networks.map((n) => (
               <div
                 key={n.ssid}
-                style={{
-                  padding: "4px 8px",
-                  cursor: "pointer",
-                  borderBottom: "1px solid var(--border)",
-                }}
+                class={styles.networkItem}
                 onClick={() => setWifiSsid(n.ssid)}
               >
                 {n.ssid} ({n.rssi} dBm) {n.secure ? "\u{1f512}" : ""}

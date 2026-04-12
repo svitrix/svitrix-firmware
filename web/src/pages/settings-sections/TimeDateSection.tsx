@@ -1,6 +1,7 @@
 import { useState } from "preact/hooks";
 import { useSettings } from "../../context/SettingsContext";
 import { Toggle, TextField, ColorField, Select, Card, FormRow, Button } from "../../components/ui";
+import styles from "./sections.module.css";
 
 export function TimeDateSection() {
   const { settings, updateSettings, saveDisplaySettings } = useSettings();
@@ -22,7 +23,7 @@ export function TimeDateSection() {
 
   return (
     <Card title="Time & Date Format">
-      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      <div class={styles.stack}>
         <FormRow>
           <TextField label="Time Format" value={s.TFORMAT} onChange={(v) => updateSettings({ TFORMAT: v })} />
           <TextField label="Date Format" value={s.DFORMAT} onChange={(v) => updateSettings({ DFORMAT: v })} />

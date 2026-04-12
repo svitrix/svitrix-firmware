@@ -7,6 +7,7 @@ import {
 } from "../api/client";
 import type { DataSource } from "../api/types";
 import { toast } from "../components/Toast";
+import styles from "./DataFetcher.module.css";
 
 const empty: DataSource = {
   name: "",
@@ -64,8 +65,8 @@ export function DataFetcherPage(_props: { path?: string }) {
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+    <div class={styles.page}>
+      <div class={styles.header}>
         <h2>Data Sources</h2>
         <button
           class="btn-primary"
@@ -81,8 +82,8 @@ export function DataFetcherPage(_props: { path?: string }) {
 
       {showForm && (
         <div class="card">
-          <h3 style={{ marginBottom: 12 }}>{editing ? "Edit Source" : "New Source"}</h3>
-          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          <h3 class={styles.formHeading}>{editing ? "Edit Source" : "New Source"}</h3>
+          <div class={styles.formStack}>
             <div class="form-row">
               <div class="form-group">
                 <label>Name</label>
@@ -160,43 +161,35 @@ export function DataFetcherPage(_props: { path?: string }) {
       )}
 
       {sources.length === 0 && !showForm && (
-        <p style={{ color: "var(--text-dim)" }}>No data sources configured.</p>
+        <p class={styles.empty}>No data sources configured.</p>
       )}
 
       {sources.map((src) => (
         <div class="card" key={src.name}>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: 8,
-            }}
-          >
-            <strong style={{ color: "var(--accent)" }}>{src.name}</strong>
-            <div style={{ display: "flex", gap: 6 }}>
+          <div class={styles.sourceHeader}>
+            <strong class={styles.sourceName}>{src.name}</strong>
+            <div class={styles.sourceBtns}>
               <button
+                class={styles.btnSmall}
                 onClick={() => fetchDataSource(src.name).then(() => toast("Fetched!"))}
-                style={{ padding: "4px 10px", fontSize: 12 }}
               >
                 Fetch
               </button>
               <button
+                class={styles.btnSmall}
                 onClick={() => edit(src)}
-                style={{ padding: "4px 10px", fontSize: 12 }}
               >
                 Edit
               </button>
               <button
-                class="btn-danger"
+                class={`btn-danger ${styles.btnSmall}`}
                 onClick={() => remove(src.name)}
-                style={{ padding: "4px 10px", fontSize: 12 }}
               >
                 Delete
               </button>
             </div>
           </div>
-          <div style={{ fontSize: 13, color: "var(--text-dim)" }}>
+          <div class={styles.sourceMeta}>
             <div>URL: {src.url}</div>
             <div>
               Path: {src.jsonPath} | Format: {src.displayFormat || "—"} | Every {src.interval}s

@@ -1,5 +1,6 @@
 import { route } from "preact-router";
 import { signal } from "@preact/signals";
+import styles from "./Nav.module.css";
 
 const currentPath = signal(window.location.pathname);
 const theme = signal<"dark" | "light">(
@@ -36,39 +37,22 @@ export function Nav() {
   }
 
   return (
-    <nav
-      style={{
-        display: "flex",
-        gap: "4px",
-        padding: "8px 12px",
-        background: "var(--bg-card)",
-        borderBottom: "1px solid var(--border)",
-        flexWrap: "wrap",
-        alignItems: "center",
-      }}
-    >
-      <strong style={{ color: "var(--accent)", marginRight: 12 }}>Svitrix</strong>
+    <nav class={styles.nav}>
+      <strong class={styles.logo}>Svitrix</strong>
       {links.map((l) => (
         <a
           key={l.href}
           href={l.href}
           onClick={(e: Event) => navigate(e, l.href)}
-          style={{
-            padding: "4px 12px",
-            borderRadius: "var(--radius)",
-            background: path === l.href ? "var(--bg-input)" : "transparent",
-            color: path === l.href ? "var(--accent)" : "var(--text-dim)",
-            fontSize: 13,
-          }}
+          class={`${styles.link}${path === l.href ? ` ${styles.linkActive}` : ""}`}
         >
           {l.label}
         </a>
       ))}
       <button
-        class="theme-toggle"
+        class={`theme-toggle ${styles.themeToggle}`}
         onClick={toggleTheme}
         title="Toggle theme"
-        style={{ marginLeft: "auto" }}
       >
         {theme.value === "dark" ? "\u2600" : "\u263D"}
       </button>

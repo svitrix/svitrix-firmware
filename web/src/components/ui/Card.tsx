@@ -1,4 +1,5 @@
 import type { ComponentChildren } from "preact";
+import styles from "./Card.module.css";
 
 export function Card({
   title,
@@ -11,9 +12,9 @@ export function Card({
 }) {
   return (
     <div class="card">
-      <h3 style={{ marginBottom: 12 }}>{title}</h3>
+      <h3 class={styles.title}>{title}</h3>
       {subtitle && (
-        <p style={{ color: "var(--text-dim)", marginBottom: 12, fontSize: 13 }}>{subtitle}</p>
+        <p class={styles.subtitle}>{subtitle}</p>
       )}
       {children}
     </div>

@@ -1,4 +1,5 @@
 import { SettingsProvider, useSettings } from "../context/SettingsContext";
+import styles from "./Settings.module.css";
 import {
   StatsBar,
   WifiSection,
@@ -23,7 +24,7 @@ function SettingsContent() {
 
   if (!settings && !apiAvailable) {
     return (
-      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <div class={styles.page}>
         <WifiSection apMode />
       </div>
     );
@@ -32,7 +33,7 @@ function SettingsContent() {
   if (!settings) return <p>Loading...</p>;
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+    <div class={styles.page}>
       <StatsBar />
       <WifiSection />
       <NetworkSection />

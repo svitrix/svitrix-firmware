@@ -1,0 +1,15 @@
+.controls {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.canvas {
+  display: block;
+  background: #000;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  max-width: 100%;
+  height: auto;
+}

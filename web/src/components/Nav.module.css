@@ -1,0 +1,31 @@
+.nav {
+  display: flex;
+  gap: 4px;
+  padding: 8px 12px;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.logo {
+  color: var(--accent);
+  margin-right: 12px;
+}
+
+.link {
+  padding: 4px 12px;
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--text-dim);
+  font-size: 13px;
+}
+
+.linkActive {
+  background: var(--bg-input);
+  color: var(--accent);
+}
+
+.themeToggle {
+  margin-left: auto;
+}

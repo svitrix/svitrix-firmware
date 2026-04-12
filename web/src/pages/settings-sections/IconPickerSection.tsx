@@ -2,6 +2,7 @@ import { useState } from "preact/hooks";
 import { uploadFile } from "../../api/client";
 import { toast } from "../../components/Toast";
 import { TextField, Card, FormRow, Button } from "../../components/ui";
+import styles from "./sections.module.css";
 
 export function IconPickerSection() {
   const [iconId, setIconId] = useState("");
@@ -46,11 +47,11 @@ export function IconPickerSection() {
 
   return (
     <Card title="Icon Picker">
-      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      <div class={styles.stack}>
         <FormRow>
           <TextField label="LaMetric Icon ID" value={iconId} onChange={setIconId} placeholder="13" />
-          <div class="form-group" style={{ justifyContent: "flex-end" }}>
-            <div style={{ display: "flex", gap: 6 }}>
+          <div class={`form-group ${styles.formGroupEnd}`}>
+            <div class={styles.btnGroup}>
               <Button onClick={() => {
                 if (iconId) setIconPreview(`https://developer.lametric.com/content/apps/icon_thumbs/${iconId}`);
               }}>Preview</Button>
@@ -59,14 +60,10 @@ export function IconPickerSection() {
           </div>
         </FormRow>
         {iconPreview && (
-          <div style={{
-            width: 150, height: 150, background: "#000",
-            borderRadius: "var(--radius)", border: "1px solid var(--border)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-          }}>
+          <div class={styles.iconPreview}>
             <img
               src={iconPreview}
-              style={{ imageRendering: "pixelated", width: "100%", height: "100%", objectFit: "contain" }}
+              class={styles.iconPreviewImg}
               onError={() => { setIconPreview(""); toast("Icon not found"); }}
             />
           </div>

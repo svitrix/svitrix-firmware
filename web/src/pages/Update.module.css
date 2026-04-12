@@ -1,0 +1,20 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cardHeading {
+  margin-bottom: 12px;
+}
+
+.hint {
+  color: var(--text-dim);
+  margin-bottom: 12px;
+  font-size: 13px;
+}
+
+.progress {
+  margin-top: 12px;
+  color: var(--accent);
+}

@@ -1,11 +1,12 @@
 import { useSettings } from "../../context/SettingsContext";
+import styles from "./sections.module.css";
 
 export function StatsBar() {
   const { stats } = useSettings();
   if (!stats) return null;
 
   return (
-    <div class="card" style={{ display: "flex", gap: 16, flexWrap: "wrap", fontSize: 13 }}>
+    <div class={`card ${styles.statsBar}`}>
       <span>FW: {stats.version}</span>
       <span>RAM: {(stats.ram / 1024).toFixed(0)} KB</span>
       <span>WiFi: {stats.wifi_signal} dBm</span>

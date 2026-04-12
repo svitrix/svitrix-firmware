@@ -1,5 +1,6 @@
 import { useSettings } from "../../context/SettingsContext";
 import { Toggle, TextField, Card, FormRow } from "../../components/ui";
+import styles from "./sections.module.css";
 
 export function MqttSection() {
   const { config, updateConfig } = useSettings();
@@ -7,7 +8,7 @@ export function MqttSection() {
 
   return (
     <Card title="MQTT">
-      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      <div class={styles.stack}>
         <FormRow>
           <TextField label="Broker" value={config["Broker"] || ""} onChange={(v) => updateConfig("Broker", v)} />
           <TextField label="Port" value={config["Port"] || 1883} onChange={(v) => updateConfig("Port", parseInt(v as string) || 1883)} type="number" />

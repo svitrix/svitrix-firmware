@@ -1,6 +1,7 @@
 import { useState } from "preact/hooks";
 import { useSettings } from "../../context/SettingsContext";
 import { Toggle, Slider, ColorField, Select, Card, FormRow, Button } from "../../components/ui";
+import styles from "./sections.module.css";
 
 export function AppsSection() {
   const { settings, transitions, updateSettings, saveDisplaySettings } = useSettings();
@@ -24,7 +25,7 @@ export function AppsSection() {
 
   return (
     <Card title="Apps">
-      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      <div class={styles.stack}>
         <Toggle label="Time" checked={s.TIM} onChange={(v) => updateSettings({ TIM: v })} />
         <Toggle label="Date" checked={s.DAT} onChange={(v) => updateSettings({ DAT: v })} />
         <FormRow>
