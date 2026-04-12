@@ -39,7 +39,7 @@ export function TimeDateSection() {
             { value: 5, label: "Big Digits" },
             { value: 6, label: "Binary" },
           ]}
-          onChange={(v) => updateSettings({ TMODE: +v })}
+          onChange={(v) => updateSettings({ TMODE: v as number })}
         />
         <Toggle label="Start on Monday" checked={s.SOM} onChange={(v) => updateSettings({ SOM: v })} />
         <Toggle label="Celsius" checked={s.CEL} onChange={(v) => updateSettings({ CEL: v })} />

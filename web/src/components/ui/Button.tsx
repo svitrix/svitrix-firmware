@@ -9,7 +9,7 @@ export function Button({
 }: {
   children: ComponentChildren;
   variant?: "primary" | "danger" | "default";
-  onClick?: () => void;
+  onClick?: () => void | Promise<void>;
   disabled?: boolean;
   loading?: boolean;
 }) {

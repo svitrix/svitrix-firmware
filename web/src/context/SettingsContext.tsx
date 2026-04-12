@@ -35,8 +35,9 @@ interface SettingsContextValue {
   config: InfraConfig | null;
   stats: Stats | null;
   transitions: TransitionInfo[];
+  loading: boolean;
   updateSettings: (patch: Partial<Settings>) => void;
-  updateConfig: (key: string, val: unknown) => void;
+  updateConfig: <K extends keyof InfraConfig>(key: K, val: InfraConfig[K]) => void;
   saveDisplaySettings: (fields: Partial<Settings>) => Promise<void>;
   saveInfraConfig: () => Promise<void>;
   reload: () => void;
@@ -51,14 +52,16 @@ export function SettingsProvider({ children }: { children: ComponentChildren }) 
   const [stats, setStats] = useState<Stats | null>(null);
   const [transitions, setTransitions] = useState<TransitionInfo[]>([]);
   const [apiAvailable, setApiAvailable] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   const load = useCallback(() => {
-    getSettings()
-      .then(setSettings)
-      .catch(() => setApiAvailable(false));
-    getStats().then(setStats).catch(() => {});
-    getTransitions().then(setTransitions).catch(() => {});
-    getConfig().then((c) => setConfig(c as InfraConfig)).catch(() => {});
+    setLoading(true);
+    Promise.allSettled([
+      getSettings().then(setSettings).catch(() => setApiAvailable(false)),
+      getStats().then(setStats).catch(() => {}),
+      getTransitions().then(setTransitions).catch(() => {}),
+      getConfig().then((c) => setConfig(c as unknown as InfraConfig)).catch(() => {}),
+    ]).finally(() => setLoading(false));
   }, []);
 
   useEffect(() => { load(); }, [load]);
@@ -67,7 +70,7 @@ export function SettingsProvider({ children }: { children: ComponentChildren }) 
     setSettings((prev) => (prev ? { ...prev, ...patch } : prev));
   }
 
-  function updateConfig(key: string, val: unknown) {
+  function updateConfig<K extends keyof InfraConfig>(key: K, val: InfraConfig[K]) {
     setConfig((prev) => (prev ? { ...prev, [key]: val } : prev));
   }
 
@@ -83,7 +86,7 @@ export function SettingsProvider({ children }: { children: ComponentChildren }) 
   async function handleSaveInfraConfig() {
     if (!config) return;
     try {
-      await saveConfig(config);
+      await saveConfig(config as unknown as Record<string, unknown>);
       toast("Config saved & applied!");
     } catch {
       toast("Error saving config");
@@ -97,6 +100,7 @@ export function SettingsProvider({ children }: { children: ComponentChildren }) 
         config,
         stats,
         transitions,
+        loading,
         updateSettings,
         updateConfig,
         saveDisplaySettings,

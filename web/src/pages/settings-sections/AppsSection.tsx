@@ -46,7 +46,7 @@ export function AppsSection() {
             label="Transition Effect"
             value={s.TEFF}
             options={transitions.map((t, i) => ({ value: i, label: t.name }))}
-            onChange={(v) => updateSettings({ TEFF: +v })}
+            onChange={(v) => updateSettings({ TEFF: v as number })}
           />
         )}
         <Slider label="Transition Speed" min={100} max={2000} step={100} value={s.TSPEED} onChange={(v) => updateSettings({ TSPEED: v })} unit="ms" />

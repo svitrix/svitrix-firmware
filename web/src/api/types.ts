@@ -124,5 +124,4 @@ export interface InfraConfig {
   "Timezone": string;
   "Auth Username": string;
   "Auth Password": string;
-  [key: string]: unknown;
 }

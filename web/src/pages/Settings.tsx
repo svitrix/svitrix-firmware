@@ -16,7 +16,9 @@ import {
 } from "./settings-sections";
 
 function SettingsContent() {
-  const { settings, apiAvailable } = useSettings();
+  const { settings, apiAvailable, loading } = useSettings();
+
+  if (loading) return <p>Loading...</p>;
 
   if (!settings && !apiAvailable) {
     return (

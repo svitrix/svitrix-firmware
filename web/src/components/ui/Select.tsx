@@ -7,14 +7,20 @@ export function Select({
   label: string;
   value: string | number;
   options: Array<{ value: string | number; label: string }>;
-  onChange: (v: string) => void;
+  onChange: (v: number | string) => void;
 }) {
+  const id = label.toLowerCase().replace(/\s+/g, "-");
   return (
     <div class="form-group">
-      <label>{label}</label>
+      <label htmlFor={id}>{label}</label>
       <select
+        id={id}
         value={value}
-        onChange={(e) => onChange((e.target as HTMLSelectElement).value)}
+        onChange={(e) => {
+          const raw = (e.target as HTMLSelectElement).value;
+          const opt = options.find((o) => String(o.value) === raw);
+          onChange(opt && typeof opt.value === "number" ? Number(raw) : raw);
+        }}
       >
         {options.map((opt) => (
           <option key={opt.value} value={opt.value}>

@@ -15,19 +15,21 @@ export function Slider({
   step?: number;
   unit?: string;
 }) {
+  const id = label.toLowerCase().replace(/\s+/g, "-");
   return (
     <div class="form-group">
-      <label>
+      <label htmlFor={id}>
         {label}: {value}{unit ?? ""}
-        <input
-          type="range"
-          min={min}
-          max={max}
-          step={step}
-          value={value}
-          onInput={(e) => onChange(+(e.target as HTMLInputElement).value)}
-        />
       </label>
+      <input
+        id={id}
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onInput={(e) => onChange(+(e.target as HTMLInputElement).value)}
+      />
     </div>
   );
 }

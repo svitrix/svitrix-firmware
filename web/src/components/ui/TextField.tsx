@@ -11,10 +11,12 @@ export function TextField({
   type?: string;
   placeholder?: string;
 }) {
+  const id = label.toLowerCase().replace(/\s+/g, "-");
   return (
     <div class="form-group">
-      <label>{label}</label>
+      <label htmlFor={id}>{label}</label>
       <input
+        id={id}
         type={type}
         value={value}
         placeholder={placeholder}
