@@ -24,6 +24,7 @@ DisplayManager_ (singleton, coordinator)
 | `DisplayManager_ParseHelpers.cpp` | 295 | Shared JSON parsers for custom apps and notifications |
 | `DisplayManager_Settings.cpp` | 270 | Settings get/set, device stats, LED export |
 | `DisplayManager_Artnet.cpp` | 138 | Art-Net DMX receiver, moodlight mode |
+| `AppContentRenderer.cpp` | 213 | Shared rendering: icon, text, scroll, overlay (uses LayoutEngine) |
 
 ## Shared Globals (DisplayManager_internal.h)
 
@@ -133,7 +134,7 @@ Used by both custom apps and notifications:
 - `parseChartData()` — bar/line arrays (max 16 points, auto-scaled to 0-8)
 - `parseGradient()` — [color1, color2]
 - `parseTextOrFragments()` — plain text or `[{t:"...",c:"..."}]` colored fragments
-- `parseCommonAppFields()` — 15 display/effect fields
+- `parseCommonAppFields()` — 16 display/effect fields (incl. `layout`)
 - `readColorField()` — hex `"#RRGGBB"` or `[r,g,b]`
 
 ## Dependency Injection

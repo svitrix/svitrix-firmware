@@ -385,6 +385,7 @@ Shared rendering data structure and pipeline used by both custom apps and notifi
 | `pushIcon` | byte | Icon push animation mode |
 | `progress` / `pColor` / `pbColor` | int/uint32_t | Progress bar |
 | `barData[16]` / `lineData[16]` | int | Bar/line chart data |
+| `layout` | IconLayout | Icon/text positioning: Left, Right, None |
 | `effect` | int | Background effect index |
 | `overlay` | OverlayEffect | Weather overlay |
 | `drawInstructions` | String | JSON draw commands |
