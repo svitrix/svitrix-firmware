@@ -86,6 +86,11 @@ void DisplayManager_::registerPolicy(IDisplayPolicy *policy)
         policies_.push_back(policy);
 }
 
+void DisplayManager_::markPolicyConfigDirty()
+{
+    policyDirty_ = true;
+}
+
 uint32_t DisplayManager_::resolveTextColor(uint32_t preferred) const
 {
     // Use the cached active policy (computed in tick()) rather than
@@ -243,9 +248,15 @@ void DisplayManager_::tick()
                                { return p->isActive(); });
         IDisplayPolicy *newActive = (it != policies_.end()) ? *it : nullptr;
 
-        if (newActive != activePolicy_)
+        // Re-apply when either the active policy identity changed, or a
+        // policy-relevant config field was mutated since the last activation
+        // (dirty flag set by markPolicyConfigDirty()). The latter handles
+        // the "user edits nightColor while night mode is active" case.
+        const bool changed = (newActive != activePolicy_);
+        if (changed || policyDirty_)
         {
             activePolicy_ = newActive;
+            policyDirty_ = false;
             if (activePolicy_)
             {
                 uint32_t col;

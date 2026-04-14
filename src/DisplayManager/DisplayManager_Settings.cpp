@@ -153,18 +153,42 @@ void DisplayManager_::setNewSettings(const char *json)
     {
         appConfig.nativeIconLayout = layoutFromString(doc["NILAYOUT"].as<String>());
     }
+    bool nightFieldsChanged = false;
     if (doc.containsKey("NMODE"))
+    {
         appConfig.nightMode = doc["NMODE"].as<bool>();
+        nightFieldsChanged = true;
+    }
     if (doc.containsKey("NSTART"))
+    {
         appConfig.nightStart = doc["NSTART"].as<uint16_t>();
+        nightFieldsChanged = true;
+    }
     if (doc.containsKey("NEND"))
+    {
         appConfig.nightEnd = doc["NEND"].as<uint16_t>();
+        nightFieldsChanged = true;
+    }
     if (doc.containsKey("NBRI"))
+    {
         appConfig.nightBrightness = doc["NBRI"].as<uint8_t>();
+        nightFieldsChanged = true;
+    }
     if (doc.containsKey("NCOL"))
+    {
         appConfig.nightColor = doc["NCOL"].as<uint32_t>();
+        nightFieldsChanged = true;
+    }
     if (doc.containsKey("NBTRANS"))
+    {
         appConfig.nightBlockTransition = doc["NBTRANS"].as<bool>();
+        nightFieldsChanged = true;
+    }
+    // Force DisplayManager's cached overrides (matrix brightness, default text
+    // colour) to re-sync on the next tick so a mid-activation config edit
+    // (e.g. new nightColor) takes effect without waiting for the window to flip.
+    if (nightFieldsChanged)
+        markPolicyConfigDirty();
     timeConfig.isCelsius = doc.containsKey("CEL") ? doc["CEL"] : timeConfig.isCelsius;
     timeConfig.startOnMonday = doc.containsKey("SOM") ? doc["SOM"].as<bool>() : timeConfig.startOnMonday;
     displayConfig.matrixOff = doc.containsKey("MATP") ? !doc["MATP"].as<bool>() : displayConfig.matrixOff;
