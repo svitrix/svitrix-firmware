@@ -209,17 +209,31 @@ void DisplayManager_::tick()
     }
     else
     {
-        bool nightActive = isNightModeActive();
-        if (nightActive)
+        // Edge-trigger night-mode state transitions: applying setAutoTransition /
+        // setTextColor / setBrightness every frame churns UI state, clobbers
+        // per-app color choices, and may produce MQTT/log spam. Only react when
+        // the active flag flips. During night the per-app renderer
+        // (applyNativeAppColor) already honours nightColor.
+        static bool wasNightActive = false;
+        const bool nightActive = isNightModeActive();
+        if (nightActive != wasNightActive)
         {
-            if (appConfig.nightBlockTransition)
-                setAutoTransition(false);
-            setTextColor(appConfig.nightColor);
-        }
-        else
-        {
-            setAutoTransition(appConfig.autoTransition);
-            setTextColor(colorConfig.textColor);
+            if (nightActive)
+            {
+                setTextColor(appConfig.nightColor);
+                if (appConfig.nightBlockTransition)
+                    setAutoTransition(false);
+            }
+            else
+            {
+                setTextColor(colorConfig.textColor);
+                setAutoTransition(appConfig.autoTransition);
+            }
+            // Reapply brightness so setBrightness() picks up (or releases) the
+            // nightBrightness clamp. Without this, entering the window would
+            // only dim on the next unrelated brightness change.
+            setBrightness(brightnessConfig.brightness);
+            wasNightActive = nightActive;
         }
         ui->update();
         if (ui->getUiState()->appState == IN_TRANSITION && !appIsSwitching)
