@@ -6,31 +6,8 @@
 #include "EffectRegistry.h"
 #include "DisplayManager.h"
 #include "LayoutEngine.h"
-#include "timer.h"
-#include "NightModeWindow.h"
 
 Preferences Settings;
-
-bool isNightModeActive()
-{
-    if (!appConfig.nightMode)
-        return false;
-
-    const struct tm *now = timer_localtime();
-    if (!now)
-        return false;
-
-    // Guard against the pre-NTP epoch window. tm_year is years-since-1900,
-    // so values < 120 (i.e. before 2020) mean NTP hasn't synced yet and the
-    // clock is reading ~1970. Without this guard, the defaults (start=21:00,
-    // end=06:00) would activate at boot because 00:00 falls inside the
-    // wrap-around window.
-    if (now->tm_year < 120)
-        return false;
-
-    const uint16_t currentMinutes = static_cast<uint16_t>(now->tm_hour * 60 + now->tm_min);
-    return isWithinNightWindow(currentMinutes, appConfig.nightStart, appConfig.nightEnd);
-}
 
 const char *getID()
 {

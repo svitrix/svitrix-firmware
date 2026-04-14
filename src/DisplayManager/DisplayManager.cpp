@@ -9,6 +9,7 @@
  * layout switching, gamma correction, and the New Year easter egg.
  */
 #include <DisplayManager.h>
+#include <algorithm>
 #include "DisplayManager_internal.h"
 #include "INotifier.h"
 #include "IPeripheryProvider.h"
@@ -78,6 +79,26 @@ void DisplayManager_::subscribeViaMqtt(const char *topic)
     if (notifier_)
         notifier_->subscribe(topic);
 }
+
+void DisplayManager_::registerPolicy(IDisplayPolicy *policy)
+{
+    if (policy)
+        policies_.push_back(policy);
+}
+
+uint32_t DisplayManager_::resolveTextColor(uint32_t preferred) const
+{
+    // Use the cached active policy (computed in tick()) rather than
+    // re-evaluating isActive() — resolveTextColor is on the hot per-app
+    // render path called many times per frame.
+    if (activePolicy_)
+    {
+        uint32_t override_;
+        if (activePolicy_->overridesTextColor(override_))
+            return override_;
+    }
+    return preferred;
+}
 void DisplayManager_::setColorCorrection(CRGB c)
 {
     colorCorrection = c;
@@ -95,9 +116,9 @@ const String& DisplayManager_::getCurrentApp() const
     return currentApp;
 }
 
-/// Sets matrix brightness, respecting matrixOff state and night mode.
+/// Sets matrix brightness, respecting matrixOff state and active policies.
 /// When display is off, brightness stays 0 unless the front notification has wakeup=true.
-/// When night mode is active, brightness is clamped to nightBrightness.
+/// When a registered policy is active and overrides brightness, the value is clamped.
 void DisplayManager_::setBrightness(int bri)
 {
     bool wakeup = false;
@@ -112,8 +133,12 @@ void DisplayManager_::setBrightness(int bri)
     }
     else
     {
-        if (isNightModeActive())
-            bri = appConfig.nightBrightness;
+        if (activePolicy_)
+        {
+            uint8_t clamp;
+            if (activePolicy_->overridesBrightness(clamp))
+                bri = clamp;
+        }
         matrix->setBrightness(bri);
         actualBri = bri;
     }
@@ -209,19 +234,24 @@ void DisplayManager_::tick()
     }
     else
     {
-        // Edge-trigger night-mode state transitions: applying setAutoTransition /
-        // setTextColor / setBrightness every frame churns UI state, clobbers
-        // per-app color choices, and may produce MQTT/log spam. Only react when
-        // the active flag flips. During night the per-app renderer
-        // (applyNativeAppColor) already honours nightColor.
-        static bool wasNightActive = false;
-        const bool nightActive = isNightModeActive();
-        if (nightActive != wasNightActive)
+        // Edge-trigger: resolve which policy (if any) is active this tick and
+        // only apply side-effectful setters when the active policy changes.
+        // Per-tick application would churn UI state, clobber per-app colours,
+        // and potentially spam downstream listeners (MQTT, logs).
+        auto it = std::find_if(policies_.begin(), policies_.end(),
+                               [](IDisplayPolicy *p)
+                               { return p->isActive(); });
+        IDisplayPolicy *newActive = (it != policies_.end()) ? *it : nullptr;
+
+        if (newActive != activePolicy_)
         {
-            if (nightActive)
+            activePolicy_ = newActive;
+            if (activePolicy_)
             {
-                setTextColor(appConfig.nightColor);
-                if (appConfig.nightBlockTransition)
+                uint32_t col;
+                if (activePolicy_->overridesTextColor(col))
+                    setTextColor(col);
+                if (activePolicy_->blocksAutoTransition())
                     setAutoTransition(false);
             }
             else
@@ -229,11 +259,9 @@ void DisplayManager_::tick()
                 setTextColor(colorConfig.textColor);
                 setAutoTransition(appConfig.autoTransition);
             }
-            // Reapply brightness so setBrightness() picks up (or releases) the
-            // nightBrightness clamp. Without this, entering the window would
-            // only dim on the next unrelated brightness change.
+            // Reapply brightness so the clamp inside setBrightness() takes
+            // effect (or is released) immediately on the transition edge.
             setBrightness(brightnessConfig.brightness);
-            wasNightActive = nightActive;
         }
         ui->update();
         if (ui->getUiState()->appState == IN_TRANSITION && !appIsSwitching)

@@ -32,6 +32,8 @@
 #include "PowerManager.h"
 #include "DataFetcher/DataFetcher.h"
 #include "timer.h"
+#include "RealTimeProvider.h"
+#include "policies/NightModePolicy.h"
 #include <cassert>
 
 TaskHandle_t taskHandle = nullptr;
@@ -94,6 +96,13 @@ void setup()
     DisplayManager.setPeriphery(&PeripheryManager);
     DisplayManager.setMenuActiveQuery([]()
                                       { return MenuManager.inMenu; });
+
+    // Display policies (scheduled/event-driven overrides for brightness,
+    // text color, auto-transition). Order of registration = priority.
+    // Statics so the objects outlive main(); DisplayManager only stores pointers.
+    static RealTimeProvider realTimeProvider;
+    static NightModePolicy nightModePolicy(appConfig, realTimeProvider);
+    DisplayManager.registerPolicy(&nightModePolicy);
 
     // Wire up IDisplay interfaces (Phase 8, updated Phase 11: renderer + notifier split)
     UpdateManager.setDisplay(&DisplayManager.getRenderer());

@@ -4,7 +4,7 @@
  *
  * Kept header-only and dependency-free so it can be compiled into
  * native_test without pulling Arduino/Preferences. The stateful
- * wrapper lives in Globals.cpp as isNightModeActive().
+ * wrapper lives in NightModePolicy (src/policies/).
  */
 #pragma once
 

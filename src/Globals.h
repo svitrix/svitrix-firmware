@@ -56,4 +56,3 @@ constexpr double movementFactor = 0.5;
 
 void loadSettings();
 void saveSettings();
-bool isNightModeActive();

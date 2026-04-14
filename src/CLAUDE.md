@@ -77,7 +77,20 @@ See [lib/config/CLAUDE.md](../lib/config/CLAUDE.md) for full field list.
 | `startLittleFS()` | Mount LittleFS, create dirs, handle corrupt FS |
 | `loadDevSettings()` | Parse `/dev.json` for advanced overrides |
 | `getID()` | Generate device ID from MAC: `svitrix_XXYYZZ` |
-| `isNightModeActive()` | Check if current time is within night mode window |
+
+### Display Policies (src/policies/)
+
+Pluggable `IDisplayPolicy` implementations that can override brightness,
+text color, and auto-transition while active. Registered with
+`DisplayManager.registerPolicy()` in `main.cpp`; order = priority.
+
+| Policy | File | Triggered by |
+|--------|------|--------------|
+| `NightModePolicy` | `src/policies/NightModePolicy.h` | `appConfig.nightMode` + time-of-day window |
+
+Adding a new mode (movie, away, sleep timer, etc.) = new header
+implementing `IDisplayPolicy` + one `registerPolicy()` call. No changes
+to `DisplayManager` or `Apps_Helpers`.
 
 ### Debug Macros
 
