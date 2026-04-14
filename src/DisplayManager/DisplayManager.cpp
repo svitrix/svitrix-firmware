@@ -250,13 +250,16 @@ void DisplayManager_::tick()
 
         // Re-apply when either the active policy identity changed, or a
         // policy-relevant config field was mutated since the last activation
-        // (dirty flag set by markPolicyConfigDirty()). The latter handles
-        // the "user edits nightColor while night mode is active" case.
+        // (dirty flag set by markPolicyConfigDirty()). The dirty branch is
+        // gated on a policy being involved on at least one side of the
+        // transition — firing a re-apply when both sides are nullptr would
+        // needlessly overwrite whatever the current app just rendered.
         const bool changed = (newActive != activePolicy_);
-        if (changed || policyDirty_)
+        const bool dirtyWithPolicy = policyDirty_ && (newActive || activePolicy_);
+        policyDirty_ = false;
+        if (changed || dirtyWithPolicy)
         {
             activePolicy_ = newActive;
-            policyDirty_ = false;
             if (activePolicy_)
             {
                 uint32_t col;
