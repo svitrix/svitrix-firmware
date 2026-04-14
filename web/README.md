@@ -102,7 +102,7 @@ src/
   pages/
     screen/                   # Live LED matrix preview
     settings/                 # Device configuration
-      sections/               # 14 independent settings sections
+      sections/               # 15 independent settings sections (incl. NightModeSection)
     data-fetcher/             # External API data sources
     files/                    # LittleFS file manager
     backup/                   # Config backup/restore

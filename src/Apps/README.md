@@ -127,7 +127,7 @@ No hardcoded limit on the number of custom apps.
 | Function | Purpose |
 |----------|---------|
 | `nativeAppGuard(appName)` | Skip if notification active, set currentApp |
-| `applyNativeAppColor(color)` | Apply custom color or reset to default |
+| `applyNativeAppColor(color)` | Apply per-app color (> 0) or global text color; any active `IDisplayPolicy` (e.g. NightModePolicy) can veto via `DisplayManager.resolveTextColor()` |
 | `drawWeekdayBar(x, y, lineWidth, spacing, start)` | 7 horizontal segments, current day highlighted |
 | `replacePlaceholders(input)` | `{{topic}}` → MQTT value substitution |
 

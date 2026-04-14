@@ -148,6 +148,25 @@ bool checkUpdate(bool withScreen);
 void updateFirmware();
 ```
 
+### IDisplayPolicy (4 methods)
+```cpp
+bool isActive() const;
+bool overridesBrightness(uint8_t& out) const;     // only valid when isActive()
+bool overridesTextColor(uint32_t& out) const;     // only valid when isActive()
+bool blocksAutoTransition() const;                // only valid when isActive()
+```
+Pluggable scheduled/event-driven override rule. Registered with
+`DisplayManager.registerPolicy()`; first-active wins. Current implementor:
+`NightModePolicy` (src/policies/).
+
+### ITimeProvider (1 method)
+```cpp
+bool now(struct tm& out) const;   // false when clock is not synced (e.g. pre-NTP)
+```
+Abstraction over `timer_localtime()` for policies that schedule by time-of-day.
+Production impl: `RealTimeProvider` (src/), enforces `tm_year >= 120` (year ≥ 2020)
+to reject the pre-NTP epoch window.
+
 ## Known Violations (16 files bypass interfaces)
 
 These files use direct `#include` instead of interfaces (see issue #11):
