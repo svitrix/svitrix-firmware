@@ -13,15 +13,15 @@ OTA firmware update manager. Checks remote server for new versions and performs 
 
 ## Files
 
-| File | LOC | Purpose |
-|------|-----|---------|
-| `UpdateManager.h` | 23 | Singleton, `IUpdater` implementation |
-| `UpdateManager.cpp` | 36 | Version check, firmware download, progress callbacks |
+| File | Purpose |
+|------|---------|
+| `UpdateManager.h` | Singleton, `IUpdater` implementation |
+| `UpdateManager.cpp` | Version check, firmware download, progress callbacks |
 
 ## OTA Flow
 
 1. `checkUpdate(withScreen)` — HTTPS GET version string, compare against `VERSION` constant
-2. `updateFirmware()` — download via `httpUpdate.update()` with pinned CA cert (`cert.h`)
+2. `updateFirmware()` — download via `httpUpdate.update()` with pinned CA cert ([src/data/cert.h](../data/cert.h))
 3. Progress bar rendered via `IDisplayRenderer::drawProgressBar()` (green fill, y=7)
 4. On success: automatic reboot
 

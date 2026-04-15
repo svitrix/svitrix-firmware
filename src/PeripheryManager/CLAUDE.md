@@ -14,10 +14,10 @@ Hardware abstraction singleton. Manages physical buttons, I2C temperature/humidi
 
 ## Files
 
-| File | LOC | Purpose |
-|------|-----|---------|
-| `PeripheryManager.h` | 77 | Public API, singleton, IPeripheryProvider + ISound |
-| `PeripheryManager.cpp` | 541 | Hardware init, sensor loops, button dispatch, sound |
+| File | Purpose |
+|------|---------|
+| `PeripheryManager.h` | Public API, singleton, IPeripheryProvider + ISound |
+| `PeripheryManager.cpp` | Hardware init, sensor loops, button dispatch, sound |
 
 ## Interfaces
 

@@ -13,10 +13,10 @@ HTTP REST API server, WiFi connectivity, mDNS discovery, UDP device discovery, a
 
 ## Files
 
-| File | LOC | Purpose |
-|------|-----|---------|
-| `ServerManager.h` | 39 | Public API, singleton, IButtonReporter |
-| `ServerManager.cpp` | 536 | WiFi setup, HTTP endpoints, UDP/TCP, settings loader |
+| File | Purpose |
+|------|---------|
+| `ServerManager.h` | Public API, singleton, IButtonReporter |
+| `ServerManager.cpp` | WiFi setup, HTTP endpoints, UDP/TCP, settings loader |
 
 ## Interfaces
 

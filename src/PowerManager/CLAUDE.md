@@ -13,10 +13,10 @@ Deep sleep controller. Puts the ESP32 into `esp_deep_sleep` with timer and GPIO 
 
 ## Files
 
-| File | LOC | Purpose |
-|------|-----|---------|
-| `PowerManager.h` | 23 | Singleton, `IPower` implementation |
-| `PowerManager.cpp` | 36 | Sleep logic, JSON parser, wake source config |
+| File | Purpose |
+|------|---------|
+| `PowerManager.h` | Singleton, `IPower` implementation |
+| `PowerManager.cpp` | Sleep logic, JSON parser, wake source config |
 
 ## Wake Sources
 

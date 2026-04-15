@@ -13,10 +13,10 @@ On-device settings menu rendered on the LED matrix. Adjusts display, time, audio
 
 ## Files
 
-| File | LOC | Purpose |
-|------|-----|---------|
-| `MenuManager.h` | 47 | Singleton, `IButtonHandler` implementation |
-| `MenuManager.cpp` | 491 | Menu state machine, menu items, button handlers |
+| File | Purpose |
+|------|---------|
+| `MenuManager.h` | Singleton, `IButtonHandler` implementation |
+| `MenuManager.cpp` | Menu state machine, menu items, button handlers |
 
 ## Menu Structure (~13 items)
 
