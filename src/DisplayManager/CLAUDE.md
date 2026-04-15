@@ -169,7 +169,7 @@ Things grep won't tell you — reach for these before hypothesizing:
 
 - LED output passes through `calculateGamma(brightness)` from [lib/services/src/GammaUtils.cpp](../../lib/services/src/GammaUtils.cpp) — a two-segment log curve: `logMap(bri, 2, 180, 0.535, 2.3, 1.9)`.
 - At `brightness < 2` the curve floors at `0.535` — near zero output → perceived flicker / dropout.
-- Auto-brightness path ([SensorCalc::calculateBrightness](../../lib/services/src/SensorCalc.cpp)) then applies `pow(pct, ldrGamma) / pow(100, ldrGamma-1)` and clamps to `[minBri, maxBri]`.
+- Auto-brightness path ([calculateBrightness in SensorCalc.cpp](../../lib/services/src/SensorCalc.cpp)) then applies `pow(pct, ldrGamma) / pow(100, ldrGamma-1)` and clamps to `[minBri, maxBri]`.
 - **Common fixes:**
   - Raise `brightnessConfig.minBri` (default low; set to 10–15 to kill dropouts).
   - Lower `brightnessConfig.ldrGamma` if auto-brightness overshoots dark too fast.
