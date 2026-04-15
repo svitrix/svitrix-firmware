@@ -160,3 +160,42 @@ MQTTManager.setDisplay(&DisplayManager, &DisplayManager, &DisplayManager.getNoti
 ## Backward Compatibility
 
 DisplayManager_ delegates ~79 methods to renderer_ and notifMgr_. Apps calling `DisplayManager.drawPixel()` still work — forwarded internally.
+
+## Debugging Hints
+
+Things grep won't tell you — reach for these before hypothesizing:
+
+### Brightness flicker at low values
+
+- LED output passes through `calculateGamma(brightness)` from [lib/services/src/GammaUtils.cpp](../../lib/services/src/GammaUtils.cpp) — a two-segment log curve: `logMap(bri, 2, 180, 0.535, 2.3, 1.9)`.
+- At `brightness < 2` the curve floors at `0.535` — near zero output → perceived flicker / dropout.
+- Auto-brightness path ([calculateBrightness in SensorCalc.cpp](../../lib/services/src/SensorCalc.cpp)) then applies `pow(pct, ldrGamma) / pow(100, ldrGamma-1)` and clamps to `[minBri, maxBri]`.
+- **Common fixes:**
+  - Raise `brightnessConfig.minBri` (default low; set to 10–15 to kill dropouts).
+  - Lower `brightnessConfig.ldrGamma` if auto-brightness overshoots dark too fast.
+  - Disable auto-brightness entirely (`autoBrightness = false`) to isolate whether the issue is sensor-driven or inherent.
+- Curve samples live in [test/test_native/test_gamma/](../../test/test_native/test_gamma/).
+
+### Text appears corrupted / truncated
+
+- Width measurement is in `TextUtils::getTextWidth()` — uses `activeFont` set once at startup (`setTextFont(SvitrixFont)` in `main.cpp`). If the font pointer is null, all widths return 0 → cursor never advances.
+- Cyrillic chars use a two-byte UTF-8 decode in [TextUtils](../../lib/services/src/TextUtils.cpp); missing codepoints fall back to width 4.
+- For unicode glyph rendering see [UnicodeFont](../../lib/services/src/UnicodeFont.cpp) — binary search over sorted codepoints.
+
+### Notifications queue stuck / not advancing
+
+- NotificationManager owns a vector of `Notification` (FIFO). `duration=0` means indefinite — stuck notification usually = someone pushed `duration=0` and didn't dismiss.
+- Check `/api/notify/dismiss` or MQTT `notify/dismiss` to clear.
+- Indicator state (3 RGB dots) is independent — indicators persist across notifications.
+
+### Custom app doesn't render or loops forever
+
+- `lifetime=0` = never expires (indefinite). `repeat=0` = loop forever. Both together → app never releases the loop slot.
+- Parsed by `parseCustomPage()` in `DisplayManager_CustomApps.cpp`; renderer is `AppContentRenderer.cpp` (shared with notifications — bugs here affect both).
+
+### Matrix freezes but no crash
+
+- Likely `tick()` blocked inside a long-running operation. Check:
+  - `MQTTManager.tick()` publishing while WiFi is dropping — wrap in `isConnected` guard.
+  - `UpdateManager.updateFirmware()` runs synchronously and hijacks the loop until reboot.
+  - `DataFetcher.tick()` HTTP fetch — if `timeout_ms` too high, stalls loop.

@@ -27,7 +27,12 @@ Scan recent code changes and update the corresponding CLAUDE.md / README.md file
    | `src/Apps/` | `src/Apps/README.md` |
    | `src/MelodyPlayer/` | `src/MelodyPlayer/README.md` |
    | `src/effects/` | `src/effects/README.md` |
-   | `src/ServerManager.*`, `src/PeripheryManager.*`, `src/MenuManager.*`, `src/Globals.*`, `src/AppContentRenderer.*` | `src/CLAUDE.md` |
+   | `src/ServerManager/` | `src/ServerManager/CLAUDE.md` |
+   | `src/PeripheryManager/` | `src/PeripheryManager/CLAUDE.md` |
+   | `src/MenuManager/` | `src/MenuManager/CLAUDE.md` |
+   | `src/PowerManager/` | `src/PowerManager/CLAUDE.md` |
+   | `src/UpdateManager/` | `src/UpdateManager/CLAUDE.md` |
+   | `src/Globals.*`, `src/AppContent.h` | `src/CLAUDE.md` |
    | `lib/interfaces/` | `lib/interfaces/CLAUDE.md` |
    | `lib/services/` | `lib/services/CLAUDE.md` |
    | `lib/config/` | `lib/config/CLAUDE.md` |
