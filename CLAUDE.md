@@ -1,498 +1,203 @@
-# Svitrix Firmware — Claude Instructions
+# Svitrix Firmware — AI Reference
 
-## Project
+ESP32 firmware for Ulanzi TC001 Smart Pixel Clock (32×8 WS2812B-Mini LED matrix).
+C++17 / Arduino / PlatformIO.
 
-ESP32 firmware for Ulanzi TC001 Smart Pixel Clock (32x8 WS2812B-Mini LED matrix).
-C++17 / Arduino framework / PlatformIO.
+## TL;DR
 
-### Hardware (Ulanzi TC001)
-
-- **MCU**: ESP32-WROOM-32D (dual-core Xtensa LX6, 240 MHz)
-- **Flash**: 8 MB (current partition table uses only 4 MB — expandable)
-- **RAM**: 520 KB SRAM
-- **USB-Serial**: CH340
-- **LED Matrix**: 8×32 WS2812B-Mini (256 LEDs), GPIO32, serpentine wiring
-- **Buttons**: GPIO26 (left), GPIO27 (middle/wakeup), GPIO14 (right), GPIO13 (reset) — active LOW, internal pull-up
-- **Buzzer**: GPIO15, passive piezo, PWM via LEDC (`INPUT_PULLDOWN` at init)
-- **LDR**: GPIO35 (GL5516 photoresistor, ADC1_CH7)
-- **Battery**: 4400 mAh Li-ion, GPIO34 (ADC1_CH6, voltage divider)
-- **I2C** (GPIO21 SDA, GPIO22 SCL): SHT3x temp/humidity (0x44), DS1307 RTC (0x68)
-
-### Partition Layout (svitrix_partition.csv)
-
-```
-app0:   1.875 MB (active firmware)
-app1:   1.875 MB (OTA update slot)
-spiffs: 256 KB   (LittleFS — icons, SPA, configs)
-total:  4 MB used / 8 MB available — partition table can be expanded
-```
+- **Stack:** ESP32-WROOM-32D · Arduino-ESP32 · FastLED/NeoMatrix · LittleFS · AsyncWebServer · ArduinoHA
+- **Entry point:** [src/main.cpp](src/main.cpp) — composition root, wires interfaces, owns `setup()`/`loop()`
+- **Decoupling:** 13 pure-virtual interfaces in [lib/interfaces/](lib/interfaces/); all inter-module calls go through them
+- **Per-module docs:** see [Module Doc Map](#module-doc-map) — each dir auto-loads on Read
+- **Deep dives:** [Git workflow](.claude/git-workflow.md) · [Hardware pinout](src/PeripheryManager/CLAUDE.md) · [Config structs](lib/config/CLAUDE.md)
 
 ## Build & Test
 
 ```bash
-pio run -e ulanzi          # Build firmware (auto-builds SPA via pre-build script)
-pio test -e native_test    # Run all tests (Unity, 26 suites, 470 tests)
+pio run -e ulanzi          # Build firmware (auto-builds SPA via tools/build_web.py)
+pio test -e native_test    # Native unit tests (Unity)
 cd web && npm run dev      # SPA dev server (hot reload, proxies to device)
-cd web && npm run upload   # Build SPA + upload to device LittleFS
+cd web && npm run upload   # Build SPA + upload to LittleFS
 ```
 
-Flash chip is 8 MB, but the partition table uses only 4 MB. App partition is 1.875 MB. Partition table can be expanded when needed.
+## Hardware (Ulanzi TC001)
+
+| Component | Spec / Pin |
+|-----------|------------|
+| MCU | ESP32-WROOM-32D (dual Xtensa LX6, 240 MHz) |
+| Flash / RAM | 8 MB (partition uses 4 MB, expandable) · 520 KB SRAM |
+| App partition | 1.875 MB (OTA slot × 2), SPIFFS 256 KB |
+| LED matrix | 8×32 WS2812B-Mini, GPIO32, serpentine |
+| Buttons | GPIO26 (L), GPIO27 (M/wake), GPIO14 (R), GPIO13 (reset) — active LOW |
+| Buzzer | GPIO15 (passive piezo, LEDC PWM) |
+| LDR | GPIO35 (GL5516, ADC1_CH7) |
+| Battery | GPIO34 (ADC1_CH6, voltage divider), 4400 mAh |
+| I²C | GPIO21 SDA, GPIO22 SCL — SHT3x (0x44), DS1307 (0x68) |
+| USB-Serial | CH340 |
 
 ## Project Structure
 
+Physical layout only — for "what does X do?" see [Module Doc Map](#module-doc-map).
+
 ```
 src/
-  main.cpp                    # Composition root, dependency wiring
-  Apps/                       # Native + custom app rendering (TimeApp, DateApp, etc.)
-  DisplayManager/             # Display coordinator (3 classes), custom app lifecycle, settings
-                              #   + AppContentRenderer.cpp (shared rendering pipeline)
-  MatrixDisplayUi/            # App framework: state machine, transitions, overlays, indicators
-  MQTTManager/                # MQTT + Home Assistant auto-discovery (25 HA entities)
-  MelodyPlayer/               # RTTTL parser + async PWM playback
-  ServerManager/              # HTTP API (35 REST endpoints)
-  PeripheryManager/           # Hardware: sensors, buzzer, buttons, battery, LDR
-  MenuManager/                # On-device settings menu
-  UpdateManager/              # OTA firmware updates
-  PowerManager/               # Sleep/wake management
-  Overlays/                   # Clock/date overlay rendering
-  effects/                    # 19 visual effects + weather overlays, IPixelCanvas abstraction
-  data/                       # Static data: SvitrixFont.h, cert.h, icons.h, Dictionary.cpp/h
-  contrib/                    # Third-party headers: GifPlayer.h, ArtnetWifi.h
-  AppContent.h                # AppContentBase struct (shared rendering fields)
-  Globals.cpp/h               # Config structs, global state
-  Functions.cpp/h             # Utility functions
-  timer.cpp/h                 # Background timer helpers
+├── main.cpp                    composition root
+├── DisplayManager/
+├── MatrixDisplayUi/
+├── MQTTManager/
+├── ServerManager/
+├── PeripheryManager/
+├── MenuManager/
+├── UpdateManager/
+├── PowerManager/
+├── DataFetcher/
+├── Apps/
+├── MelodyPlayer/
+├── effects/
+├── Overlays/
+├── data/                       SvitrixFont, cert, icons, Dictionary
+├── contrib/                    GifPlayer, ArtnetWifi (3rd-party)
+├── AppContent.h
+├── Globals.{cpp,h}
+├── Functions.{cpp,h}
+└── timer.{cpp,h}
 lib/
-  interfaces/                 # 13 interfaces (IDisplayControl, INotifier, IPixelCanvas, etc.)
-  services/                   # 14 service libraries (100% test coverage)
-  config/                     # Configuration defaults
-  TJpg_Decoder/               # JPEG decoder (local fork)
-  home-assistant-integration/ # ArduinoHA library (trimmed)
-  webserver/                  # Async web server wrapper (API routing, WiFi, OTA)
-web/                          # SPA (Preact + Vite + TypeScript, strict mode)
-  src/
-    api/                      # Typed API client (~30 endpoints)
-    context/                  # SettingsContext (shared state provider)
-    components/               # Nav, Toast, ui/ (8 reusable components)
-    pages/                    # 6 pages (directory-per-page with index.ts)
-      settings/sections/      # 14 independent settings sections with partial save
-    styles/                   # CSS variables, dark/light themes
-  vite.config.ts              # Build config: IIFE output, gzip, dev proxy
-data/
-  web/                        # SPA build output (gzipped, uploaded to LittleFS)
-tools/
-  build_web.py                # PlatformIO pre-build: auto-builds SPA if sources changed
-test/
-  test_native/                # 26 test suites (native C++ tests)
+├── interfaces/                 pure-virtual decoupling layer
+├── services/                   stateless utility libs
+├── config/
+├── home-assistant-integration/ ArduinoHA fork
+├── webserver/                  ESPAsyncWebServer wrapper
+└── TJpg_Decoder/
+web/                            Preact + Vite + TypeScript SPA
+data/web/                       SPA build output → LittleFS
+tools/build_web.py              PlatformIO pre-build hook
+test/test_native/               native C++ unit tests
 ```
 
 ## Architecture Rules
 
-- **13 interfaces** decouple all module-to-module communication — never add direct dependencies between modules
-- **Singleton pattern** with `= delete` copy/move for managers
-- **Setter injection** with `assert()` guards — all wiring in `main.cpp`
-- **Effects** are decoupled from hardware via `IPixelCanvas` interface
-- DisplayManager is split into 3 classes: `DisplayManager_` (coordinator) + `DisplayRenderer_` + `NotificationManager_`
-- Each module directory has a `CLAUDE.md` or `README.md` with detailed AI reference — read it before modifying that module
+- **Interfaces everywhere** — never add direct `#include` of one module into another; wire via [lib/interfaces/](lib/interfaces/)
+- **Singletons** with `= delete` copy/move; setter injection with `assert()` guards; all wiring in [main.cpp](src/main.cpp)
+- **Effects decoupled from hardware** via `IPixelCanvas`; tests use `MockPixelCanvas`
+- **DisplayManager is 3 classes:** `DisplayManager_` (coordinator) + `DisplayRenderer_` + `NotificationManager_`
+- **Before modifying a module — read its CLAUDE.md / README.md** (listed below)
 
-## Module Dependency Graph
+## Interface Wiring
 
-All inter-module communication goes through interfaces wired in `main.cpp`.
+| Provider | Interface | Consumers |
+|----------|-----------|-----------|
+| DisplayManager_ | `IDisplayControl` | MenuManager, ServerManager, MQTTManager |
+| DisplayManager_ | `IDisplayNavigation` | MenuManager, ServerManager, MQTTManager, DataFetcher |
+| DisplayManager_ | `IMatrixHost` | MatrixDisplayUi |
+| DisplayManager_ | `IButtonHandler` | PeripheryManager |
+| DisplayRenderer_ | `IDisplayRenderer` | UpdateManager, MenuManager, ServerManager |
+| NotificationManager_ | `IDisplayNotifier` | ServerManager, MQTTManager |
+| MQTTManager_ | `INotifier` | DisplayManager, NotificationManager |
+| MQTTManager_ | `IButtonReporter` | PeripheryManager |
+| ServerManager_ | `IButtonReporter` | PeripheryManager |
+| PeripheryManager_ | `IPeripheryProvider` | DisplayManager, NotificationManager, MenuManager, MQTTManager |
+| PeripheryManager_ | `ISound` | ServerManager, MQTTManager |
+| PowerManager_ | `IPower` | ServerManager, MQTTManager |
+| UpdateManager_ | `IUpdater` | ServerManager, MQTTManager, MenuManager |
+| NeoMatrixCanvas | `IPixelCanvas` | Effect system |
+| MenuManager_ | `IButtonHandler` | PeripheryManager |
 
-### Modules and their roles
-
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│ main.cpp — Composition Root                                         │
-│ Creates singletons, wires all interfaces, runs setup() + loop()    │
-└─────────────────────────────────────────────────────────────────────┘
-         │ wires interfaces to:
-         ▼
-┌──────────────────────────────────────────────────────────────────────┐
-│                        CORE MODULES                                  │
-│                                                                      │
-│  DisplayManager_ ─────────── "the brain"                            │
-│  ├── DisplayRenderer_         draws text, shapes, charts, images    │
-│  ├── NotificationManager_     notification queue + 3 indicators     │
-│  └── MatrixDisplayUi          app framework, transitions, overlays  │
-│       └── NeoMatrixCanvas     IPixelCanvas for effects              │
-│                                                                      │
-│  MQTTManager_ ────────────── MQTT broker + Home Assistant (25 HA)   │
-│  ServerManager_ ──────────── HTTP REST API (35 endpoints)           │
-│  PeripheryManager_ ───────── sensors, buzzer, buttons, LDR, battery │
-│  MenuManager_ ────────────── on-device settings menu                │
-│  PowerManager_ ───────────── deep sleep / wake                      │
-│  UpdateManager_ ──────────── OTA firmware updates                   │
-│  DataFetcher_ ────────────── external HTTP data sources             │
-└──────────────────────────────────────────────────────────────────────┘
-
-┌──────────────────────────────────────────────────────────────────────┐
-│                        LIBRARIES                                     │
-│                                                                      │
-│  lib/interfaces/     13 pure virtual interfaces (decoupling layer)  │
-│  lib/services/       14 stateless utilities (100% test coverage)    │
-│  lib/config/         ConfigTypes — all config structs               │
-│  lib/home-assistant-integration/   ArduinoHA v2.0.0 (trimmed)      │
-│  lib/webserver/      ESPAsyncWebServer wrapper (API routing, WiFi)  │
-│  lib/TJpg_Decoder/   JPEG decoder (local fork)                     │
-└──────────────────────────────────────────────────────────────────────┘
-```
-
-### Interface wiring (main.cpp)
-
-Who provides what interface to whom:
-
-```
-                     PROVIDES                    CONSUMES
-Module               Interface           →       Module
-─────────────────────────────────────────────────────────────
-DisplayManager_      IDisplayControl     →       MenuManager, ServerManager, MQTTManager
-DisplayManager_      IDisplayNavigation  →       MenuManager, ServerManager, MQTTManager, DataFetcher
-DisplayManager_      IMatrixHost         →       MatrixDisplayUi
-DisplayManager_      IButtonHandler      →       PeripheryManager (dispatcher)
-DisplayRenderer_     IDisplayRenderer    →       UpdateManager, MenuManager, ServerManager
-NotificationManager_ IDisplayNotifier   →       ServerManager, MQTTManager
-MQTTManager_         INotifier           →       DisplayManager, NotificationManager
-MQTTManager_         IButtonReporter     →       PeripheryManager (dispatcher)
-ServerManager_       IButtonReporter     →       PeripheryManager (dispatcher)
-PeripheryManager_    IPeripheryProvider  →       DisplayManager, NotificationManager, MenuManager, MQTTManager
-PeripheryManager_    ISound              →       ServerManager, MQTTManager
-PowerManager_        IPower              →       ServerManager, MQTTManager
-UpdateManager_       IUpdater            →       ServerManager, MQTTManager, MenuManager
-NeoMatrixCanvas      IPixelCanvas        →       Effect system (19 effects)
-MenuManager_         IButtonHandler      →       PeripheryManager (dispatcher)
-```
-
-### Data flow diagram
-
-```
-     ┌──────────┐         ┌──────────────┐        ┌─────────────┐
-     │  Buttons  │────────▶│PeripheryMgr  │───────▶│ DisplayMgr  │
-     │  LDR     │ hardware│ (IButtonHandler│ iface │ (IDisplayCtrl│
-     │  Sensors │ events  │  ISound       │───┐   │  IDisplayNav)│
-     └──────────┘         │  IPeriphProv) │   │   └──────┬───────┘
-                          └──────────────┘   │          │
-                                │            │          │ owns
-                                │            │   ┌──────▼───────┐
-          ┌─────────────┐       │            │   │MatrixDisplayUi│
-          │ MQTT Broker │◀─────▶│            │   │(state machine,│
-          │ (Home Asst) │ iface │            │   │ transitions)  │
-          └──────┬──────┘       │            │   └──────┬───────┘
-                 │         ┌────▼──────┐     │          │ renders
-                 └────────▶│MQTTManager│     │   ┌──────▼───────┐
-                           │(INotifier │─────┘   │DisplayRenderer│
-                           │ IButtonRep│         │(IDisplayRender)│
-                           └───────────┘         └──────┬───────┘
-                                                        │
-          ┌─────────────┐                        ┌──────▼───────┐
-          │  HTTP Client │◀─────────────────────▶│ ServerManager │
-          │  (REST API)  │  35 endpoints          │(IButtonRep)  │
-          └─────────────┘                        └──────────────┘
-
-          ┌─────────────┐                        ┌──────────────┐
-          │  LED Matrix  │◀──────────────────────│    FastLED    │
-          │  32x8 WS2812│  256 pixels             │  NeoMatrix   │
-          └─────────────┘                        └──────────────┘
-```
-
-### Main loop execution order
+## Main loop
 
 ```cpp
 void loop() {
-    timer_tick();              // Background timers
-    ServerManager.tick();      // Process HTTP requests
-    DisplayManager.tick();     // Render current app/notification/effect
-    PeripheryManager.tick();   // Read sensors, buttons, update brightness
+    timer_tick();
+    ServerManager.tick();      // HTTP requests
+    DisplayManager.tick();     // Render app/notification/effect
+    PeripheryManager.tick();   // Sensors, buttons, auto-brightness
     if (ServerManager.isConnected) {
-        MQTTManager.tick();    // Process MQTT messages, publish stats
-        DataFetcher.tick();    // Fetch external data sources
+        MQTTManager.tick();    // MQTT messages, stats publishing
+        DataFetcher.tick();    // External HTTP data sources
     }
 }
 ```
 
-### Service consumption map
+## Service Consumption
 
-Which `lib/services/` each module uses:
+Which [lib/services/](lib/services/) each module uses:
 
-```
-DisplayManager  ← ColorUtils, TimeEffects, GammaUtils, TextUtils, StatsBuilder, OverlayMapping
-DisplayRenderer ← TextUtils, UnicodeFont, ColorUtils
-PeripheryManager← SensorCalc
-MQTTManager     ← MessageRouter, HADiscovery, AppRegistry, StatsBuilder, PlaceholderUtils
-Apps            ← ColorUtils, TimeEffects, TextUtils, LayoutEngine
-DataFetcher     ← (no lib/services dependencies)
-main.cpp        ← TextUtils (setTextFont at startup)
-```
+| Consumer | Services |
+|----------|----------|
+| DisplayManager | ColorUtils, TimeEffects, GammaUtils, TextUtils, StatsBuilder, OverlayMapping |
+| DisplayRenderer | TextUtils, UnicodeFont, ColorUtils |
+| PeripheryManager | SensorCalc |
+| MQTTManager | MessageRouter, HADiscovery, AppRegistry, StatsBuilder, PlaceholderUtils |
+| Apps | ColorUtils, TimeEffects, TextUtils, LayoutEngine |
+| main.cpp | TextUtils (`setTextFont(SvitrixFont)` at startup) |
 
-### CLAUDE.md reference map
+## Module Doc Map
 
-Each module has detailed AI documentation:
+Per-module docs auto-load when you Read files in their directory.
 
-```
-CLAUDE.md (root)                            ← you are here
-│
-├── lib/interfaces/CLAUDE.md                ← 13 interfaces, methods, implementors, consumers
-├── lib/services/CLAUDE.md                  ← 14 services, API, deps, test mapping
-├── lib/config/CLAUDE.md                    ← 13 config structs, all fields, defaults, persistence
-├── lib/home-assistant-integration/CLAUDE.md← ArduinoHA fork, 7/17 entity types enabled
-├── lib/webserver/CLAUDE.md                 ← FSWebServer, WiFi, routes, SPA fallback
-├── web/README.md                           ← SPA: Preact + Vite, 6 pages, dev workflow
-│
-├── src/CLAUDE.md                           ← module docs: ServerManager (35 endpoints),
-│                                              PeripheryManager (buttons, sensors, buzzer),
-│                                              MenuManager (13 menu items), UpdateManager (OTA),
-│                                              PowerManager (deep sleep), Globals (config store),
-│                                              AppContentRenderer (shared rendering pipeline)
-├── src/DisplayManager/CLAUDE.md            ← 3 classes, 9 files, rendering, custom apps
-├── src/MQTTManager/CLAUDE.md               ← 25 HA entities, 20 topics, 7 callbacks
-├── src/MatrixDisplayUi/CLAUDE.md           ← state machine, 10 transitions, indicators
-├── src/DataFetcher/CLAUDE.md               ← external HTTP data sources, round-robin polling
-│
-├── src/Apps/README.md                      ← native + custom app rendering
-├── src/MelodyPlayer/README.md              ← RTTTL parser, async PWM playback
-└── src/effects/README.md                   ← 19 visual effects, weather overlays, IPixelCanvas
-```
+| Module | Doc | Role |
+|--------|-----|------|
+| Interfaces | [lib/interfaces/CLAUDE.md](lib/interfaces/CLAUDE.md) | 13 pure-virtual interfaces (decoupling layer) |
+| Services | [lib/services/CLAUDE.md](lib/services/CLAUDE.md) | 14 stateless libs, 100% test coverage |
+| Config | [lib/config/CLAUDE.md](lib/config/CLAUDE.md) | Config structs, defaults, persistence |
+| HA integration | [lib/home-assistant-integration/CLAUDE.md](lib/home-assistant-integration/CLAUDE.md) | ArduinoHA fork, entity types enabled |
+| Webserver | [lib/webserver/CLAUDE.md](lib/webserver/CLAUDE.md) | Async server wrapper, WiFi, SPA fallback |
+| SPA | [web/README.md](web/README.md) | Preact + Vite, pages & components |
+| src root | [src/CLAUDE.md](src/CLAUDE.md) | Globals, AppContent, cross-cutting files |
+| ServerManager | [src/ServerManager/CLAUDE.md](src/ServerManager/CLAUDE.md) | HTTP REST API, WiFi, mDNS, UDP/TCP |
+| PeripheryManager | [src/PeripheryManager/CLAUDE.md](src/PeripheryManager/CLAUDE.md) | Buttons, I2C sensors, LDR, battery, buzzer |
+| MenuManager | [src/MenuManager/CLAUDE.md](src/MenuManager/CLAUDE.md) | On-device settings menu |
+| UpdateManager | [src/UpdateManager/CLAUDE.md](src/UpdateManager/CLAUDE.md) | OTA firmware updates (HTTPS, pinned CA) |
+| PowerManager | [src/PowerManager/CLAUDE.md](src/PowerManager/CLAUDE.md) | Deep sleep, timer + GPIO wake |
+| DisplayManager | [src/DisplayManager/CLAUDE.md](src/DisplayManager/CLAUDE.md) | 3 classes, rendering, custom apps |
+| MQTTManager | [src/MQTTManager/CLAUDE.md](src/MQTTManager/CLAUDE.md) | MQTT + HA auto-discovery |
+| MatrixDisplayUi | [src/MatrixDisplayUi/CLAUDE.md](src/MatrixDisplayUi/CLAUDE.md) | App framework, state machine, transitions |
+| DataFetcher | [src/DataFetcher/CLAUDE.md](src/DataFetcher/CLAUDE.md) | External HTTP sources, round-robin polling |
+| Apps | [src/Apps/README.md](src/Apps/README.md) | Native + custom app rendering |
+| MelodyPlayer | [src/MelodyPlayer/README.md](src/MelodyPlayer/README.md) | RTTTL parser, async PWM |
+| Effects | [src/effects/README.md](src/effects/README.md) | Visual effects, weather overlays, IPixelCanvas |
 
 ## Common Change Patterns
 
-Typical multi-file changes and which files they touch. Read relevant module CLAUDE.md for details.
-
-### Add new visual effect
-```
-src/effects/<Category>Effects.h/.cpp  — effect function (IPixelCanvas API)
-src/effects/EffectRegistry.h          — bump kNumEffects
-src/effects/EffectRegistry.cpp        — register in effects[] array
-test/test_native/test_effects/        — test with MockPixelCanvas
-src/effects/README.md                 — add to effects table
-CLAUDE.md (root)                      — update "19 effects" count
-```
-
-### Add new Time Mode (TMODE)
-```
-src/Apps/Apps_NativeApps.cpp           — new if (timeConfig.timeMode == N) block
-web/src/pages/settings-sections/TimeDateSection.tsx — new option in Select
-src/CLAUDE.md                          — update TimeApp mode list
-```
-
-### Add new config field
-```
-lib/config/src/ConfigTypes.h           — add field to struct
-src/Globals.cpp                        — NVS load/save + default
-src/ServerManager/ServerManager.cpp    — expose via GET/POST /api/settings
-web/src/api/types.ts                   — add to Settings interface
-web/src/context/SettingsContext.tsx     — add to save payload
-web/src/pages/settings-sections/*.tsx  — UI control
-lib/config/CLAUDE.md                   — update struct table
-```
-
-### Add new MQTT / Home Assistant entity
-```
-→ use /add-ha-entity command (covers all 25+ entity checklist items)
-```
-
-### Add new native app
-```
-src/Apps/Apps_NativeApps.cpp           — render function
-src/Apps/Apps.h                        — declare function
-src/DisplayManager/DisplayManager.cpp  — register in app loop
-src/Apps/README.md                     — add to app table
-```
-
-### Add new service library
-```
-→ use /add-service command (covers lib/services/ pattern)
-```
-
-### Modify web UI page/section
-```
-web/src/pages/ or settings-sections/   — component
-web/src/api/types.ts                   — types if new API fields
-web/src/context/SettingsContext.tsx     — state if new settings
-web/src/api/client.ts                  — new endpoint calls
-web/README.md                          — update if new page/section
-```
+| Task | Touches |
+|------|---------|
+| New visual effect | `src/effects/<Cat>Effects.*`, `EffectRegistry.cpp`, `test/test_native/test_effects/`, `src/effects/README.md` |
+| New config field | `lib/config/src/ConfigTypes.h`, `src/Globals.cpp`, `src/ServerManager/*`, `web/src/api/types.ts`, `web/src/context/SettingsContext.tsx`, settings UI section, `lib/config/CLAUDE.md` |
+| New MQTT / HA entity | Use `/add-ha-entity` skill (covers all steps) |
+| New service library | Use `/add-service` skill (covers `lib/services/` pattern) |
+| New native app | `src/Apps/Apps_NativeApps.cpp`, `src/Apps/Apps.h`, register in `DisplayManager.cpp`, `src/Apps/README.md` |
+| New TimeMode (TMODE) | `src/Apps/Apps_NativeApps.cpp`, `web/src/pages/settings-sections/TimeDateSection.tsx` |
+| New UI page/section | `web/src/pages/`, `web/src/api/types.ts`, `SettingsContext.tsx`, `api/client.ts`, `web/README.md` |
 
 ## Cross-module Impact Map
 
-When changing shared types or interfaces, these modules must also be checked:
-
-| If you change... | Also check / update... |
+| When you change… | Also update… |
 |---|---|
-| `lib/config/ConfigTypes.h` fields | `Globals.cpp` (NVS), `ServerManager` (API), web UI (types + section), `MQTTManager` (HA entities), `lib/config/CLAUDE.md` |
-| `lib/interfaces/I*.h` methods | All implementors + consumers (see Interface Wiring table above), `lib/interfaces/CLAUDE.md` |
+| `lib/config/ConfigTypes.h` fields | `Globals.cpp` (NVS), ServerManager API, web UI, MQTTManager (HA entities), `lib/config/CLAUDE.md` |
+| `lib/interfaces/I*.h` methods | All implementors + consumers (see Interface Wiring), `lib/interfaces/CLAUDE.md` |
+| `IPixelCanvas` API | All effects, `NeoMatrixCanvas.h`, `MockPixelCanvas.h`, effect tests |
 | `src/effects/EffectRegistry` | `EffectRegistry.h` (kNumEffects), `src/effects/README.md`, web UI effect list |
-| `src/Apps/Apps_NativeApps.cpp` modes | `TimeDateSection.tsx`, `src/CLAUDE.md` (TimeApp docs) |
-| `IPixelCanvas` API | All 19 effects, `NeoMatrixCanvas.h`, `MockPixelCanvas.h`, effect tests |
-| `web/src/api/types.ts` Settings | `SettingsContext.tsx`, all settings-sections that use changed fields |
-| `src/MQTTManager/` HA entities | `src/MQTTManager/CLAUDE.md` (entity count + table), root CLAUDE.md (25 HA entities) |
+| `src/MQTTManager/` HA entities | `src/MQTTManager/CLAUDE.md` entity table |
+| `web/src/api/types.ts` Settings | `SettingsContext.tsx`, all settings-sections using changed fields |
 
 ## Coding Conventions
 
-- Build flags defined in `platformio.ini` — `-DULANZI` for hardware-specific code
-- `#ifdef ULANZI` guards for battery, LDR, and hardware-specific features
-- Custom font rendering via `matrixPrint()` in DisplayRenderer (not Adafruit GFX)
-- Colors: hex strings `"#RRGGBB"` or `[r,g,b]` arrays in JSON APIs
+- Build flags in `platformio.ini` — `-DULANZI` for hardware-specific code
+- `#ifdef ULANZI` guards for battery, LDR, hardware features
+- Custom font via `matrixPrint()` in DisplayRenderer (not Adafruit GFX)
+- Colors: `"#RRGGBB"` or `[r,g,b]` in JSON APIs
 - MQTT topics prefixed with configurable `mqttConfig.prefix`
-- LittleFS for persistent storage: `/ICONS/`, `/CUSTOMAPPS/`, `/PALETTES/`
-- JSON parsing uses ArduinoJson v6 (StaticJsonDocument/DynamicJsonDocument)
+- LittleFS storage: `/ICONS/`, `/CUSTOMAPPS/`, `/PALETTES/`
+- JSON: ArduinoJson v6 (`StaticJsonDocument`/`DynamicJsonDocument`)
 
 ## Testing
 
-- Tests run natively (not on device) using `native_test` environment
-- Test mocks in `test/mocks/` — mock Arduino, FastLED, WiFi, etc.
-- Service libraries in `lib/services/` have 100% test coverage
-- Always run `pio test -e native_test` after changes to verify nothing breaks
-
-## API Endpoints
-
-- `GET /api/stats` — device stats JSON
-- `POST /api/notify` — push notification (JSON: text, icon, duration, color, rainbow, rtttl, sound)
-- MQTT: 23 incoming command topics, periodic stats publishing
+Native-only (not on device). Mocks in `test/mocks/`. [lib/services/](lib/services/) maintains 100% coverage. Run `pio test -e native_test` after every change.
 
 ## User Preferences
 
-- Concise communication preferred
+- Concise communication
 - Always verify changes with build + tests
 
-## Git & Release Workflow
+## Git & Release
 
-### Commit rules — [Conventional Commits v1.0.0](https://www.conventionalcommits.org/en/v1.0.0/)
-
-- Do NOT add `Co-Authored-By` lines to commit messages
-
-#### Format
-
-```
-<type>[(scope)][!]: <description>
-
-[body]
-
-[footer(s)]
-```
-
-- **Subject line** (`<type>[(scope)]: <description>`):
-  - Under 72 characters
-  - Lowercase type, imperative mood (`add`, not `added` or `adds`)
-  - No period at the end
-- **Body** (optional, blank line after subject):
-  - Explain **why**, not **what** (the diff shows what)
-  - Wrap at 72 characters
-- **Footer** (optional):
-  - `BREAKING CHANGE: <description>` — for detailed breaking change explanation
-  - `Refs: #123` — reference related issues
-
-#### Types
-
-| Type | When to use | Changelog section |
-|------|-------------|-------------------|
-| `feat` | New user-facing feature | **Features** |
-| `fix` | Bug fix | **Bug Fixes** |
-| `refactor` | Code restructuring (no behavior change) | — |
-| `perf` | Performance improvement | **Performance** |
-| `docs` | Documentation only | — |
-| `test` | Adding/fixing tests | — |
-| `chore` | Maintenance, deps, CI, tooling | — |
-| `build` | Build system, platformio.ini | — |
-| `ci` | CI/CD pipeline changes | — |
-| `style` | Formatting, whitespace (no logic) | — |
-
-#### Scope
-
-Optional but encouraged. Use module name in lowercase:
-
-`feat(mqtt): add light entity support`
-`fix(display): correct gamma on low brightness`
-`refactor(effects): extract IPixelCanvas`
-`docs(web): update SPA dev workflow`
-
-Common scopes: `mqtt`, `display`, `effects`, `web`, `server`, `menu`, `periphery`, `power`, `datafetcher`, `apps`, `config`, `font`
-
-#### Breaking changes
-
-Two ways to indicate:
-
-1. `!` after type/scope: `refactor(mqtt)!: rename INotifier methods`
-2. `BREAKING CHANGE:` footer for details:
-
-```
-refactor(mqtt)!: rename INotifier methods
-
-Renamed publishState() to syncState() across all callers.
-
-BREAKING CHANGE: INotifier::publishState() renamed to syncState().
-All MQTT topic consumers must update their integration code.
-```
-
-#### Examples
-
-```
-feat(datafetcher): add JSON path array index support
-
-Allow data sources to use array indices in jsonPath (e.g., "data.0.price").
-This enables fetching from APIs that return arrays instead of objects.
-
-Refs: #25
-```
-
-```
-fix(display): prevent crash on empty notification text
-
-Null text pointer caused segfault in DisplayRenderer::printText().
-Added nullptr check before UTF-8 decoding.
-```
-
-```
-chore: upgrade C++ standard from C++11 to C++17
-```
-
-### Branching strategy
-
-```
-main              ← always stable, every commit is a tagged release
-  └── feature/*   ← short-lived branches for features/fixes
-```
-
-- `main` is the single long-lived branch
-- All work happens in `feature/*` branches, merged via PR
-- **Squash merge only** — every PR becomes a single commit on main (`gh pr merge --squash`)
-- No `develop` branch — keep it simple for solo/small team
-- Add `develop` + `release/*` branches only when contributors appear
-
-### Versioning — Semantic Versioning with pre-release tags
-
-Format: `vMAJOR.MINOR.PATCH[-pre.N]`
-
-```
-v0.2.0-beta.1    ← first beta (from feature branch or main)
-v0.2.0-beta.2    ← beta bug fixes
-v0.2.0-rc.1      ← release candidate (feature freeze, only bug fixes)
-v0.2.0-rc.2      ← critical fix in RC
-v0.2.0           ← stable release (merged to main)
-```
-
-- **MAJOR** — breaking API/MQTT/config changes
-- **MINOR** — new features, new HA entities, new effects
-- **PATCH** — bug fixes, performance improvements
-
-### Release process
-
-1. Create `feature/*` branch from `main`
-2. Develop and test (`pio run -e ulanzi && pio test -e native_test`)
-3. When ready for beta testing: tag `v0.X.0-beta.1` on the branch
-4. When feature-complete: tag `v0.X.0-rc.1` (only bug fixes after this)
-5. Merge PR to `main`, tag `v0.X.0` on main
-6. Create GitHub Release from tag, attach `firmware.bin`
-
-### GitHub Releases
-
-- **Stable** (`v0.2.0`) — full release, marked as "Latest"
-- **Beta** (`v0.2.0-beta.1`) — mark as **pre-release** on GitHub
-- **RC** (`v0.2.0-rc.1`) — mark as **pre-release** on GitHub
-- Attach `.pio/build/ulanzi/firmware.bin` to each release
-- Release notes: list changes grouped by type (Features, Fixes, Breaking)
-
-### Tags
-
-- Always use annotated tags: `git tag -a v0.2.0 -m "v0.2.0: short description"`
-- Push tags explicitly: `git push origin v0.2.0`
-- Never delete or move published tags
+See [.claude/git-workflow.md](.claude/git-workflow.md) — Conventional Commits, SemVer with pre-release tags, squash-merge only, no `Co-Authored-By` lines.

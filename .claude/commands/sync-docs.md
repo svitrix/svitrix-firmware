@@ -26,7 +26,12 @@ Analyze ALL changes on the current feature branch vs main and update every affec
    | `src/Apps/` | `src/Apps/README.md` |
    | `src/MelodyPlayer/` | `src/MelodyPlayer/README.md` |
    | `src/effects/` | `src/effects/README.md` |
-   | `src/ServerManager.*`, `src/PeripheryManager.*`, `src/MenuManager.*`, `src/Globals.*`, `src/AppContentRenderer.*`, `src/PowerManager.*`, `src/UpdateManager.*` | `src/CLAUDE.md` |
+   | `src/ServerManager/` | `src/ServerManager/CLAUDE.md` |
+   | `src/PeripheryManager/` | `src/PeripheryManager/CLAUDE.md` |
+   | `src/MenuManager/` | `src/MenuManager/CLAUDE.md` |
+   | `src/PowerManager/` | `src/PowerManager/CLAUDE.md` |
+   | `src/UpdateManager/` | `src/UpdateManager/CLAUDE.md` |
+   | `src/Globals.*`, `src/AppContent.h` | `src/CLAUDE.md` |
    | `lib/interfaces/` | `lib/interfaces/CLAUDE.md` |
    | `lib/services/` | `lib/services/CLAUDE.md` |
    | `lib/config/` | `lib/config/CLAUDE.md` |
@@ -54,7 +59,7 @@ Analyze ALL changes on the current feature branch vs main and update every affec
    - API endpoints count — check `src/ServerManager.cpp`
    - Test suites/tests count — run `pio test -e native_test --list-tests` or count test files
    - Interface count (currently 13) — check `lib/interfaces/`
-   - Service count (currently 13) — check `lib/services/`
+   - Service count (currently 14) — check `lib/services/`
 
 5. **Update root CLAUDE.md if architecture changed:**
    - New module added → update Project Structure tree
