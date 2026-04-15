@@ -44,25 +44,27 @@ All allocated with `new` in `setup()` when `haConfig.discovery == true`. Freed b
 ## MQTT Topics
 
 ### Incoming (20 command suffixes)
-All prefixed with `<mqttConfig.prefix>/`:
+All prefixed with `<mqttConfig.prefix>/`. **HTTP equivalent** column shows the matching REST endpoint in [src/ServerManager/CLAUDE.md](../ServerManager/CLAUDE.md) — useful for cross-referencing behavior or porting commands.
 
-| Suffix | Action |
-|--------|--------|
-| `/notify` | `generateNotification(0, json)` |
-| `/notify/dismiss` | `dismissNotify()` |
-| `/custom/#` | `parseCustomPage(appName, json)` — wildcard |
-| `/switch` | `switchToApp(json)` |
-| `/apps` | `updateAppVector(json)` |
-| `/nextapp`, `/previousapp` | Navigation |
-| `/settings` | `setNewSettings(json)` |
-| `/power` | `setPower(doc["power"])` |
-| `/sleep` | `setPower(false)` + `sleep(seconds)` |
-| `/indicator1-3` | `indicatorParser(N, json)` |
-| `/moodlight` | `moodlight(json)` |
-| `/rtttl`, `/sound`, `/r2d2` | Audio playback |
-| `/doupdate` | `checkUpdate()` + `updateFirmware()` |
-| `/sendscreen` | Publish `ledsAsJson()` |
-| `/reboot` | `ESP.restart()` |
+| Suffix | Action | HTTP equivalent |
+|--------|--------|-----------------|
+| `/notify` | `generateNotification(0, json)` | `POST /api/notify` |
+| `/notify/dismiss` | `dismissNotify()` | `ANY /api/notify/dismiss` |
+| `/custom/#` | `parseCustomPage(appName, json)` — wildcard | `POST /api/custom?name=X` |
+| `/switch` | `switchToApp(json)` | `POST /api/switch` |
+| `/apps` | `updateAppVector(json)` | `POST /api/apps` |
+| `/nextapp`, `/previousapp` | Navigation | `ANY /api/nextapp`, `POST /api/previousapp` |
+| `/settings` | `setNewSettings(json)` | `POST /api/settings` |
+| `/power` | `setPower(doc["power"])` | `POST /api/power` |
+| `/sleep` | `setPower(false)` + `sleep(seconds)` | `POST /api/sleep` |
+| `/indicator1-3` | `indicatorParser(N, json)` | `POST /api/indicator1..3` |
+| `/moodlight` | `moodlight(json)` | `POST /api/moodlight` |
+| `/rtttl`, `/sound`, `/r2d2` | Audio playback | `POST /api/rtttl`, `/sound`, `/r2d2` |
+| `/doupdate` | `checkUpdate()` + `updateFirmware()` | `POST /api/doupdate` |
+| `/sendscreen` | Publish `ledsAsJson()` | `GET /api/screen` |
+| `/reboot` | `ESP.restart()` | `ANY /api/reboot` |
+
+**HTTP-only (no MQTT binding):** `/api/erase` (factory reset), `/api/resetSettings`, `/api/reorder`, `/api/loop`, `/api/stats`, `/api/effects`, `/api/transitions`, `/api/datafetcher*`, `/version`, `/save`. If MQTT access is needed for these, add a new `CMD_*` enum in `MessageRouter` + handler in `onMqttMessage`.
 
 Routing via `MessageRouter::routeTopic()` → `MqttCommandType` enum → switch dispatch.
 

@@ -198,6 +198,28 @@ Native-only (not on device). Mocks in `test/mocks/`. [lib/services/](lib/service
 - Concise communication
 - Always verify changes with build + tests
 
+## Available Skills
+
+Prefer these over manual multi-step workflows — each is a tested, opinionated recipe.
+
+| Skill | Use when |
+|-------|----------|
+| `/add-ha-entity` | Adding a MQTT sensor/switch/light/button with HA auto-discovery |
+| `/add-effect` | Adding a visual effect following the `IPixelCanvas` pattern |
+| `/add-service` | Extracting reusable stateless logic into `lib/services/` with 100% test coverage |
+| `/parallel` | Splitting a feature into 2+ independent worktrees (no shared files) |
+| `/delegate` | Handing off a full feature (branch + code + tests + PR) to a background agent |
+| `/build` | Full local CI: tests + firmware build + flash-size check |
+| `/flash-size` | Detailed binary size + partition layout analysis |
+| `/sync-docs` | Re-sync all CLAUDE.md files with current branch changes before a PR |
+| `/update-docs` | Update docs after a specific code change (narrower than sync-docs) |
+| `/sync-public-docs` | Refresh public VitePress docs (`docs/`) before release |
+| `/pr` | Create a structured GitHub PR from the current feature branch |
+| `/release` | Interactive beta/rc/stable release workflow |
+| `/changelog` | Generate changelog from conventional commits (since last tag or range) |
+
 ## Git & Release
 
 See [.claude/git-workflow.md](.claude/git-workflow.md) — Conventional Commits, SemVer with pre-release tags, squash-merge only, no `Co-Authored-By` lines.
+
+<!-- Counts verified 2026-04-15: 13 interfaces · 14 services · 19 effects · 25 HA entities · 26 test suites -->
