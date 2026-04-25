@@ -222,4 +222,4 @@ Prefer these over manual multi-step workflows — each is a tested, opinionated 
 
 See [.claude/git-workflow.md](.claude/git-workflow.md) — Conventional Commits, SemVer with pre-release tags, squash-merge only, no `Co-Authored-By` lines.
 
-<!-- Counts verified 2026-04-15: 13 interfaces · 14 services · 19 effects · 25 HA entities · 26 test suites -->
+<!-- Counts verified 2026-04-25: 13 interfaces · 14 services · 20 effects · 25 HA entities · 26 test suites -->
