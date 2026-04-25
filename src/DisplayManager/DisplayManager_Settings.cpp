@@ -100,6 +100,7 @@ String DisplayManager_::getSettings()
     doc["BAT"] = appConfig.showBat;
     doc["VOL"] = audioConfig.soundVolume;
     doc["OVERLAY"] = overlayToString(ui->getGlobalOverlay());
+    doc["BEFF"] = displayConfig.backgroundEffect;
     String jsonString;
     return serializeJson(doc, jsonString), jsonString;
 }
@@ -163,6 +164,15 @@ void DisplayManager_::setNewSettings(const char *json)
     appConfig.showTemp = doc.containsKey("TEMP") ? doc["TEMP"].as<bool>() : appConfig.showTemp;
     appConfig.showBat = doc.containsKey("BAT") ? doc["BAT"].as<bool>() : appConfig.showBat;
     audioConfig.soundActive = doc.containsKey("SOUND") ? doc["SOUND"].as<bool>() : audioConfig.soundActive;
+
+    if (doc.containsKey("BEFF"))
+    {
+        int beff = doc["BEFF"].as<int>();
+        if (beff < -1 || beff >= kNumEffects)
+            beff = -1;
+        displayConfig.backgroundEffect = beff;
+        ui->setBackgroundEffect(beff);
+    }
 
     if (doc.containsKey("VOL"))
     {

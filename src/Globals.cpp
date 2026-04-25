@@ -286,6 +286,7 @@ void loadSettings()
     appConfig.showTemp = Settings.getBool("TEMP", true);
     appConfig.showHum = Settings.getBool("HUM", true);
     displayConfig.matrixLayout = Settings.getUInt("MAT", 0);
+    displayConfig.backgroundEffect = Settings.getInt("BEFF", -1);
     appConfig.scrollSpeed = Settings.getUInt("SSPEED", 100);
     appConfig.nativeIconLayout = static_cast<IconLayout>(Settings.getUChar("NILAYOUT", 0));
 #ifdef ULANZI
@@ -337,6 +338,7 @@ void saveSettings()
     Settings.putBool("TEMP", appConfig.showTemp);
     Settings.putBool("HUM", appConfig.showHum);
     Settings.putUInt("SSPEED", appConfig.scrollSpeed);
+    Settings.putInt("BEFF", displayConfig.backgroundEffect);
     Settings.putUChar("NILAYOUT", static_cast<uint8_t>(appConfig.nativeIconLayout));
 #ifdef ULANZI
     Settings.putBool("BAT", appConfig.showBat);

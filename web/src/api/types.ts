@@ -37,6 +37,7 @@ export interface Settings {
   TEMP: boolean;
   BAT: boolean;
   VOL: number;
+  BEFF: number;
 }
 
 export interface Stats {

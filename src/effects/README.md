@@ -1,6 +1,6 @@
 # Effects Block — AI Reference
 
-> 19 visual effects + weather overlays, all decoupled from hardware via IPixelCanvas.
+> 20 visual effects + weather overlays, all decoupled from hardware via IPixelCanvas.
 
 ## Files
 
@@ -10,7 +10,7 @@
 | `EffectRegistry.h` / `.cpp` | Dispatch array, callEffect(), settings update, state reset |
 | `WaveEffects.h` / `.cpp` | 6 wave effects (Pacifica, Plasma, ColorWaves, etc.) |
 | `PatternEffects.h` / `.cpp` | 5 pattern effects (TheaterChase, Checkerboard, etc.) |
-| `ParticleEffects.h` / `.cpp` | 4 particle effects (Stars, Fireworks, Ripple, Matrix) |
+| `ParticleEffects.h` / `.cpp` | 5 particle effects (Stars, Fireworks, Ripple, Matrix, Fire) |
 | `GameEffects.h` / `.cpp` | 4 game effects (Snake, PingPong, BrickBreaker, Eyes) |
 | `WeatherOverlay.h` / `.cpp` | Weather overlays (Rain, Snow, Storm, Frost, Thunder) |
 | `PaletteUtils.h` / `.cpp` | Palette loading (built-in, LittleFS, JSON array) |
@@ -39,7 +39,7 @@ struct Effect {
 - `updateEffectSettings(index, json)` — dynamic speed/palette/blend update
 - `resetAllEffectState()` — clear all stateful effects (called on effect switch)
 
-## Effects Table (19 effects)
+## Effects Table (20 effects)
 
 | # | Name | Category | Speed | Palette | Blend | Algorithm |
 |---|------|----------|-------|---------|-------|-----------|
@@ -62,6 +62,7 @@ struct Effect {
 | 16 | LookingEyes | Game | — | — | — | Eye sprites with gaze + blink |
 | 17 | TwinklingStars | Particle | 4 | Ocean | yes | Random spawn + brightness decay |
 | 18 | ColorWaves | Wave | 5 | Rainbow | yes | Horizontal color sweep |
+| 19 | Fire | Particle | 5 | Heat | yes | Heat-cell propagation, sparks at bottom row rise upward (Kriegsman fire) |
 
 ## Wave Effects (6)
 
@@ -84,7 +85,7 @@ struct Effect {
 | MovingLine | `pos`, `dir`, `palIdx` | Single horizontal line bouncing top↔bottom |
 | Radar | `angle` (float), `tempLeds[32][8]` | Radial line from center, framebuffer with fade-by-20 |
 
-## Particle Effects (4)
+## Particle Effects (5)
 
 | Effect | State | Algorithm |
 |--------|-------|-----------|
@@ -92,6 +93,7 @@ struct Effect {
 | Fireworks | `fireworks[5]{x,y,life,exploded,color,speed,peak}` | Ascent → explosion (plus-sign), life decay |
 | Ripple | `{x,y,life,color}`, `tempLeds[32][8]` | Ring at expanding radius, fade-by-45 trail |
 | Matrix | `matrixLedState[32][8]` | Column shift down, spawnColor → trailColor decay |
+| Fire | `fireHeat[32][8]` | Per-column cool→rise→spark; render via palette (HeatColors_p default) |
 
 ## Game Effects (4, autonomous — no user input)
 
@@ -137,3 +139,23 @@ class NeoMatrixCanvas : public IPixelCanvas {
   uint16_t Color(r, g, b);
 };
 ```
+
+## Preview Tool
+
+[tools/render_effect/](../../tools/render_effect/) is a native CLI that renders any
+effect through `MockPixelCanvas` and writes an animated GIF — no hardware
+needed. Reuses the firmware's gamma curve and FastLED palettes, so output
+matches the device frame-for-frame.
+
+```bash
+cd tools/render_effect
+make                                              # build native binary
+./render_effect --list                            # show all 20 effects
+./render_effect --effect Plasma --out Plasma.gif  # render one
+make all-gifs                                     # render all 20 (default 42 fps × 252 frames)
+make all-gifs FPS=21 FRAMES=126 SCALE=16          # half-speed, smaller files (used in docs/assets/)
+```
+
+GIFs in [docs/assets/](../../docs/assets/) are produced by this tool — re-run
+`make all-gifs FPS=21 FRAMES=126 SCALE=16 && cp *.gif ../../docs/assets/` after
+adding a new effect or changing palettes.

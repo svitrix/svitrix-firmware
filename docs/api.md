@@ -464,6 +464,7 @@ You can adjust each property in the JSON object according to your preferences. I
 | `MATP`        | boolean                   | Enable or disable the matrix. Similar to `power` endpoint but without the animation.                | `true`/`false`                                     | true    |
 | `VOL`         | integer                   | Allows to set the volume of the buzzer.                                                              | 0–30                                               | 25      |
 | `OVERLAY`     | string                    | Sets a global effect overlay (cannot be used with app specific overlays).                            | Varies (see below)                                 | N/A     |
+| `BEFF`        | integer                   | Background effect index — plays behind every app and notification. Use `-1` to disable.              | `-1` or a valid effect index (see `/api/effects`)  | -1      |
 
 **Color Values**: Can either be an RGB array (e.g., `[255,0,0]`) or a valid 6-digit hexadecimal color value (e.g., `"#FF0000"` for red).
 
