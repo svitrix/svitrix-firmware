@@ -4,15 +4,15 @@ Central MQTT communication and Home Assistant integration singleton. Manages bro
 
 ## File Map
 
-| File | LOC | Purpose |
-|------|-----|---------|
-| `MQTTManager.h` | 135 | Public API, singleton, INotifier + IButtonReporter |
-| `MQTTManager.cpp` | 289 | Instance, connection lifecycle, tick, publish methods |
-| `MQTTManager_internal.h` | 127 | Shared extern declarations for 25 HA entity pointers + ID buffers |
-| `MQTTManager_Messages.cpp` | 188 | Incoming message reception + command dispatch |
-| `MQTTManager_Callbacks.cpp` | 179 | 7 ArduinoHA callback handlers (HA → device) |
-| `MQTTManager_Discovery.cpp` | 245 | HA entity creation + metadata |
-| `MQTTManager_StateUpdates.cpp` | 165 | Stats publishing, button/indicator sync (device → HA) |
+| File                           | LOC | Purpose                                                           |
+| ------------------------------ | --- | ----------------------------------------------------------------- |
+| `MQTTManager.h`                | 135 | Public API, singleton, INotifier + IButtonReporter                |
+| `MQTTManager.cpp`              | 289 | Instance, connection lifecycle, tick, publish methods             |
+| `MQTTManager_internal.h`       | 127 | Shared extern declarations for 25 HA entity pointers + ID buffers |
+| `MQTTManager_Messages.cpp`     | 188 | Incoming message reception + command dispatch                     |
+| `MQTTManager_Callbacks.cpp`    | 179 | 7 ArduinoHA callback handlers (HA → device)                       |
+| `MQTTManager_Discovery.cpp`    | 245 | HA entity creation + metadata                                     |
+| `MQTTManager_StateUpdates.cpp` | 165 | Stats publishing, button/indicator sync (device → HA)             |
 
 ## Interfaces
 
@@ -46,23 +46,23 @@ All allocated with `new` in `setup()` when `haConfig.discovery == true`. Freed b
 ### Incoming (20 command suffixes)
 All prefixed with `<mqttConfig.prefix>/`. **HTTP equivalent** column shows the matching REST endpoint in [src/ServerManager/CLAUDE.md](../ServerManager/CLAUDE.md) — useful for cross-referencing behavior or porting commands.
 
-| Suffix | Action | HTTP equivalent |
-|--------|--------|-----------------|
-| `/notify` | `generateNotification(0, json)` | `POST /api/notify` |
-| `/notify/dismiss` | `dismissNotify()` | `ANY /api/notify/dismiss` |
-| `/custom/#` | `parseCustomPage(appName, json)` — wildcard | `POST /api/custom?name=X` |
-| `/switch` | `switchToApp(json)` | `POST /api/switch` |
-| `/apps` | `updateAppVector(json)` | `POST /api/apps` |
-| `/nextapp`, `/previousapp` | Navigation | `ANY /api/nextapp`, `POST /api/previousapp` |
-| `/settings` | `setNewSettings(json)` | `POST /api/settings` |
-| `/power` | `setPower(doc["power"])` | `POST /api/power` |
-| `/sleep` | `setPower(false)` + `sleep(seconds)` | `POST /api/sleep` |
-| `/indicator1-3` | `indicatorParser(N, json)` | `POST /api/indicator1..3` |
-| `/moodlight` | `moodlight(json)` | `POST /api/moodlight` |
-| `/rtttl`, `/sound`, `/r2d2` | Audio playback | `POST /api/rtttl`, `/sound`, `/r2d2` |
-| `/doupdate` | `checkUpdate()` + `updateFirmware()` | `POST /api/doupdate` |
-| `/sendscreen` | Publish `ledsAsJson()` | `GET /api/screen` |
-| `/reboot` | `ESP.restart()` | `ANY /api/reboot` |
+| Suffix                      | Action                                      | HTTP equivalent                             |
+| --------------------------- | ------------------------------------------- | ------------------------------------------- |
+| `/notify`                   | `generateNotification(0, json)`             | `POST /api/notify`                          |
+| `/notify/dismiss`           | `dismissNotify()`                           | `ANY /api/notify/dismiss`                   |
+| `/custom/#`                 | `parseCustomPage(appName, json)` — wildcard | `POST /api/custom?name=X`                   |
+| `/switch`                   | `switchToApp(json)`                         | `POST /api/switch`                          |
+| `/apps`                     | `updateAppVector(json)`                     | `POST /api/apps`                            |
+| `/nextapp`, `/previousapp`  | Navigation                                  | `ANY /api/nextapp`, `POST /api/previousapp` |
+| `/settings`                 | `setNewSettings(json)`                      | `POST /api/settings`                        |
+| `/power`                    | `setPower(doc["power"])`                    | `POST /api/power`                           |
+| `/sleep`                    | `setPower(false)` + `sleep(seconds)`        | `POST /api/sleep`                           |
+| `/indicator1-3`             | `indicatorParser(N, json)`                  | `POST /api/indicator1..3`                   |
+| `/moodlight`                | `moodlight(json)`                           | `POST /api/moodlight`                       |
+| `/rtttl`, `/sound`, `/r2d2` | Audio playback                              | `POST /api/rtttl`, `/sound`, `/r2d2`        |
+| `/doupdate`                 | `checkUpdate()` + `updateFirmware()`        | `POST /api/doupdate`                        |
+| `/sendscreen`               | Publish `ledsAsJson()`                      | `GET /api/screen`                           |
+| `/reboot`                   | `ESP.restart()`                             | `ANY /api/reboot`                           |
 
 **HTTP-only (no MQTT binding):** `/api/erase` (factory reset), `/api/resetSettings`, `/api/reorder`, `/api/loop`, `/api/stats`, `/api/effects`, `/api/transitions`, `/api/datafetcher*`, `/version`, `/save`. If MQTT access is needed for these, add a new `CMD_*` enum in `MessageRouter` + handler in `onMqttMessage`.
 

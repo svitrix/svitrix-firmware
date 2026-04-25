@@ -22,18 +22,18 @@ cd web && npm run upload   # Build SPA + upload to LittleFS
 
 ## Hardware (Ulanzi TC001)
 
-| Component | Spec / Pin |
-|-----------|------------|
-| MCU | ESP32-WROOM-32D (dual Xtensa LX6, 240 MHz) |
-| Flash / RAM | 8 MB (partition uses 4 MB, expandable) · 520 KB SRAM |
-| App partition | 1.875 MB (OTA slot × 2), SPIFFS 256 KB |
-| LED matrix | 8×32 WS2812B-Mini, GPIO32, serpentine |
-| Buttons | GPIO26 (L), GPIO27 (M/wake), GPIO14 (R), GPIO13 (reset) — active LOW |
-| Buzzer | GPIO15 (passive piezo, LEDC PWM) |
-| LDR | GPIO35 (GL5516, ADC1_CH7) |
-| Battery | GPIO34 (ADC1_CH6, voltage divider), 4400 mAh |
-| I²C | GPIO21 SDA, GPIO22 SCL — SHT3x (0x44), DS1307 (0x68) |
-| USB-Serial | CH340 |
+| Component     | Spec / Pin                                                           |
+| ------------- | -------------------------------------------------------------------- |
+| MCU           | ESP32-WROOM-32D (dual Xtensa LX6, 240 MHz)                           |
+| Flash / RAM   | 8 MB (partition uses 4 MB, expandable) · 520 KB SRAM                 |
+| App partition | 1.875 MB (OTA slot × 2), SPIFFS 256 KB                               |
+| LED matrix    | 8×32 WS2812B-Mini, GPIO32, serpentine                                |
+| Buttons       | GPIO26 (L), GPIO27 (M/wake), GPIO14 (R), GPIO13 (reset) — active LOW |
+| Buzzer        | GPIO15 (passive piezo, LEDC PWM)                                     |
+| LDR           | GPIO35 (GL5516, ADC1_CH7)                                            |
+| Battery       | GPIO34 (ADC1_CH6, voltage divider), 4400 mAh                         |
+| I²C           | GPIO21 SDA, GPIO22 SCL — SHT3x (0x44), DS1307 (0x68)                 |
+| USB-Serial    | CH340                                                                |
 
 ## Project Structure
 
@@ -84,23 +84,23 @@ test/test_native/               native C++ unit tests
 
 ## Interface Wiring
 
-| Provider | Interface | Consumers |
-|----------|-----------|-----------|
-| DisplayManager_ | `IDisplayControl` | MenuManager, ServerManager, MQTTManager |
-| DisplayManager_ | `IDisplayNavigation` | MenuManager, ServerManager, MQTTManager, DataFetcher |
-| DisplayManager_ | `IMatrixHost` | MatrixDisplayUi |
-| DisplayManager_ | `IButtonHandler` | PeripheryManager |
-| DisplayRenderer_ | `IDisplayRenderer` | UpdateManager, MenuManager, ServerManager |
-| NotificationManager_ | `IDisplayNotifier` | ServerManager, MQTTManager |
-| MQTTManager_ | `INotifier` | DisplayManager, NotificationManager |
-| MQTTManager_ | `IButtonReporter` | PeripheryManager |
-| ServerManager_ | `IButtonReporter` | PeripheryManager |
-| PeripheryManager_ | `IPeripheryProvider` | DisplayManager, NotificationManager, MenuManager, MQTTManager |
-| PeripheryManager_ | `ISound` | ServerManager, MQTTManager |
-| PowerManager_ | `IPower` | ServerManager, MQTTManager |
-| UpdateManager_ | `IUpdater` | ServerManager, MQTTManager, MenuManager |
-| NeoMatrixCanvas | `IPixelCanvas` | Effect system |
-| MenuManager_ | `IButtonHandler` | PeripheryManager |
+| Provider             | Interface            | Consumers                                                     |
+| -------------------- | -------------------- | ------------------------------------------------------------- |
+| DisplayManager_      | `IDisplayControl`    | MenuManager, ServerManager, MQTTManager                       |
+| DisplayManager_      | `IDisplayNavigation` | MenuManager, ServerManager, MQTTManager, DataFetcher          |
+| DisplayManager_      | `IMatrixHost`        | MatrixDisplayUi                                               |
+| DisplayManager_      | `IButtonHandler`     | PeripheryManager                                              |
+| DisplayRenderer_     | `IDisplayRenderer`   | UpdateManager, MenuManager, ServerManager                     |
+| NotificationManager_ | `IDisplayNotifier`   | ServerManager, MQTTManager                                    |
+| MQTTManager_         | `INotifier`          | DisplayManager, NotificationManager                           |
+| MQTTManager_         | `IButtonReporter`    | PeripheryManager                                              |
+| ServerManager_       | `IButtonReporter`    | PeripheryManager                                              |
+| PeripheryManager_    | `IPeripheryProvider` | DisplayManager, NotificationManager, MenuManager, MQTTManager |
+| PeripheryManager_    | `ISound`             | ServerManager, MQTTManager                                    |
+| PowerManager_        | `IPower`             | ServerManager, MQTTManager                                    |
+| UpdateManager_       | `IUpdater`           | ServerManager, MQTTManager, MenuManager                       |
+| NeoMatrixCanvas      | `IPixelCanvas`       | Effect system                                                 |
+| MenuManager_         | `IButtonHandler`     | PeripheryManager                                              |
 
 ## Main loop
 
