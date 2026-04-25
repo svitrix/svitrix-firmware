@@ -1,11 +1,12 @@
 import { createContext } from "preact";
 import { useContext, useState, useEffect, useCallback } from "preact/hooks";
-import type { Settings, Stats, TransitionInfo, InfraConfig } from "../api/types";
+import type { Settings, Stats, TransitionInfo, EffectInfo, InfraConfig } from "../api/types";
 import {
   getSettings,
   saveSettings,
   getStats,
   getTransitions,
+  getEffects,
   getConfig,
   saveConfig,
 } from "../api/client";
@@ -35,6 +36,7 @@ interface SettingsContextValue {
   config: InfraConfig | null;
   stats: Stats | null;
   transitions: TransitionInfo[];
+  effects: EffectInfo[];
   loading: boolean;
   updateSettings: (patch: Partial<Settings>) => void;
   updateConfig: <K extends keyof InfraConfig>(key: K, val: InfraConfig[K]) => void;
@@ -51,6 +53,7 @@ export function SettingsProvider({ children }: { children: ComponentChildren }) 
   const [config, setConfig] = useState<InfraConfig | null>(null);
   const [stats, setStats] = useState<Stats | null>(null);
   const [transitions, setTransitions] = useState<TransitionInfo[]>([]);
+  const [effects, setEffects] = useState<EffectInfo[]>([]);
   const [apiAvailable, setApiAvailable] = useState(true);
   const [loading, setLoading] = useState(true);
 
@@ -60,6 +63,7 @@ export function SettingsProvider({ children }: { children: ComponentChildren }) 
       getSettings().then(setSettings).catch(() => setApiAvailable(false)),
       getStats().then(setStats).catch(() => {}),
       getTransitions().then(setTransitions).catch(() => {}),
+      getEffects().then(setEffects).catch(() => {}),
       getConfig().then((c) => setConfig(c as unknown as InfraConfig)).catch(() => {}),
     ]).finally(() => setLoading(false));
   }, []);
@@ -100,6 +104,7 @@ export function SettingsProvider({ children }: { children: ComponentChildren }) 
         config,
         stats,
         transitions,
+        effects,
         loading,
         updateSettings,
         updateConfig,
