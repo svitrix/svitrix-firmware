@@ -160,6 +160,27 @@ void test_fire_speed_max_does_not_crash(void) {
     TEST_ASSERT_EQUAL(kMatrixWidth * kMatrixHeight, mock.drawPixelCalls);
 }
 
+void test_fire_eventually_lights_some_pixel(void) {
+    // Guards against regressions that turn Fire into a "fills with black" no-op
+    // (e.g. broken cooling math, palette index always 0). Sparks are random
+    // (random8() < sparking), so we run enough frames to make a no-spark run
+    // statistically negligible.
+    resetParticleEffectState();
+    EffectSettings fireSettings(5, HeatColors_p, true);
+    bool litAny = false;
+    for (int frame = 0; frame < 60 && !litAny; frame++) {
+        setMockMillis(20000 + frame * 50);
+        mock.reset();
+        Fire(mock, 0, 0, &fireSettings);
+        for (int i = 0; i < mock.pixelCount && !litAny; i++) {
+            const CRGB& c = mock.pixels[i].color;
+            if (c.r != 0 || c.g != 0 || c.b != 0)
+                litAny = true;
+        }
+    }
+    TEST_ASSERT_TRUE_MESSAGE(litAny, "Fire drew only black pixels for 60 frames");
+}
+
 // ---------------------------------------------------------------------------
 // main
 // ---------------------------------------------------------------------------
@@ -190,6 +211,7 @@ int main(int, char **) {
     RUN_TEST(test_fire_repeated_invocation_stable);
     RUN_TEST(test_fire_speed_zero_does_not_crash);
     RUN_TEST(test_fire_speed_max_does_not_crash);
+    RUN_TEST(test_fire_eventually_lights_some_pixel);
 
     return UNITY_END();
 }

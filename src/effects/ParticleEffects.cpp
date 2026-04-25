@@ -1,5 +1,7 @@
 #include "ParticleEffects.h"
 
+#include <algorithm>
+
 // ---- Twinkling Stars ----
 
 namespace
@@ -290,9 +292,11 @@ void Fire(IPixelCanvas& canvas, int16_t x, int16_t y, EffectSettings *settings)
 
 void resetParticleEffectState()
 {
-    memset(stars, 0, sizeof(stars));
-    // cppcheck-suppress memsetClassFloat
-    memset(fireworks, 0, sizeof(fireworks));
+    // Star/Firework hold floats — std::fill_n value-initializes each element,
+    // which is portable. memset on float members is technically UB (only
+    // safe on IEEE 754 where the all-zero bit pattern equals +0.0).
+    std::fill_n(&stars[0][0], kMatrixWidth * kMatrixHeight, Star{});
+    std::fill_n(fireworks, kMaxFireworks, Firework{});
     lastFireworkTime = 0;
     ripple = {};
     memset(tempLedsRipple, 0, sizeof(tempLedsRipple));
