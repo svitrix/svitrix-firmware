@@ -85,6 +85,16 @@ v0.2.0          stable release
 5. Merge PR, tag `v0.X.0` on `main`
 6. GitHub Release from tag, attach `firmware.bin`
 
+### Version file
+
+The `version` file at the repo root is the **single source of truth** for the
+firmware version embedded into the build (via [tools/inject_version.py](../tools/inject_version.py)).
+
+- Updated automatically by the release workflow from the pushed git tag
+- Committed back to `main` as part of the `release: vX.Y.Z` auto-commit
+- **Do not edit manually** — push a tag instead
+- If missing/empty, [src/Globals.h](../src/Globals.h) falls back to `"dev"`
+
 ## GitHub Releases
 
 - **Stable** — full release, marked "Latest"
