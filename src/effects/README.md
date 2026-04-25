@@ -139,3 +139,23 @@ class NeoMatrixCanvas : public IPixelCanvas {
   uint16_t Color(r, g, b);
 };
 ```
+
+## Preview Tool
+
+[tools/render_effect/](../../tools/render_effect/) is a native CLI that renders any
+effect through `MockPixelCanvas` and writes an animated GIF — no hardware
+needed. Reuses the firmware's gamma curve and FastLED palettes, so output
+matches the device frame-for-frame.
+
+```bash
+cd tools/render_effect
+make                                              # build native binary
+./render_effect --list                            # show all 20 effects
+./render_effect --effect Plasma --out Plasma.gif  # render one
+make all-gifs                                     # render all 20 (default 42 fps × 252 frames)
+make all-gifs FPS=21 FRAMES=126 SCALE=16          # half-speed, smaller files (used in docs/assets/)
+```
+
+GIFs in [docs/assets/](../../docs/assets/) are produced by this tool — re-run
+`make all-gifs FPS=21 FRAMES=126 SCALE=16 && cp *.gif ../../docs/assets/` after
+adding a new effect or changing palettes.

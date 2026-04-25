@@ -71,6 +71,7 @@ lib/
 web/                            Preact + Vite + TypeScript SPA
 data/web/                       SPA build output → LittleFS
 tools/build_web.py              PlatformIO pre-build hook
+tools/render_effect/            native CLI — render any effect to a GIF (no device needed)
 test/test_native/               native C++ unit tests
 ```
 
