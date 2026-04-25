@@ -126,6 +126,41 @@ void test_looking_eyes_draws_pupils(void) {
 }
 
 // ---------------------------------------------------------------------------
+// Group 4: Fire (ParticleEffects)
+// ---------------------------------------------------------------------------
+
+void test_fire_fills_matrix(void) {
+    setMockMillis(20000);
+    EffectSettings fireSettings(5, HeatColors_p, true);
+    Fire(mock, 0, 0, &fireSettings);
+    TEST_ASSERT_EQUAL(kMatrixWidth * kMatrixHeight, mock.drawPixelCalls);
+}
+
+void test_fire_repeated_invocation_stable(void) {
+    EffectSettings fireSettings(5, HeatColors_p, true);
+    for (int frame = 0; frame < 20; frame++) {
+        setMockMillis(20000 + frame * 100);
+        mock.reset();
+        Fire(mock, 0, 0, &fireSettings);
+        TEST_ASSERT_EQUAL(kMatrixWidth * kMatrixHeight, mock.drawPixelCalls);
+    }
+}
+
+void test_fire_speed_zero_does_not_crash(void) {
+    setMockMillis(20000);
+    EffectSettings slowSettings(0, HeatColors_p, true);
+    Fire(mock, 0, 0, &slowSettings);
+    TEST_ASSERT_EQUAL(kMatrixWidth * kMatrixHeight, mock.drawPixelCalls);
+}
+
+void test_fire_speed_max_does_not_crash(void) {
+    setMockMillis(20000);
+    EffectSettings fastSettings(20, HeatColors_p, true);
+    Fire(mock, 0, 0, &fastSettings);
+    TEST_ASSERT_EQUAL(kMatrixWidth * kMatrixHeight, mock.drawPixelCalls);
+}
+
+// ---------------------------------------------------------------------------
 // main
 // ---------------------------------------------------------------------------
 
@@ -149,6 +184,12 @@ int main(int, char **) {
     RUN_TEST(test_brick_breaker_draws_elements);
     RUN_TEST(test_looking_eyes_draws_bitmaps);
     RUN_TEST(test_looking_eyes_draws_pupils);
+
+    // Fire (ParticleEffects)
+    RUN_TEST(test_fire_fills_matrix);
+    RUN_TEST(test_fire_repeated_invocation_stable);
+    RUN_TEST(test_fire_speed_zero_does_not_crash);
+    RUN_TEST(test_fire_speed_max_does_not_crash);
 
     return UNITY_END();
 }

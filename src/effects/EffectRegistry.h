@@ -2,7 +2,7 @@
 
 #include "EffectTypes.h"
 
-constexpr int kNumEffects = 19;
+constexpr int kNumEffects = 20;
 
 extern Effect effects[];
 

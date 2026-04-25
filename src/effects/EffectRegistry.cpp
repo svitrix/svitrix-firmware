@@ -26,6 +26,7 @@ Effect effects[] = {
     {"LookingEyes", LookingEyes, EffectSettings()},
     {"TwinklingStars", TwinklingStars, EffectSettings(4, OceanColors_p, true)},
     {"ColorWaves", ColorWaves, EffectSettings(5, RainbowColors_p, true)},
+    {"Fire", Fire, EffectSettings(5, HeatColors_p, true)},
 };
 
 void callEffect(IPixelCanvas& canvas, int16_t x, int16_t y, uint8_t index)

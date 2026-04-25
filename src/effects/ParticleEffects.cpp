@@ -76,6 +76,7 @@ void Fireworks(IPixelCanvas& canvas, int16_t x, int16_t y, EffectSettings *setti
         for (auto& fw : fireworks)
         {
             if (fw.life == 0)
+            // cppcheck-suppress useStlAlgorithm
             {
                 fw.x = random(kMatrixWidth);
                 fw.y = kMatrixHeight - 1;
@@ -184,6 +185,7 @@ CRGB matrixLedState[kMatrixWidth][kMatrixHeight];
 
 } // namespace
 
+// cppcheck-suppress constParameterPointer
 void Matrix(IPixelCanvas& canvas, int16_t x, int16_t y, EffectSettings *settings)
 {
     static const CRGB spawnColor(175, 255, 175);
@@ -220,15 +222,82 @@ void Matrix(IPixelCanvas& canvas, int16_t x, int16_t y, EffectSettings *settings
             canvas.drawPixel(x + i, y + j, matrixLedState[i][j]);
 }
 
+// ---- Fire ----
+
+namespace
+{
+
+uint8_t fireHeat[kMatrixWidth][kMatrixHeight];
+uint32_t fireLastUpdate = 0;
+
+} // namespace
+
+void Fire(IPixelCanvas& canvas, int16_t x, int16_t y, EffectSettings *settings)
+{
+    constexpr uint8_t kBaseCooling = 55;
+    constexpr uint8_t kBaseSparking = 120;
+
+    auto speed = static_cast<uint8_t>(settings->speed);
+    uint8_t cooling = static_cast<uint8_t>(constrain(kBaseCooling - speed * 2, 20, 100));
+    uint8_t sparking = static_cast<uint8_t>(constrain(kBaseSparking + speed * 8, 60, 220));
+    uint32_t frameDelay = static_cast<uint32_t>(constrain(60 - speed * 5, 10, 80));
+
+    if (millis() - fireLastUpdate >= frameDelay)
+    {
+        fireLastUpdate = millis();
+
+        for (uint16_t i = 0; i < kMatrixWidth; i++)
+        {
+            // 1) Cool down every cell a little
+            for (uint16_t j = 0; j < kMatrixHeight; j++)
+            {
+                uint8_t maxCool = static_cast<uint8_t>((cooling * 10) / kMatrixHeight + 2);
+                uint8_t cool = random8(0, maxCool);
+                fireHeat[i][j] = (fireHeat[i][j] > cool) ? fireHeat[i][j] - cool : 0;
+            }
+
+            // 2) Heat rises: each cell takes a weighted average of the two cells below
+            for (uint16_t j = 0; j + 1 < kMatrixHeight; j++)
+            {
+                uint16_t below1 = fireHeat[i][j + 1];
+                uint16_t below2 = (j + 2 < kMatrixHeight) ? fireHeat[i][j + 2] : below1;
+                fireHeat[i][j] = static_cast<uint8_t>((below1 + below1 + below2) / 3);
+            }
+
+            // 3) Random sparks at the bottom row (heat source)
+            if (random8() < sparking)
+            {
+                uint8_t spark = random8(160, 255);
+                uint16_t sum = static_cast<uint16_t>(fireHeat[i][kMatrixHeight - 1]) + spark;
+                fireHeat[i][kMatrixHeight - 1] = static_cast<uint8_t>(sum > 255 ? 255 : sum);
+            }
+        }
+    }
+
+    // 4) Render heat field through the palette
+    for (uint16_t i = 0; i < kMatrixWidth; i++)
+    {
+        for (uint16_t j = 0; j < kMatrixHeight; j++)
+        {
+            auto colorIndex = static_cast<uint8_t>((static_cast<uint16_t>(fireHeat[i][j]) * 240) / 256);
+            CRGB color = ColorFromPalette(settings->palette, colorIndex, 255, blendMode(settings));
+            canvas.drawPixel(x + i, y + j, color);
+        }
+    }
+}
+
 // ---- Reset all particle effect state ----
 
 void resetParticleEffectState()
 {
     memset(stars, 0, sizeof(stars));
+    // cppcheck-suppress memsetClassFloat
     memset(fireworks, 0, sizeof(fireworks));
     lastFireworkTime = 0;
     ripple = {};
     memset(tempLedsRipple, 0, sizeof(tempLedsRipple));
     matrixLastMove = 0;
     memset(matrixLedState, 0, sizeof(matrixLedState));
+    memset(fireHeat, 0, sizeof(fireHeat));
+    fireLastUpdate = 0;
 }
