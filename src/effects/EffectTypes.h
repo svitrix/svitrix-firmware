@@ -14,7 +14,7 @@ struct EffectSettings
     CRGBPalette16 palette;
     bool blend;
 
-    EffectSettings(double s = 2, CRGBPalette16 p = OceanColors_p, bool b = false)
+    explicit EffectSettings(double s = 2, CRGBPalette16 p = OceanColors_p, bool b = false)
         : speed(s)
         , palette(p)
         , blend(b)
