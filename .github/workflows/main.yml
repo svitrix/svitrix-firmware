@@ -45,13 +45,11 @@ jobs:
           pip install --upgrade platformio
           sudo apt-get -y install jq
 
-      - name: Compile firmware with version
-        env:
-          PLATFORMIO_BUILD_FLAGS: -DVERSION=\"${{ steps.version.outputs.version }}\"
-        run: pio run --environment ulanzi
-
       - name: Sync version file
         run: echo '${{ steps.version.outputs.version }}' > version
+
+      - name: Compile firmware
+        run: pio run --environment ulanzi
 
       - name: Update web flasher
         run: |
