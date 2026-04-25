@@ -72,8 +72,8 @@ Its also accessible via HTTP /api/effects
   <tr>
     <td>Fade</td>
     <td><img src="./assets/Fade.gif" style="max-height:100px;"></td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
+    <td>Fire</td>
+    <td><img src="./assets/Fire.gif" style="max-height:100px;"></td>
   </tr>
 </table>
 
@@ -123,6 +123,7 @@ Standard values:
 | LookingEyes | - | - | - |
 | TwinklingStars | 4 | Ocean | false |
 | ColorWaves | 3 | Rainbow | true |
+| Fire | 5 | Heat | true |
 
 
 

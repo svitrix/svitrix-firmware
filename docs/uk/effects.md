@@ -72,8 +72,8 @@ SVITRIX надсилає всі назви ефектів один раз піс
   <tr>
     <td>Fade</td>
     <td><img src="../assets/Fade.gif" style="max-height:100px;"></td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
+    <td>Fire</td>
+    <td><img src="../assets/Fire.gif" style="max-height:100px;"></td>
   </tr>
 </table>
 
@@ -123,6 +123,7 @@ SVITRIX надсилає всі назви ефектів один раз піс
 | LookingEyes | - | - | - |
 | TwinklingStars | 4 | Ocean | false |
 | ColorWaves | 3 | Rainbow | true |
+| Fire | 5 | Heat | true |
 
 
 
