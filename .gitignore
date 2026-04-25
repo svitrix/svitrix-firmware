@@ -6,9 +6,6 @@
 /Tools
 !tools/build_web.py
 !tools/dist.sh
-!tools/render_effect/render_effect.cpp
-!tools/render_effect/FastLED.h
-!tools/render_effect/Makefile
 compile_commands.json
 
 # Claude Code
