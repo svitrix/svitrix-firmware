@@ -171,6 +171,7 @@ void DisplayManager_::setNewSettings(const char *json)
         if (beff < -1 || beff >= kNumEffects)
             beff = -1;
         displayConfig.backgroundEffect = beff;
+        ui->setBackgroundEffect(beff);
     }
 
     if (doc.containsKey("VOL"))
