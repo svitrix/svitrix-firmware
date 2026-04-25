@@ -6,7 +6,6 @@
 /Tools
 !tools/build_web.py
 !tools/dist.sh
-!tools/inject_version.py
 compile_commands.json
 
 # Claude Code
