@@ -1,6 +1,7 @@
 #include "DataFetcher.h"
 #include "Globals.h"
 #include "IDisplayNavigation.h"
+#include "FormatStringValidator.h"
 #include <ArduinoJson.h>
 #include <HTTPClient.h>
 #include <WiFiClientSecure.h>
@@ -198,7 +199,11 @@ String DataFetcher_::formatValue(const DataSourceConfig& src, const String& raw)
     if (src.displayFormat.isEmpty())
         return raw;
 
-    // Try to interpret as a number for printf formatting
+    // Defense-in-depth: addSource() and loadSources() also validate, but treat
+    // displayFormat as untrusted at every snprintf call site.
+    if (!isSafeSingleArgFormat(src.displayFormat.c_str()))
+        return raw;
+
     char buf[64];
     if (src.displayFormat.indexOf('f') >= 0 || src.displayFormat.indexOf('d') >= 0 ||
         src.displayFormat.indexOf('i') >= 0 || src.displayFormat.indexOf('g') >= 0)
@@ -254,6 +259,13 @@ bool DataFetcher_::addSource(const char *json)
 
     if (cfg.interval < DataSourceConfig::MIN_INTERVAL)
         cfg.interval = DataSourceConfig::MIN_INTERVAL;
+
+    // Reject unsafe printf-style format strings at the API boundary.
+    if (!isSafeSingleArgFormat(cfg.displayFormat.c_str()))
+    {
+        DEBUG_PRINTLN(F("DataFetcher: rejecting source with unsafe displayFormat"));
+        return false;
+    }
 
     // Update existing or add new
     auto existing = std::find_if(sources_.begin(), sources_.end(),
@@ -367,6 +379,11 @@ void DataFetcher_::loadSources()
 
         if (cfg.interval < DataSourceConfig::MIN_INTERVAL)
             cfg.interval = DataSourceConfig::MIN_INTERVAL;
+
+        // Old persisted configs may contain unsafe formats — downgrade to raw
+        // rather than dropping the source so users don't lose data silently.
+        if (!isSafeSingleArgFormat(cfg.displayFormat.c_str()))
+            cfg.displayFormat = "";
 
         sources_.push_back(cfg);
         lastFetch_.push_back(0); // Fetch on first tick

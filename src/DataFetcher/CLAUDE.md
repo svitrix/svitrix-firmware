@@ -81,7 +81,7 @@ Display shows as custom app
 |--------|-------------|
 | `fetchAndPush(index)` | HTTP GET + extract + format + push to display |
 | `extractJsonValue(json, path)` | Walk dot-notation path through ArduinoJson (supports objects + arrays) |
-| `formatValue(src, raw)` | Apply printf-style `displayFormat` to raw value |
+| `formatValue(src, raw)` | Apply printf-style `displayFormat` to raw value (validates with `isSafeSingleArgFormat`; returns raw on unsafe format) |
 | `buildCustomAppJson(src, value)` | Build JSON for `parseCustomPage()` with text, icon, color, lifetime=0 |
 
 ## HTTP API Endpoints (registered in ServerManager)

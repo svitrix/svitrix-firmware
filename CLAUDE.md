@@ -134,6 +134,7 @@ Which [lib/services/](lib/services/) each module uses:
 | PeripheryManager | SensorCalc |
 | MQTTManager | MessageRouter, HADiscovery, AppRegistry, StatsBuilder, PlaceholderUtils |
 | Apps | ColorUtils, TimeEffects, TextUtils, LayoutEngine |
+| DataFetcher | FormatStringValidator |
 | main.cpp | TextUtils (`setTextFont(SvitrixFont)` at startup) |
 
 ## Module Doc Map
