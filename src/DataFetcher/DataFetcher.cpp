@@ -5,6 +5,7 @@
 #include <HTTPClient.h>
 #include <WiFiClientSecure.h>
 #include <LittleFS.h>
+#include <algorithm>
 
 extern const char *rootCACertificate;
 
@@ -141,11 +142,10 @@ String DataFetcher_::extractJsonValue(const String& json, const String& path)
     // Walk the dot-separated path: "bpi.USD.rate_float" or "data.0.price"
     JsonVariant current = doc.as<JsonVariant>();
     int start = 0;
-    int dot;
 
     while (start < (int)path.length())
     {
-        dot = path.indexOf('.', start);
+        int dot = path.indexOf('.', start);
         if (dot < 0)
             dot = path.length();
 
@@ -256,14 +256,14 @@ bool DataFetcher_::addSource(const char *json)
         cfg.interval = DataSourceConfig::MIN_INTERVAL;
 
     // Update existing or add new
-    for (size_t i = 0; i < sources_.size(); i++)
+    auto existing = std::find_if(sources_.begin(), sources_.end(),
+                                 [&](const DataSourceConfig& s)
+                                 { return s.name == cfg.name; });
+    if (existing != sources_.end())
     {
-        if (sources_[i].name == cfg.name)
-        {
-            sources_[i] = cfg;
-            saveSources();
-            return true;
-        }
+        *existing = cfg;
+        saveSources();
+        return true;
     }
 
     if (sources_.size() >= DataSourceConfig::MAX_SOURCES)
@@ -280,24 +280,23 @@ bool DataFetcher_::addSource(const char *json)
 
 bool DataFetcher_::removeSource(const String& name)
 {
-    for (size_t i = 0; i < sources_.size(); i++)
-    {
-        if (sources_[i].name == name)
-        {
-            // Remove the custom app from display
-            if (nav_)
-                nav_->parseCustomPage(name, "{}", false);
+    auto it = std::find_if(sources_.begin(), sources_.end(),
+                           [&](const DataSourceConfig& s)
+                           { return s.name == name; });
+    if (it == sources_.end())
+        return false;
 
-            sources_.erase(sources_.begin() + i);
-            lastFetch_.erase(lastFetch_.begin() + i);
-            if (nextFetchIndex_ >= sources_.size() && !sources_.empty())
-                nextFetchIndex_ = 0;
+    if (nav_)
+        nav_->parseCustomPage(name, "{}", false);
 
-            saveSources();
-            return true;
-        }
-    }
-    return false;
+    auto idx = std::distance(sources_.begin(), it);
+    sources_.erase(it);
+    lastFetch_.erase(lastFetch_.begin() + idx);
+    if (nextFetchIndex_ >= sources_.size() && !sources_.empty())
+        nextFetchIndex_ = 0;
+
+    saveSources();
+    return true;
 }
 
 String DataFetcher_::getSourcesAsJson()
@@ -324,15 +323,15 @@ String DataFetcher_::getSourcesAsJson()
 
 void DataFetcher_::forceFetch(const String& name)
 {
-    for (size_t i = 0; i < sources_.size(); i++)
-    {
-        if (sources_[i].name == name)
-        {
-            fetchAndPush(i);
-            lastFetch_[i] = millis();
-            return;
-        }
-    }
+    auto it = std::find_if(sources_.begin(), sources_.end(),
+                           [&](const DataSourceConfig& s)
+                           { return s.name == name; });
+    if (it == sources_.end())
+        return;
+
+    auto idx = std::distance(sources_.begin(), it);
+    fetchAndPush(idx);
+    lastFetch_[idx] = millis();
 }
 
 // ---------- LittleFS persistence ----------
