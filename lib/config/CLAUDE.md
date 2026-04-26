@@ -138,6 +138,12 @@ Shared configuration structs consumed by all modules. Single header, no logic, n
 | `scrollSpeed` | uint8_t | `100` | Text scroll speed (ms per pixel) |
 | `nativeIconLayout` | IconLayout | `Left` | Icon position for native apps |
 | `blockNavigation` | bool | `false` | Block button navigation |
+| `nightMode` | bool | `false` | Enable scheduled night mode |
+| `nightStart` | uint16_t | `1260` | Night start (minutes from midnight, 21:00) |
+| `nightEnd` | uint16_t | `360` | Night end (minutes from midnight, 06:00) |
+| `nightBrightness` | uint8_t | `5` | Brightness during night mode |
+| `nightColor` | uint32_t | `0xFF0000` | Text color during night mode (red) |
+| `nightBlockTransition` | bool | `true` | Disable auto-transition in night mode |
 
 ### AudioConfig
 | Field | Type | Default | Notes |

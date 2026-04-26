@@ -1,6 +1,6 @@
 # Interfaces — AI Reference
 
-13 pure virtual interfaces that decouple all module-to-module communication. This is the architectural backbone of Svitrix.
+15 pure virtual interfaces that decouple all module-to-module communication. This is the architectural backbone of Svitrix.
 
 ## Interface Map
 
@@ -10,6 +10,7 @@
 | **IDisplayControl** | 10 | DisplayManager_ | MenuManager, ServerManager, MQTTManager |
 | **IDisplayNavigation** | 12 | DisplayManager_ | MenuManager, ServerManager, MQTTManager, DataFetcher |
 | **IDisplayNotifier** | 9 | NotificationManager_ | ServerManager, MQTTManager |
+| **IDisplayPolicy** | 4 | NightModePolicy | DisplayManager |
 | **IMatrixHost** | 4 | DisplayManager_ | MatrixDisplayUi |
 | **IButtonHandler** | 4 | DisplayManager_, MenuManager_ | PeripheryManager |
 | **IButtonReporter** | 1 | MQTTManager_, ServerManager_ | PeripheryManager |
@@ -18,6 +19,7 @@
 | **IPixelCanvas** | 6 | NeoMatrixCanvas | Effect system |
 | **ISound** | 3 | PeripheryManager_ | ServerManager, MQTTManager |
 | **IPower** | 2 | PowerManager_ | ServerManager, MQTTManager |
+| **ITimeProvider** | 1 | RealTimeProvider | NightModePolicy |
 | **IUpdater** | 2 | UpdateManager_ | ServerManager, MQTTManager, MenuManager |
 
 ## Injection Pattern
@@ -145,6 +147,25 @@ void sleepParser(const char* json);
 bool checkUpdate(bool withScreen);
 void updateFirmware();
 ```
+
+### IDisplayPolicy (4 methods)
+```cpp
+bool isActive() const;
+bool overridesBrightness(uint8_t& out) const;     // only valid when isActive()
+bool overridesTextColor(uint32_t& out) const;     // only valid when isActive()
+bool blocksAutoTransition() const;                // only valid when isActive()
+```
+Pluggable scheduled/event-driven override rule. Registered with
+`DisplayManager.registerPolicy()`; first-active wins. Current implementor:
+`NightModePolicy` (src/policies/).
+
+### ITimeProvider (1 method)
+```cpp
+bool now(struct tm& out) const;   // false when clock is not synced (e.g. pre-NTP)
+```
+Abstraction over `timer_localtime()` for policies that schedule by time-of-day.
+Production impl: `RealTimeProvider` (src/), enforces `tm_year >= 120` (year ≥ 2020)
+to reject the pre-NTP epoch window.
 
 ## Known Violations (16 files bypass interfaces)
 

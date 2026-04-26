@@ -29,18 +29,15 @@ bool nativeAppGuard(const char *appName)
 
 // ── Color override ─────────────────────────────────────────────────
 
-/// Apply a per-app color if set (> 0), otherwise reset to global text color.
+/// Apply a per-app color if set (> 0), otherwise the global text color.
+/// DisplayManager.resolveTextColor() lets any active IDisplayPolicy
+/// (e.g. NightModePolicy) veto the choice, so this function stays
+/// policy-agnostic.
 /// @param colorValue Per-app color from colorConfig (0 = use global).
 void applyNativeAppColor(uint32_t colorValue)
 {
-    if (colorValue > 0)
-    {
-        DisplayManager.setTextColor(colorValue);
-    }
-    else
-    {
-        DisplayManager.resetTextColor();
-    }
+    const uint32_t preferred = (colorValue > 0) ? colorValue : colorConfig.textColor;
+    DisplayManager.setTextColor(DisplayManager.resolveTextColor(preferred));
 }
 
 // ── Weekday indicator bar ──────────────────────────────────────────

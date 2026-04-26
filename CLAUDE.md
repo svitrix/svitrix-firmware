@@ -7,7 +7,7 @@ C++17 / Arduino / PlatformIO.
 
 - **Stack:** ESP32-WROOM-32D · Arduino-ESP32 · FastLED/NeoMatrix · LittleFS · AsyncWebServer · ArduinoHA
 - **Entry point:** [src/main.cpp](src/main.cpp) — composition root, wires interfaces, owns `setup()`/`loop()`
-- **Decoupling:** 13 pure-virtual interfaces in [lib/interfaces/](lib/interfaces/); all inter-module calls go through them
+- **Decoupling:** 15 pure-virtual interfaces in [lib/interfaces/](lib/interfaces/); all inter-module calls go through them
 - **Per-module docs:** see [Module Doc Map](#module-doc-map) — each dir auto-loads on Read
 - **Deep dives:** [Git workflow](.claude/git-workflow.md) · [Hardware pinout](src/PeripheryManager/CLAUDE.md) · [Config structs](lib/config/CLAUDE.md)
 
@@ -55,11 +55,14 @@ src/
 ├── MelodyPlayer/
 ├── effects/
 ├── Overlays/
+├── policies/                   IDisplayPolicy implementations (NightModePolicy)
 ├── data/                       SvitrixFont, cert, icons, Dictionary
 ├── contrib/                    GifPlayer, ArtnetWifi (3rd-party)
 ├── AppContent.h
 ├── Globals.{cpp,h}
 ├── Functions.{cpp,h}
+├── NightModeWindow.h           shared night-window predicate
+├── RealTimeProvider.h          ITimeProvider impl wrapping localtime()
 └── timer.{cpp,h}
 lib/
 ├── interfaces/                 pure-virtual decoupling layer
@@ -102,6 +105,8 @@ test/test_native/               native C++ unit tests
 | UpdateManager_       | `IUpdater`           | ServerManager, MQTTManager, MenuManager                       |
 | NeoMatrixCanvas      | `IPixelCanvas`       | Effect system                                                 |
 | MenuManager_         | `IButtonHandler`     | PeripheryManager                                              |
+| NightModePolicy      | `IDisplayPolicy`     | DisplayManager (registered in `main.cpp`, order = priority)   |
+| RealTimeProvider     | `ITimeProvider`      | NightModePolicy                                               |
 
 ## Main loop
 
@@ -137,7 +142,7 @@ Per-module docs auto-load when you Read files in their directory.
 
 | Module | Doc | Role |
 |--------|-----|------|
-| Interfaces | [lib/interfaces/CLAUDE.md](lib/interfaces/CLAUDE.md) | 13 pure-virtual interfaces (decoupling layer) |
+| Interfaces | [lib/interfaces/CLAUDE.md](lib/interfaces/CLAUDE.md) | 15 pure-virtual interfaces (decoupling layer) |
 | Services | [lib/services/CLAUDE.md](lib/services/CLAUDE.md) | 14 stateless libs, 100% test coverage |
 | Config | [lib/config/CLAUDE.md](lib/config/CLAUDE.md) | Config structs, defaults, persistence |
 | HA integration | [lib/home-assistant-integration/CLAUDE.md](lib/home-assistant-integration/CLAUDE.md) | ArduinoHA fork, entity types enabled |
@@ -168,6 +173,7 @@ Per-module docs auto-load when you Read files in their directory.
 | New native app | `src/Apps/Apps_NativeApps.cpp`, `src/Apps/Apps.h`, register in `DisplayManager.cpp`, `src/Apps/README.md` |
 | New TimeMode (TMODE) | `src/Apps/Apps_NativeApps.cpp`, `web/src/pages/settings-sections/TimeDateSection.tsx` |
 | New UI page/section | `web/src/pages/`, `web/src/api/types.ts`, `SettingsContext.tsx`, `api/client.ts`, `web/README.md` |
+| New display policy | `src/policies/<Name>Policy.h` implementing `IDisplayPolicy`, register in `src/main.cpp`, `src/CLAUDE.md` (Display Policies table) |
 
 ## Cross-module Impact Map
 

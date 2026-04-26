@@ -33,6 +33,7 @@
 #include "IMatrixHost.h"
 #include "IDisplayControl.h"
 #include "IDisplayNavigation.h"
+#include "IDisplayPolicy.h"
 #include "DisplayRenderer.h"
 #include "NotificationManager.h"
 
@@ -54,6 +55,10 @@ class DisplayManager_ : public IButtonHandler, public IMatrixHost, public IDispl
 
     DisplayRenderer_ renderer_;
     NotificationManager_ notifMgr_;
+
+    std::vector<IDisplayPolicy *> policies_;
+    IDisplayPolicy *activePolicy_ = nullptr; ///< Cached first-active policy (nullptr == none)
+    bool policyDirty_ = false;               ///< Force override re-application on next tick
 
   public:
     static DisplayManager_& getInstance();
@@ -130,6 +135,22 @@ class DisplayManager_ : public IButtonHandler, public IMatrixHost, public IDispl
     void setColorTemperature(CRGB t);
     void setCurrentApp(const String& name);
     const String& getCurrentApp() const;
+
+    /// Register a display policy. Order of registration defines priority —
+    /// the first active policy wins on resolveTextColor / brightness clamp.
+    /// Pointer must outlive DisplayManager.
+    void registerPolicy(IDisplayPolicy *policy);
+
+    /// @return The text color to draw with, respecting any active policy's
+    ///         override. Falls back to `preferred` when no policy overrides.
+    [[nodiscard]] uint32_t resolveTextColor(uint32_t preferred) const;
+
+    /// Request that the next tick re-applies active-policy overrides even
+    /// if the active-policy identity hasn't changed. Call after mutating
+    /// a field a policy reads (e.g. appConfig.nightColor) so global state
+    /// set on the original activation edge (matrix brightness, default
+    /// text color) picks up the new value.
+    void markPolicyConfigDirty();
 
     // ═══════════════════════════════════════════════════════════════
     // Rendering delegation — backward compat for apps/overlays that

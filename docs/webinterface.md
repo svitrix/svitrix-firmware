@@ -76,6 +76,18 @@ Connect to an MQTT broker for Home Assistant integration and remote control:
 
 See the [Authentication](#authentication) section below.
 
+### Night Mode
+
+Schedule a low-brightness, single-color mode for nighttime use (e.g. bedroom clock):
+
+- **Enable Night Mode** — toggle the feature on/off
+- **Start / End** — time range (e.g. 21:00 to 06:00, supports crossing midnight)
+- **Night Brightness** — display brightness during night hours (1–50)
+- **Night Color** — text color during night mode (default: red — easier on the eyes)
+- **Block Auto-Transition** — when checked, apps won't cycle automatically; use buttons to navigate
+
+During the scheduled time, the display dims to the configured brightness and all text renders in the chosen night color. When the time window ends, normal settings are restored automatically.
+
 ### Display
 
 - **Matrix Power** — turn the LED matrix on/off

@@ -59,7 +59,7 @@ String DisplayManager_::getStats()
 /// Used by the HTTP API and MQTT to expose current configuration.
 String DisplayManager_::getSettings()
 {
-    StaticJsonDocument<1024> doc;
+    StaticJsonDocument<2048> doc;
     doc["MATP"] = !displayConfig.matrixOff;
     doc["ABRI"] = brightnessConfig.autoBrightness;
     doc["BRI"] = brightnessConfig.brightness;
@@ -93,6 +93,12 @@ String DisplayManager_::getSettings()
     doc["BAT_COL"] = colorConfig.batColor;
     doc["SSPEED"] = appConfig.scrollSpeed;
     doc["NILAYOUT"] = layoutToString(appConfig.nativeIconLayout);
+    doc["NMODE"] = appConfig.nightMode;
+    doc["NSTART"] = appConfig.nightStart;
+    doc["NEND"] = appConfig.nightEnd;
+    doc["NBRI"] = appConfig.nightBrightness;
+    doc["NCOL"] = appConfig.nightColor;
+    doc["NBTRANS"] = appConfig.nightBlockTransition;
     doc["TIM"] = appConfig.showTime;
     doc["DAT"] = appConfig.showDate;
     doc["HUM"] = appConfig.showHum;
@@ -147,6 +153,45 @@ void DisplayManager_::setNewSettings(const char *json)
     {
         appConfig.nativeIconLayout = layoutFromString(doc["NILAYOUT"].as<String>());
     }
+    bool nightFieldsChanged = false;
+    if (doc.containsKey("NMODE"))
+    {
+        appConfig.nightMode = doc["NMODE"].as<bool>();
+        nightFieldsChanged = true;
+    }
+    if (doc.containsKey("NSTART"))
+    {
+        appConfig.nightStart = doc["NSTART"].as<uint16_t>();
+        nightFieldsChanged = true;
+    }
+    if (doc.containsKey("NEND"))
+    {
+        appConfig.nightEnd = doc["NEND"].as<uint16_t>();
+        nightFieldsChanged = true;
+    }
+    if (doc.containsKey("NBRI"))
+    {
+        appConfig.nightBrightness = doc["NBRI"].as<uint8_t>();
+        nightFieldsChanged = true;
+    }
+    if (doc.containsKey("NCOL"))
+    {
+        // Web UI sends colors as "#RRGGBB" hex strings; getColorFromJsonVariant
+        // accepts hex strings, [r,g,b] arrays, and numbers. Plain .as<uint32_t>()
+        // would silently parse a hex string as 0 → invisible "black" night text.
+        appConfig.nightColor = getColorFromJsonVariant(doc["NCOL"], appConfig.nightColor);
+        nightFieldsChanged = true;
+    }
+    if (doc.containsKey("NBTRANS"))
+    {
+        appConfig.nightBlockTransition = doc["NBTRANS"].as<bool>();
+        nightFieldsChanged = true;
+    }
+    // Force DisplayManager's cached overrides (matrix brightness, default text
+    // colour) to re-sync on the next tick so a mid-activation config edit
+    // (e.g. new nightColor) takes effect without waiting for the window to flip.
+    if (nightFieldsChanged)
+        markPolicyConfigDirty();
     timeConfig.isCelsius = doc.containsKey("CEL") ? doc["CEL"] : timeConfig.isCelsius;
     timeConfig.startOnMonday = doc.containsKey("SOM") ? doc["SOM"].as<bool>() : timeConfig.startOnMonday;
     displayConfig.matrixOff = doc.containsKey("MATP") ? !doc["MATP"].as<bool>() : displayConfig.matrixOff;

@@ -55,7 +55,7 @@ Central configuration store and persistent settings. Defines all config structs 
 | `BrightnessConfig` | brightness, autoBrightness, min/max, ldrGamma/Factor | Brightness |
 | `ColorConfig` | textColor, timeColor, dateColor, batColor, tempColor, humColor, weekday, calendar | Colors |
 | `TimeConfig` | timeFormat, dateFormat, timeMode, startOnMonday, ntpServer, isCelsius | Time/date |
-| `AppConfig` | showTime/Date/Bat/Temp/Hum, autoTransition, transEffect, scrollSpeed, nativeIconLayout | Apps |
+| `AppConfig` | showTime/Date/Bat/Temp/Hum, autoTransition, transEffect, scrollSpeed, nativeIconLayout, nightMode/Start/End/Brightness/Color/BlockTransition | Apps |
 | `AudioConfig` | soundActive, soundVolume, bootSound | Audio |
 | `SystemConfig` | debugMode, hostname, deviceId, updateUrls, buttonCallback | System |
 
@@ -77,6 +77,20 @@ See [lib/config/CLAUDE.md](../lib/config/CLAUDE.md) for full field list.
 | `startLittleFS()` | Mount LittleFS, create dirs, handle corrupt FS |
 | `loadDevSettings()` | Parse `/dev.json` for advanced overrides |
 | `getID()` | Generate device ID from MAC: `svitrix_XXYYZZ` |
+
+### Display Policies (src/policies/)
+
+Pluggable `IDisplayPolicy` implementations that can override brightness,
+text color, and auto-transition while active. Registered with
+`DisplayManager.registerPolicy()` in `main.cpp`; order = priority.
+
+| Policy | File | Triggered by |
+|--------|------|--------------|
+| `NightModePolicy` | `src/policies/NightModePolicy.h` | `appConfig.nightMode` + time-of-day window |
+
+Adding a new mode (movie, away, sleep timer, etc.) = new header
+implementing `IDisplayPolicy` + one `registerPolicy()` call. No changes
+to `DisplayManager` or `Apps_Helpers`.
 
 ### Debug Macros
 

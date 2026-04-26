@@ -15,6 +15,7 @@ import {
   IconPickerSection,
   ActionsBar,
   NotifySection,
+  NightModeSection,
 } from "./sections";
 
 function SettingsContent() {
@@ -41,6 +42,7 @@ function SettingsContent() {
       <NtpSection />
       <AuthSection />
       <InfraSaveButton />
+      <NightModeSection />
       <DisplaySection />
       <AppsSection />
       <TimeDateSection />

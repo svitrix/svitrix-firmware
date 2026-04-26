@@ -9,6 +9,7 @@
  * layout switching, gamma correction, and the New Year easter egg.
  */
 #include <DisplayManager.h>
+#include <algorithm>
 #include "DisplayManager_internal.h"
 #include "INotifier.h"
 #include "IPeripheryProvider.h"
@@ -27,6 +28,7 @@ extern ArtnetWifi artnet;
 #include <ArduinoJson.h>
 
 constexpr int MATRIX_PIN = 32;
+
 
 CRGB leds[MATRIX_WIDTH * MATRIX_HEIGHT];
 CRGB ledsCopy[MATRIX_WIDTH * MATRIX_HEIGHT];
@@ -77,6 +79,31 @@ void DisplayManager_::subscribeViaMqtt(const char *topic)
     if (notifier_)
         notifier_->subscribe(topic);
 }
+
+void DisplayManager_::registerPolicy(IDisplayPolicy *policy)
+{
+    if (policy)
+        policies_.push_back(policy);
+}
+
+void DisplayManager_::markPolicyConfigDirty()
+{
+    policyDirty_ = true;
+}
+
+uint32_t DisplayManager_::resolveTextColor(uint32_t preferred) const
+{
+    // Use the cached active policy (computed in tick()) rather than
+    // re-evaluating isActive() — resolveTextColor is on the hot per-app
+    // render path called many times per frame.
+    if (activePolicy_)
+    {
+        uint32_t override_;
+        if (activePolicy_->overridesTextColor(override_))
+            return override_;
+    }
+    return preferred;
+}
 void DisplayManager_::setColorCorrection(CRGB c)
 {
     colorCorrection = c;
@@ -94,8 +121,9 @@ const String& DisplayManager_::getCurrentApp() const
     return currentApp;
 }
 
-/// Sets matrix brightness, respecting matrixOff state.
+/// Sets matrix brightness, respecting matrixOff state and active policies.
 /// When display is off, brightness stays 0 unless the front notification has wakeup=true.
+/// When a registered policy is active and overrides brightness, the value is clamped.
 void DisplayManager_::setBrightness(int bri)
 {
     bool wakeup = false;
@@ -110,6 +138,12 @@ void DisplayManager_::setBrightness(int bri)
     }
     else
     {
+        if (activePolicy_)
+        {
+            uint8_t clamp;
+            if (activePolicy_->overridesBrightness(clamp))
+                bri = clamp;
+        }
         matrix->setBrightness(bri);
         actualBri = bri;
     }
@@ -205,6 +239,44 @@ void DisplayManager_::tick()
     }
     else
     {
+        // Edge-trigger: resolve which policy (if any) is active this tick and
+        // only apply side-effectful setters when the active policy changes.
+        // Per-tick application would churn UI state, clobber per-app colours,
+        // and potentially spam downstream listeners (MQTT, logs).
+        auto it = std::find_if(policies_.begin(), policies_.end(),
+                               [](IDisplayPolicy *p)
+                               { return p->isActive(); });
+        IDisplayPolicy *newActive = (it != policies_.end()) ? *it : nullptr;
+
+        // Re-apply when either the active policy identity changed, or a
+        // policy-relevant config field was mutated since the last activation
+        // (dirty flag set by markPolicyConfigDirty()). The dirty branch is
+        // gated on a policy being involved on at least one side of the
+        // transition — firing a re-apply when both sides are nullptr would
+        // needlessly overwrite whatever the current app just rendered.
+        const bool changed = (newActive != activePolicy_);
+        const bool dirtyWithPolicy = policyDirty_ && (newActive || activePolicy_);
+        policyDirty_ = false;
+        if (changed || dirtyWithPolicy)
+        {
+            activePolicy_ = newActive;
+            if (activePolicy_)
+            {
+                uint32_t col;
+                if (activePolicy_->overridesTextColor(col))
+                    setTextColor(col);
+                if (activePolicy_->blocksAutoTransition())
+                    setAutoTransition(false);
+            }
+            else
+            {
+                setTextColor(colorConfig.textColor);
+                setAutoTransition(appConfig.autoTransition);
+            }
+            // Reapply brightness so the clamp inside setBrightness() takes
+            // effect (or is released) immediately on the transition edge.
+            setBrightness(brightnessConfig.brightness);
+        }
         ui->update();
         if (ui->getUiState()->appState == IN_TRANSITION && !appIsSwitching)
         {

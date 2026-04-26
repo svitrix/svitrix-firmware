@@ -50,13 +50,29 @@ extern bool artnetMode, moodlightMode;
 1. AP mode → Show "AP MODE" text
 2. artnetMode → handled by DMX callback
 3. moodlightMode → handled by moodlight()
-4. Normal → `ui->update()` (app framework)
+4. Normal → resolve active `IDisplayPolicy` (edge-trigger) → `ui->update()`
 5. Always: poll artnet, checkNewYear()
 
 ### Power & Brightness
-- `setBrightness(int)` — respects matrixOff + wakeup notifications
+- `setBrightness(int)` — respects matrixOff, wakeup notifications, and any active `IDisplayPolicy` brightness override
 - `setPower(bool)` — toggle display with sleep animation
 - `showSleepAnimation()` — bouncing "Z" (700ms)
+
+### Display Policies
+Scheduled/event-driven override rules registered via `registerPolicy(IDisplayPolicy*)`
+in `main.cpp`. First-registered active policy wins. DisplayManager caches the
+active policy on each tick and applies overrides only on edge transitions
+(or when `markPolicyConfigDirty()` forces a re-apply).
+
+- `registerPolicy(IDisplayPolicy *)` — add a policy; pointer must outlive DisplayManager
+- `resolveTextColor(uint32_t preferred) const` — `[[nodiscard]]` hot-path helper for
+  app renderers (e.g. `Apps_Helpers::applyNativeAppColor`); returns the active
+  policy's color override or the fallback
+- `markPolicyConfigDirty()` — one-shot flag; call after mutating a config field
+  a policy reads (e.g. `appConfig.nightColor`) so the next tick re-syncs the
+  global brightness and text-color defaults. Wired from `setNewSettings()`.
+
+Current implementors: `NightModePolicy` (src/policies/).
 
 ### Custom Apps
 - `parseCustomPage(name, json, preventSave)` — create/update/delete custom app
@@ -140,9 +156,10 @@ Used by both custom apps and notifications:
 ## Dependency Injection
 
 ```cpp
-void setNotifier(INotifier *n);           // MQTT publisher
-void setPeriphery(IPeripheryProvider *p);  // Audio, uptime
-void setMenuActiveQuery(bool (*cb)());    // Menu state callback
+void setNotifier(INotifier *n);              // MQTT publisher
+void setPeriphery(IPeripheryProvider *p);    // Audio, uptime
+void setMenuActiveQuery(bool (*cb)());       // Menu state callback
+void registerPolicy(IDisplayPolicy *p);      // Scheduled display-override rules
 ```
 
 ## Wiring in main.cpp
@@ -151,6 +168,10 @@ void setMenuActiveQuery(bool (*cb)());    // Menu state callback
 PeripheryManager.addButtonHandler(&DisplayManager);      // IButtonHandler
 DisplayManager.setNotifier(&MQTTManager);                 // INotifier
 DisplayManager.setPeriphery(&PeripheryManager);           // IPeripheryProvider
+// Display policies (order = priority):
+static RealTimeProvider realTimeProvider;
+static NightModePolicy nightModePolicy(appConfig, realTimeProvider);
+DisplayManager.registerPolicy(&nightModePolicy);
 // Other modules receive interfaces:
 MenuManager.setDisplay(&DisplayManager.getRenderer(), &DisplayManager, &DisplayManager);
 ServerManager.setDisplay(&DisplayManager.getRenderer(), &DisplayManager, &DisplayManager, &DisplayManager.getNotifier());
