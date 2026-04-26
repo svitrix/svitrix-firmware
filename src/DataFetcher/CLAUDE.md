@@ -112,8 +112,9 @@ Required fields: `name`, `url`, `jsonPath`. All others optional.
 
 ### `displayFormat` whitelist
 
-Validated by `lib/services/FormatStringValidator::isSafeSingleArgFormat()`
-to defeat CWE-134 format-string injection. Allowed:
+Validated by `isSafeSingleArgFormat()` from
+`lib/services/FormatStringValidator.h` to defeat CWE-134 format-string
+injection. Allowed:
 
 - One conversion specifier from `d i u o x X f g e E s` (or none)
 - Optional flags `+ - # space 0`, width `[0-9]{0,2}`, precision `.[0-9]{0,2}`

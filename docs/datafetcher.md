@@ -21,7 +21,7 @@ Each data source has the following settings:
 | **Name** | Unique identifier — becomes the app name shown in the loop |
 | **URL** | Full HTTP or HTTPS URL of the API endpoint |
 | **JSON Path** | Dot-notation path to the value in the response (e.g., `bitcoin.usd` or `data.0.price`) |
-| **Display Format** | Optional printf-style format for a single value (e.g., `$%.0f` for "$67432", `%.1f°C` for "23.5°C"). Allowed specifiers: `%d %i %u %o %x %X %f %g %e %E %s` with optional width and precision (1–2 digits each). |
+| **Display Format** | Optional printf-style format for a single value (e.g., `$%.0f` for "$67432", `%.1f°C` for "23.5°C"). Allowed specifiers: `%d %i %u %o %x %X %f %g %e %E %s` with optional width and precision (1–2 digits each). Use `%%` for a literal `%` (e.g., `%d%%` → "85%"). |
 | **Icon** | Optional icon name from the ICONS folder |
 | **Color** | Optional text color as hex `#RRGGBB` |
 | **Interval** | Polling interval in seconds (minimum 60, default 900) |

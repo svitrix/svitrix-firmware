@@ -384,7 +384,7 @@ void DataFetcher_::loadSources()
         // rather than dropping the source so users don't lose data silently.
         if (!isSafeSingleArgFormat(cfg.displayFormat.c_str()))
         {
-            DEBUG_PRINTF("DataFetcher: source '%s' had unsafe displayFormat, downgrading to raw\n",
+            DEBUG_PRINTF("DataFetcher: source '%s' had unsafe displayFormat, downgrading to raw",
                          cfg.name.c_str());
             cfg.displayFormat = "";
         }
