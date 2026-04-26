@@ -382,7 +382,7 @@ The Data Fetcher allows SVITRIX to periodically pull data from external HTTP/HTT
 | `name` | string | Yes | Unique source ID, becomes the custom app name | - |
 | `url` | string | Yes | Full HTTP/HTTPS URL | - |
 | `jsonPath` | string | Yes | Dot-notation path to extract from JSON response (e.g., `"bitcoin.usd"`, `"data.0.price"`) | - |
-| `displayFormat` | string | No | printf-style format string (e.g., `"$%.0f"`, `"%.1f°C"`) | raw value |
+| `displayFormat` | string | No | printf-style format with a single conversion (e.g., `"$%.0f"`, `"%.1f°C"`). Allowed: `%d %i %u %o %x %X %f %g %e %E %s` with width and precision modifiers. Other formats are rejected with HTTP 400. | raw value |
 | `icon` | string | No | Icon name from the ICONS folder (without extension) | none |
 | `color` | string | No | Text color as hex `"#RRGGBB"` | global text color |
 | `interval` | integer | No | Polling interval in seconds (minimum 60) | 900 (15 min) |
