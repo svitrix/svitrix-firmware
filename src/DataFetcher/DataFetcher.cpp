@@ -1,10 +1,12 @@
 #include "DataFetcher.h"
 #include "Globals.h"
 #include "IDisplayNavigation.h"
+#include "FormatStringValidator.h"
 #include <ArduinoJson.h>
 #include <HTTPClient.h>
 #include <WiFiClientSecure.h>
 #include <LittleFS.h>
+#include <algorithm>
 
 extern const char *rootCACertificate;
 
@@ -141,11 +143,10 @@ String DataFetcher_::extractJsonValue(const String& json, const String& path)
     // Walk the dot-separated path: "bpi.USD.rate_float" or "data.0.price"
     JsonVariant current = doc.as<JsonVariant>();
     int start = 0;
-    int dot;
 
     while (start < (int)path.length())
     {
-        dot = path.indexOf('.', start);
+        int dot = path.indexOf('.', start);
         if (dot < 0)
             dot = path.length();
 
@@ -198,7 +199,11 @@ String DataFetcher_::formatValue(const DataSourceConfig& src, const String& raw)
     if (src.displayFormat.isEmpty())
         return raw;
 
-    // Try to interpret as a number for printf formatting
+    // Defense-in-depth: addSource() and loadSources() also validate, but treat
+    // displayFormat as untrusted at every snprintf call site.
+    if (!isSafeSingleArgFormat(src.displayFormat.c_str()))
+        return raw;
+
     char buf[64];
     if (src.displayFormat.indexOf('f') >= 0 || src.displayFormat.indexOf('d') >= 0 ||
         src.displayFormat.indexOf('i') >= 0 || src.displayFormat.indexOf('g') >= 0)
@@ -255,15 +260,22 @@ bool DataFetcher_::addSource(const char *json)
     if (cfg.interval < DataSourceConfig::MIN_INTERVAL)
         cfg.interval = DataSourceConfig::MIN_INTERVAL;
 
-    // Update existing or add new
-    for (size_t i = 0; i < sources_.size(); i++)
+    // Reject unsafe printf-style format strings at the API boundary.
+    if (!isSafeSingleArgFormat(cfg.displayFormat.c_str()))
     {
-        if (sources_[i].name == cfg.name)
-        {
-            sources_[i] = cfg;
-            saveSources();
-            return true;
-        }
+        DEBUG_PRINTLN(F("DataFetcher: rejecting source with unsafe displayFormat"));
+        return false;
+    }
+
+    // Update existing or add new
+    auto existing = std::find_if(sources_.begin(), sources_.end(),
+                                 [&](const DataSourceConfig& s)
+                                 { return s.name == cfg.name; });
+    if (existing != sources_.end())
+    {
+        *existing = cfg;
+        saveSources();
+        return true;
     }
 
     if (sources_.size() >= DataSourceConfig::MAX_SOURCES)
@@ -280,24 +292,23 @@ bool DataFetcher_::addSource(const char *json)
 
 bool DataFetcher_::removeSource(const String& name)
 {
-    for (size_t i = 0; i < sources_.size(); i++)
-    {
-        if (sources_[i].name == name)
-        {
-            // Remove the custom app from display
-            if (nav_)
-                nav_->parseCustomPage(name, "{}", false);
+    auto it = std::find_if(sources_.begin(), sources_.end(),
+                           [&](const DataSourceConfig& s)
+                           { return s.name == name; });
+    if (it == sources_.end())
+        return false;
 
-            sources_.erase(sources_.begin() + i);
-            lastFetch_.erase(lastFetch_.begin() + i);
-            if (nextFetchIndex_ >= sources_.size() && !sources_.empty())
-                nextFetchIndex_ = 0;
+    if (nav_)
+        nav_->parseCustomPage(name, "{}", false);
 
-            saveSources();
-            return true;
-        }
-    }
-    return false;
+    auto idx = std::distance(sources_.begin(), it);
+    sources_.erase(it);
+    lastFetch_.erase(lastFetch_.begin() + idx);
+    if (nextFetchIndex_ >= sources_.size() && !sources_.empty())
+        nextFetchIndex_ = 0;
+
+    saveSources();
+    return true;
 }
 
 String DataFetcher_::getSourcesAsJson()
@@ -324,15 +335,15 @@ String DataFetcher_::getSourcesAsJson()
 
 void DataFetcher_::forceFetch(const String& name)
 {
-    for (size_t i = 0; i < sources_.size(); i++)
-    {
-        if (sources_[i].name == name)
-        {
-            fetchAndPush(i);
-            lastFetch_[i] = millis();
-            return;
-        }
-    }
+    auto it = std::find_if(sources_.begin(), sources_.end(),
+                           [&](const DataSourceConfig& s)
+                           { return s.name == name; });
+    if (it == sources_.end())
+        return;
+
+    auto idx = std::distance(sources_.begin(), it);
+    fetchAndPush(idx);
+    lastFetch_[idx] = millis();
 }
 
 // ---------- LittleFS persistence ----------
@@ -368,6 +379,15 @@ void DataFetcher_::loadSources()
 
         if (cfg.interval < DataSourceConfig::MIN_INTERVAL)
             cfg.interval = DataSourceConfig::MIN_INTERVAL;
+
+        // Old persisted configs may contain unsafe formats — downgrade to raw
+        // rather than dropping the source so users don't lose data silently.
+        if (!isSafeSingleArgFormat(cfg.displayFormat.c_str()))
+        {
+            DEBUG_PRINTF("DataFetcher: source '%s' had unsafe displayFormat, downgrading to raw",
+                         cfg.name.c_str());
+            cfg.displayFormat = "";
+        }
 
         sources_.push_back(cfg);
         lastFetch_.push_back(0); // Fetch on first tick

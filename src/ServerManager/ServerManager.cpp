@@ -341,12 +341,13 @@ void ServerManager_::tick()
                 if (systemConfig.webPort != 80)
                 {
                     char buffer[128];
-                    sprintf(buffer, "%s:%d", systemConfig.hostname.c_str(), systemConfig.webPort);
-                    udp.printf(buffer);
+                    snprintf(buffer, sizeof(buffer), "%s:%d",
+                             systemConfig.hostname.c_str(), systemConfig.webPort);
+                    udp.printf("%s", buffer);
                 }
                 else
                 {
-                    udp.printf(systemConfig.hostname.c_str());
+                    udp.printf("%s", systemConfig.hostname.c_str());
                 }
 
                 udp.endPacket();

@@ -7,7 +7,7 @@ Singleton module that periodically fetches values from external HTTP/HTTPS APIs 
 | File | LOC | Purpose |
 |------|-----|---------|
 | `DataFetcher.h` | 45 | Public API, singleton definition |
-| `DataFetcher.cpp` | 403 | HTTP fetching, JSON extraction, source CRUD, LittleFS persistence |
+| `DataFetcher.cpp` | 422 | HTTP fetching, JSON extraction, source CRUD, LittleFS persistence |
 | `DataFetcherConfig.h` | 18 | `DataSourceConfig` struct — per-source configuration |
 
 ## Interfaces
@@ -28,7 +28,7 @@ Uses `IDisplayNavigation::parseCustomPage(name, json, show)` to feed fetched dat
 | `name` | String | Unique ID, becomes the custom app name (e.g., `"btc"`) |
 | `url` | String | Full HTTP/HTTPS URL |
 | `jsonPath` | String | Dot-notation path to extract (e.g., `"bitcoin.usd"`, `"data.0.price"`) |
-| `displayFormat` | String | printf-style format (e.g., `"$%.0f"`) or empty for raw |
+| `displayFormat` | String | printf-style format (e.g., `"$%.0f"`) or empty for raw — restricted to single-arg whitelist (see below) |
 | `icon` | String | Icon name from LittleFS, or empty |
 | `textColor` | String | Hex color `"#RRGGBB"` or empty for default |
 | `interval` | uint32_t | Polling interval in seconds |
@@ -69,11 +69,11 @@ Display shows as custom app
 |--------|-------------|
 | `setup()` | Creates `/DATAFETCHER/` dir, loads sources from LittleFS |
 | `tick()` | Round-robin poll — checks one source per call |
-| `addSource(json)` | Parse JSON config, upsert by name, save to LittleFS |
+| `addSource(json)` | Parse JSON config, upsert by name, save to LittleFS — rejects unsafe `displayFormat` (returns false → HTTP 400) |
 | `removeSource(name)` | Remove source + clear its custom app from display |
 | `forceFetch(name)` | Immediately fetch a specific source (used by API) |
 | `getSourcesAsJson()` | Serialize all sources as JSON array |
-| `loadSources()` / `saveSources()` | LittleFS persistence to `/DATAFETCHER/sources.json` |
+| `loadSources()` / `saveSources()` | LittleFS persistence to `/DATAFETCHER/sources.json` — `loadSources()` downgrades any persisted unsafe `displayFormat` to empty (raw) and logs the source name |
 
 ### Private Methods
 
@@ -81,7 +81,7 @@ Display shows as custom app
 |--------|-------------|
 | `fetchAndPush(index)` | HTTP GET + extract + format + push to display |
 | `extractJsonValue(json, path)` | Walk dot-notation path through ArduinoJson (supports objects + arrays) |
-| `formatValue(src, raw)` | Apply printf-style `displayFormat` to raw value |
+| `formatValue(src, raw)` | Apply printf-style `displayFormat` to raw value (validates with `isSafeSingleArgFormat`; returns raw on unsafe format) |
 | `buildCustomAppJson(src, value)` | Build JSON for `parseCustomPage()` with text, icon, color, lifetime=0 |
 
 ## HTTP API Endpoints (registered in ServerManager)
@@ -109,6 +109,25 @@ Display shows as custom app
 ```
 
 Required fields: `name`, `url`, `jsonPath`. All others optional.
+
+### `displayFormat` whitelist
+
+Validated by `isSafeSingleArgFormat()` from
+`lib/services/FormatStringValidator.h` to defeat CWE-134 format-string
+injection. Allowed:
+
+- One conversion specifier from `d i u o x X f g e E s` (or none)
+- Optional flags `+ - # space 0`, width `[0-9]{0,2}`, precision `.[0-9]{0,2}`
+- `%%` literal anywhere
+- Surrounding plain text
+
+Rejected: `%n %p %c %a %A`, length modifiers (`l h ll …`), variable
+width (`%*d`, `%.*d`), positional args (`%1$d`), 3+ digit width or
+precision, more than one specifier.
+
+Validation runs in three places: `addSource()` (HTTP 400),
+`loadSources()` (silent downgrade with debug log), and `formatValue()`
+(defense-in-depth at the snprintf call site).
 
 ## HTTPS Handling
 

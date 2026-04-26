@@ -22,8 +22,8 @@ class DataFetcher_
 
     bool fetchAndPush(size_t index);
     String extractJsonValue(const String& json, const String& path);
-    String buildCustomAppJson(const DataSourceConfig& src, const String& value);
-    String formatValue(const DataSourceConfig& src, const String& raw);
+    static String buildCustomAppJson(const DataSourceConfig& src, const String& value);
+    static String formatValue(const DataSourceConfig& src, const String& raw);
 
   public:
     static DataFetcher_& getInstance();

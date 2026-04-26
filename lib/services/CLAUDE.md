@@ -1,6 +1,6 @@
 # Services Library — AI Reference
 
-14 pure-logic utility libraries extracted from managers for testability. All stateless (except TextUtils), no hardware dependencies, 100% test coverage.
+15 pure-logic utility libraries extracted from managers for testability. All stateless (except TextUtils), no hardware dependencies, 100% test coverage.
 
 ## Service Map
 
@@ -20,6 +20,7 @@
 | **OverlayMapping** | Weather overlay enum ↔ string | Yes | `overlayToString()`, `overlayFromString()` |
 | **PlaceholderUtils** | `{{key}}` template substitution via callback | Yes | `replacePlaceholdersWith(input, getValue)` |
 | **LayoutEngine** | Icon/text position: left, right, none layouts | Yes | `computeLayout()`, `layoutToString()`, `layoutFromString()` |
+| **FormatStringValidator** | Whitelist for user-supplied printf format strings (CWE-134 defense) | Yes | `isSafeSingleArgFormat(fmt)` |
 
 ## Dependency Graph
 
@@ -38,6 +39,7 @@ HADiscovery (standalone)
 OverlayMapping (standalone)
 PlaceholderUtils (standalone)
 LayoutEngine (standalone)
+FormatStringValidator (standalone, header-only)
 ```
 
 No inter-service circular dependencies. Most services are fully standalone.
@@ -52,6 +54,7 @@ No inter-service circular dependencies. Most services are fully standalone.
 | MQTTManager | MessageRouter, HADiscovery, AppRegistry, StatsBuilder, PlaceholderUtils |
 | Apps | ColorUtils, TimeEffects, TextUtils |
 | DisplayManager, Apps, Overlays | LayoutEngine |
+| DataFetcher | FormatStringValidator |
 | main.cpp | TextUtils (`setTextFont(SvitrixFont)` — must be called at startup) |
 
 ## Test Coverage
@@ -74,6 +77,7 @@ Every service has dedicated tests in `test/test_native/`:
 | OverlayMapping | `test_overlay/` |
 | PlaceholderUtils | `test_placeholder_utils/` |
 | LayoutEngine | `test_layout_engine/` |
+| FormatStringValidator | `test_format_validator/` |
 
 Run all: `pio test -e native_test`
 
