@@ -59,11 +59,15 @@ jobs:
       - name: Compile firmware
         run: pio run --environment ulanzi
 
+      - name: Build LittleFS image (SPA)
+        run: pio run --environment ulanzi --target buildfs
+
       - name: Update web flasher
         run: |
           cp .pio/build/ulanzi/firmware.bin docs/public/ulanzi_flasher/firmware/firmware.bin
           cp .pio/build/ulanzi/bootloader.bin docs/public/ulanzi_flasher/firmware/bootloader.bin
           cp .pio/build/ulanzi/partitions.bin docs/public/ulanzi_flasher/firmware/partitions.bin
+          cp .pio/build/ulanzi/littlefs.bin docs/public/ulanzi_flasher/firmware/littlefs.bin
           cp ~/.platformio/packages/framework-arduinoespressif32/tools/partitions/boot_app0.bin docs/public/ulanzi_flasher/firmware/boot_app0.bin
           jq '.version = "${{ steps.version.outputs.version }}"' \
             docs/public/ulanzi_flasher/firmware/manifest.json > manifest.tmp \
@@ -80,7 +84,9 @@ jobs:
         with:
           name: v${{ steps.version.outputs.version }}
           generate_release_notes: true
-          files: .pio/build/ulanzi/firmware.bin
+          files: |
+            .pio/build/ulanzi/firmware.bin
+            .pio/build/ulanzi/littlefs.bin
 
   deploy-docs:
     name: Deploy documentation
