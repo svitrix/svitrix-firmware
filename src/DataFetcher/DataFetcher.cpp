@@ -383,7 +383,11 @@ void DataFetcher_::loadSources()
         // Old persisted configs may contain unsafe formats — downgrade to raw
         // rather than dropping the source so users don't lose data silently.
         if (!isSafeSingleArgFormat(cfg.displayFormat.c_str()))
+        {
+            DEBUG_PRINTF("DataFetcher: source '%s' had unsafe displayFormat, downgrading to raw\n",
+                         cfg.name.c_str());
             cfg.displayFormat = "";
+        }
 
         sources_.push_back(cfg);
         lastFetch_.push_back(0); // Fetch on first tick

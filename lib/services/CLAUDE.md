@@ -39,6 +39,7 @@ HADiscovery (standalone)
 OverlayMapping (standalone)
 PlaceholderUtils (standalone)
 LayoutEngine (standalone)
+FormatStringValidator (standalone, header-only)
 ```
 
 No inter-service circular dependencies. Most services are fully standalone.
@@ -53,6 +54,7 @@ No inter-service circular dependencies. Most services are fully standalone.
 | MQTTManager | MessageRouter, HADiscovery, AppRegistry, StatsBuilder, PlaceholderUtils |
 | Apps | ColorUtils, TimeEffects, TextUtils |
 | DisplayManager, Apps, Overlays | LayoutEngine |
+| DataFetcher | FormatStringValidator |
 | main.cpp | TextUtils (`setTextFont(SvitrixFont)` — must be called at startup) |
 
 ## Test Coverage

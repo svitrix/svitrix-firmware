@@ -27,7 +27,7 @@
  */
 #pragma once
 
-inline bool isSafeSingleArgFormat(const char* fmt)
+[[nodiscard]] inline bool isSafeSingleArgFormat(const char* fmt)
 {
     if (!fmt)
         return true;
