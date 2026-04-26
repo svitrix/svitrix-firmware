@@ -176,7 +176,10 @@ void DisplayManager_::setNewSettings(const char *json)
     }
     if (doc.containsKey("NCOL"))
     {
-        appConfig.nightColor = doc["NCOL"].as<uint32_t>();
+        // Web UI sends colors as "#RRGGBB" hex strings; getColorFromJsonVariant
+        // accepts hex strings, [r,g,b] arrays, and numbers. Plain .as<uint32_t>()
+        // would silently parse a hex string as 0 → invisible "black" night text.
+        appConfig.nightColor = getColorFromJsonVariant(doc["NCOL"], appConfig.nightColor);
         nightFieldsChanged = true;
     }
     if (doc.containsKey("NBTRANS"))
