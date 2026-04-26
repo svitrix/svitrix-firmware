@@ -144,7 +144,7 @@ Per-module docs auto-load when you Read files in their directory.
 | Module | Doc | Role |
 |--------|-----|------|
 | Interfaces | [lib/interfaces/CLAUDE.md](lib/interfaces/CLAUDE.md) | 15 pure-virtual interfaces (decoupling layer) |
-| Services | [lib/services/CLAUDE.md](lib/services/CLAUDE.md) | 14 stateless libs, 100% test coverage |
+| Services | [lib/services/CLAUDE.md](lib/services/CLAUDE.md) | 15 stateless libs, 100% test coverage |
 | Config | [lib/config/CLAUDE.md](lib/config/CLAUDE.md) | Config structs, defaults, persistence |
 | HA integration | [lib/home-assistant-integration/CLAUDE.md](lib/home-assistant-integration/CLAUDE.md) | ArduinoHA fork, entity types enabled |
 | Webserver | [lib/webserver/CLAUDE.md](lib/webserver/CLAUDE.md) | Async server wrapper, WiFi, SPA fallback |
