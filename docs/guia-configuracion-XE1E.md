@@ -428,3 +428,45 @@ git push
 - Tus cambios se quedan en tu fork a menos que hagas un **Pull Request** al repo original
 - Tu fork es independiente — puedes experimentar sin afectar el repo original
 - Para contribuir cambios al proyecto original, crea un PR desde tu fork
+
+### Conflictos de Merge
+
+Los conflictos ocurren cuando tú y el repo original modifican las mismas líneas del mismo archivo.
+
+| Situación | ¿Conflicto? |
+|-----------|-------------|
+| Tú modificas un archivo, upstream no lo toca | No |
+| Upstream modifica un archivo, tú no lo tocas | No |
+| Ambos modifican el mismo archivo en **líneas diferentes** | No (merge automático) |
+| Ambos modifican el mismo archivo en **las mismas líneas** | **Sí** |
+
+#### Qué pasa cuando hay conflicto
+
+```bash
+git pull upstream main
+# Auto-merging archivo.cpp
+# CONFLICT (content): Merge conflict in archivo.cpp
+```
+
+Git marca el archivo con:
+
+```cpp
+<<<<<<< HEAD
+// Tu código
+=======
+// Código de upstream
+>>>>>>> upstream/main
+```
+
+Debes:
+1. Abrir el archivo y decidir qué código mantener
+2. Eliminar los marcadores `<<<<<<<`, `=======`, `>>>>>>>`
+3. Guardar el archivo
+4. `git add archivo.cpp`
+5. `git commit -m "fix: resolve merge conflict"`
+
+#### Estrategias para Minimizar Conflictos
+
+1. **Archivos separados** — Haz tus cambios en archivos que upstream no toca (ej: `guia-configuracion-XE1E.md`)
+2. **Sync frecuente** — Ejecuta `git pull upstream main` seguido para tener conflictos pequeños y manejables
+3. **Cambios modulares** — Prefiere agregar código nuevo en lugar de modificar código existente

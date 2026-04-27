@@ -39,6 +39,31 @@ git push
 - Tus cambios se quedan en tu fork a menos que hagas un **Pull Request** al repo original
 - Tu fork es independiente — puedes experimentar sin afectar el repo original
 
+### Conflictos de Merge
+
+Ocurren cuando tú y upstream modifican las mismas líneas del mismo archivo.
+
+```bash
+git pull upstream main
+# CONFLICT (content): Merge conflict in archivo.cpp
+```
+
+Git marca el conflicto:
+```cpp
+<<<<<<< HEAD
+// Tu código
+=======
+// Código de upstream
+>>>>>>> upstream/main
+```
+
+Resolver: editar archivo → eliminar marcadores → `git add` → `git commit`
+
+**Minimizar conflictos:**
+1. Cambios en archivos que upstream no toca
+2. Sync frecuente (`git pull upstream main`)
+3. Agregar código nuevo en lugar de modificar existente
+
 ## Commits — [Conventional Commits v1.0.0](https://www.conventionalcommits.org/en/v1.0.0/)
 
 - Do NOT add `Co-Authored-By` lines to commit messages.
