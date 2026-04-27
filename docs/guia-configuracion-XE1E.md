@@ -470,3 +470,23 @@ Debes:
 1. **Archivos separados** — Haz tus cambios en archivos que upstream no toca (ej: `guia-configuracion-XE1E.md`)
 2. **Sync frecuente** — Ejecuta `git pull upstream main` seguido para tener conflictos pequeños y manejables
 3. **Cambios modulares** — Prefiere agregar código nuevo en lugar de modificar código existente
+
+### Sincronización Automática
+
+Este fork tiene un GitHub Action que sincroniza automáticamente con el repo original:
+
+| Configuración | Valor |
+|---------------|-------|
+| **Frecuencia** | Diario a las 6:00 UTC |
+| **Workflow** | `.github/workflows/sync-upstream.yml` |
+| **Ejecución manual** | Actions > "Sync Upstream" > "Run workflow" |
+
+**Qué hace:**
+1. Verifica si hay commits nuevos en upstream
+2. Si hay cambios → hace merge automático y push
+3. Si hay conflicto → falla y notifica (no rompe nada, requiere intervención manual)
+
+**Ver estado:**
+```
+https://github.com/XE1E/svitrix-firmware-XE1E/actions/workflows/sync-upstream.yml
+```

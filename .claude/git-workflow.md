@@ -64,6 +64,14 @@ Resolver: editar archivo → eliminar marcadores → `git add` → `git commit`
 2. Sync frecuente (`git pull upstream main`)
 3. Agregar código nuevo en lugar de modificar existente
 
+### Sincronización Automática
+
+GitHub Action que sincroniza diariamente con upstream (6:00 UTC):
+
+- Workflow: `.github/workflows/sync-upstream.yml`
+- Manual: Actions > "Sync Upstream" > "Run workflow"
+- Si hay conflicto: falla y notifica (requiere intervención manual)
+
 ## Commits — [Conventional Commits v1.0.0](https://www.conventionalcommits.org/en/v1.0.0/)
 
 - Do NOT add `Co-Authored-By` lines to commit messages.
