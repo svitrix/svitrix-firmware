@@ -1,5 +1,44 @@
 # Git & Release Workflow
 
+## Fork Workflow
+
+Este repositorio es un fork:
+
+```
+┌─────────────────────────────────────┐
+│  upstream (svitrix/svitrix-firmware)│  ← Repo original (solo lectura)
+└─────────────────────────────────────┘
+                ↓ git pull upstream main
+┌─────────────────────────────────────┐
+│  Tu PC (local)                      │
+│  main → trackea origin/main         │
+└─────────────────────────────────────┘
+                ↓ git push
+┌─────────────────────────────────────┐
+│  origin (XE1E/svitrix-firmware-XE1E)│  ← Tu fork (lectura + escritura)
+└─────────────────────────────────────┘
+```
+
+### Comandos básicos
+
+| Comando | Resultado |
+|---------|-----------|
+| `git push` | Push a tu fork (origin) |
+| `git pull` | Pull de tu fork (origin) |
+| `git pull upstream main` | Sincronizar con el repo original |
+
+### Sincronizar tu fork con upstream
+
+```bash
+git pull upstream main
+git push
+```
+
+### Pull Requests
+
+- Tus cambios se quedan en tu fork a menos que hagas un **Pull Request** al repo original
+- Tu fork es independiente — puedes experimentar sin afectar el repo original
+
 ## Commits — [Conventional Commits v1.0.0](https://www.conventionalcommits.org/en/v1.0.0/)
 
 - Do NOT add `Co-Authored-By` lines to commit messages.

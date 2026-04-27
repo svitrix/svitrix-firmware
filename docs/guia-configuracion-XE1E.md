@@ -384,3 +384,47 @@ https://xe1e.github.io/svitrix-firmware-XE1E/
 | **Flasher** | https://xe1e.github.io/svitrix-firmware-XE1E/ |
 | **Basado en** | svitrix/svitrix-firmware |
 | **Autor fork** | XE1E |
+
+---
+
+## 14. Git - Flujo de Trabajo del Fork
+
+Este repositorio es un fork del proyecto original SVITRIX.
+
+### Estructura de Remotos
+
+```
+┌─────────────────────────────────────┐
+│  upstream (svitrix/svitrix-firmware)│  ← Repo original (solo lectura)
+└─────────────────────────────────────┘
+                ↓ git pull upstream main
+┌─────────────────────────────────────┐
+│  Tu PC (local)                      │
+│  main → trackea origin/main         │
+└─────────────────────────────────────┘
+                ↓ git push
+┌─────────────────────────────────────┐
+│  origin (XE1E/svitrix-firmware-XE1E)│  ← Tu fork (lectura + escritura)
+└─────────────────────────────────────┘
+```
+
+### Comandos Básicos
+
+| Comando | Resultado |
+|---------|-----------|
+| `git push` | Push a tu fork (origin) |
+| `git pull` | Pull de tu fork (origin) |
+| `git pull upstream main` | Sincronizar con el repo original |
+
+### Sincronizar tu Fork con el Original
+
+```bash
+git pull upstream main
+git push
+```
+
+### Pull Requests
+
+- Tus cambios se quedan en tu fork a menos que hagas un **Pull Request** al repo original
+- Tu fork es independiente — puedes experimentar sin afectar el repo original
+- Para contribuir cambios al proyecto original, crea un PR desde tu fork
