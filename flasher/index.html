@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>SVITRIX XE1E Flasher</title>
+    <meta name="description" content="Instala el firmware SVITRIX XE1E en Ulanzi TC001" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark light" />
+    <style>
+      :root {
+        --bg: #1a1a2e;
+        --surface: #16213e;
+        --border: #0f3460;
+        --accent: #e94560;
+        --accent-hover: #ff6b81;
+        --text: #eee;
+        --text-muted: #a0a0b0;
+        --success: #4ecca3;
+        --warning: #f0a500;
+      }
+
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+
+      body {
+        font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 640px;
+        margin: 0 auto;
+        padding: 24px 16px;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 32px;
+      }
+
+      header h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+      }
+
+      header .subtitle {
+        color: var(--accent);
+        font-size: 1.2rem;
+        margin-top: 4px;
+      }
+
+      header p {
+        color: var(--text-muted);
+        margin-top: 8px;
+      }
+
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 20px;
+      }
+
+      .card h2 {
+        font-size: 1.15rem;
+        margin-bottom: 12px;
+      }
+
+      .install-section {
+        text-align: center;
+        padding: 32px 24px;
+      }
+
+      .install-section p {
+        color: var(--text-muted);
+        margin-bottom: 20px;
+      }
+
+      esp-web-install-button {
+        display: inline-block;
+      }
+
+      esp-web-install-button button,
+      esp-web-install-button::part(button) {
+        background: var(--accent);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 14px 36px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+
+      esp-web-install-button button:hover,
+      esp-web-install-button::part(button):hover {
+        background: var(--accent-hover);
+      }
+
+      esp-web-install-button[install-unsupported] {
+        visibility: inherit;
+      }
+
+      .steps {
+        list-style: none;
+        counter-reset: step;
+      }
+
+      .steps li {
+        counter-increment: step;
+        padding: 8px 0 8px 40px;
+        position: relative;
+        border-left: 2px solid var(--border);
+        margin-left: 14px;
+      }
+
+      .steps li:last-child {
+        border-left-color: transparent;
+      }
+
+      .steps li::before {
+        content: counter(step);
+        position: absolute;
+        left: -13px;
+        top: 8px;
+        width: 24px;
+        height: 24px;
+        background: var(--accent);
+        color: #fff;
+        border-radius: 50%;
+        font-size: 0.8rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .steps li strong {
+        display: block;
+        margin-bottom: 2px;
+      }
+
+      .steps li span {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+      }
+
+      .includes {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .includes div {
+        background: var(--bg);
+        border-radius: 6px;
+        padding: 10px 12px;
+        font-size: 0.9rem;
+      }
+
+      .includes div::before {
+        content: "\2713  ";
+        color: var(--success);
+        font-weight: 700;
+      }
+
+      .note {
+        background: rgba(240, 165, 0, 0.1);
+        border: 1px solid var(--warning);
+        border-radius: 8px;
+        padding: 12px 16px;
+        font-size: 0.9rem;
+        margin-top: 16px;
+      }
+
+      .note strong {
+        color: var(--warning);
+      }
+
+      .requirements {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        margin-top: 8px;
+      }
+
+      .footer {
+        text-align: center;
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        margin-top: 32px;
+        padding-top: 20px;
+        border-top: 1px solid var(--border);
+      }
+
+      .footer a, a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+
+      .footer a:hover, a:hover {
+        color: var(--accent-hover);
+      }
+
+      .badge {
+        display: inline-block;
+        background: var(--accent);
+        color: white;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        margin-left: 8px;
+        vertical-align: middle;
+      }
+    </style>
+    <script
+      type="module"
+      src="https://esm.run/esp-web-tools@8.0.1/dist/web/install-button.js"
+    ></script>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>SVITRIX <span class="badge">XE1E</span></h1>
+        <p class="subtitle">Fork personalizado</p>
+        <p>Firmware para Ulanzi TC001 Smart Pixel Clock</p>
+      </header>
+
+      <!-- Install button -->
+      <div class="card install-section">
+        <p>
+          Conecta tu Ulanzi TC001 via USB-C y presiona el boton.<br />
+          El firmware y la interfaz web se instalan en un solo paso.
+        </p>
+        <esp-web-install-button manifest="firmware/manifest.json">
+          <button slot="activate">Instalar Firmware</button>
+          <span slot="unsupported">
+            Tu navegador no soporta Web Serial.<br />
+            Usa <strong>Chrome</strong> o <strong>Edge</strong> en PC.
+          </span>
+        </esp-web-install-button>
+        <p class="requirements">Requiere Chrome o Edge. Navegadores moviles no soportados.</p>
+      </div>
+
+      <!-- What's included -->
+      <div class="card">
+        <h2>Que se instala</h2>
+        <div class="includes">
+          <div>Firmware SVITRIX</div>
+          <div>Interfaz Web (SPA)</div>
+          <div>Bootloader</div>
+          <div>Tabla de particiones</div>
+        </div>
+        <div class="note">
+          <strong>Nota:</strong> Para la primera instalacion, se recomienda borrar el dispositivo
+          (ESP Web Tools ofrecera esta opcion). Esto garantiza una instalacion limpia.
+        </div>
+      </div>
+
+      <!-- Steps after install -->
+      <div class="card">
+        <h2>Despues de la instalacion</h2>
+        <ol class="steps">
+          <li>
+            <strong>Conectate al punto de acceso WiFi</strong>
+            <span>
+              El dispositivo creara una red <strong>svitrix_XXXXX</strong> con password <strong>12345678</strong>.
+              Conectate desde tu celular o computadora.
+            </span>
+          </li>
+          <li>
+            <strong>Abre la interfaz web</strong>
+            <span>
+              Navega a <strong>http://192.168.4.1</strong> en tu navegador.
+              Se abrira el panel de control de SVITRIX.
+            </span>
+          </li>
+          <li>
+            <strong>Configura tu WiFi</strong>
+            <span>
+              En la seccion de Settings, ingresa las credenciales de tu WiFi de casa.
+              El dispositivo se reiniciara y se conectara a tu red.
+            </span>
+          </li>
+          <li>
+            <strong>Listo!</strong>
+            <span>
+              La IP aparecera en la pantalla LED. Abrela en el navegador para acceso completo.
+              Configura el clima en <strong>http://[IP]/datafetcher</strong>
+            </span>
+          </li>
+        </ol>
+      </div>
+
+      <!-- Data Fetcher hint -->
+      <div class="card">
+        <h2>Configurar Clima (WeatherAPI)</h2>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">
+          Una vez conectado, ve a <strong>http://[IP]/datafetcher</strong> para agregar datos del clima:
+        </p>
+        <ul style="margin-top: 12px; margin-left: 20px; color: var(--text-muted); font-size: 0.9rem;">
+          <li>Temperatura exterior</li>
+          <li>Sensacion termica</li>
+          <li>Humedad</li>
+          <li>Indice UV</li>
+          <li>Condicion del clima</li>
+        </ul>
+        <p style="margin-top: 12px; font-size: 0.85rem;">
+          <a href="https://www.weatherapi.com/signup.aspx" target="_blank">Obtener API Key gratis en WeatherAPI.com</a>
+        </p>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+        <a href="https://github.com/XE1E/svitrix-firmware-XE1E">GitHub XE1E Fork</a>
+        &middot;
+        <a href="https://github.com/svitrix/svitrix-firmware">SVITRIX Original</a>
+        <br/><br/>
+        Instalador powered by
+        <a href="https://esphome.github.io/esp-web-tools/">ESP Web Tools</a>
+      </div>
+    </div>
+  </body>
+</html>
