@@ -92,10 +92,10 @@ function sidebarUk() {
 
 export default defineConfig({
   title: 'SVITRIX',
-  base: '/svitrix-firmware/',
+  base: '/svitrix-firmware-XE1E/',
 
   head: [
-    ['link', { rel: 'icon', href: '/svitrix-firmware/assets/icon.png' }]
+    ['link', { rel: 'icon', href: '/svitrix-firmware-XE1E/assets/icon.png' }]
   ],
 
   locales: {
