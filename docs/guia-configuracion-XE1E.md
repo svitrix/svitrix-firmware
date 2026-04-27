@@ -471,6 +471,33 @@ Debes:
 2. **Sync frecuente** — Ejecuta `git pull upstream main` seguido para tener conflictos pequeños y manejables
 3. **Cambios modulares** — Prefiere agregar código nuevo en lugar de modificar código existente
 
+### Archivos con Conflicto Permanente
+
+Estos archivos tienen cambios específicos para tu fork y **siempre causarán conflicto** al sincronizar con upstream:
+
+| Archivo | Tu versión | Upstream |
+|---------|------------|----------|
+| `docs/.vitepress/config.mts` | `base: '/svitrix-firmware-XE1E/'` | `base: '/svitrix-firmware/'` |
+| `docs/flasher.md` | iframe: `/svitrix-firmware-XE1E/...` | iframe: `/svitrix-firmware/...` |
+| `docs/uk/flasher.md` | iframe: `/svitrix-firmware-XE1E/...` | iframe: `/svitrix-firmware/...` |
+
+#### Cómo resolver estos conflictos
+
+Cuando veas conflicto en estos archivos después de `git pull upstream main`:
+
+```bash
+# Git mostrará:
+# CONFLICT (content): Merge conflict in docs/.vitepress/config.mts
+```
+
+1. Abre el archivo en conflicto
+2. Busca las líneas con `base:` o `iframe src=`
+3. **Siempre mantén tu versión** con `/svitrix-firmware-XE1E/`
+4. Elimina los marcadores de conflicto
+5. `git add <archivo>` y `git commit`
+
+**Importante:** Si upstream actualiza otras partes de estos archivos (no el base path), acepta esos cambios pero mantén tu base path.
+
 ### Sincronización Automática
 
 Este fork tiene un GitHub Action que sincroniza automáticamente con el repo original:

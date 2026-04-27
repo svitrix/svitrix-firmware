@@ -64,6 +64,11 @@ Resolver: editar archivo → eliminar marcadores → `git add` → `git commit`
 2. Sync frecuente (`git pull upstream main`)
 3. Agregar código nuevo en lugar de modificar existente
 
+**Archivos con conflicto permanente** (siempre mantener nuestra versión):
+- `docs/.vitepress/config.mts` — `base: '/svitrix-firmware-XE1E/'`
+- `docs/flasher.md` — iframe con `/svitrix-firmware-XE1E/`
+- `docs/uk/flasher.md` — iframe con `/svitrix-firmware-XE1E/`
+
 ### Sincronización Automática
 
 GitHub Action que sincroniza diariamente con upstream (6:00 UTC):
