@@ -278,6 +278,9 @@ void DisplayManager_::setNewSettings(const char *json)
     if (appsChanged)
         loadNativeApps();
     applyAllSettings();
+    // Always mark dirty so next tick() re-applies policy overrides (e.g. night
+    // mode's block-auto-transition) that applyAllSettings() might have missed.
+    markPolicyConfigDirty();
     saveSettings();
     if (systemConfig.debugMode)
         DEBUG_PRINTLN("Settings loaded");

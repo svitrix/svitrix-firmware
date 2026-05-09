@@ -1,6 +1,6 @@
 import { useState } from "preact/hooks";
 import { useSettings } from "../../../context/SettingsContext";
-import { Toggle, Slider, ColorField, Select, Card, Button, FormRow } from "../../../components/ui";
+import { Toggle, Slider, ColorField, Select, Card, Button } from "../../../components/ui";
 import styles from "./sections.module.css";
 
 const TRANSITION_OPTIONS = [
@@ -91,11 +91,6 @@ export function AppsSection() {
         <div class={styles.appRow}>
           <Toggle label="Temperature" checked={s.TEMP} onChange={(v) => updateSettings({ TEMP: v })} />
           <ColorField label="" value={s.TEMP_COL} onChange={(v) => updateSettings({ TEMP_COL: v })} />
-          <div class={styles.appSlider}>
-            <Slider label="" min={1} max={60} value={s.TEMPDUR || 7} onChange={(v) => updateSettings({ TEMPDUR: v })} unit="s" />
-          </div>
-        </div>
-        <FormRow centered>
           <Toggle label="Celsius" checked={s.CEL} onChange={(v) => updateSettings({ CEL: v })} />
           <Select
             label="Offset"
@@ -103,7 +98,10 @@ export function AppsSection() {
             options={TEMP_OFFSET_OPTIONS}
             onChange={(v) => updateSettings({ TOFF: v as number })}
           />
-        </FormRow>
+          <div style={{ width: "470px", flexShrink: 0 }}>
+            <Slider label="" min={1} max={60} value={s.TEMPDUR || 7} onChange={(v) => updateSettings({ TEMPDUR: v })} unit="s" />
+          </div>
+        </div>
 
         <div class={styles.appRow}>
           <Toggle label="Humidity" checked={s.HUM} onChange={(v) => updateSettings({ HUM: v })} />

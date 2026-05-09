@@ -38,7 +38,7 @@ export function Nav() {
 
   return (
     <nav class={styles.nav}>
-      <strong class={styles.logo}>Svitrix</strong>
+      <strong class={styles.logo}>Svitrix XE1E</strong>
       {links.map((l) => (
         <a
           key={l.href}

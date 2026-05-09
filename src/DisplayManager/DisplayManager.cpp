@@ -228,7 +228,19 @@ void DisplayManager_::setup()
     ui->setTimePerTransition(appConfig.timePerTransition);
     ui->setOverlays(overlays, 3);
     ui->setBackgroundEffect(displayConfig.backgroundEffect);
-    setAutoTransition(appConfig.autoTransition);
+    // Only apply config's auto-transition if no active policy blocks it.
+    // Query policies directly (not the cached activePolicy_) to handle
+    // calls from setNewSettings() before the next tick() updates the cache.
+    bool policyBlocks = false;
+    for (auto *p : policies_)
+    {
+        if (p->isActive() && p->blocksAutoTransition())
+        {
+            policyBlocks = true;
+            break;
+        }
+    }
+    setAutoTransition(policyBlocks ? false : appConfig.autoTransition);
     ui->init();
 }
 

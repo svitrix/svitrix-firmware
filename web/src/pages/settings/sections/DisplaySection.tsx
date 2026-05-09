@@ -40,8 +40,12 @@ export function DisplaySection() {
           <Toggle label="Auto Brightness" checked={s.ABRI} onChange={(v) => updateSettings({ ABRI: v })} />
           {s.ABRI && (
             <>
-              <Slider label="Min" min={1} max={50} value={s.MINBRI ?? 2} onChange={(v) => updateSettings({ MINBRI: v })} />
-              <Slider label="Max" min={80} max={255} value={s.MAXBRI ?? 160} onChange={(v) => updateSettings({ MAXBRI: v })} />
+              <div style={{ minWidth: "335px" }}>
+                <Slider label="Min" min={1} max={50} value={s.MINBRI ?? 2} onChange={(v) => updateSettings({ MINBRI: v })} />
+              </div>
+              <div style={{ minWidth: "335px" }}>
+                <Slider label="Max" min={0} max={255} value={s.MAXBRI ?? 160} onChange={(v) => updateSettings({ MAXBRI: v })} />
+              </div>
             </>
           )}
         </div>
