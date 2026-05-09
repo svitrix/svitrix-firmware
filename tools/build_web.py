@@ -31,6 +31,7 @@ def build_web(*args, **kwargs):
             cwd=web_dir,
             capture_output=True,
             text=True,
+            shell=True,
         )
         if result.returncode != 0:
             print(f"npm install failed:\n{result.stderr}")
@@ -61,6 +62,7 @@ def build_web(*args, **kwargs):
         cwd=web_dir,
         capture_output=True,
         text=True,
+        shell=True,
     )
     if result.returncode != 0:
         print(f"SPA build failed:\n{result.stderr}")

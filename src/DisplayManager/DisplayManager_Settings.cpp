@@ -33,6 +33,7 @@ String DisplayManager_::getStats()
     data.lux = static_cast<int>(sensorConfig.currentLux);
     data.ldrRaw = sensorConfig.ldrRaw;
     data.freeRam = ESP.getFreeHeap() + ESP.getFreePsram();
+    data.totalRam = ESP.getHeapSize() + ESP.getPsramSize();
     data.brightness = brightnessConfig.brightness;
     data.hasSensor = sensorConfig.sensorReading;
     if (sensorConfig.sensorReading)
@@ -107,6 +108,11 @@ String DisplayManager_::getSettings()
     doc["VOL"] = audioConfig.soundVolume;
     doc["OVERLAY"] = overlayToString(ui->getGlobalOverlay());
     doc["BEFF"] = displayConfig.backgroundEffect;
+    doc["TIMEDUR"] = appConfig.timeDuration;
+    doc["DATEDUR"] = appConfig.dateDuration;
+    doc["TEMPDUR"] = appConfig.tempDuration;
+    doc["HUMDUR"] = appConfig.humDuration;
+    doc["BATDUR"] = appConfig.batDuration;
     String jsonString;
     return serializeJson(doc, jsonString), jsonString;
 }
@@ -208,6 +214,11 @@ void DisplayManager_::setNewSettings(const char *json)
     appConfig.showHum = doc.containsKey("HUM") ? doc["HUM"].as<bool>() : appConfig.showHum;
     appConfig.showTemp = doc.containsKey("TEMP") ? doc["TEMP"].as<bool>() : appConfig.showTemp;
     appConfig.showBat = doc.containsKey("BAT") ? doc["BAT"].as<bool>() : appConfig.showBat;
+    appConfig.timeDuration = doc.containsKey("TIMEDUR") ? doc["TIMEDUR"].as<uint16_t>() : appConfig.timeDuration;
+    appConfig.dateDuration = doc.containsKey("DATEDUR") ? doc["DATEDUR"].as<uint16_t>() : appConfig.dateDuration;
+    appConfig.tempDuration = doc.containsKey("TEMPDUR") ? doc["TEMPDUR"].as<uint16_t>() : appConfig.tempDuration;
+    appConfig.humDuration = doc.containsKey("HUMDUR") ? doc["HUMDUR"].as<uint16_t>() : appConfig.humDuration;
+    appConfig.batDuration = doc.containsKey("BATDUR") ? doc["BATDUR"].as<uint16_t>() : appConfig.batDuration;
     audioConfig.soundActive = doc.containsKey("SOUND") ? doc["SOUND"].as<bool>() : audioConfig.soundActive;
 
     if (doc.containsKey("BEFF"))
@@ -254,7 +265,12 @@ void DisplayManager_::setNewSettings(const char *json)
     readColorField(obj, "TEMP_COL", colorConfig.tempColor, colorConfig.textColor);
     readColorField(obj, "HUM_COL", colorConfig.humColor, colorConfig.textColor);
     readColorField(obj, "BAT_COL", colorConfig.batColor, colorConfig.textColor);
+
+    bool appsChanged = doc.containsKey("TIM") || doc.containsKey("DAT") ||
+                       doc.containsKey("TEMP") || doc.containsKey("HUM") || doc.containsKey("BAT");
     doc.clear();
+    if (appsChanged)
+        loadNativeApps();
     applyAllSettings();
     saveSettings();
     if (systemConfig.debugMode)

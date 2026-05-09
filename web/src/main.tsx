@@ -17,13 +17,12 @@ function App() {
       <Nav />
       <main class={styles.main}>
         <Router>
-          <ScreenPage path="/" />
-          <SettingsPage path="/settings" />
+          <SettingsPage path="/" />
+          <ScreenPage path="/screen" />
           <DataFetcherPage path="/datafetcher" />
           <BackupPage path="/backup" />
           <UpdatePage path="/update" />
           <FilesPage path="/files" />
-          <ScreenPage default />
         </Router>
       </main>
       <ToastContainer />

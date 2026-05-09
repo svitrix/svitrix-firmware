@@ -50,6 +50,11 @@ static inline String getBody(AsyncWebServerRequest *request)
     return String();
 }
 
+struct WifiNetworkEntry {
+    String ssid;
+    String password;
+};
+
 class FSWebServer
 {
 
@@ -79,7 +84,20 @@ public:
         authPass = pass;
     }
 
+    void setWifiNetworks(const WifiNetworkEntry *networks, int count, const String &hostname)
+    {
+        m_wifiNetworkCount = (count > 3) ? 3 : count;
+        for (int i = 0; i < m_wifiNetworkCount; i++)
+        {
+            m_wifiNetworks[i] = networks[i];
+        }
+        m_hostname = hostname;
+    }
+
 private:
+    WifiNetworkEntry m_wifiNetworks[3];
+    int m_wifiNetworkCount = 0;
+    String m_hostname;
     int failedAttempts = 0;
     unsigned long previousMillis = 0;
     unsigned long interval = 10000;

@@ -38,6 +38,7 @@ struct StatsData
     int lux;                    // "lux" — ambient light level
     uint16_t ldrRaw;            // "ldr_raw" — raw LDR ADC value
     uint32_t freeRam;           // "ram" — free heap + PSRAM bytes
+    uint32_t totalRam;          // "ram_total" — total heap + PSRAM bytes
     uint8_t brightness;         // "bri" — current display brightness
     bool hasSensor;             // if true, include temp/hum fields
     float temperature;          // "temp" — already rounded by caller

@@ -170,18 +170,19 @@ void TimeApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_t x, 
     applyNativeAppColor(colorConfig.timeColor);
 
     char t[20];
-    if (timeformat[2] == ' ')
+    size_t fmtLen = strlen(timeformat);
+    bool blinkFirst = (fmtLen > 2 && timeformat[2] == ' ');
+    bool blinkSecond = (fmtLen > 5 && timeformat[5] == ' ');
+
+    if (blinkFirst || blinkSecond)
     {
         char t2[20];
         strcpy(t2, timeformat);
-        if (timer_time() % 2)
-        {
-            t2[2] = ' ';
-        }
-        else
-        {
-            t2[2] = ':';
-        }
+        bool showColon = (timer_time() % 2) == 0;
+        if (blinkFirst)
+            t2[2] = showColon ? ':' : ' ';
+        if (blinkSecond)
+            t2[5] = showColon ? ':' : ' ';
         strftime(t, sizeof(t), t2, timer_localtime());
     }
     else

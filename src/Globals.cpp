@@ -288,6 +288,11 @@ void loadSettings()
     displayConfig.matrixLayout = Settings.getUInt("MAT", 0);
     displayConfig.backgroundEffect = Settings.getInt("BEFF", -1);
     appConfig.scrollSpeed = Settings.getUInt("SSPEED", 100);
+    appConfig.timeDuration = Settings.getUShort("TIMEDUR", 7);
+    appConfig.dateDuration = Settings.getUShort("DATEDUR", 7);
+    appConfig.tempDuration = Settings.getUShort("TEMPDUR", 7);
+    appConfig.humDuration = Settings.getUShort("HUMDUR", 7);
+    appConfig.batDuration = Settings.getUShort("BATDUR", 7);
     appConfig.nativeIconLayout = static_cast<IconLayout>(Settings.getUChar("NILAYOUT", 0));
     appConfig.nightMode = Settings.getBool("NMODE", false);
     appConfig.nightStart = Settings.getUShort("NSTART", 1260);
@@ -300,10 +305,16 @@ void loadSettings()
 #endif
     audioConfig.soundActive = Settings.getBool("SOUND", true);
     audioConfig.soundVolume = Settings.getUInt("VOL", 25);
+    wifiConfig.networks[0].ssid = Settings.getString("WSSID1", "");
+    wifiConfig.networks[0].password = Settings.getString("WPASS1", "");
+    wifiConfig.networks[1].ssid = Settings.getString("WSSID2", "");
+    wifiConfig.networks[1].password = Settings.getString("WPASS2", "");
+    wifiConfig.networks[2].ssid = Settings.getString("WSSID3", "");
+    wifiConfig.networks[2].password = Settings.getString("WPASS3", "");
     Settings.end();
     systemConfig.deviceId = getID();
     mqttConfig.prefix = systemConfig.deviceId;
-    systemConfig.hostname = systemConfig.deviceId;
+    systemConfig.hostname = "svitrix";
     loadDevSettings();
 }
 
@@ -344,6 +355,11 @@ void saveSettings()
     Settings.putBool("TEMP", appConfig.showTemp);
     Settings.putBool("HUM", appConfig.showHum);
     Settings.putUInt("SSPEED", appConfig.scrollSpeed);
+    Settings.putUShort("TIMEDUR", appConfig.timeDuration);
+    Settings.putUShort("DATEDUR", appConfig.dateDuration);
+    Settings.putUShort("TEMPDUR", appConfig.tempDuration);
+    Settings.putUShort("HUMDUR", appConfig.humDuration);
+    Settings.putUShort("BATDUR", appConfig.batDuration);
     Settings.putInt("BEFF", displayConfig.backgroundEffect);
     Settings.putUChar("NILAYOUT", static_cast<uint8_t>(appConfig.nativeIconLayout));
     Settings.putBool("NMODE", appConfig.nightMode);
@@ -357,9 +373,16 @@ void saveSettings()
 #endif
     Settings.putBool("SOUND", audioConfig.soundActive);
     Settings.putUInt("VOL", audioConfig.soundVolume);
+    Settings.putString("WSSID1", wifiConfig.networks[0].ssid);
+    Settings.putString("WPASS1", wifiConfig.networks[0].password);
+    Settings.putString("WSSID2", wifiConfig.networks[1].ssid);
+    Settings.putString("WPASS2", wifiConfig.networks[1].password);
+    Settings.putString("WSSID3", wifiConfig.networks[2].ssid);
+    Settings.putString("WPASS3", wifiConfig.networks[2].password);
     Settings.end();
 }
 
+WifiConfig wifiConfig = {{{""}, {""}, {""}}};
 MqttConfig mqttConfig = {"", 1883, "", "", ""};
 NetworkConfig networkConfig = {false, "192.168.178.10", "192.168.178.1", "255.255.255.0", "8.8.8.8", "1.1.1.1"};
 HaConfig haConfig = {false, "homeassistant"};
@@ -370,7 +393,7 @@ AuthConfig authConfig = {"", "svitrix"};
 DisplayConfig displayConfig = {0, 42, false, false, false, true, -1};
 BrightnessConfig brightnessConfig = {120, 0, true, 2, 160, 3.0, 1.0, false};
 ColorConfig colorConfig = {0xFFFFFF, 0, 0, 0, 0, 0, 0xFFFFFF, 0x666666, 0xFF0000, 0x000000, 0xFFFFFF};
-TimeConfig timeConfig = {"%H:%M:%S", "%d.%m.%y", 1, false, "de.pool.ntp.org", "CET-1CEST,M3.5.0,M10.5.0/3", false, 0};
-AppConfig appConfig = {true, true, true, true, true, true, false, 1, 400, 7000, 100, IconLayout::Left, false, false, 1260, 360, 5, 0xFF0000, true};
+TimeConfig timeConfig = {"%H:%M:%S", "%d.%m.%y", 1, false, "time.cloudflare.com", "CET-1CEST,M3.5.0,M10.5.0/3", false, 0};
+AppConfig appConfig = {true, true, true, true, true, true, false, 1, 400, 7000, 100, 7, 7, 7, 7, 7, IconLayout::Left, false, false, 1260, 360, 5, 0xFF0000, true};
 AudioConfig audioConfig = {false, 30, ""};
 SystemConfig systemConfig = {true, 15, 80, "", false, 10000, false, false, "", "", false, false, "", ""};

@@ -11,6 +11,7 @@ static StatsData makeDefaults()
     d.lux = 350;
     d.ldrRaw = 780;
     d.freeRam = 120000;
+    d.totalRam = 320000;
     d.brightness = 120;
     d.hasSensor = true;
     d.temperature = 23.5f;

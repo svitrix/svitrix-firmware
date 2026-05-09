@@ -1,68 +1,126 @@
-import { useState } from "preact/hooks";
-import { scanWifi, connectWifi } from "../../../api/client";
+import { useState, useEffect } from "preact/hooks";
+import { scanWifi, getWifiNetworks, saveWifiNetworks } from "../../../api/client";
+import type { WifiNetwork } from "../../../api/client";
 import { toast } from "../../../components/Toast";
-import { TextField, Card, FormRow, Button } from "../../../components/ui";
+import { TextField, Card, FormRow, Button, Select } from "../../../components/ui";
 import styles from "./sections.module.css";
 
-export function WifiSection({ apMode }: { apMode?: boolean }) {
-  const [networks, setNetworks] = useState<Array<{ ssid: string; rssi: number; secure: number }>>([]);
+export function WifiSection() {
+  const [scannedNetworks, setScannedNetworks] = useState<Array<{ ssid: string; strength: number; security: boolean }>>([]);
   const [scanning, setScanning] = useState(false);
-  const [wifiSsid, setWifiSsid] = useState("");
-  const [wifiPass, setWifiPass] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [networks, setNetworks] = useState<WifiNetwork[]>([
+    { ssid: "", password: "" },
+    { ssid: "", password: "" },
+    { ssid: "", password: "" },
+  ]);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    getWifiNetworks()
+      .then((data) => {
+        if (data.networks) {
+          setNetworks(
+            data.networks.map((n) => ({
+              ssid: n.ssid || "",
+              password: "",
+              configured: n.configured,
+            }))
+          );
+        }
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
 
   async function doScan() {
     setScanning(true);
     try {
       const nets = await scanWifi();
-      setNetworks(nets.sort((a, b) => b.rssi - a.rssi));
+      setScannedNetworks(nets.sort((a, b) => b.strength - a.strength));
     } catch {
       toast("Scan failed");
     }
     setScanning(false);
   }
 
-  async function doConnect() {
-    if (!wifiSsid) { toast("Enter SSID"); return; }
-    try {
-      await connectWifi(wifiSsid, wifiPass);
-      toast("Connecting to WiFi...");
-      setTimeout(() => {
-        toast("Device rebooting... check matrix for new IP");
-        fetch("/restart").catch(() => {});
-      }, 3000);
-    } catch {
-      toast("Connection failed");
-    }
+  function updateNetwork(index: number, field: "ssid" | "password", value: string) {
+    const updated = [...networks];
+    updated[index] = { ...updated[index], [field]: value };
+    setNetworks(updated);
   }
 
-  const subtitle = apMode
-    ? "Connect to your home WiFi network. After connecting, the device will reboot with full settings available."
-    : undefined;
+  async function doSave() {
+    setSaving(true);
+    try {
+      await saveWifiNetworks(networks);
+      toast("WiFi networks saved. Reboot to apply.");
+    } catch {
+      toast("Failed to save");
+    }
+    setSaving(false);
+  }
+
+  const ssidOptions = scannedNetworks.map((n) => ({
+    value: n.ssid,
+    label: `${n.ssid} (${n.strength} dBm)${n.security ? " 🔒" : ""}`,
+  }));
 
   return (
-    <Card title="WiFi" subtitle={subtitle}>
+    <Card title="WiFi Networks" subtitle="Configure up to 3 WiFi networks. The device will try each in order.">
       <div class={styles.stack}>
         <Button onClick={doScan} disabled={scanning}>
           {scanning ? "Scanning..." : "Scan Networks"}
         </Button>
-        {networks.length > 0 && (
-          <div class={styles.networkList}>
-            {networks.map((n) => (
-              <div
-                key={n.ssid}
-                class={styles.networkItem}
-                onClick={() => setWifiSsid(n.ssid)}
-              >
-                {n.ssid} ({n.rssi} dBm) {n.secure ? "\u{1f512}" : ""}
+
+        {loading ? (
+          <p class={styles.hint}>Loading...</p>
+        ) : (
+          networks.map((net, i) => (
+            <div key={i} class={styles.wifiSlot}>
+              <div class={styles.wifiSlotHeader}>
+                <span>WiFi {i + 1}</span>
+                {net.configured && !net.password && (
+                  <span class={styles.configuredBadge}>configured</span>
+                )}
               </div>
-            ))}
-          </div>
+              <FormRow>
+                {ssidOptions.length > 0 ? (
+                  <Select
+                    label="SSID"
+                    value={net.ssid}
+                    options={[
+                      { value: "", label: "(select network)" },
+                      ...(net.ssid && !ssidOptions.some((o) => o.value === net.ssid)
+                        ? [{ value: net.ssid, label: `${net.ssid} (saved)` }]
+                        : []),
+                      ...ssidOptions,
+                    ]}
+                    onChange={(v) => updateNetwork(i, "ssid", v as string)}
+                  />
+                ) : (
+                  <TextField
+                    label="SSID"
+                    value={net.ssid}
+                    onChange={(v) => updateNetwork(i, "ssid", v)}
+                    placeholder="Click 'Scan Networks' or type manually"
+                  />
+                )}
+                <TextField
+                  label="Password"
+                  value={net.password || ""}
+                  onChange={(v) => updateNetwork(i, "password", v)}
+                  type="password"
+                  placeholder={net.configured ? "(unchanged)" : undefined}
+                />
+              </FormRow>
+            </div>
+          ))
         )}
-        <FormRow>
-          <TextField label="SSID" value={wifiSsid} onChange={setWifiSsid} />
-          <TextField label="Password" value={wifiPass} onChange={setWifiPass} type="password" />
-        </FormRow>
-        <Button variant="primary" onClick={doConnect}>Connect</Button>
+
+        <Button variant="primary" onClick={doSave} disabled={saving}>
+          {saving ? "Saving..." : "Save WiFi Networks"}
+        </Button>
       </div>
     </Card>
   );

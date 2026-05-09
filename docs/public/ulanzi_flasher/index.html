@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="utf-8" />
-    <title>SVITRIX Flasher</title>
-    <meta name="description" content="Install SVITRIX firmware on Ulanzi TC001" />
+    <title>SVITRIX XE1E Flasher</title>
+    <meta name="description" content="Instala el firmware SVITRIX en Ulanzi TC001" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="dark light" />
     <style>
@@ -233,77 +233,74 @@
   <body>
     <div class="container">
       <div class="lang-switch">
+        <button onclick="setLang('es')" id="btn-es">ES</button>
         <button onclick="setLang('en')" id="btn-en">EN</button>
-        <button onclick="setLang('uk')" id="btn-uk">UA</button>
       </div>
 
       <header>
-        <h1>SVITRIX</h1>
+        <h1>SVITRIX XE1E</h1>
         <p>
+          <span data-es>Firmware para Ulanzi TC001 Smart Pixel Clock</span>
           <span data-en>Firmware for Ulanzi TC001 Smart Pixel Clock</span>
-          <span data-uk>Прошивка для Ulanzi TC001 Smart Pixel Clock</span>
         </p>
       </header>
 
       <!-- Install button -->
       <div class="card install-section">
         <p>
+          <span data-es>
+            Conecta el Ulanzi TC001 via USB-C y presiona el boton de abajo.<br />
+            El firmware y la interfaz web se instalan en un solo paso.
+          </span>
           <span data-en>
             Connect Ulanzi TC001 via USB-C and press the button below.<br />
             Firmware and web interface are installed in a single step.
           </span>
-          <span data-uk>
-            Підключіть Ulanzi TC001 через USB-C та натисніть кнопку нижче.<br />
-            Прошивка та веб-інтерфейс встановлюються за один крок.
-          </span>
         </p>
         <esp-web-install-button manifest="firmware/manifest.json">
           <span slot="unsupported">
+            <span data-es>
+              Tu navegador no soporta Web Serial.<br />
+              Usa <strong>Chrome</strong> o <strong>Edge</strong> en escritorio.
+            </span>
             <span data-en>
               Your browser does not support Web Serial.<br />
               Use <strong>Chrome</strong> or <strong>Edge</strong> on desktop.
             </span>
-            <span data-uk>
-              Ваш браузер не підтримує Web Serial.<br />
-              Використовуйте <strong>Chrome</strong> або <strong>Edge</strong> на десктопі.
-            </span>
           </span>
         </esp-web-install-button>
         <p class="requirements">
+          <span data-es>Requiere Chrome o Edge. Los navegadores moviles no son compatibles.</span>
           <span data-en>Requires Chrome or Edge. Mobile browsers are not supported.</span>
-          <span data-uk>Потрібен Chrome або Edge. Мобільні браузери не підтримуються.</span>
         </p>
       </div>
 
       <!-- What's included -->
       <div class="card">
         <h2>
+          <span data-es>Que se instala</span>
           <span data-en>What gets installed</span>
-          <span data-uk>Що встановлюється</span>
         </h2>
         <div class="includes">
+          <div>Firmware</div>
           <div>
-            <span data-en>Firmware</span>
-            <span data-uk>Прошивка</span>
-          </div>
-          <div>
+            <span data-es>Interfaz web (SPA)</span>
             <span data-en>Web interface (SPA)</span>
-            <span data-uk>Веб-інтерфейс (SPA)</span>
           </div>
           <div>Bootloader</div>
           <div>
+            <span data-es>Tabla de particiones</span>
             <span data-en>Partition table</span>
-            <span data-uk>Таблиця розділів</span>
           </div>
         </div>
         <div class="note">
+          <span data-es>
+            <strong>Nota:</strong> Para la primera instalacion, se recomienda borrar el dispositivo
+            (ESP Web Tools ofrecera esta opcion). Esto asegura una instalacion limpia.
+          </span>
           <span data-en>
             <strong>Note:</strong> For the first installation, it is recommended to erase the device
             (ESP Web Tools will offer this option). This ensures a clean install.
-          </span>
-          <span data-uk>
-            <strong>Примітка:</strong> При першій установці рекомендується стерти пристрій
-            (ESP Web Tools запропонує цю опцію). Це гарантує чисту установку.
           </span>
         </div>
       </div>
@@ -311,71 +308,71 @@
       <!-- Steps after install -->
       <div class="card">
         <h2>
+          <span data-es>Despues de la instalacion</span>
           <span data-en>After installation</span>
-          <span data-uk>Після встановлення</span>
         </h2>
         <ol class="steps">
           <li>
             <strong>
+              <span data-es>Conectate al punto de acceso WiFi</span>
               <span data-en>Connect to the WiFi access point</span>
-              <span data-uk>Підключіться до WiFi точки доступу</span>
             </strong>
             <span>
+              <span data-es>
+                El dispositivo creara una red <strong>SVITRIX_XXXX</strong>.
+                Conectate desde tu telefono o computadora.
+              </span>
               <span data-en>
                 The device will create a network <strong>SVITRIX_XXXX</strong>.
                 Connect to it from your phone or computer.
               </span>
-              <span data-uk>
-                Пристрій створить мережу <strong>SVITRIX_XXXX</strong>.
-                Підключіться до неї з телефону або комп'ютера.
-              </span>
             </span>
           </li>
           <li>
             <strong>
+              <span data-es>Abre la interfaz web</span>
               <span data-en>Open the web interface</span>
-              <span data-uk>Відкрийте веб-інтерфейс</span>
             </strong>
             <span>
+              <span data-es>
+                Navega a <strong>192.168.4.1</strong> en tu navegador.
+                Se abrira el panel de control de SVITRIX.
+              </span>
               <span data-en>
                 Navigate to <strong>192.168.4.1</strong> in your browser.
                 The SVITRIX control panel will open.
               </span>
-              <span data-uk>
-                Перейдіть за адресою <strong>192.168.4.1</strong> у браузері.
-                Відкриється панель керування SVITRIX.
-              </span>
             </span>
           </li>
           <li>
             <strong>
+              <span data-es>Configura el WiFi</span>
               <span data-en>Configure WiFi</span>
-              <span data-uk>Налаштуйте WiFi</span>
             </strong>
             <span>
+              <span data-es>
+                En la seccion Settings, ingresa las credenciales de tu WiFi.
+                El dispositivo se reiniciara y se conectara a tu red.
+              </span>
               <span data-en>
                 In the Settings section, enter your home WiFi credentials.
                 The device will reboot and connect to your network.
               </span>
-              <span data-uk>
-                У розділі Settings введіть дані вашої домашньої WiFi мережі.
-                Пристрій перезавантажиться та підключиться до неї.
-              </span>
             </span>
           </li>
           <li>
             <strong>
+              <span data-es>Listo!</span>
               <span data-en>Done!</span>
-              <span data-uk>Готово!</span>
             </strong>
             <span>
+              <span data-es>
+                Busca la IP del dispositivo en tu router y abrela en un navegador
+                para acceso completo a la configuracion.
+              </span>
               <span data-en>
                 Find the device IP in your router and open it in a browser
                 for full access to settings.
-              </span>
-              <span data-uk>
-                Знайдіть IP пристрою в вашому роутері та відкрийте його в браузері
-                для повного доступу до налаштувань.
               </span>
             </span>
           </li>
@@ -384,7 +381,7 @@
 
       <!-- Footer -->
       <div class="footer">
-        <a href="https://github.com/svitrix/svitrix-firmware">SVITRIX GitHub</a>
+        <a href="https://github.com/XE1E/svitrix-firmware-XE1E">SVITRIX XE1E GitHub</a>
         &middot;
         Installer powered by
         <a href="https://esphome.github.io/esp-web-tools/">ESP Web Tools</a>
@@ -393,35 +390,29 @@
 
     <script>
       function detectLang() {
-        // Check ?lang= param first
         var params = new URLSearchParams(window.location.search);
         var lang = params.get('lang');
-        if (lang === 'uk' || lang === 'en') return lang;
+        if (lang === 'es' || lang === 'en') return lang;
 
-        // Check parent URL (iframe in VitePress docs)
-        try {
-          var parentPath = window.parent.location.pathname;
-          if (parentPath.indexOf('/uk/') !== -1) return 'uk';
-        } catch (e) {
-          // Cross-origin iframe — check referrer
-          if (document.referrer.indexOf('/uk/') !== -1) return 'uk';
-        }
+        // Check browser language
+        var browserLang = navigator.language || navigator.userLanguage;
+        if (browserLang && browserLang.startsWith('es')) return 'es';
 
-        return 'en';
+        return 'es'; // Default to Spanish
       }
 
       function setLang(lang) {
         document.documentElement.lang = lang;
+        var esEls = document.querySelectorAll('[data-es]');
         var enEls = document.querySelectorAll('[data-en]');
-        var ukEls = document.querySelectorAll('[data-uk]');
+        for (var i = 0; i < esEls.length; i++) {
+          esEls[i].style.display = lang === 'es' ? '' : 'none';
+        }
         for (var i = 0; i < enEls.length; i++) {
           enEls[i].style.display = lang === 'en' ? '' : 'none';
         }
-        for (var i = 0; i < ukEls.length; i++) {
-          ukEls[i].style.display = lang === 'uk' ? '' : 'none';
-        }
+        document.getElementById('btn-es').classList.toggle('active', lang === 'es');
         document.getElementById('btn-en').classList.toggle('active', lang === 'en');
-        document.getElementById('btn-uk').classList.toggle('active', lang === 'uk');
       }
 
       setLang(detectLang());

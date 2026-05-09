@@ -19,8 +19,8 @@ window.addEventListener("popstate", () => {
 });
 
 const links = [
-  { href: "/", label: "Screen" },
-  { href: "/settings", label: "Settings" },
+  { href: "/", label: "Settings" },
+  { href: "/screen", label: "Screen" },
   { href: "/datafetcher", label: "Data" },
   { href: "/files", label: "Files" },
   { href: "/backup", label: "Backup" },

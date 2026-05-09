@@ -52,6 +52,18 @@ CRGB colorTemperature;
 // Current app name (declared extern in DisplayManager_internal.h)
 String currentApp;
 
+/// Maps native app names to their configured per-app duration (in milliseconds).
+/// Custom apps and unknown names fall back to the global timePerApp setting.
+static long getDurationForApp(const String& appName)
+{
+    if (appName == "Time") return appConfig.timeDuration * 1000L;
+    if (appName == "Date") return appConfig.dateDuration * 1000L;
+    if (appName == "Temperature") return appConfig.tempDuration * 1000L;
+    if (appName == "Humidity") return appConfig.humDuration * 1000L;
+    if (appName == "Battery") return appConfig.batDuration * 1000L;
+    return appConfig.timePerApp;
+}
+
 DisplayManager_& DisplayManager_::getInstance()
 {
     static DisplayManager_ instance;
@@ -158,7 +170,7 @@ bool DisplayManager_::setAutoTransition(bool active)
         ui->disablesetAutoTransition();
         return false;
     }
-    if (active && appConfig.autoTransition)
+    if (active)
     {
         ui->enablesetAutoTransition();
         return true;
@@ -288,7 +300,7 @@ void DisplayManager_::tick()
             resetAllEffectState();
             if (notifier_)
                 notifier_->setCurrentApp(currentApp);
-            setAppTime(appConfig.timePerApp);
+            setAppTime(getDurationForApp(currentApp));
             checkLifetime(ui->getnextAppNumber());
             ResetCustomApps();
         }

@@ -26,7 +26,7 @@ function SettingsContent() {
   if (!settings && !apiAvailable) {
     return (
       <div class={styles.page}>
-        <WifiSection apMode />
+        <WifiSection />
       </div>
     );
   }

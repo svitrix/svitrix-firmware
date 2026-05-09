@@ -8,7 +8,7 @@ export function StatsBar() {
   return (
     <div class={`card ${styles.statsBar}`}>
       <span>FW: {stats.version}</span>
-      <span>RAM: {(stats.ram / 1024).toFixed(0)} KB</span>
+      <span>RAM: {(stats.ram / 1024).toFixed(0)} / {(stats.ram_total / 1024).toFixed(0)} KB</span>
       <span>WiFi: {stats.wifi_signal} dBm</span>
       <span>Lux: {stats.lux}</span>
       <span>Uptime: {stats.uptime}</span>

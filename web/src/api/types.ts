@@ -44,6 +44,11 @@ export interface Settings {
   NCOL: number;
   BEFF: number;
   NBTRANS: boolean;
+  TIMEDUR: number;
+  DATEDUR: number;
+  TEMPDUR: number;
+  HUMDUR: number;
+  BATDUR: number;
 }
 
 export interface Stats {
@@ -53,6 +58,7 @@ export interface Stats {
   lux: number;
   ldr_raw: number;
   ram: number;
+  ram_total: number;
   bri: number;
   temp: number;
   hum: number;

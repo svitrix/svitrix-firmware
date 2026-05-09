@@ -77,3 +77,54 @@
 .formGroupEnd {
   justify-content: flex-end;
 }
+
+/* WiFi network slot */
+.wifiSlot {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px;
+  background: var(--bg-input);
+}
+
+.wifiSlotHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.configuredBadge {
+  font-size: 11px;
+  color: var(--accent);
+  background: rgba(240, 184, 0, 0.15);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.scanHint {
+  font-size: 12px;
+  color: var(--text-dim);
+  padding: 4px 8px;
+  background: var(--bg-input);
+  border-radius: 4px;
+  margin-bottom: 4px;
+}
+
+/* App row with toggle, color picker, and duration slider */
+.appRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.appRow > :first-child {
+  min-width: 120px;
+}
+
+.appSlider {
+  flex: 1;
+  min-width: 100px;
+}

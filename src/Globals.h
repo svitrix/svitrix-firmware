@@ -37,6 +37,7 @@ void formatSettings();
 #endif
 
 // Config structs
+extern WifiConfig wifiConfig;
 extern MqttConfig mqttConfig;
 extern NetworkConfig networkConfig;
 extern HaConfig haConfig;

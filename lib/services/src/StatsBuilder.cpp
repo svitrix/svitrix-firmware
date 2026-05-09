@@ -55,6 +55,10 @@ String buildStatsJson(const StatsData& data)
     json += String((long)data.freeRam);
     json += ",";
 
+    json += "\"ram_total\":";
+    json += String((long)data.totalRam);
+    json += ",";
+
     addInt(json, "bri", data.brightness);
 
     if (data.hasSensor)

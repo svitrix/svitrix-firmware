@@ -121,7 +121,7 @@ export async function deleteFile(path: string): Promise<Response> {
 }
 
 // WiFi
-export async function scanWifi(): Promise<Array<{ ssid: string; rssi: number; secure: number }>> {
+export async function scanWifi(): Promise<Array<{ ssid: string; strength: number; security: boolean }>> {
   const maxAttempts = 15;
   for (let i = 0; i < maxAttempts; i++) {
     const res = await fetch("/scan");
@@ -141,6 +141,18 @@ export const connectWifi = (ssid: string, password: string) => {
   form.append("password", password);
   return fetch("/connect", { method: "POST", body: form });
 };
+
+// WiFi networks config (3 networks)
+export interface WifiNetwork {
+  ssid: string;
+  password?: string;
+  configured?: boolean;
+}
+
+export const getWifiNetworks = () => get<{ networks: WifiNetwork[] }>("/api/wifi");
+
+export const saveWifiNetworks = (networks: WifiNetwork[]) =>
+  post("/api/wifi", { networks });
 
 // Config file (DoNotTouch.json — network, MQTT, time, auth)
 export const getConfig = () => get<Record<string, unknown>>("/DoNotTouch.json");

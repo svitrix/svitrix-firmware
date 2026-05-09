@@ -1,6 +1,6 @@
 import { useState } from "preact/hooks";
 import { useSettings } from "../../../context/SettingsContext";
-import { Toggle, Slider, ColorField, Select, Card, FormRow, Button } from "../../../components/ui";
+import { Toggle, Slider, ColorField, Select, Card, Button } from "../../../components/ui";
 import styles from "./sections.module.css";
 
 export function AppsSection() {
@@ -19,6 +19,11 @@ export function AppsSection() {
       ATIME: s.ATIME, ATRANS: s.ATRANS,
       TEFF: s.TEFF, TSPEED: s.TSPEED,
       SSPEED: s.SSPEED, BLOCKN: s.BLOCKN,
+      TIMEDUR: s.TIMEDUR,
+      DATEDUR: s.DATEDUR,
+      TEMPDUR: s.TEMPDUR,
+      HUMDUR: s.HUMDUR,
+      BATDUR: s.BATDUR,
     });
     setSaving(false);
   }
@@ -26,21 +31,44 @@ export function AppsSection() {
   return (
     <Card title="Apps">
       <div class={styles.stack}>
-        <Toggle label="Time" checked={s.TIM} onChange={(v) => updateSettings({ TIM: v })} />
-        <Toggle label="Date" checked={s.DAT} onChange={(v) => updateSettings({ DAT: v })} />
-        <FormRow>
+        <div class={styles.appRow}>
+          <Toggle label="Time" checked={s.TIM} onChange={(v) => updateSettings({ TIM: v })} />
+          <div class={styles.appSlider}>
+            <Slider label="" min={1} max={300} value={s.TIMEDUR || 7} onChange={(v) => updateSettings({ TIMEDUR: v })} unit="s" />
+          </div>
+        </div>
+
+        <div class={styles.appRow}>
+          <Toggle label="Date" checked={s.DAT} onChange={(v) => updateSettings({ DAT: v })} />
+          <div class={styles.appSlider}>
+            <Slider label="" min={1} max={60} value={s.DATEDUR || 7} onChange={(v) => updateSettings({ DATEDUR: v })} unit="s" />
+          </div>
+        </div>
+
+        <div class={styles.appRow}>
           <Toggle label="Temperature" checked={s.TEMP} onChange={(v) => updateSettings({ TEMP: v })} />
-          <ColorField label="Temp Color" value={s.TEMP_COL} onChange={(v) => updateSettings({ TEMP_COL: v })} />
-        </FormRow>
-        <FormRow>
+          <ColorField label="" value={s.TEMP_COL} onChange={(v) => updateSettings({ TEMP_COL: v })} />
+          <div class={styles.appSlider}>
+            <Slider label="" min={1} max={60} value={s.TEMPDUR || 7} onChange={(v) => updateSettings({ TEMPDUR: v })} unit="s" />
+          </div>
+        </div>
+
+        <div class={styles.appRow}>
           <Toggle label="Humidity" checked={s.HUM} onChange={(v) => updateSettings({ HUM: v })} />
-          <ColorField label="Hum Color" value={s.HUM_COL} onChange={(v) => updateSettings({ HUM_COL: v })} />
-        </FormRow>
-        <FormRow>
+          <ColorField label="" value={s.HUM_COL} onChange={(v) => updateSettings({ HUM_COL: v })} />
+          <div class={styles.appSlider}>
+            <Slider label="" min={1} max={60} value={s.HUMDUR || 7} onChange={(v) => updateSettings({ HUMDUR: v })} unit="s" />
+          </div>
+        </div>
+
+        <div class={styles.appRow}>
           <Toggle label="Battery" checked={s.BAT} onChange={(v) => updateSettings({ BAT: v })} />
-          <ColorField label="Battery Color" value={s.BAT_COL} onChange={(v) => updateSettings({ BAT_COL: v })} />
-        </FormRow>
-        <Slider label="App Duration" min={1} max={60} value={s.ATIME} onChange={(v) => updateSettings({ ATIME: v })} unit="s" />
+          <ColorField label="" value={s.BAT_COL} onChange={(v) => updateSettings({ BAT_COL: v })} />
+          <div class={styles.appSlider}>
+            <Slider label="" min={1} max={60} value={s.BATDUR || 7} onChange={(v) => updateSettings({ BATDUR: v })} unit="s" />
+          </div>
+        </div>
+
         <Toggle label="Auto Transition" checked={s.ATRANS} onChange={(v) => updateSettings({ ATRANS: v })} />
         {transitions.length > 0 && (
           <Select

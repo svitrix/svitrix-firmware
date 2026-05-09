@@ -8,6 +8,15 @@ struct AuthConfig {
     String pass;
 };
 
+struct WifiNetwork {
+    String ssid;
+    String password;
+};
+
+struct WifiConfig {
+    WifiNetwork networks[3];
+};
+
 struct NetworkConfig {
     bool isStatic;
     String ip;
@@ -115,6 +124,11 @@ struct AppConfig {
     int timePerTransition;
     long timePerApp;
     uint8_t scrollSpeed;
+    uint16_t timeDuration;    // Clock display duration (1-300s)
+    uint16_t dateDuration;    // Date display duration (1-60s)
+    uint16_t tempDuration;    // Temperature display duration (1-60s)
+    uint16_t humDuration;     // Humidity display duration (1-60s)
+    uint16_t batDuration;     // Battery display duration (1-60s)
     IconLayout nativeIconLayout;
     bool blockNavigation;
     bool nightMode;

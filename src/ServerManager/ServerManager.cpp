@@ -187,6 +187,34 @@ void addHandler()
                            { String body = getBody(request); smNav_->reorderApps(body.c_str()); request->send(200, "text/plain", "OK"); });
     mws.addHandler("/api/settings", HTTP_GET, [](AsyncWebServerRequest *request)
                    { request->send(200, "application/json", smControl_->getSettings()); });
+    mws.addHandler("/api/wifi", HTTP_GET, [](AsyncWebServerRequest *request)
+                   {
+                    StaticJsonDocument<512> doc;
+                    JsonArray networks = doc.createNestedArray("networks");
+                    for (int i = 0; i < 3; i++) {
+                        JsonObject net = networks.createNestedObject();
+                        net["ssid"] = wifiConfig.networks[i].ssid;
+                        net["configured"] = wifiConfig.networks[i].ssid.length() > 0;
+                    }
+                    String json;
+                    serializeJson(doc, json);
+                    request->send(200, "application/json", json); });
+    mws.addHandlerWithBody("/api/wifi", HTTP_POST, [](AsyncWebServerRequest *request)
+                           {
+                            String body = getBody(request);
+                            StaticJsonDocument<512> doc;
+                            DeserializationError err = deserializeJson(doc, body);
+                            if (err) {
+                                request->send(400, "text/plain", "InvalidJSON");
+                                return;
+                            }
+                            JsonArray networks = doc["networks"];
+                            for (int i = 0; i < 3 && i < (int)networks.size(); i++) {
+                                wifiConfig.networks[i].ssid = networks[i]["ssid"].as<String>();
+                                wifiConfig.networks[i].password = networks[i]["password"].as<String>();
+                            }
+                            saveSettings();
+                            request->send(200, "text/plain", "OK"); });
     mws.addHandlerWithBody("/api/custom", HTTP_POST, [](AsyncWebServerRequest *request)
                            {
                             String name;
@@ -283,6 +311,12 @@ void ServerManager_::setup()
         WiFi.config(ip, gw, sn, dns1, dns2);
     }
     WiFi.setHostname(systemConfig.hostname.c_str()); // define hostname
+    WifiNetworkEntry wifiEntries[3];
+    for (int i = 0; i < 3; i++) {
+        wifiEntries[i].ssid = wifiConfig.networks[i].ssid;
+        wifiEntries[i].password = wifiConfig.networks[i].password;
+    }
+    mws.setWifiNetworks(wifiEntries, 3, systemConfig.hostname);
     myIP = mws.startWiFi(systemConfig.apTimeout * 1000, systemConfig.hostname.c_str(), "12345678");
     isConnected = !(myIP == IPAddress(192, 168, 4, 1));
     if (systemConfig.debugMode)

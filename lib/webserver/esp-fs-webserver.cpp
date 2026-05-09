@@ -246,57 +246,97 @@ IPAddress FSWebServer::startWiFi(uint32_t timeout, const char *apSSID, const cha
     m_timeout = timeout;
     WiFi.mode(WIFI_STA);
 
-    const char *_ssid;
-    const char *_pass;
-
-    wifi_config_t conf;
-    esp_wifi_get_config(WIFI_IF_STA, &conf);
-
-    _ssid = reinterpret_cast<const char *>(conf.sta.ssid);
-    _pass = reinterpret_cast<const char *>(conf.sta.password);
-
-    char *my_ssid = new char[33];
-    strncpy(my_ssid, _ssid, 32);
-    my_ssid[32] = '\0';
-    _ssid = my_ssid;
-
-    if (strlen(_ssid) && strlen(_pass))
+    // Try configured WiFi networks
+    for (int i = 0; i < m_wifiNetworkCount; i++)
     {
-        WiFi.begin(_ssid, _pass, 0, 0, true);
-        Serial.print(F("Connecting to "));
-        Serial.println(_ssid);
+        const String &ssid = m_wifiNetworks[i].ssid;
+        const String &pass = m_wifiNetworks[i].password;
+
+        if (ssid.length() == 0)
+            continue;
+
+        Serial.printf("Trying WiFi %d: %s\n", i + 1, ssid.c_str());
+        WiFi.begin(ssid.c_str(), pass.c_str());
 
         uint32_t startTime = millis();
         while (WiFi.status() != WL_CONNECTED)
         {
             delay(300);
             Serial.print(".");
-            if (WiFi.status() == WL_CONNECTED)
-            {
-                ip = WiFi.localIP();
-                WiFi.persistent(true);
-                delete[] my_ssid;
-                return ip;
-            }
             if (millis() - startTime > m_timeout)
             {
-                Serial.println(F("No connection after a while -> go in Access Point mode"));
+                Serial.println(F(" timeout"));
+                WiFi.disconnect();
                 break;
             }
         }
+
+        if (WiFi.status() == WL_CONNECTED)
+        {
+            ip = WiFi.localIP();
+            Serial.printf("\nConnected to %s\n", ssid.c_str());
+            Serial.print(F("IP: "));
+            Serial.println(ip);
+
+            // Start mDNS
+            if (m_hostname.length() > 0 && MDNS.begin(m_hostname.c_str()))
+            {
+                MDNS.addService("http", "tcp", 80);
+                Serial.printf("mDNS: http://%s.local\n", m_hostname.c_str());
+            }
+
+            return ip;
+        }
     }
 
+    // No configured networks or all failed - try last ESP-IDF stored credentials
+    wifi_config_t conf;
+    esp_wifi_get_config(WIFI_IF_STA, &conf);
+    const char *storedSsid = reinterpret_cast<const char *>(conf.sta.ssid);
+
+    if (strlen(storedSsid) > 0)
+    {
+        Serial.printf("Trying stored WiFi: %s\n", storedSsid);
+        WiFi.begin();
+
+        uint32_t startTime = millis();
+        while (WiFi.status() != WL_CONNECTED)
+        {
+            delay(300);
+            Serial.print(".");
+            if (millis() - startTime > m_timeout)
+            {
+                Serial.println(F(" timeout"));
+                break;
+            }
+        }
+
+        if (WiFi.status() == WL_CONNECTED)
+        {
+            ip = WiFi.localIP();
+            Serial.print(F("\nConnected! IP: "));
+            Serial.println(ip);
+
+            if (m_hostname.length() > 0 && MDNS.begin(m_hostname.c_str()))
+            {
+                MDNS.addService("http", "tcp", 80);
+                Serial.printf("mDNS: http://%s.local\n", m_hostname.c_str());
+            }
+
+            return ip;
+        }
+    }
+
+    // All failed - go to AP mode
+    Serial.println(F("\nNo WiFi connection -> Access Point mode"));
     if (apSSID != nullptr && apPsw != nullptr)
         setAPmode(apSSID, apPsw);
     else
         setAPmode("ESP_AP", "123456789");
 
-    WiFi.begin();
     ip = WiFi.softAPIP();
-    Serial.print(F("\nAP mode.\nServer IP address: "));
+    Serial.print(F("AP IP: "));
     Serial.println(ip);
-    Serial.println();
-    delete[] my_ssid;
     return ip;
 }
 
