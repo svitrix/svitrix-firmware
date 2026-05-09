@@ -24,6 +24,7 @@ export function DisplaySection() {
     setSaving(true);
     await saveDisplaySettings({
       MATP: s.MATP, ABRI: s.ABRI, BRI: s.BRI,
+      MINBRI: s.MINBRI, MAXBRI: s.MAXBRI,
       GAMMA: s.GAMMA, UPPERCASE: s.UPPERCASE,
       TCOL: s.TCOL, CCORRECTION: s.CCORRECTION, CTEMP: s.CTEMP,
       BEFF: s.BEFF,
@@ -35,7 +36,15 @@ export function DisplaySection() {
     <Card title="Display">
       <div class={styles.stack}>
         <Toggle label="Matrix Power" checked={s.MATP} onChange={(v) => updateSettings({ MATP: v })} />
-        <Toggle label="Auto Brightness" checked={s.ABRI} onChange={(v) => updateSettings({ ABRI: v })} />
+        <div style={{ display: "flex", alignItems: "center", gap: "16px", flexWrap: "wrap" }}>
+          <Toggle label="Auto Brightness" checked={s.ABRI} onChange={(v) => updateSettings({ ABRI: v })} />
+          {s.ABRI && (
+            <>
+              <Slider label="Min" min={1} max={50} value={s.MINBRI ?? 2} onChange={(v) => updateSettings({ MINBRI: v })} />
+              <Slider label="Max" min={80} max={255} value={s.MAXBRI ?? 160} onChange={(v) => updateSettings({ MAXBRI: v })} />
+            </>
+          )}
+        </div>
         <Slider label="Brightness" min={0} max={255} value={s.BRI} onChange={(v) => updateSettings({ BRI: v })} />
         <Slider label="Gamma" min={0.5} max={3} step={0.1} value={s.GAMMA} onChange={(v) => updateSettings({ GAMMA: v })} />
         <Toggle label="Uppercase" checked={s.UPPERCASE} onChange={(v) => updateSettings({ UPPERCASE: v })} />

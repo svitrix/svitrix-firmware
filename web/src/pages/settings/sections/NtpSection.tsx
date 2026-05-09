@@ -42,7 +42,7 @@ export function NtpSection() {
           label="Timezone"
           value={config["Timezone"] || ""}
           onChange={(v) => updateConfig("Timezone", v)}
-          placeholder="CET-1CEST,M3.5.0,M10.5.0/3"
+          placeholder="CST6"
         />
         <p class={styles.hint}>
           Find your timezone at{" "}

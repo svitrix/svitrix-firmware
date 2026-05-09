@@ -357,6 +357,18 @@ void MatrixDisplayUi::drawApp()
         {
             crossfadeTransition();
         }
+        else if (currentTransition == SLIDE_UP)
+        {
+            slideTransitionWithDirection(ANIM_SLIDE_UP);
+        }
+        else if (currentTransition == SLIDE_LEFT)
+        {
+            slideTransitionWithDirection(ANIM_SLIDE_LEFT);
+        }
+        else if (currentTransition == SLIDE_RIGHT)
+        {
+            slideTransitionWithDirection(ANIM_SLIDE_RIGHT);
+        }
         break;
     }
     case FIXED:

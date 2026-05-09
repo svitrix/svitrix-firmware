@@ -64,6 +64,8 @@ String DisplayManager_::getSettings()
     doc["MATP"] = !displayConfig.matrixOff;
     doc["ABRI"] = brightnessConfig.autoBrightness;
     doc["BRI"] = brightnessConfig.brightness;
+    doc["MINBRI"] = brightnessConfig.minBrightness;
+    doc["MAXBRI"] = brightnessConfig.maxBrightness;
     doc["ATRANS"] = appConfig.autoTransition;
     doc["TCOL"] = colorConfig.textColor;
     doc["TEFF"] = appConfig.transEffect;
@@ -105,6 +107,7 @@ String DisplayManager_::getSettings()
     doc["HUM"] = appConfig.showHum;
     doc["TEMP"] = appConfig.showTemp;
     doc["BAT"] = appConfig.showBat;
+    doc["TOFF"] = sensorConfig.tempOffset;
     doc["VOL"] = audioConfig.soundVolume;
     doc["OVERLAY"] = overlayToString(ui->getGlobalOverlay());
     doc["BEFF"] = displayConfig.backgroundEffect;
@@ -154,6 +157,8 @@ void DisplayManager_::setNewSettings(const char *json)
     appConfig.transEffect = doc.containsKey("TEFF") ? doc["TEFF"] : appConfig.transEffect;
     appConfig.timePerTransition = doc.containsKey("TSPEED") ? doc["TSPEED"] : appConfig.timePerTransition;
     brightnessConfig.brightness = doc.containsKey("BRI") ? doc["BRI"] : brightnessConfig.brightness;
+    brightnessConfig.minBrightness = doc.containsKey("MINBRI") ? doc["MINBRI"].as<uint8_t>() : brightnessConfig.minBrightness;
+    brightnessConfig.maxBrightness = doc.containsKey("MAXBRI") ? doc["MAXBRI"].as<uint8_t>() : brightnessConfig.maxBrightness;
     appConfig.scrollSpeed = doc.containsKey("SSPEED") ? doc["SSPEED"] : appConfig.scrollSpeed;
     if (doc.containsKey("NILAYOUT"))
     {
@@ -214,6 +219,7 @@ void DisplayManager_::setNewSettings(const char *json)
     appConfig.showHum = doc.containsKey("HUM") ? doc["HUM"].as<bool>() : appConfig.showHum;
     appConfig.showTemp = doc.containsKey("TEMP") ? doc["TEMP"].as<bool>() : appConfig.showTemp;
     appConfig.showBat = doc.containsKey("BAT") ? doc["BAT"].as<bool>() : appConfig.showBat;
+    sensorConfig.tempOffset = doc.containsKey("TOFF") ? doc["TOFF"].as<float>() : sensorConfig.tempOffset;
     appConfig.timeDuration = doc.containsKey("TIMEDUR") ? doc["TIMEDUR"].as<uint16_t>() : appConfig.timeDuration;
     appConfig.dateDuration = doc.containsKey("DATEDUR") ? doc["DATEDUR"].as<uint16_t>() : appConfig.dateDuration;
     appConfig.tempDuration = doc.containsKey("TEMPDUR") ? doc["TEMPDUR"].as<uint16_t>() : appConfig.tempDuration;

@@ -1,10 +1,51 @@
 import { useState } from "preact/hooks";
 import { useSettings } from "../../../context/SettingsContext";
-import { Toggle, Slider, ColorField, Select, Card, Button } from "../../../components/ui";
+import { Toggle, Slider, ColorField, Select, Card, Button, FormRow } from "../../../components/ui";
 import styles from "./sections.module.css";
 
+const TRANSITION_OPTIONS = [
+  { value: 0, label: "Random" },
+  { value: 1, label: "Slide Down" },
+  { value: 11, label: "Slide Up" },
+  { value: 12, label: "Slide Left" },
+  { value: 13, label: "Slide Right" },
+  { value: 2, label: "Dim" },
+  { value: 3, label: "Zoom" },
+  { value: 4, label: "Rotate" },
+  { value: 5, label: "Pixelate" },
+  { value: 6, label: "Curtain" },
+  { value: 7, label: "Ripple" },
+  { value: 8, label: "Blink" },
+  { value: 9, label: "Reload" },
+  { value: 10, label: "Fade" },
+];
+
+const TEMP_OFFSET_OPTIONS = [
+  { value: 5, label: "+5°" },
+  { value: 4, label: "+4°" },
+  { value: 3, label: "+3°" },
+  { value: 2, label: "+2°" },
+  { value: 1, label: "+1°" },
+  { value: 0, label: "0°" },
+  { value: -1, label: "-1°" },
+  { value: -2, label: "-2°" },
+  { value: -3, label: "-3°" },
+  { value: -4, label: "-4°" },
+  { value: -5, label: "-5°" },
+  { value: -6, label: "-6°" },
+  { value: -7, label: "-7°" },
+  { value: -8, label: "-8°" },
+  { value: -9, label: "-9°" },
+  { value: -10, label: "-10°" },
+  { value: -11, label: "-11°" },
+  { value: -12, label: "-12°" },
+  { value: -13, label: "-13°" },
+  { value: -14, label: "-14°" },
+  { value: -15, label: "-15°" },
+];
+
 export function AppsSection() {
-  const { settings, transitions, updateSettings, saveDisplaySettings } = useSettings();
+  const { settings, updateSettings, saveDisplaySettings } = useSettings();
   const [saving, setSaving] = useState(false);
   if (!settings) return null;
   const s = settings;
@@ -24,6 +65,8 @@ export function AppsSection() {
       TEMPDUR: s.TEMPDUR,
       HUMDUR: s.HUMDUR,
       BATDUR: s.BATDUR,
+      CEL: s.CEL,
+      TOFF: s.TOFF,
     });
     setSaving(false);
   }
@@ -52,6 +95,15 @@ export function AppsSection() {
             <Slider label="" min={1} max={60} value={s.TEMPDUR || 7} onChange={(v) => updateSettings({ TEMPDUR: v })} unit="s" />
           </div>
         </div>
+        <FormRow centered>
+          <Toggle label="Celsius" checked={s.CEL} onChange={(v) => updateSettings({ CEL: v })} />
+          <Select
+            label="Offset"
+            value={s.TOFF ?? -9}
+            options={TEMP_OFFSET_OPTIONS}
+            onChange={(v) => updateSettings({ TOFF: v as number })}
+          />
+        </FormRow>
 
         <div class={styles.appRow}>
           <Toggle label="Humidity" checked={s.HUM} onChange={(v) => updateSettings({ HUM: v })} />
@@ -70,14 +122,12 @@ export function AppsSection() {
         </div>
 
         <Toggle label="Auto Transition" checked={s.ATRANS} onChange={(v) => updateSettings({ ATRANS: v })} />
-        {transitions.length > 0 && (
-          <Select
-            label="Transition Effect"
-            value={s.TEFF}
-            options={transitions.map((t, i) => ({ value: i, label: t }))}
-            onChange={(v) => updateSettings({ TEFF: v as number })}
-          />
-        )}
+        <Select
+          label="Transition Effect"
+          value={s.TEFF}
+          options={TRANSITION_OPTIONS}
+          onChange={(v) => updateSettings({ TEFF: v as number })}
+        />
         <Slider label="Transition Speed" min={100} max={2000} step={100} value={s.TSPEED} onChange={(v) => updateSettings({ TSPEED: v })} unit="ms" />
         <Slider label="Scroll Speed" min={10} max={100} value={s.SSPEED} onChange={(v) => updateSettings({ SSPEED: v })} />
         <Toggle label="Block Navigation" checked={s.BLOCKN} onChange={(v) => updateSettings({ BLOCKN: v })} />

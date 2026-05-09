@@ -55,11 +55,13 @@
 #define DEBUG_MatrixDisplayUi(...)
 #endif
 
-/// Vertical direction for slide transition animation.
+/// Direction for slide transition animation.
 enum AnimationDirection
 {
-    SLIDE_UP,
-    SLIDE_DOWN
+    ANIM_SLIDE_UP,
+    ANIM_SLIDE_DOWN,
+    ANIM_SLIDE_LEFT,
+    ANIM_SLIDE_RIGHT
 };
 
 /// Visual effect used when transitioning between apps.
@@ -67,7 +69,7 @@ enum AnimationDirection
 enum TransitionType
 {
     RANDOM,
-    SLIDE,
+    SLIDE,          // Slide Down (legacy, index 1)
     FADE,
     ZOOM,
     ROTATE,
@@ -76,7 +78,10 @@ enum TransitionType
     RIPPLE,
     BLINK,
     RELOAD,
-    CROSSFADE
+    CROSSFADE,
+    SLIDE_UP,       // New (index 11)
+    SLIDE_LEFT,     // New (index 12)
+    SLIDE_RIGHT     // New (index 13)
 };
 
 /// Current phase of the app display cycle.
@@ -144,7 +149,7 @@ class MatrixDisplayUi
     IMatrixHost *host_;        ///< Display host for LED access, gamma, app lifecycle
     CRGB ledsCopy[256];        ///< Temporary buffer for transition effects (32x8 pixels)
 
-    AnimationDirection appAnimationDirection = SLIDE_DOWN; ///< Slide direction for SLIDE transition
+    AnimationDirection appAnimationDirection = ANIM_SLIDE_DOWN; ///< Slide direction for SLIDE transition
     int8_t lastTransitionDirection = 1;                    ///< Saved direction before manual override
 
     unsigned long ticksPerApp = 151;  ///< Ticks to display each app (~5000ms at 30 FPS)
@@ -173,6 +178,7 @@ class MatrixDisplayUi
 
     // ── Transition effects (MatrixDisplayUi_Transitions.cpp) ──────────
     void slideTransition();
+    void slideTransitionWithDirection(AnimationDirection direction);
     void fadeTransition();
     void zoomTransition();
     void rotateTransition();

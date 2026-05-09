@@ -68,7 +68,7 @@ void DisplayRenderer_::printText(int16_t x, int16_t y, const char *text, bool ce
     if (centered)
     {
         uint16_t textWidth = getTextWidth(text, textCase);
-        int16_t textX = ((32 - textWidth) / 2);
+        int16_t textX = x + ((32 - textWidth) / 2);
         setCursor(textX, y);
     }
     else

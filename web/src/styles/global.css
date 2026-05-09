@@ -144,6 +144,13 @@ label {
   gap: 12px;
 }
 
+.form-row-centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+}
+
 .toast {
   position: fixed;
   bottom: 20px;

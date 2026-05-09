@@ -256,6 +256,8 @@ void loadSettings()
     Settings.begin("svitrix", false);
     brightnessConfig.brightness = Settings.getUInt("BRI", 120);
     brightnessConfig.autoBrightness = Settings.getBool("ABRI", false);
+    brightnessConfig.minBrightness = Settings.getUChar("MINBRI", 2);
+    brightnessConfig.maxBrightness = Settings.getUChar("MAXBRI", 160);
     displayConfig.uppercaseLetters = Settings.getBool("UPPER", true);
     colorConfig.textColor = Settings.getUInt("TCOL", 0xFFFFFF);
     colorConfig.calendarHeaderColor = Settings.getUInt("CHCOL", 0xFF0000);
@@ -285,6 +287,7 @@ void loadSettings()
     appConfig.showDate = Settings.getBool("DAT", false);
     appConfig.showTemp = Settings.getBool("TEMP", true);
     appConfig.showHum = Settings.getBool("HUM", true);
+    sensorConfig.tempOffset = Settings.getFloat("TOFF", -9.0);
     displayConfig.matrixLayout = Settings.getUInt("MAT", 0);
     displayConfig.backgroundEffect = Settings.getInt("BEFF", -1);
     appConfig.scrollSpeed = Settings.getUInt("SSPEED", 100);
@@ -330,6 +333,8 @@ void saveSettings()
     Settings.putUInt("BRI", brightnessConfig.brightness);
     Settings.putBool("WD", appConfig.showWeekday);
     Settings.putBool("ABRI", brightnessConfig.autoBrightness);
+    Settings.putUChar("MINBRI", brightnessConfig.minBrightness);
+    Settings.putUChar("MAXBRI", brightnessConfig.maxBrightness);
     Settings.putBool("BLOCKN", appConfig.blockNavigation);
     Settings.putBool("ATRANS", appConfig.autoTransition);
     Settings.putBool("UPPER", displayConfig.uppercaseLetters);
@@ -354,6 +359,7 @@ void saveSettings()
     Settings.putBool("DAT", appConfig.showDate);
     Settings.putBool("TEMP", appConfig.showTemp);
     Settings.putBool("HUM", appConfig.showHum);
+    Settings.putFloat("TOFF", sensorConfig.tempOffset);
     Settings.putUInt("SSPEED", appConfig.scrollSpeed);
     Settings.putUShort("TIMEDUR", appConfig.timeDuration);
     Settings.putUShort("DATEDUR", appConfig.dateDuration);
@@ -393,7 +399,7 @@ AuthConfig authConfig = {"", "svitrix"};
 DisplayConfig displayConfig = {0, 42, false, false, false, true, -1};
 BrightnessConfig brightnessConfig = {120, 0, true, 2, 160, 3.0, 1.0, false};
 ColorConfig colorConfig = {0xFFFFFF, 0, 0, 0, 0, 0, 0xFFFFFF, 0x666666, 0xFF0000, 0x000000, 0xFFFFFF};
-TimeConfig timeConfig = {"%H:%M:%S", "%d.%m.%y", 1, false, "time.cloudflare.com", "CET-1CEST,M3.5.0,M10.5.0/3", false, 0};
+TimeConfig timeConfig = {"%H:%M:%S", "%d.%m.%y", 1, false, "time.cloudflare.com", "CST6", false, 0};
 AppConfig appConfig = {true, true, true, true, true, true, false, 1, 400, 7000, 100, 7, 7, 7, 7, 7, IconLayout::Left, false, false, 1260, 360, 5, 0xFF0000, true};
 AudioConfig audioConfig = {false, 30, ""};
 SystemConfig systemConfig = {true, 15, 80, "", false, 10000, false, false, "", "", false, false, "", ""};

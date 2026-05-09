@@ -2,6 +2,8 @@ export interface Settings {
   MATP: boolean;
   ABRI: boolean;
   BRI: number;
+  MINBRI: number;
+  MAXBRI: number;
   ATRANS: boolean;
   TCOL: number;
   TEFF: number;
@@ -49,6 +51,7 @@ export interface Settings {
   TEMPDUR: number;
   HUMDUR: number;
   BATDUR: number;
+  TOFF: number;
 }
 
 export interface Stats {

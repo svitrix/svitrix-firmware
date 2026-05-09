@@ -6,6 +6,7 @@ export function Slider({
   onChange,
   step,
   unit,
+  compact,
 }: {
   label: string;
   min: number;
@@ -14,10 +15,12 @@ export function Slider({
   onChange: (v: number) => void;
   step?: number;
   unit?: string;
+  compact?: boolean;
 }) {
   const id = label.toLowerCase().replace(/\s+/g, "-");
+  const style = compact ? { maxWidth: "105px", minWidth: "85px" } : undefined;
   return (
-    <div class="form-group">
+    <div class="form-group" style={style}>
       <label htmlFor={id}>
         {label}: {value}{unit ?? ""}
       </label>

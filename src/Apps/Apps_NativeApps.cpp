@@ -203,7 +203,8 @@ void TimeApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_t x, 
         timePosY = 6;
     }
 
-    DisplayManager.printText(12 + x, timePosY + y, t, timeConfig.timeMode == 0, 2);
+    int16_t baseX = (timeConfig.timeMode == 0) ? 0 : 12;
+    DisplayManager.printText(baseX + x, timePosY + y, t, timeConfig.timeMode == 0, 2);
 
     if (timeConfig.timeMode > 0)
     {

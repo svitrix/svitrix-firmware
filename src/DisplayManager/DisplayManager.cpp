@@ -221,7 +221,7 @@ void DisplayManager_::setup()
     {
         FastLED.setTemperature(colorTemperature);
     }
-    ui->setAppAnimation(SLIDE_DOWN);
+    ui->setAppAnimation(ANIM_SLIDE_DOWN);
 
     ui->setTargetFPS(displayConfig.matrixFps);
     ui->setTimePerApp(appConfig.timePerApp);
@@ -495,6 +495,7 @@ void DisplayManager_::setPower(bool state)
 /// Applies gamma correction to all LEDs based on current brightness.
 /// Saves original colors to ledsCopy[] before correction.
 /// Also mirrors the display horizontally if mirrorDisplay is enabled.
+/// At very low brightness (1-5), applies additional dimming for better low-light control.
 void DisplayManager_::gammaCorrection()
 {
     float gamma = calculateGamma(actualBri);
@@ -502,6 +503,15 @@ void DisplayManager_::gammaCorrection()
     for (int i = 0; i < MATRIX_WIDTH * MATRIX_HEIGHT; i++)
     {
         leds[i] = applyGamma_video(leds[i], gamma);
+    }
+    // Apply extra dimming at very low brightness for better low-light control
+    if (actualBri <= 5)
+    {
+        uint8_t scale = map(actualBri, 1, 5, 32, 192);
+        for (int i = 0; i < MATRIX_WIDTH * MATRIX_HEIGHT; i++)
+        {
+            leds[i].nscale8(scale);
+        }
     }
 
     if (displayConfig.mirrorDisplay)

@@ -30,7 +30,7 @@ void rotate(int& x, int& y, float angle)
 /// Pick a random TransitionType, excluding RANDOM (index 0).
 TransitionType getRandomTransition()
 {
-    return static_cast<TransitionType>((rand() % (CROSSFADE)) + 1);
+    return static_cast<TransitionType>((rand() % SLIDE_RIGHT) + 1);
 }
 
 // ── Transitions ─────────────────────────────────────────────────────
@@ -69,25 +69,44 @@ void MatrixDisplayUi::fadeTransition()
     }
 }
 
-/// Slide the old app out and the new app in vertically (up or down).
+/// Slide the old app out and the new app in.
 /// Direction is inverted when navigating backward.
 void MatrixDisplayUi::slideTransition()
 {
+    slideTransitionWithDirection(this->appAnimationDirection);
+}
+
+/// Slide transition with explicit direction (used by directional slide variants).
+void MatrixDisplayUi::slideTransitionWithDirection(AnimationDirection direction)
+{
+    this->matrix->clear();
     float progress = (float)this->state.ticksSinceLastStateSwitch / (float)this->ticksPerTransition;
     int16_t x, y, x1, y1;
-    switch (this->appAnimationDirection)
+    switch (direction)
     {
-    case SLIDE_UP:
+    case ANIM_SLIDE_UP:
         x = 0;
         y = -8 * progress;
         x1 = 0;
         y1 = y + 8;
         break;
-    case SLIDE_DOWN:
+    case ANIM_SLIDE_DOWN:
         x = 0;
         y = 8 * progress;
         x1 = 0;
         y1 = y - 8;
+        break;
+    case ANIM_SLIDE_LEFT:
+        x = -32 * progress;
+        y = 0;
+        x1 = x + 32;
+        y1 = 0;
+        break;
+    case ANIM_SLIDE_RIGHT:
+        x = 32 * progress;
+        y = 0;
+        x1 = x - 32;
+        y1 = 0;
         break;
     }
     int8_t dir = this->state.appTransitionDirection >= 0 ? 1 : -1;

@@ -22,11 +22,9 @@ const DATE_FORMATS = [
   { value: "%d.%m.%y", label: "DD.MM.YY" },
   { value: "%d-%m-%y", label: "DD-MM-YY" },
   { value: "%d %b", label: "DD Mon" },
-  { value: "%d %b %Y", label: "DD Mon YYYY" },
   { value: "%m.%d.%y", label: "MM.DD.YY" },
   { value: "%m-%d-%y", label: "MM-DD-YY" },
   { value: "%b %d", label: "Mon DD" },
-  { value: "%b %d %Y", label: "Mon DD YYYY" },
 ];
 
 const ALL_TIME_MODES = [
@@ -66,7 +64,7 @@ export function TimeDateSection() {
     setSaving(true);
     await saveDisplaySettings({
       TFORMAT: s.TFORMAT, DFORMAT: s.DFORMAT, TMODE: s.TMODE,
-      SOM: s.SOM, CEL: s.CEL,
+      SOM: s.SOM,
       TIME_COL: s.TIME_COL, DATE_COL: s.DATE_COL,
       WD: s.WD, WDCA: s.WDCA, WDCI: s.WDCI,
       CHCOL: s.CHCOL, CTCOL: s.CTCOL, CBCOL: s.CBCOL,
@@ -99,7 +97,6 @@ export function TimeDateSection() {
         />
         {hasSeconds && <p class={styles.hint}>Calendar and Big Digits modes disabled when showing seconds</p>}
         <Toggle label="Start on Monday" checked={s.SOM} onChange={(v) => updateSettings({ SOM: v })} />
-        <Toggle label="Celsius" checked={s.CEL} onChange={(v) => updateSettings({ CEL: v })} />
         <FormRow>
           <ColorField label="Time Color" value={s.TIME_COL} onChange={(v) => updateSettings({ TIME_COL: v })} />
           <ColorField label="Date Color" value={s.DATE_COL} onChange={(v) => updateSettings({ DATE_COL: v })} />

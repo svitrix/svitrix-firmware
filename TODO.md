@@ -45,14 +45,6 @@
   - Configuración de ubicación/API key en settings
   - Agregar como app nativa junto a Time, Date, Temp, Hum, Bat
 
-## Sensores
-
-- [ ] **Ajuste compensación temperatura sensor interno**
-  - Agregar opción en Web UI para configurar offset de temperatura
-  - El sensor interno suele leer más alto por calor del ESP32
-  - Permitir valores negativos (ej: -3°C) para compensar
-  - Guardar en settings y aplicar a lecturas
-
 ## Documentación
 
 - [ ] **Manual de Interface Web**
