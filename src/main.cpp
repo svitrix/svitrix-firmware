@@ -141,12 +141,14 @@ void setup()
         DisplayManager.startArtnet();
         stopBootAnimation();
         float x = 4;
-        String textForDisplay = "SVITRIX   " + ServerManager.myIP.toString();
+        String textForDisplay = "SVITRIX XE1E   " + ServerManager.myIP.toString();
 
         if (systemConfig.webPort != 80)
         {
             textForDisplay += ":" + String(systemConfig.webPort);
         }
+
+        textForDisplay += "   " + systemConfig.hostname + ".local";
 
         int textLength = textForDisplay.length() * 4;
         while (x >= -textLength)

@@ -28,3 +28,35 @@
   - Verificar que los SSIDs configurados se muestren correctamente al cargar
   - Probar guardado y reconexión con las 3 redes
   - Verificar comportamiento del fallback entre redes
+
+## Menú en Pantalla
+
+- [ ] **Analizar menú en pantalla**
+  - Revisar funciones actuales del menú físico (botones)
+  - Optimizar navegación y opciones
+  - Agregar nuevas funciones útiles
+  - Documentar opciones disponibles
+
+## Apps Nativas
+
+- [ ] **App de Clima Exterior (WeatherAPI)**
+  - Integrar WeatherAPI para obtener clima actual
+  - Mostrar temperatura, condición, icono
+  - Configuración de ubicación/API key en settings
+  - Agregar como app nativa junto a Time, Date, Temp, Hum, Bat
+
+## Sensores
+
+- [ ] **Ajuste compensación temperatura sensor interno**
+  - Agregar opción en Web UI para configurar offset de temperatura
+  - El sensor interno suele leer más alto por calor del ESP32
+  - Permitir valores negativos (ej: -3°C) para compensar
+  - Guardar en settings y aplicar a lecturas
+
+## Documentación
+
+- [ ] **Manual de Interface Web**
+  - Documentar todas las secciones de Settings
+  - Explicar cada opción y su función
+  - Incluir capturas de pantalla
+  - Formato: docs/ o README separado
