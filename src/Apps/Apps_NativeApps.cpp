@@ -350,6 +350,17 @@ void BatApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_t x, i
 
 // ── OutdoorTempApp ─────────────────────────────────────────────────
 
+/// Returns weather condition icon based on WeatherAPI condition code.
+static const uint16_t* getWeatherConditionIcon(int code)
+{
+    // Sunny/Clear: 1000
+    if (code == 1000) return icon_sunny;
+    // Rain: 1063, 1150-1201, 1240-1246
+    if (code == 1063 || (code >= 1150 && code <= 1201) || (code >= 1240 && code <= 1246)) return icon_rainy;
+    // Cloudy/Overcast/Fog: 1003, 1006, 1009, 1030, 1135, 1147
+    return icon_cloudy;
+}
+
 /// Weather app showing outdoor temperature from WeatherAPI.
 void OutdoorTempApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_t x, int16_t y, GifPlayer *gifPlayer)
 {
@@ -362,17 +373,18 @@ void OutdoorTempApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int1
 
     if (m.hasIcon)
     {
-        matrix->drawRGBBitmap(x + m.iconX, y, icon_234, 8, 8);
+        const uint16_t* condIcon = getWeatherConditionIcon(weatherData.conditionCode);
+        matrix->drawRGBBitmap(x + m.iconX, y, condIcon, 8, 8);
     }
 
     String tempStr;
     if (weatherData.valid)
     {
-        tempStr = String(weatherData.outdoorTemp, timeConfig.tempDecimalPlaces) + "\xB0" + (timeConfig.isCelsius ? "C" : "F");
+        tempStr = String(weatherData.outdoorTemp, timeConfig.tempDecimalPlaces) + "°" + (timeConfig.isCelsius ? "C" : "F");
     }
     else
     {
-        tempStr = "--.-\xB0" + String(timeConfig.isCelsius ? "C" : "F");
+        tempStr = "--.-°" + String(timeConfig.isCelsius ? "C" : "F");
     }
 
     uint16_t textWidth = getTextWidth(tempStr.c_str(), 0);
@@ -395,9 +407,31 @@ void OutdoorHumApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16
 
     LayoutMetrics m = LayoutEngine::computeLayout(appConfig.nativeIconLayout, 0);
 
+    static File humIconGif;
+    static bool humIconChecked = false;
+    static bool humIconIsGif = false;
+    static uint16_t humIconFrame = 0;
+
     if (m.hasIcon)
     {
-        matrix->drawRGBBitmap(x + m.iconX, y + 1, icon_2075, 8, 8);
+        if (!humIconChecked)
+        {
+            humIconChecked = true;
+            if (LittleFS.exists("/ICONS/53628.gif"))
+            {
+                humIconGif = LittleFS.open("/ICONS/53628.gif");
+                humIconIsGif = true;
+            }
+        }
+        if (humIconIsGif)
+        {
+            gifPlayer->playGif(x + m.iconX, y, &humIconGif, humIconFrame);
+            humIconFrame = gifPlayer->getFrame();
+        }
+        else
+        {
+            matrix->drawRGBBitmap(x + m.iconX, y, icon_53628, 8, 8);
+        }
     }
 
     String humStr;
@@ -428,18 +462,48 @@ void PressureApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_t
 
     applyNativeAppColor(weatherConfig.pressureColor);
 
+    LayoutMetrics m = LayoutEngine::computeLayout(appConfig.nativeIconLayout, 0);
+
+    static File pressIconGif;
+    static bool pressIconChecked = false;
+    static bool pressIconIsGif = false;
+    static uint16_t pressIconFrame = 0;
+
+    if (m.hasIcon)
+    {
+        if (!pressIconChecked)
+        {
+            pressIconChecked = true;
+            if (LittleFS.exists("/ICONS/66892.gif"))
+            {
+                pressIconGif = LittleFS.open("/ICONS/66892.gif");
+                pressIconIsGif = true;
+            }
+        }
+        if (pressIconIsGif)
+        {
+            gifPlayer->playGif(x + m.iconX, y, &pressIconGif, pressIconFrame);
+            pressIconFrame = gifPlayer->getFrame();
+        }
+        else
+        {
+            matrix->drawRGBBitmap(x + m.iconX, y, icon_66892, 8, 8);
+        }
+    }
+
     String pressStr;
     if (weatherData.valid)
     {
-        pressStr = String(static_cast<int>(weatherData.pressure)) + "mb";
+        pressStr = String(static_cast<int>(weatherData.pressure));
     }
     else
     {
-        pressStr = "----mb";
+        pressStr = "----";
     }
 
     uint16_t textWidth = getTextWidth(pressStr.c_str(), 0);
-    int16_t textX = (32 - textWidth) / 2;
+    LayoutMetrics tm = LayoutEngine::computeLayout(appConfig.nativeIconLayout, textWidth);
+    int16_t textX = tm.textCenterX;
 
     DisplayManager.setCursor(textX + x, 6 + y);
     DisplayManager.matrixPrint(pressStr.c_str());
@@ -469,6 +533,13 @@ void AirQualityApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16
     }
     applyNativeAppColor(aqiColor);
 
+    LayoutMetrics m = LayoutEngine::computeLayout(appConfig.nativeIconLayout, 0);
+
+    if (m.hasIcon)
+    {
+        matrix->drawRGBBitmap(x + m.iconX, y, icon_6622, 8, 8);
+    }
+
     String aqiStr;
     if (weatherData.valid && weatherData.aqi > 0)
     {
@@ -480,7 +551,8 @@ void AirQualityApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16
     }
 
     uint16_t textWidth = getTextWidth(aqiStr.c_str(), 0);
-    int16_t textX = (32 - textWidth) / 2;
+    LayoutMetrics tm = LayoutEngine::computeLayout(appConfig.nativeIconLayout, textWidth);
+    int16_t textX = tm.textCenterX;
 
     DisplayManager.setCursor(textX + x, 6 + y);
     DisplayManager.matrixPrint(aqiStr.c_str());

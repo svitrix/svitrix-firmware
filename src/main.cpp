@@ -129,7 +129,7 @@ void setup()
     ServerManager.loadSettings();
     DisplayManager.setup();
     DisplayManager.HSVtext(9, 6, VERSION, true, 0);
-    delay(500);
+    delay(2500);
     xTaskCreatePinnedToCore(BootAnimation, "Task", 10000, NULL, 1, &taskHandle, 0);
     ServerManager.setup();
     if (ServerManager.isConnected)
@@ -156,6 +156,7 @@ void setup()
             DisplayManager.HSVtext(x, 6, textForDisplay.c_str(), true, 0);
             x -= 0.18;
         }
+        delay(2000);
 
 
         if (mqttConfig.host != "")

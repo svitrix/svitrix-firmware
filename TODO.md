@@ -2,6 +2,19 @@
 
 ## UI / Display
 
+- [ ] **Revisar ajustes Brightness Slider**
+  - Checar cómo funciona slider Brightness vs sliders Auto Brightness (Min/Max)
+  - Verificar interacción cuando Auto Brightness está activo
+  - Posiblemente clarificar UI o lógica
+
+- [ ] **Header fijo en Web UI**
+  - Verificar que position:sticky funcione correctamente
+  - Si no funciona, revisar overflow del contenedor padre
+
+- [x] **Banner de versión al inicio** ✅
+  - Muestra "SVITRIX XE1E V x.x.x" + IP + hostname
+  - Pausa 2 segundos después del scroll
+
 - [ ] **Colon más pequeño (1x2) para el reloj**
   - Modificar el renderizado del colon (:) en el modo reloj de texto
   - Que sea 1 pixel de ancho por 2 de alto, en lugar del tamaño actual (1x3)
@@ -39,11 +52,19 @@
 
 ## Apps Nativas
 
-- [ ] **App de Clima Exterior (WeatherAPI)**
+- [x] **App de Clima Exterior (WeatherAPI)** ✅
   - Integrar WeatherAPI para obtener clima actual
   - Mostrar temperatura, condición, icono
   - Configuración de ubicación/API key en settings
-  - Agregar como app nativa junto a Time, Date, Temp, Hum, Bat
+  - Apps: OutdoorTemp, OutdoorHum, Pressure, AirQuality
+  - Iconos GIF desde /ICONS/ (53628, 66892, 53778)
+  - Icono temperatura según condición climática (sunny/cloudy/rainy)
+
+- [ ] **Iconos animados GIF causan reinicio**
+  - Batería: 12835.gif causa reinicio
+  - AQI: 53778.gif causa reinicio
+  - Investigar compatibilidad del formato GIF
+  - OutdoorHum (53628.gif) y Pressure (66892.gif) funcionan bien
 
 ## Documentación
 
