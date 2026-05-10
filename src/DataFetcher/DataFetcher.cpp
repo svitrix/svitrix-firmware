@@ -46,10 +46,29 @@ void DataFetcher_::setup()
 
 void DataFetcher_::tick()
 {
+    unsigned long now = millis();
+
+    // Weather API fetch (independent of custom data sources)
+    if (!weatherConfig.apiKey.isEmpty())
+    {
+        unsigned long weatherInterval = weatherConfig.updateInterval * 60000UL;
+        if (now - lastWeatherFetch_ >= weatherInterval)
+        {
+            if (ESP.getFreeHeap() > MIN_FREE_HEAP)
+            {
+                fetchWeather();
+                lastWeatherFetch_ = now;
+            }
+            else
+            {
+                DEBUG_PRINTLN(F("DataFetcher: low heap, skipping weather fetch"));
+            }
+        }
+    }
+
+    // Custom data sources (round-robin)
     if (!nav_ || sources_.empty())
         return;
-
-    unsigned long now = millis();
 
     // Round-robin: check one source per tick to avoid blocking the loop
     size_t idx = nextFetchIndex_ % sources_.size();
@@ -419,4 +438,123 @@ void DataFetcher_::saveSources()
     }
     serializeJson(doc, file);
     file.close();
+}
+
+// ---------- Weather API ----------
+
+String DataFetcher_::buildWeatherQuery()
+{
+    String q;
+    switch (weatherConfig.locationType)
+    {
+    case WEATHER_LOC_CITY:
+        q = weatherConfig.city;
+        break;
+    case WEATHER_LOC_COORDS:
+        q = String(weatherConfig.latitude, 4) + "," + String(weatherConfig.longitude, 4);
+        break;
+    case WEATHER_LOC_STATION:
+        q = weatherConfig.stationId;
+        break;
+    case WEATHER_LOC_AUTO_IP:
+    default:
+        q = "auto:ip";
+        break;
+    }
+    return q;
+}
+
+void DataFetcher_::fetchWeather()
+{
+    if (weatherConfig.apiKey.isEmpty())
+    {
+        weatherData.valid = false;
+        return;
+    }
+
+    String url = "https://api.weatherapi.com/v1/current.json?key=";
+    url += weatherConfig.apiKey;
+    url += "&q=";
+    url += buildWeatherQuery();
+    url += "&aqi=yes";
+
+    DEBUG_PRINTF("DataFetcher: fetching weather from %s", url.c_str());
+
+    HTTPClient http;
+    WiFiClientSecure secClient;
+    secClient.setInsecure();
+
+    http.begin(secClient, url);
+    http.setConnectTimeout(HTTP_CONNECT_TIMEOUT);
+    http.setTimeout(HTTP_READ_TIMEOUT);
+    http.addHeader("Accept", "application/json");
+
+    int httpCode = http.GET();
+    if (httpCode != HTTP_CODE_OK)
+    {
+        DEBUG_PRINTF("DataFetcher: weather fetch failed: %d", httpCode);
+        http.end();
+        weatherData.valid = false;
+        return;
+    }
+
+    String body = http.getString();
+    http.end();
+
+    DynamicJsonDocument doc(2048);
+    DeserializationError err = deserializeJson(doc, body);
+    if (err)
+    {
+        DEBUG_PRINTF("DataFetcher: weather JSON parse error: %s", err.c_str());
+        weatherData.valid = false;
+        return;
+    }
+
+    JsonObject current = doc["current"];
+    if (current.isNull())
+    {
+        DEBUG_PRINTLN(F("DataFetcher: weather response missing 'current' object"));
+        weatherData.valid = false;
+        return;
+    }
+
+    // Temperature (use unit from timeConfig)
+    weatherData.outdoorTemp = timeConfig.isCelsius ? current["temp_c"].as<float>()
+                                                   : current["temp_f"].as<float>();
+    weatherData.outdoorHumidity = current["humidity"].as<float>();
+    weatherData.pressure = current["pressure_mb"].as<float>();
+
+    // Condition
+    JsonObject condition = current["condition"];
+    if (!condition.isNull())
+    {
+        weatherData.condition = condition["text"].as<String>();
+        weatherData.conditionCode = condition["code"].as<int>();
+    }
+
+    // Air Quality Index (US EPA standard)
+    JsonObject airQuality = current["air_quality"];
+    if (!airQuality.isNull())
+    {
+        weatherData.aqi = airQuality["us-epa-index"].as<int>();
+    }
+    else
+    {
+        weatherData.aqi = 0;
+    }
+
+    weatherData.lastUpdate = millis();
+    weatherData.valid = true;
+
+    DEBUG_PRINTF("DataFetcher: weather updated - %.1f%s, %s, AQI=%d",
+                 weatherData.outdoorTemp,
+                 timeConfig.isCelsius ? "C" : "F",
+                 weatherData.condition.c_str(),
+                 weatherData.aqi);
+}
+
+void DataFetcher_::forceWeatherFetch()
+{
+    fetchWeather();
+    lastWeatherFetch_ = millis();
 }

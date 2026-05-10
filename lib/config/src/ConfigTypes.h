@@ -161,3 +161,37 @@ struct SystemConfig {
     String updateVersionUrl;
     String updateFirmwareUrl;
 };
+
+enum WeatherLocationType : uint8_t {
+    WEATHER_LOC_CITY = 0,
+    WEATHER_LOC_COORDS = 1,
+    WEATHER_LOC_AUTO_IP = 2,
+    WEATHER_LOC_STATION = 3
+};
+
+struct WeatherConfig {
+    String apiKey;
+    WeatherLocationType locationType;
+    String city;
+    float latitude;
+    float longitude;
+    String stationId;         // PWS station ID (e.g. "pws:KMAHANOV10")
+    uint16_t updateInterval;  // minutes (10, 15, 30, 60)
+    bool showOutdoorTemp;
+    bool showOutdoorHumidity;
+    bool showPressure;
+    bool showAirQuality;
+    bool showIndoorTemp;
+    bool showIndoorHumidity;
+};
+
+struct WeatherData {
+    float outdoorTemp;
+    float outdoorHumidity;
+    float pressure;           // mb/hPa
+    int aqi;                  // US EPA index (1-6)
+    String condition;         // "sunny", "cloudy", etc.
+    int conditionCode;        // WeatherAPI condition code
+    unsigned long lastUpdate; // millis() of last update
+    bool valid;               // data available
+};

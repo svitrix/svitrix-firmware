@@ -20,10 +20,15 @@ class DataFetcher_
     std::vector<unsigned long> lastFetch_;
     size_t nextFetchIndex_ = 0;
 
+    unsigned long lastWeatherFetch_ = 0;
+
     bool fetchAndPush(size_t index);
     String extractJsonValue(const String& json, const String& path);
     static String buildCustomAppJson(const DataSourceConfig& src, const String& value);
     static String formatValue(const DataSourceConfig& src, const String& raw);
+
+    void fetchWeather();
+    String buildWeatherQuery();
 
   public:
     static DataFetcher_& getInstance();
@@ -38,6 +43,7 @@ class DataFetcher_
     bool removeSource(const String& name);
     String getSourcesAsJson();
     void forceFetch(const String& name);
+    void forceWeatherFetch();
     void loadSources();
     void saveSources();
 };

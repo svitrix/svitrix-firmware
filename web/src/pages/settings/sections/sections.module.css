@@ -128,3 +128,19 @@
   flex: 1;
   min-width: 100px;
 }
+
+/* Weather status display */
+.weatherStatus {
+  margin-top: 8px;
+  padding: 12px;
+  background: var(--bg-input);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+.weatherGrid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 12px;
+  font-size: 13px;
+}

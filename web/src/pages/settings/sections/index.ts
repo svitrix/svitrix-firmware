@@ -13,3 +13,4 @@ export { InfraSaveButton } from "./InfraSaveButton";
 export { ActionsBar } from "./ActionsBar";
 export { NotifySection } from "./NotifySection";
 export { NightModeSection } from "./NightModeSection";
+export { WeatherSection } from "./WeatherSection";

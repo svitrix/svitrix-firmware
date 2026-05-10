@@ -215,6 +215,68 @@ void addHandler()
                             }
                             saveSettings();
                             request->send(200, "text/plain", "OK"); });
+    // NOTE: more specific routes must be registered BEFORE the parent route
+    mws.addHandler("/api/weather/fetch", HTTP_POST, [](AsyncWebServerRequest *request)
+                   {
+                    DataFetcher.forceWeatherFetch();
+                    request->send(200, "text/plain", "OK"); });
+    mws.addHandler("/api/weather/data", HTTP_GET, [](AsyncWebServerRequest *request)
+                   {
+                    StaticJsonDocument<512> doc;
+                    doc["valid"] = weatherData.valid;
+                    doc["outdoorTemp"] = weatherData.outdoorTemp;
+                    doc["outdoorHumidity"] = weatherData.outdoorHumidity;
+                    doc["pressure"] = weatherData.pressure;
+                    doc["aqi"] = weatherData.aqi;
+                    doc["condition"] = weatherData.condition;
+                    doc["conditionCode"] = weatherData.conditionCode;
+                    doc["lastUpdate"] = weatherData.lastUpdate;
+                    String json;
+                    serializeJson(doc, json);
+                    request->send(200, "application/json", json); });
+    mws.addHandler("/api/weather", HTTP_GET, [](AsyncWebServerRequest *request)
+                   {
+                    StaticJsonDocument<512> doc;
+                    doc["apiKey"] = weatherConfig.apiKey;
+                    doc["locationType"] = static_cast<int>(weatherConfig.locationType);
+                    doc["city"] = weatherConfig.city;
+                    doc["latitude"] = weatherConfig.latitude;
+                    doc["longitude"] = weatherConfig.longitude;
+                    doc["stationId"] = weatherConfig.stationId;
+                    doc["updateInterval"] = weatherConfig.updateInterval;
+                    doc["showOutdoorTemp"] = weatherConfig.showOutdoorTemp;
+                    doc["showOutdoorHumidity"] = weatherConfig.showOutdoorHumidity;
+                    doc["showPressure"] = weatherConfig.showPressure;
+                    doc["showAirQuality"] = weatherConfig.showAirQuality;
+                    doc["showIndoorTemp"] = weatherConfig.showIndoorTemp;
+                    doc["showIndoorHumidity"] = weatherConfig.showIndoorHumidity;
+                    String json;
+                    serializeJson(doc, json);
+                    request->send(200, "application/json", json); });
+    mws.addHandlerWithBody("/api/weather", HTTP_POST, [](AsyncWebServerRequest *request)
+                           {
+                            String body = getBody(request);
+                            StaticJsonDocument<512> doc;
+                            DeserializationError err = deserializeJson(doc, body);
+                            if (err) {
+                                request->send(400, "text/plain", "InvalidJSON");
+                                return;
+                            }
+                            if (doc.containsKey("apiKey")) weatherConfig.apiKey = doc["apiKey"].as<String>();
+                            if (doc.containsKey("locationType")) weatherConfig.locationType = static_cast<WeatherLocationType>(doc["locationType"].as<int>());
+                            if (doc.containsKey("city")) weatherConfig.city = doc["city"].as<String>();
+                            if (doc.containsKey("latitude")) weatherConfig.latitude = doc["latitude"].as<float>();
+                            if (doc.containsKey("longitude")) weatherConfig.longitude = doc["longitude"].as<float>();
+                            if (doc.containsKey("stationId")) weatherConfig.stationId = doc["stationId"].as<String>();
+                            if (doc.containsKey("updateInterval")) weatherConfig.updateInterval = doc["updateInterval"].as<uint16_t>();
+                            if (doc.containsKey("showOutdoorTemp")) weatherConfig.showOutdoorTemp = doc["showOutdoorTemp"].as<bool>();
+                            if (doc.containsKey("showOutdoorHumidity")) weatherConfig.showOutdoorHumidity = doc["showOutdoorHumidity"].as<bool>();
+                            if (doc.containsKey("showPressure")) weatherConfig.showPressure = doc["showPressure"].as<bool>();
+                            if (doc.containsKey("showAirQuality")) weatherConfig.showAirQuality = doc["showAirQuality"].as<bool>();
+                            if (doc.containsKey("showIndoorTemp")) weatherConfig.showIndoorTemp = doc["showIndoorTemp"].as<bool>();
+                            if (doc.containsKey("showIndoorHumidity")) weatherConfig.showIndoorHumidity = doc["showIndoorHumidity"].as<bool>();
+                            saveSettings();
+                            request->send(200, "text/plain", "OK"); });
     mws.addHandlerWithBody("/api/custom", HTTP_POST, [](AsyncWebServerRequest *request)
                            {
                             String name;

@@ -314,6 +314,20 @@ void loadSettings()
     wifiConfig.networks[1].password = Settings.getString("WPASS2", "");
     wifiConfig.networks[2].ssid = Settings.getString("WSSID3", "");
     wifiConfig.networks[2].password = Settings.getString("WPASS3", "");
+    // Weather API config
+    weatherConfig.apiKey = Settings.getString("WAPI_KEY", "");
+    weatherConfig.locationType = static_cast<WeatherLocationType>(Settings.getUChar("WAPI_LOC", 0));
+    weatherConfig.city = Settings.getString("WAPI_CITY", "");
+    weatherConfig.latitude = Settings.getFloat("WAPI_LAT", 0.0);
+    weatherConfig.longitude = Settings.getFloat("WAPI_LON", 0.0);
+    weatherConfig.stationId = Settings.getString("WAPI_STA", "");
+    weatherConfig.updateInterval = Settings.getUShort("WAPI_INT", 30);
+    weatherConfig.showOutdoorTemp = Settings.getBool("WAPI_OTEMP", true);
+    weatherConfig.showOutdoorHumidity = Settings.getBool("WAPI_OHUM", false);
+    weatherConfig.showPressure = Settings.getBool("WAPI_PRES", false);
+    weatherConfig.showAirQuality = Settings.getBool("WAPI_AQI", false);
+    weatherConfig.showIndoorTemp = Settings.getBool("WAPI_ITEMP", false);
+    weatherConfig.showIndoorHumidity = Settings.getBool("WAPI_IHUM", false);
     Settings.end();
     systemConfig.deviceId = getID();
     mqttConfig.prefix = systemConfig.deviceId;
@@ -385,6 +399,20 @@ void saveSettings()
     Settings.putString("WPASS2", wifiConfig.networks[1].password);
     Settings.putString("WSSID3", wifiConfig.networks[2].ssid);
     Settings.putString("WPASS3", wifiConfig.networks[2].password);
+    // Weather API config
+    Settings.putString("WAPI_KEY", weatherConfig.apiKey);
+    Settings.putUChar("WAPI_LOC", static_cast<uint8_t>(weatherConfig.locationType));
+    Settings.putString("WAPI_CITY", weatherConfig.city);
+    Settings.putFloat("WAPI_LAT", weatherConfig.latitude);
+    Settings.putFloat("WAPI_LON", weatherConfig.longitude);
+    Settings.putString("WAPI_STA", weatherConfig.stationId);
+    Settings.putUShort("WAPI_INT", weatherConfig.updateInterval);
+    Settings.putBool("WAPI_OTEMP", weatherConfig.showOutdoorTemp);
+    Settings.putBool("WAPI_OHUM", weatherConfig.showOutdoorHumidity);
+    Settings.putBool("WAPI_PRES", weatherConfig.showPressure);
+    Settings.putBool("WAPI_AQI", weatherConfig.showAirQuality);
+    Settings.putBool("WAPI_ITEMP", weatherConfig.showIndoorTemp);
+    Settings.putBool("WAPI_IHUM", weatherConfig.showIndoorHumidity);
     Settings.end();
 }
 
@@ -403,3 +431,5 @@ TimeConfig timeConfig = {"%H:%M:%S", "%d.%m.%y", 1, false, "time.cloudflare.com"
 AppConfig appConfig = {true, true, true, true, true, true, false, 1, 400, 7000, 100, 7, 7, 7, 7, 7, IconLayout::Left, false, false, 1260, 360, 5, 0xFF0000, true};
 AudioConfig audioConfig = {false, 30, ""};
 SystemConfig systemConfig = {true, 15, 80, "", false, 10000, false, false, "", "", false, false, "", ""};
+WeatherConfig weatherConfig = {"", WEATHER_LOC_CITY, "", 0.0, 0.0, "", 30, true, false, false, false, false, false};
+WeatherData weatherData = {0, 0, 0, 0, "", 0, 0, false};

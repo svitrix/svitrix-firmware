@@ -16,6 +16,7 @@ import {
   ActionsBar,
   NotifySection,
   NightModeSection,
+  WeatherSection,
 } from "./sections";
 
 function SettingsContent() {
@@ -45,6 +46,7 @@ function SettingsContent() {
       <NightModeSection />
       <DisplaySection />
       <AppsSection />
+      <WeatherSection />
       <TimeDateSection />
       <SoundSection />
       <NotifySection />

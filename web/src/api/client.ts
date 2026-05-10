@@ -8,6 +8,8 @@ import type {
   Indicator,
   EffectInfo,
   TransitionInfo,
+  WeatherConfig,
+  WeatherData,
 } from "./types";
 
 async function get<T>(url: string): Promise<T> {
@@ -164,3 +166,10 @@ export async function saveConfig(config: Record<string, unknown>): Promise<void>
   await fetch("/edit", { method: "POST", body: form });
   await fetch("/save", { method: "POST" });
 }
+
+// Weather API config
+export const getWeatherConfig = () => get<WeatherConfig>("/api/weather");
+export const saveWeatherConfig = (config: Partial<WeatherConfig>) =>
+  post("/api/weather", config);
+export const getWeatherData = () => get<WeatherData>("/api/weather/data");
+export const forceWeatherFetch = () => post("/api/weather/fetch");

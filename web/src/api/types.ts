@@ -140,3 +140,30 @@ export interface InfraConfig {
   "Auth Username": string;
   "Auth Password": string;
 }
+
+export interface WeatherConfig {
+  apiKey: string;
+  locationType: number;  // 0=city, 1=coords, 2=auto:ip, 3=station
+  city: string;
+  latitude: number;
+  longitude: number;
+  stationId: string;
+  updateInterval: number;
+  showOutdoorTemp: boolean;
+  showOutdoorHumidity: boolean;
+  showPressure: boolean;
+  showAirQuality: boolean;
+  showIndoorTemp: boolean;
+  showIndoorHumidity: boolean;
+}
+
+export interface WeatherData {
+  valid: boolean;
+  outdoorTemp: number;
+  outdoorHumidity: number;
+  pressure: number;
+  aqi: number;
+  condition: string;
+  conditionCode: number;
+  lastUpdate: number;
+}

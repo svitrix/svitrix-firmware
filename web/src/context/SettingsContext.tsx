@@ -1,6 +1,6 @@
 import { createContext } from "preact";
 import { useContext, useState, useEffect, useCallback } from "preact/hooks";
-import type { Settings, Stats, TransitionInfo, EffectInfo, InfraConfig } from "../api/types";
+import type { Settings, Stats, TransitionInfo, EffectInfo, InfraConfig, WeatherConfig } from "../api/types";
 import {
   getSettings,
   saveSettings,
@@ -9,6 +9,8 @@ import {
   getEffects,
   getConfig,
   saveConfig,
+  getWeatherConfig,
+  saveWeatherConfig as apiSaveWeatherConfig,
 } from "../api/client";
 import { toast } from "../components/Toast";
 import type { ComponentChildren } from "preact";
@@ -34,14 +36,17 @@ function prepareSettingsForSave(fields: Partial<Settings>): Record<string, unkno
 interface SettingsContextValue {
   settings: Settings | null;
   config: InfraConfig | null;
+  weatherConfig: WeatherConfig | null;
   stats: Stats | null;
   transitions: TransitionInfo[];
   effects: EffectInfo[];
   loading: boolean;
   updateSettings: (patch: Partial<Settings>) => void;
   updateConfig: <K extends keyof InfraConfig>(key: K, val: InfraConfig[K]) => void;
+  updateWeatherConfig: (patch: Partial<WeatherConfig>) => void;
   saveDisplaySettings: (fields: Partial<Settings>) => Promise<void>;
   saveInfraConfig: () => Promise<void>;
+  saveWeatherConfig: () => Promise<void>;
   reload: () => void;
   apiAvailable: boolean;
 }
@@ -51,6 +56,7 @@ const SettingsContext = createContext<SettingsContextValue>(null!);
 export function SettingsProvider({ children }: { children: ComponentChildren }) {
   const [settings, setSettings] = useState<Settings | null>(null);
   const [config, setConfig] = useState<InfraConfig | null>(null);
+  const [weatherConfig, setWeatherConfig] = useState<WeatherConfig | null>(null);
   const [stats, setStats] = useState<Stats | null>(null);
   const [transitions, setTransitions] = useState<TransitionInfo[]>([]);
   const [effects, setEffects] = useState<EffectInfo[]>([]);
@@ -65,6 +71,7 @@ export function SettingsProvider({ children }: { children: ComponentChildren }) 
       getTransitions().then(setTransitions).catch(() => {}),
       getEffects().then(setEffects).catch(() => {}),
       getConfig().then((c) => setConfig(c as unknown as InfraConfig)).catch(() => {}),
+      getWeatherConfig().then(setWeatherConfig).catch(() => {}),
     ]).finally(() => setLoading(false));
   }, []);
 
@@ -76,6 +83,10 @@ export function SettingsProvider({ children }: { children: ComponentChildren }) 
 
   function updateConfig<K extends keyof InfraConfig>(key: K, val: InfraConfig[K]) {
     setConfig((prev) => (prev ? { ...prev, [key]: val } : prev));
+  }
+
+  function updateWeatherConfig(patch: Partial<WeatherConfig>) {
+    setWeatherConfig((prev) => (prev ? { ...prev, ...patch } : prev));
   }
 
   async function saveDisplaySettings(fields: Partial<Settings>) {
@@ -97,19 +108,32 @@ export function SettingsProvider({ children }: { children: ComponentChildren }) 
     }
   }
 
+  async function handleSaveWeatherConfig() {
+    if (!weatherConfig) return;
+    try {
+      await apiSaveWeatherConfig(weatherConfig);
+      toast("Weather config saved!");
+    } catch {
+      toast("Error saving weather config");
+    }
+  }
+
   return (
     <SettingsContext.Provider
       value={{
         settings,
         config,
+        weatherConfig,
         stats,
         transitions,
         effects,
         loading,
         updateSettings,
         updateConfig,
+        updateWeatherConfig,
         saveDisplaySettings,
         saveInfraConfig: handleSaveInfraConfig,
+        saveWeatherConfig: handleSaveWeatherConfig,
         reload: load,
         apiAvailable,
       }}
