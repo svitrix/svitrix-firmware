@@ -57,6 +57,31 @@ void MQTTManager_::sendStats()
         uptime->setValue(uptimeStr);
         transition->setState(appConfig.autoTransition, false);
         ipAddr->setValue(ServerManager.myIP.toString().c_str());
+
+        // Weather sensors (only update if weather data is valid)
+        if (weatherData.valid)
+        {
+            char weatherBuf[16];
+            snprintf(weatherBuf, sizeof(weatherBuf), "%.*f", timeConfig.tempDecimalPlaces, weatherData.outdoorTemp);
+            outdoorTemp->setValue(weatherBuf);
+
+            snprintf(weatherBuf, sizeof(weatherBuf), "%.0f", weatherData.outdoorHumidity);
+            outdoorHum->setValue(weatherBuf);
+
+            snprintf(weatherBuf, sizeof(weatherBuf), "%.0f", weatherData.pressure);
+            pressure->setValue(weatherBuf);
+
+            if (weatherData.aqi > 0)
+            {
+                snprintf(weatherBuf, sizeof(weatherBuf), "%d", weatherData.aqi);
+                aqi->setValue(weatherBuf);
+            }
+
+            if (!weatherData.condition.isEmpty())
+            {
+                weatherCond->setValue(weatherData.condition.c_str());
+            }
+        }
     }
     publish(StatsTopic, dmControl_->getStats().c_str());
 }

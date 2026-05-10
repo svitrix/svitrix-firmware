@@ -66,6 +66,16 @@ static void destroyHAEntities()
     btnmid = nullptr;
     delete btnright;
     btnright = nullptr;
+    delete outdoorTemp;
+    outdoorTemp = nullptr;
+    delete outdoorHum;
+    outdoorHum = nullptr;
+    delete pressure;
+    pressure = nullptr;
+    delete aqi;
+    aqi = nullptr;
+    delete weatherCond;
+    weatherCond = nullptr;
 
     mqtt.resetDevicesCount();
 }
@@ -296,6 +306,36 @@ void MQTTManager_::setup()
         buildEntityId(senDescs[9].idTemplate, macStr, ipAddrID, sizeof(ipAddrID));
         ipAddr = new HASensor(ipAddrID);
         applySensorDescriptor(ipAddr, senDescs[9]);
+
+        // Weather sensors (from WeatherAPI)
+        size_t weatherCount;
+        const auto *weatherDescs = getWeatherSensorDescriptors(weatherCount);
+
+        buildEntityId(weatherDescs[0].idTemplate, macStr, outTempID, sizeof(outTempID));
+        outdoorTemp = new HASensor(outTempID);
+        outdoorTemp->setName(weatherDescs[0].name);
+        outdoorTemp->setIcon(weatherDescs[0].icon);
+        outdoorTemp->setDeviceClass(weatherDescs[0].deviceClass);
+        outdoorTemp->setUnitOfMeasurement(timeConfig.isCelsius ? "\xC2\xB0""C" : "\xC2\xB0""F");
+
+        buildEntityId(weatherDescs[1].idTemplate, macStr, outHumID, sizeof(outHumID));
+        outdoorHum = new HASensor(outHumID);
+        applySensorDescriptor(outdoorHum, weatherDescs[1]);
+
+        buildEntityId(weatherDescs[2].idTemplate, macStr, pressID, sizeof(pressID));
+        pressure = new HASensor(pressID);
+        applySensorDescriptor(pressure, weatherDescs[2]);
+
+        buildEntityId(weatherDescs[3].idTemplate, macStr, aqiID, sizeof(aqiID));
+        aqi = new HASensor(aqiID);
+        aqi->setName(weatherDescs[3].name);
+        aqi->setIcon(weatherDescs[3].icon);
+        aqi->setDeviceClass(weatherDescs[3].deviceClass);
+
+        buildEntityId(weatherDescs[4].idTemplate, macStr, weatherCondID, sizeof(weatherCondID));
+        weatherCond = new HASensor(weatherCondID);
+        weatherCond->setName(weatherDescs[4].name);
+        weatherCond->setIcon(weatherDescs[4].icon);
     }
     else
     {

@@ -128,6 +128,34 @@ static const char BAT_NAME[] = "Battery";
 static const char BAT_CLASS[] = "battery";
 static const char BAT_UNIT[] = "%";
 
+// ── Weather sensors (from WeatherAPI) ───────────────────────────────
+
+static const char OUTTEMP_ID[] = "%s_out_temp";
+static const char OUTTEMP_ICON[] = "mdi:thermometer";
+static const char OUTTEMP_NAME[] = "Outdoor Temperature";
+static const char OUTTEMP_CLASS[] = "temperature";
+
+static const char OUTHUM_ID[] = "%s_out_hum";
+static const char OUTHUM_ICON[] = "mdi:water-percent";
+static const char OUTHUM_NAME[] = "Outdoor Humidity";
+static const char OUTHUM_CLASS[] = "humidity";
+static const char OUTHUM_UNIT[] = "%";
+
+static const char PRESS_ID[] = "%s_pressure";
+static const char PRESS_ICON[] = "mdi:gauge";
+static const char PRESS_NAME[] = "Pressure";
+static const char PRESS_CLASS[] = "pressure";
+static const char PRESS_UNIT[] = "hPa";
+
+static const char AQI_ID[] = "%s_aqi";
+static const char AQI_ICON[] = "mdi:air-filter";
+static const char AQI_NAME[] = "Air Quality Index";
+static const char AQI_CLASS[] = "aqi";
+
+static const char WCOND_ID[] = "%s_weather_cond";
+static const char WCOND_ICON[] = "mdi:weather-partly-cloudy";
+static const char WCOND_NAME[] = "Weather Condition";
+
 // ── Binary sensors ──────────────────────────────────────────────────
 
 static const char BTNL_ID[] = "%s_btnL";
@@ -183,6 +211,15 @@ static const HAEntityDescriptor binarySensorDescs[] = {
     {BTNR_ID, BTNR_NAME, nullptr, nullptr, nullptr},
 };
 
+// Weather sensors array (5 sensors)
+static const HAEntityDescriptor weatherSensorDescs[] = {
+    {OUTTEMP_ID, OUTTEMP_NAME, OUTTEMP_ICON, OUTTEMP_CLASS, nullptr},    // 0 - unit set dynamically (°C/°F)
+    {OUTHUM_ID,  OUTHUM_NAME,  OUTHUM_ICON,  OUTHUM_CLASS,  OUTHUM_UNIT}, // 1
+    {PRESS_ID,   PRESS_NAME,   PRESS_ICON,   PRESS_CLASS,   PRESS_UNIT},  // 2
+    {AQI_ID,     AQI_NAME,     AQI_ICON,     AQI_CLASS,     nullptr},     // 3
+    {WCOND_ID,   WCOND_NAME,   WCOND_ICON,   nullptr,       nullptr},     // 4
+};
+
 // ── Function implementations ────────────────────────────────────────
 
 HAEntityDescriptor getMatrixLightDescriptor()
@@ -225,6 +262,12 @@ const HAEntityDescriptor *getBinarySensorDescriptors(size_t &count)
     return binarySensorDescs;
 }
 
+const HAEntityDescriptor *getWeatherSensorDescriptors(size_t &count)
+{
+    count = 5;
+    return weatherSensorDescs;
+}
+
 void buildEntityId(const char *idTemplate, const char *macStr,
                    char *outBuf, size_t bufSize)
 {
@@ -249,6 +292,6 @@ const char *getDeviceModel()
 size_t getTotalEntityCount(bool includeBattery)
 {
     // 1 matrix + 3 indicators + 2 selects + 4 buttons + 1 switch
-    // + sensors (10 or 11) + 3 binary sensors
-    return 1 + 3 + 2 + 4 + 1 + (includeBattery ? 11 : 10) + 3;
+    // + sensors (10 or 11) + 3 binary sensors + 5 weather sensors
+    return 1 + 3 + 2 + 4 + 1 + (includeBattery ? 11 : 10) + 3 + 5;
 }

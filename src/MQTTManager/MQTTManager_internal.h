@@ -61,6 +61,13 @@ extern HABinarySensor *btnleft;  ///< Left hardware button state
 extern HABinarySensor *btnmid;   ///< Middle hardware button state
 extern HABinarySensor *btnright; ///< Right hardware button state
 
+// Weather sensors (from WeatherAPI)
+extern HASensor *outdoorTemp;    ///< Outdoor temperature
+extern HASensor *outdoorHum;     ///< Outdoor humidity
+extern HASensor *pressure;       ///< Atmospheric pressure (hPa)
+extern HASensor *aqi;            ///< Air quality index (1-6)
+extern HASensor *weatherCond;    ///< Weather condition text
+
 // ── HA entity ID buffers (defined in MQTTManager.cpp) ───────────────
 // Each buffer holds a unique HA entity ID built from MAC + suffix.
 
@@ -71,6 +78,7 @@ extern char verID[40], ramID[40], upID[40], sigID[40];
 extern char btnLID[40], btnMID[40], btnRID[40];
 extern char transID[40], doUpdateID[40], batID[40];
 extern char myID[40], sSpeed[40], effectID[40], ipAddrID[40];
+extern char outTempID[40], outHumID[40], pressID[40], aqiID[40], weatherCondID[40];
 
 // ── Other shared state (defined in MQTTManager.cpp) ─────────────────
 

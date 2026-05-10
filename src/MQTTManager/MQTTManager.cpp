@@ -14,7 +14,7 @@
 
 WiFiClient espClient;               ///< TCP socket for the MQTT broker connection
 HADevice device;                    ///< ArduinoHA device descriptor (MAC, name, version)
-HAMqtt mqtt(espClient, device, 26); ///< ArduinoHA MQTT client (max 26 HA entities)
+HAMqtt mqtt(espClient, device, 32); ///< ArduinoHA MQTT client (max 32 HA entities)
 
 // ── HA entity pointers ──────────────────────────────────────────────
 // Allocated in setup() when HA discovery is enabled; remain nullptr otherwise.
@@ -45,6 +45,13 @@ HABinarySensor *btnleft = nullptr;  ///< Left hardware button state
 HABinarySensor *btnmid = nullptr;   ///< Middle hardware button state
 HABinarySensor *btnright = nullptr; ///< Right hardware button state
 
+// Weather sensors (from WeatherAPI)
+HASensor *outdoorTemp = nullptr;    ///< Outdoor temperature
+HASensor *outdoorHum = nullptr;     ///< Outdoor humidity
+HASensor *pressure = nullptr;       ///< Atmospheric pressure (hPa)
+HASensor *aqi = nullptr;            ///< Air quality index (1-6)
+HASensor *weatherCond = nullptr;    ///< Weather condition text
+
 // ── HA entity ID buffers ────────────────────────────────────────────
 // Each holds a unique HA entity ID built from MAC suffix (e.g. "abc123_mat").
 
@@ -57,6 +64,7 @@ char verID[40], ramID[40], upID[40], sigID[40];
 char btnLID[40], btnMID[40], btnRID[40];
 char transID[40], doUpdateID[40], batID[40];
 char myID[40], sSpeed[40], effectID[40], ipAddrID[40];
+char outTempID[40], outHumID[40], pressID[40], aqiID[40], weatherCondID[40];
 
 unsigned long previousMillis_Stats;    ///< Timestamp of last stats publish (millis)
 std::map<String, String> mqttValues;   ///< Cached values for subscribed external topics

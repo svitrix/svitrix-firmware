@@ -81,6 +81,13 @@ const HAEntityDescriptor *getSensorDescriptors(size_t &count, bool includeBatter
 /// @return Pointer to static array of binary sensor descriptors.
 const HAEntityDescriptor *getBinarySensorDescriptors(size_t &count);
 
+// --- Weather sensors ---
+
+/// Weather sensors from WeatherAPI (outdoor temp, humidity, pressure, AQI, condition).
+/// @param[out] count Set to number of descriptors (always 5).
+/// @return Pointer to static array of weather sensor descriptors.
+const HAEntityDescriptor *getWeatherSensorDescriptors(size_t &count);
+
 // --- Utilities ---
 
 /// Build an entity ID by formatting idTemplate with macStr.
