@@ -1,6 +1,6 @@
 import { useState, useEffect } from "preact/hooks";
 import { useSettings } from "../../../context/SettingsContext";
-import { Toggle, Select, Card, FormRow, Button } from "../../../components/ui";
+import { Toggle, Select, Card, FormRow, Button, Slider, ColorField } from "../../../components/ui";
 import { getWeatherData, forceWeatherFetch } from "../../../api/client";
 import type { WeatherData } from "../../../api/types";
 import styles from "./sections.module.css";
@@ -20,7 +20,7 @@ const UPDATE_INTERVALS = [
 ];
 
 export function WeatherSection() {
-  const { weatherConfig, updateWeatherConfig, saveWeatherConfig } = useSettings();
+  const { weatherConfig, settings, updateWeatherConfig, updateSettings, saveWeatherConfig } = useSettings();
   const [saving, setSaving] = useState(false);
   const [fetching, setFetching] = useState(false);
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
@@ -138,38 +138,42 @@ export function WeatherSection() {
           onChange={(v) => updateWeatherConfig({ updateInterval: v as number })}
         />
 
-        <p class={styles.hint}>Display Options</p>
+        <p class={styles.hint}>Weather Apps</p>
 
-        <Toggle
-          label="Outdoor Temperature"
-          checked={w.showOutdoorTemp}
-          onChange={(v) => updateWeatherConfig({ showOutdoorTemp: v })}
-        />
-        <Toggle
-          label="Outdoor Humidity"
-          checked={w.showOutdoorHumidity}
-          onChange={(v) => updateWeatherConfig({ showOutdoorHumidity: v })}
-        />
-        <Toggle
-          label="Pressure (mb)"
-          checked={w.showPressure}
-          onChange={(v) => updateWeatherConfig({ showPressure: v })}
-        />
-        <Toggle
-          label="Air Quality (AQI)"
-          checked={w.showAirQuality}
-          onChange={(v) => updateWeatherConfig({ showAirQuality: v })}
-        />
-        <Toggle
-          label="Indoor Temperature"
-          checked={w.showIndoorTemp}
-          onChange={(v) => updateWeatherConfig({ showIndoorTemp: v })}
-        />
-        <Toggle
-          label="Indoor Humidity"
-          checked={w.showIndoorHumidity}
-          onChange={(v) => updateWeatherConfig({ showIndoorHumidity: v })}
-        />
+        <div class={styles.appRow}>
+          <Toggle label="Outdoor Temp" checked={w.showOutdoorTemp} onChange={(v) => updateWeatherConfig({ showOutdoorTemp: v })} />
+          <ColorField label="" value={w.outdoorTempColor} onChange={(v) => updateWeatherConfig({ outdoorTempColor: v })} />
+          {settings && (
+            <Toggle label="Celsius" checked={settings.CEL} onChange={(v) => updateSettings({ CEL: v })} />
+          )}
+          <div style={{ width: "515px", flexShrink: 0 }}>
+            <Slider label="" min={1} max={60} value={w.outdoorTempDuration || 7} onChange={(v) => updateWeatherConfig({ outdoorTempDuration: v })} unit="s" />
+          </div>
+        </div>
+
+        <div class={styles.appRow}>
+          <Toggle label="Outdoor Hum" checked={w.showOutdoorHumidity} onChange={(v) => updateWeatherConfig({ showOutdoorHumidity: v })} />
+          <ColorField label="" value={w.outdoorHumColor} onChange={(v) => updateWeatherConfig({ outdoorHumColor: v })} />
+          <div class={styles.appSlider}>
+            <Slider label="" min={1} max={60} value={w.outdoorHumDuration || 7} onChange={(v) => updateWeatherConfig({ outdoorHumDuration: v })} unit="s" />
+          </div>
+        </div>
+
+        <div class={styles.appRow}>
+          <Toggle label="Pressure" checked={w.showPressure} onChange={(v) => updateWeatherConfig({ showPressure: v })} />
+          <ColorField label="" value={w.pressureColor} onChange={(v) => updateWeatherConfig({ pressureColor: v })} />
+          <div class={styles.appSlider}>
+            <Slider label="" min={1} max={60} value={w.pressureDuration || 7} onChange={(v) => updateWeatherConfig({ pressureDuration: v })} unit="s" />
+          </div>
+        </div>
+
+        <div class={styles.appRow}>
+          <Toggle label="Air Quality" checked={w.showAirQuality} onChange={(v) => updateWeatherConfig({ showAirQuality: v })} />
+          <ColorField label="" value={w.aqiColor} onChange={(v) => updateWeatherConfig({ aqiColor: v })} />
+          <div class={styles.appSlider}>
+            <Slider label="" min={1} max={60} value={w.aqiDuration || 7} onChange={(v) => updateWeatherConfig({ aqiDuration: v })} unit="s" />
+          </div>
+        </div>
 
         <FormRow>
           <Button variant="primary" onClick={handleSave} loading={saving}>

@@ -263,6 +263,22 @@ std::pair<String, AppCallback> getNativeAppByName(const String& appName)
         return std::make_pair("Battery", BatApp);
     }
 #endif
+    else if (appName == "OutdoorTemp")
+    {
+        return std::make_pair("OutdoorTemp", OutdoorTempApp);
+    }
+    else if (appName == "OutdoorHum")
+    {
+        return std::make_pair("OutdoorHum", OutdoorHumApp);
+    }
+    else if (appName == "Pressure")
+    {
+        return std::make_pair("Pressure", PressureApp);
+    }
+    else if (appName == "AirQuality")
+    {
+        return std::make_pair("AirQuality", AirQualityApp);
+    }
     return std::make_pair("", nullptr);
 }
 
@@ -517,6 +533,12 @@ void DisplayManager_::loadNativeApps()
 #ifdef ULANZI
     updateApp("Battery", BatApp, appConfig.showBat, 4);
 #endif
+
+    // Weather apps (from WeatherAPI)
+    updateApp("OutdoorTemp", OutdoorTempApp, weatherConfig.showOutdoorTemp, 5);
+    updateApp("OutdoorHum", OutdoorHumApp, weatherConfig.showOutdoorHumidity, 6);
+    updateApp("Pressure", PressureApp, weatherConfig.showPressure, 7);
+    updateApp("AirQuality", AirQualityApp, weatherConfig.showAirQuality, 8);
 
     ui->setApps(Apps);
     setAutoTransition(true);

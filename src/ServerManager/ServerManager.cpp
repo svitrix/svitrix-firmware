@@ -236,7 +236,7 @@ void addHandler()
                     request->send(200, "application/json", json); });
     mws.addHandler("/api/weather", HTTP_GET, [](AsyncWebServerRequest *request)
                    {
-                    StaticJsonDocument<512> doc;
+                    StaticJsonDocument<768> doc;
                     doc["apiKey"] = weatherConfig.apiKey;
                     doc["locationType"] = static_cast<int>(weatherConfig.locationType);
                     doc["city"] = weatherConfig.city;
@@ -250,13 +250,21 @@ void addHandler()
                     doc["showAirQuality"] = weatherConfig.showAirQuality;
                     doc["showIndoorTemp"] = weatherConfig.showIndoorTemp;
                     doc["showIndoorHumidity"] = weatherConfig.showIndoorHumidity;
+                    doc["outdoorTempColor"] = weatherConfig.outdoorTempColor;
+                    doc["outdoorHumColor"] = weatherConfig.outdoorHumColor;
+                    doc["pressureColor"] = weatherConfig.pressureColor;
+                    doc["aqiColor"] = weatherConfig.aqiColor;
+                    doc["outdoorTempDuration"] = weatherConfig.outdoorTempDuration;
+                    doc["outdoorHumDuration"] = weatherConfig.outdoorHumDuration;
+                    doc["pressureDuration"] = weatherConfig.pressureDuration;
+                    doc["aqiDuration"] = weatherConfig.aqiDuration;
                     String json;
                     serializeJson(doc, json);
                     request->send(200, "application/json", json); });
     mws.addHandlerWithBody("/api/weather", HTTP_POST, [](AsyncWebServerRequest *request)
                            {
                             String body = getBody(request);
-                            StaticJsonDocument<512> doc;
+                            StaticJsonDocument<768> doc;
                             DeserializationError err = deserializeJson(doc, body);
                             if (err) {
                                 request->send(400, "text/plain", "InvalidJSON");
@@ -275,7 +283,19 @@ void addHandler()
                             if (doc.containsKey("showAirQuality")) weatherConfig.showAirQuality = doc["showAirQuality"].as<bool>();
                             if (doc.containsKey("showIndoorTemp")) weatherConfig.showIndoorTemp = doc["showIndoorTemp"].as<bool>();
                             if (doc.containsKey("showIndoorHumidity")) weatherConfig.showIndoorHumidity = doc["showIndoorHumidity"].as<bool>();
+                            if (doc.containsKey("outdoorTempColor")) weatherConfig.outdoorTempColor = doc["outdoorTempColor"].as<uint32_t>();
+                            if (doc.containsKey("outdoorHumColor")) weatherConfig.outdoorHumColor = doc["outdoorHumColor"].as<uint32_t>();
+                            if (doc.containsKey("pressureColor")) weatherConfig.pressureColor = doc["pressureColor"].as<uint32_t>();
+                            if (doc.containsKey("aqiColor")) weatherConfig.aqiColor = doc["aqiColor"].as<uint32_t>();
+                            if (doc.containsKey("outdoorTempDuration")) weatherConfig.outdoorTempDuration = doc["outdoorTempDuration"].as<uint8_t>();
+                            if (doc.containsKey("outdoorHumDuration")) weatherConfig.outdoorHumDuration = doc["outdoorHumDuration"].as<uint8_t>();
+                            if (doc.containsKey("pressureDuration")) weatherConfig.pressureDuration = doc["pressureDuration"].as<uint8_t>();
+                            if (doc.containsKey("aqiDuration")) weatherConfig.aqiDuration = doc["aqiDuration"].as<uint8_t>();
+                            bool appsChanged = doc.containsKey("showOutdoorTemp") || doc.containsKey("showOutdoorHumidity") ||
+                                               doc.containsKey("showPressure") || doc.containsKey("showAirQuality");
                             saveSettings();
+                            if (appsChanged && smNav_) smNav_->loadNativeApps();
+                            if (!weatherConfig.apiKey.isEmpty()) DataFetcher.forceWeatherFetch();
                             request->send(200, "text/plain", "OK"); });
     mws.addHandlerWithBody("/api/custom", HTTP_POST, [](AsyncWebServerRequest *request)
                            {

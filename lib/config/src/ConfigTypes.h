@@ -183,6 +183,15 @@ struct WeatherConfig {
     bool showAirQuality;
     bool showIndoorTemp;
     bool showIndoorHumidity;
+    // Display settings for weather apps
+    uint32_t outdoorTempColor;
+    uint32_t outdoorHumColor;
+    uint32_t pressureColor;
+    uint32_t aqiColor;
+    uint8_t outdoorTempDuration;  // seconds
+    uint8_t outdoorHumDuration;
+    uint8_t pressureDuration;
+    uint8_t aqiDuration;
 };
 
 struct WeatherData {

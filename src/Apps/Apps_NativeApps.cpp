@@ -347,3 +347,141 @@ void BatApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_t x, i
     DisplayManager.setCursor(textX + x, 6 + y);
     DisplayManager.matrixPrint(batStr.c_str());
 }
+
+// ── OutdoorTempApp ─────────────────────────────────────────────────
+
+/// Weather app showing outdoor temperature from WeatherAPI.
+void OutdoorTempApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_t x, int16_t y, GifPlayer *gifPlayer)
+{
+    if (nativeAppGuard("OutdoorTemp"))
+        return;
+
+    applyNativeAppColor(weatherConfig.outdoorTempColor);
+
+    LayoutMetrics m = LayoutEngine::computeLayout(appConfig.nativeIconLayout, 0);
+
+    if (m.hasIcon)
+    {
+        matrix->drawRGBBitmap(x + m.iconX, y, icon_234, 8, 8);
+    }
+
+    String tempStr;
+    if (weatherData.valid)
+    {
+        tempStr = String(weatherData.outdoorTemp, timeConfig.tempDecimalPlaces) + "\xB0" + (timeConfig.isCelsius ? "C" : "F");
+    }
+    else
+    {
+        tempStr = "--.-\xB0" + String(timeConfig.isCelsius ? "C" : "F");
+    }
+
+    uint16_t textWidth = getTextWidth(tempStr.c_str(), 0);
+    LayoutMetrics tm = LayoutEngine::computeLayout(appConfig.nativeIconLayout, textWidth);
+    int16_t textX = tm.textCenterX;
+
+    DisplayManager.setCursor(textX + x, 6 + y);
+    DisplayManager.matrixPrint(tempStr.c_str());
+}
+
+// ── OutdoorHumApp ──────────────────────────────────────────────────
+
+/// Weather app showing outdoor humidity from WeatherAPI.
+void OutdoorHumApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_t x, int16_t y, GifPlayer *gifPlayer)
+{
+    if (nativeAppGuard("OutdoorHum"))
+        return;
+
+    applyNativeAppColor(weatherConfig.outdoorHumColor);
+
+    LayoutMetrics m = LayoutEngine::computeLayout(appConfig.nativeIconLayout, 0);
+
+    if (m.hasIcon)
+    {
+        matrix->drawRGBBitmap(x + m.iconX, y + 1, icon_2075, 8, 8);
+    }
+
+    String humStr;
+    if (weatherData.valid)
+    {
+        humStr = String(static_cast<int>(weatherData.outdoorHumidity)) + "%";
+    }
+    else
+    {
+        humStr = "--%";
+    }
+
+    uint16_t textWidth = getTextWidth(humStr.c_str(), 0);
+    LayoutMetrics tm = LayoutEngine::computeLayout(appConfig.nativeIconLayout, textWidth);
+    int16_t textX = tm.textCenterX;
+
+    DisplayManager.setCursor(textX + x, 6 + y);
+    DisplayManager.matrixPrint(humStr.c_str());
+}
+
+// ── PressureApp ────────────────────────────────────────────────────
+
+/// Weather app showing atmospheric pressure from WeatherAPI.
+void PressureApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_t x, int16_t y, GifPlayer *gifPlayer)
+{
+    if (nativeAppGuard("Pressure"))
+        return;
+
+    applyNativeAppColor(weatherConfig.pressureColor);
+
+    String pressStr;
+    if (weatherData.valid)
+    {
+        pressStr = String(static_cast<int>(weatherData.pressure)) + "mb";
+    }
+    else
+    {
+        pressStr = "----mb";
+    }
+
+    uint16_t textWidth = getTextWidth(pressStr.c_str(), 0);
+    int16_t textX = (32 - textWidth) / 2;
+
+    DisplayManager.setCursor(textX + x, 6 + y);
+    DisplayManager.matrixPrint(pressStr.c_str());
+}
+
+// ── AirQualityApp ──────────────────────────────────────────────────
+
+/// Weather app showing Air Quality Index from WeatherAPI.
+void AirQualityApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_t x, int16_t y, GifPlayer *gifPlayer)
+{
+    if (nativeAppGuard("AirQuality"))
+        return;
+
+    // Use config color if set, otherwise dynamic color based on AQI level
+    uint32_t aqiColor = weatherConfig.aqiColor;
+    if (aqiColor == 0 && weatherData.valid && weatherData.aqi > 0)
+    {
+        switch (weatherData.aqi)
+        {
+        case 1: aqiColor = 0x00FF00; break; // Good - green
+        case 2: aqiColor = 0xFFFF00; break; // Moderate - yellow
+        case 3: aqiColor = 0xFFA500; break; // Unhealthy for sensitive - orange
+        case 4: aqiColor = 0xFF0000; break; // Unhealthy - red
+        case 5: aqiColor = 0x800080; break; // Very unhealthy - purple
+        case 6: aqiColor = 0x800000; break; // Hazardous - maroon
+        }
+    }
+    applyNativeAppColor(aqiColor);
+
+    String aqiStr;
+    if (weatherData.valid && weatherData.aqi > 0)
+    {
+        aqiStr = "AQI:" + String(weatherData.aqi);
+    }
+    else
+    {
+        aqiStr = "AQI:--";
+    }
+
+    uint16_t textWidth = getTextWidth(aqiStr.c_str(), 0);
+    int16_t textX = (32 - textWidth) / 2;
+
+    DisplayManager.setCursor(textX + x, 6 + y);
+    DisplayManager.matrixPrint(aqiStr.c_str());
+}

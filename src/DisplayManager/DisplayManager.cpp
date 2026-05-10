@@ -61,6 +61,10 @@ static long getDurationForApp(const String& appName)
     if (appName == "Temperature") return appConfig.tempDuration * 1000L;
     if (appName == "Humidity") return appConfig.humDuration * 1000L;
     if (appName == "Battery") return appConfig.batDuration * 1000L;
+    if (appName == "OutdoorTemp") return weatherConfig.outdoorTempDuration * 1000L;
+    if (appName == "OutdoorHum") return weatherConfig.outdoorHumDuration * 1000L;
+    if (appName == "Pressure") return weatherConfig.pressureDuration * 1000L;
+    if (appName == "AirQuality") return weatherConfig.aqiDuration * 1000L;
     return appConfig.timePerApp;
 }
 

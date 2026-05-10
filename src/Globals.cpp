@@ -328,6 +328,14 @@ void loadSettings()
     weatherConfig.showAirQuality = Settings.getBool("WAPI_AQI", false);
     weatherConfig.showIndoorTemp = Settings.getBool("WAPI_ITEMP", false);
     weatherConfig.showIndoorHumidity = Settings.getBool("WAPI_IHUM", false);
+    weatherConfig.outdoorTempColor = Settings.getUInt("WAPI_OTCOL", 0);
+    weatherConfig.outdoorHumColor = Settings.getUInt("WAPI_OHCOL", 0);
+    weatherConfig.pressureColor = Settings.getUInt("WAPI_PCOL", 0);
+    weatherConfig.aqiColor = Settings.getUInt("WAPI_AQCOL", 0);
+    weatherConfig.outdoorTempDuration = Settings.getUChar("WAPI_OTDUR", 7);
+    weatherConfig.outdoorHumDuration = Settings.getUChar("WAPI_OHDUR", 7);
+    weatherConfig.pressureDuration = Settings.getUChar("WAPI_PDUR", 7);
+    weatherConfig.aqiDuration = Settings.getUChar("WAPI_AQDUR", 7);
     Settings.end();
     systemConfig.deviceId = getID();
     mqttConfig.prefix = systemConfig.deviceId;
@@ -413,6 +421,14 @@ void saveSettings()
     Settings.putBool("WAPI_AQI", weatherConfig.showAirQuality);
     Settings.putBool("WAPI_ITEMP", weatherConfig.showIndoorTemp);
     Settings.putBool("WAPI_IHUM", weatherConfig.showIndoorHumidity);
+    Settings.putUInt("WAPI_OTCOL", weatherConfig.outdoorTempColor);
+    Settings.putUInt("WAPI_OHCOL", weatherConfig.outdoorHumColor);
+    Settings.putUInt("WAPI_PCOL", weatherConfig.pressureColor);
+    Settings.putUInt("WAPI_AQCOL", weatherConfig.aqiColor);
+    Settings.putUChar("WAPI_OTDUR", weatherConfig.outdoorTempDuration);
+    Settings.putUChar("WAPI_OHDUR", weatherConfig.outdoorHumDuration);
+    Settings.putUChar("WAPI_PDUR", weatherConfig.pressureDuration);
+    Settings.putUChar("WAPI_AQDUR", weatherConfig.aqiDuration);
     Settings.end();
 }
 
@@ -431,5 +447,5 @@ TimeConfig timeConfig = {"%H:%M:%S", "%d.%m.%y", 1, false, "time.cloudflare.com"
 AppConfig appConfig = {true, true, true, true, true, true, false, 1, 400, 7000, 100, 7, 7, 7, 7, 7, IconLayout::Left, false, false, 1260, 360, 5, 0xFF0000, true};
 AudioConfig audioConfig = {false, 30, ""};
 SystemConfig systemConfig = {true, 15, 80, "", false, 10000, false, false, "", "", false, false, "", ""};
-WeatherConfig weatherConfig = {"", WEATHER_LOC_CITY, "", 0.0, 0.0, "", 30, true, false, false, false, false, false};
+WeatherConfig weatherConfig = {"", WEATHER_LOC_CITY, "", 0.0, 0.0, "", 30, true, false, false, false, false, false, 0, 0, 0, 0, 7, 7, 7, 7};
 WeatherData weatherData = {0, 0, 0, 0, "", 0, 0, false};

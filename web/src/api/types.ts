@@ -155,6 +155,15 @@ export interface WeatherConfig {
   showAirQuality: boolean;
   showIndoorTemp: boolean;
   showIndoorHumidity: boolean;
+  // Display settings
+  outdoorTempColor: number;
+  outdoorHumColor: number;
+  pressureColor: number;
+  aqiColor: number;
+  outdoorTempDuration: number;
+  outdoorHumDuration: number;
+  pressureDuration: number;
+  aqiDuration: number;
 }
 
 export interface WeatherData {
