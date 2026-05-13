@@ -12,6 +12,9 @@ compile_commands.json
 .claude/settings.json
 .claude/settings.local.json
 
+# CodeGraph index (rebuildable from source; not for version control)
+.codegraph/
+
 # OS
 .DS_Store
 

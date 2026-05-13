@@ -53,13 +53,13 @@ Analyze ALL changes on the current feature branch vs main and update every affec
      - Changed dependency wiring in `main.cpp`
 
 4. **Update counts across all docs:**
-   Verify these numbers match reality:
-   - HA entities count (currently 25) — check `src/MQTTManager/`
-   - Effects count (currently 19) — check `src/effects/`
-   - API endpoints count — check `src/ServerManager.cpp`
-   - Test suites/tests count — run `pio test -e native_test --list-tests` or count test files
-   - Interface count (currently 13) — check `lib/interfaces/`
-   - Service count (currently 14) — check `lib/services/`
+   Re-compute these from the code (do NOT trust numbers in existing docs — assume they may be stale):
+   - HA entities — count entity registrations in `src/MQTTManager/` + `lib/services/HADiscovery/`
+   - Effects — `grep kNumEffects src/effects/EffectRegistry.h`
+   - API endpoints — `grep -cE 'server\\.on\\(' src/ServerManager/*.cpp`
+   - Test suites/tests — `ls test/test_native/ | wc -l` and `pio test -e native_test --list-tests` if installed
+   - Interfaces — `ls lib/interfaces/src/I*.h | wc -l`
+   - Services — count unique service names (excluding .h/.cpp pairs) in `lib/services/src/`
 
 5. **Update root CLAUDE.md if architecture changed:**
    - New module added → update Project Structure tree

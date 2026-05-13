@@ -2,7 +2,9 @@
 description: Add a new visual effect following the IPixelCanvas pattern
 ---
 
-Guide through adding a new visual effect to the Svitrix firmware. Currently there are 20 effects.
+Guide through adding a new visual effect to the Svitrix firmware.
+
+> Verify the current count before writing docs: `grep kNumEffects src/effects/EffectRegistry.h`.
 
 ## Before starting
 
@@ -48,8 +50,8 @@ Guide through adding a new visual effect to the Svitrix firmware. Currently ther
    IMPORTANT: Check flash size after — effects add to binary size.
 
 8. **Update documentation:**
-   - Update `src/effects/README.md` — add effect to the list
-   - Update effect count in root `CLAUDE.md` (currently says 20)
+   - Update [src/effects/README.md](../../src/effects/README.md) — add effect to the list
+   - Update effect count in root [CLAUDE.md](../../CLAUDE.md) if it's referenced there
 
 ## IPixelCanvas API reference (quick)
 ```cpp

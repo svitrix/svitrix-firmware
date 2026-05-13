@@ -55,6 +55,34 @@ jobs:
             --quiet \
             src/
 
+  clang-tidy:
+    name: Clang-Tidy (advisory)
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Install clang-tidy
+        run: sudo apt-get update && sudo apt-get install -y clang-tidy-18
+
+      - name: Run clang-tidy on lib/services/
+        # Scope: lib/services/ only — pure C++ that compiles without ESP32 toolchain.
+        # Mode: advisory (continue-on-error above). Tighten the gate by removing
+        # continue-on-error once the codebase is clean. Add other paths to the
+        # globbed list when their headers don't need xtensa-specific resolution.
+        run: |
+          mapfile -t files < <(git ls-files 'lib/services/src/*.cpp')
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "No lib/services/ files matched, skipping."
+            exit 0
+          fi
+          clang-tidy-18 --quiet "${files[@]}" -- \
+            -std=c++17 \
+            -DUNIT_TEST \
+            -Ilib/services/src \
+            -Ilib/interfaces/src
+
   test:
     name: Unit Tests (native)
     runs-on: ubuntu-latest
