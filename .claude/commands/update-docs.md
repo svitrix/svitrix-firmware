@@ -52,8 +52,8 @@ Scan recent code changes and update the corresponding CLAUDE.md / README.md file
      - New dependencies or wiring changes
 
 4. **Verify consistency:**
-   - Cross-check counts: "25 HA entities", "19 effects", "33 endpoints", etc.
-   - Verify interface lists match actual code
+   - Cross-check counts against the code itself, not against numbers in existing docs (they rot fast)
+   - Verify interface lists match actual files in `lib/interfaces/src/`
    - Check that module dependency graph in root CLAUDE.md is still accurate
 
 5. **Report what was updated:**

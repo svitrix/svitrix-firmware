@@ -25,7 +25,7 @@
 
 SVITRIX is a smart home companion designed for HomeAssistant, IOBroker, NodeRed, and other automation systems. It works out of the box with pre-installed apps for time, date, temperature, humidity, and battery. For advanced users, the powerful MQTT and HTTP API allows creating custom apps, sending notifications, and controlling every aspect of the display.
 
-SVITRIX is a community-driven fork of the original [AWTRIX 3](https://github.com/Blueforcer/awtrix3) project, created to enable active development and accept contributions from the community.
+SVITRIX started as a fork of [AWTRIX 3](https://github.com/Blueforcer/awtrix3) and has since been substantially rewritten — interface-decoupled modules, stateless service libraries with native unit tests, a Preact-based web UI, and an ADR-driven architecture. The shared lineage stays in attribution and the inherited CC BY-NC-SA license; day-to-day development has diverged from upstream.
 
 > **Note:** In SVITRIX, "Custom Apps" are not traditional apps you install. They are dynamic pages that rotate on the display, showing content sent from an external system via MQTT or HTTP. All logic is handled by your smart home — SVITRIX provides the display.
 
@@ -131,7 +131,14 @@ SVITRIX is developed using an **AI-first** approach. [Claude](https://claude.ai)
 
 ## Contributing
 
-Star the repo, open issues, and submit pull requests — contributions are welcome!
+Contributions are welcome — star the repo, open issues, and submit pull requests.
+
+Before you start:
+
+- [CONTRIBUTING.md](CONTRIBUTING.md) — local-dev setup, design rules, commits & PR conventions
+- [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) — community standards (Contributor Covenant)
+- [SECURITY.md](SECURITY.md) — how to report a vulnerability (please don't use public issues)
+- [CHANGELOG.md](CHANGELOG.md) — release history
 
 ## Disclaimer
 

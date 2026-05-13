@@ -2,7 +2,9 @@
 description: Analyze firmware binary size and partition layout in detail
 ---
 
-Perform a detailed analysis of the firmware flash usage. This is critical — flash is ~96% full.
+Perform a detailed analysis of the firmware flash usage.
+
+> Compute the current usage from the build output below — do NOT rely on any baked-in number. Project rule: flash is comfortable; do not panic-optimize unless `> 90%`.
 
 ## Steps
 
@@ -59,8 +61,8 @@ Perform a detailed analysis of the firmware flash usage. This is critical — fl
    ```
 
 8. **If CRITICAL**, suggest optimization strategies:
-   - Check for unused effects (19 effects may not all be needed)
+   - Check for unused effects in [src/effects/EffectRegistry.cpp](../../src/effects/EffectRegistry.cpp) — drop unused entries
    - Check for large string literals or lookup tables
-   - Review lib_deps for unused libraries
+   - Review `lib_deps` in [platformio.ini](../../platformio.ini) for unused libraries
    - Consider `-Os` vs `-Oz` optimization
-   - Check if games are accidentally included (should be excluded by build_src_filter)
+   - Check that games are excluded by `build_src_filter` in [platformio.ini](../../platformio.ini)

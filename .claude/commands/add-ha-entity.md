@@ -2,7 +2,9 @@
 description: Step-by-step guide to add a new Home Assistant entity with MQTT auto-discovery
 ---
 
-Guide through adding a new Home Assistant entity to the Svitrix firmware. Currently there are 25 HA entities.
+Guide through adding a new Home Assistant entity to the Svitrix firmware.
+
+> Verify the current entity inventory in [src/MQTTManager/CLAUDE.md](../../src/MQTTManager/CLAUDE.md) before writing docs.
 
 ## Before starting
 

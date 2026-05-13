@@ -144,7 +144,7 @@ Per-module docs auto-load when you Read files in their directory.
 | Module | Doc | Role |
 |--------|-----|------|
 | Interfaces | [lib/interfaces/CLAUDE.md](lib/interfaces/CLAUDE.md) | 15 pure-virtual interfaces (decoupling layer) |
-| Services | [lib/services/CLAUDE.md](lib/services/CLAUDE.md) | 15 stateless libs, 100% test coverage |
+| Services | [lib/services/CLAUDE.md](lib/services/CLAUDE.md) | 17 stateless libs, 100% test coverage |
 | Config | [lib/config/CLAUDE.md](lib/config/CLAUDE.md) | Config structs, defaults, persistence |
 | HA integration | [lib/home-assistant-integration/CLAUDE.md](lib/home-assistant-integration/CLAUDE.md) | ArduinoHA fork, entity types enabled |
 | Webserver | [lib/webserver/CLAUDE.md](lib/webserver/CLAUDE.md) | Async server wrapper, WiFi, SPA fallback |
@@ -225,6 +225,22 @@ Prefer these over manual multi-step workflows — each is a tested, opinionated 
 | `/pr` | Create a structured GitHub PR from the current feature branch |
 | `/release` | Interactive beta/rc/stable release workflow |
 | `/changelog` | Generate changelog from conventional commits (since last tag or range) |
+
+## Sub-agents (review)
+
+Project-local agents in [.claude/agents/](.claude/agents/) — all read-only. Dispatch via the `Agent` tool with `subagent_type: <name>`.
+
+| Agent | Use when |
+|-------|----------|
+| `pr-reviewer` | Reviewing a PR/branch/diff end-to-end (embedded + arch + tests + docs + conventional commits). Default choice for "review this PR". |
+| `embedded-cpp-reviewer` | C++-heavy diff. Strict audit against the embedded rule sheet (heap, ISR, fixed-width types, banned funcs, UB). |
+| `firmware-architecture-reviewer` | New modules / interfaces / services. Verifies interface decoupling, IPixelCanvas usage, stateless services, singleton wiring. |
+
+`pr-reviewer` covers the common case. The other two are deeper second-pass tools for focused audits.
+
+## CodeGraph
+
+`.codegraph/` is initialized — semantic graph of the codebase. For broad exploration questions ("how does X work?", "where is Y implemented?"), spawn an Explore agent that uses `codegraph_explore` (see global `~/.claude/CLAUDE.md` for rules). The main session uses only lightweight tools (`codegraph_search`, `codegraph_callers`, `codegraph_impact`) for targeted lookups.
 
 ## Git & Release
 
