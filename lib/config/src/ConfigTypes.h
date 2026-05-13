@@ -146,4 +146,9 @@ struct SystemConfig {
     bool apMode;
     String updateVersionUrl;
     String updateFirmwareUrl;
+    bool verifyUpdateSignature;  // Phase 1: when true, OTA aborts unless a well-formed
+                                 // base64-encoded .sig file is fetched from
+                                 // `<updateFirmwareUrl>.sig`. Phase 2 (see ADR 0005)
+                                 // adds RSA-PSS verification over firmware SHA-256
+                                 // before partition commit.
 };
