@@ -45,7 +45,7 @@ static const char BRI_OPTIONS[] = "Manual;Auto";
 static const char EFFECT_ID[] = "%s_eff";
 static const char EFFECT_ICON[] = "mdi:auto-fix";
 static const char EFFECT_NAME[] = "Transition effect";
-static const char EFFECT_OPTIONS[] = "Random;Slide;Dim;Zoom;Rotate;Pixelate;Curtain;Ripple;Blink;Reload;Fade";
+static const char EFFECT_OPTIONS[] = "Random;Slide Down;Dim;Zoom;Rotate;Pixelate;Curtain;Ripple;Blink;Reload;Fade;Slide Up;Slide Left;Slide Right";
 
 // ── Buttons ─────────────────────────────────────────────────────────
 

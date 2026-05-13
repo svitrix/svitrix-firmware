@@ -1,6 +1,6 @@
 {
   "name": "SVITRIX XE1E",
-  "version": "0.3.1-XE1E",
+  "version": "0.4.0-XE1E",
   "home_assistant_domain": "SvitrixLight",
   "new_install_prompt_erase": true,
   "builds": [
