@@ -97,6 +97,8 @@ String buildStatsJson(const StatsData& data)
     addBool(json, "matrix", data.matrixOn);
     json += ",";
     addString(json, "ip_address", data.ipAddress);
+    json += ",";
+    addString(json, "reset_reason", data.resetReason);
 
     json += "}";
     return json;
