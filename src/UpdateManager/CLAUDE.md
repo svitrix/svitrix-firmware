@@ -7,7 +7,7 @@ OTA firmware update manager. Checks remote server for new versions and performs 
 - **Provides:** `IUpdater` → ServerManager, MQTTManager, MenuManager
 - **Consumes:** `IDisplayRenderer`
 - **Entry point:** `UpdateManager_::checkUpdate()`, `::updateFirmware()`
-- **Security:** HTTPS with pinned CA cert (`cert.h`)
+- **Security:** HTTPS with pinned CA cert (`cert.h`). Optional signed-OTA Phase 1 structural pre-check (`systemConfig.verifyUpdateSignature`) — see [ADR 0005](../../adr/0005-signed-ota-phase-1.md).
 
 > 📌 Auto-loads when reading files in `src/UpdateManager/`
 
@@ -38,9 +38,11 @@ OTA firmware update manager. Checks remote server for new versions and performs 
 | `systemConfig.updateVersionUrl` | URL returning plain-text version |
 | `systemConfig.updateFirmwareUrl` | URL to firmware `.bin` file |
 | `systemConfig.updateAvailable` | Flag set by `checkUpdate()` |
+| `systemConfig.verifyUpdateSignature` | Phase 1 signed-OTA toggle (NVS `VFYUPD`, dev.json `verify_update_signature`); see ADR 0005 |
 
 ## Don't
 
 - Don't bypass HTTPS cert validation — we ship a pinned root CA in `cert.h`
 - Don't interleave `updateFirmware()` with display/MQTT work — the device reboots on success
 - Don't cache version string across boots — always fetch live from URL
+- Don't treat Phase 1 signature verification as full cryptographic protection — it only checks signature presence + structural plausibility. Phase 2 (ADR 0005) adds RSA-PSS verification.

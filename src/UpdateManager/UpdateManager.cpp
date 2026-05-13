@@ -4,10 +4,83 @@
 #include <HTTPUpdate.h>
 #include <WiFiClientSecure.h>
 #include "cert.h"
+#include "data/ota_pubkey.h"
 #include "IDisplayRenderer.h"
 #include <Ticker.h>
 #include "Globals.h"
+#include "SignatureVerifier.h"
 #include <cassert>
+
+namespace
+{
+
+// Phase 1 signature pre-check.
+// Fetches `<firmwareUrl>.sig` and validates it is plausibly a base64-encoded
+// RSA-2048 signature (right size, no invalid characters). This catches the
+// gross failure modes — missing file, HTML error page, truncated download —
+// before we waste partition writes.
+//
+// Returns true if it is safe to proceed with the update.
+// Phase 2 (ADR 0005) will replace this with a streaming download + real
+// RSA-PSS verification over the firmware SHA-256 before the partition is
+// marked bootable.
+bool prefetchAndCheckSignature(const String& firmwareUrl)
+{
+    if (kOtaUpdatePublicKeyPem[0] == '\0')
+    {
+        if (systemConfig.debugMode)
+            DEBUG_PRINTLN(F("OTA verify enabled but no public key compiled in — refusing update."));
+        return false;
+    }
+
+    const String sigUrl = buildSignatureUrl(firmwareUrl);
+    if (sigUrl.length() == 0)
+        return false;
+
+    WiFiClientSecure sigClient;
+    sigClient.setCACert(rootCACertificate);
+    sigClient.setTimeout(5);
+    HTTPClient sigHttps;
+    sigHttps.setConnectTimeout(3000);
+    sigHttps.setTimeout(5000);
+
+    if (!sigHttps.begin(sigClient, sigUrl))
+    {
+        if (systemConfig.debugMode)
+            DEBUG_PRINTLN(F("OTA: signature URL begin() failed."));
+        return false;
+    }
+
+    const int code = sigHttps.GET();
+    if (code != HTTP_CODE_OK)
+    {
+        sigHttps.end();
+        if (systemConfig.debugMode)
+            DEBUG_PRINTF("OTA: signature fetch HTTP %d — aborting.", code);
+        return false;
+    }
+
+    const String sigBody = sigHttps.getString();
+    sigHttps.end();
+
+    if (!isPlausibleRsa2048SignatureBase64(sigBody))
+    {
+        if (systemConfig.debugMode)
+            DEBUG_PRINTLN(F("OTA: signature body not plausibly RSA-2048 base64."));
+        return false;
+    }
+
+    // TODO(Phase 2 / ADR 0005): pass `sigBody` to a streaming update flow
+    // that hashes the firmware as it arrives, then verifies the signature
+    // via mbedtls RSA-PSS before calling Update.end(true). Until then,
+    // returning true here means "signature is structurally present" — not
+    // "cryptographically valid". Treat the flag accordingly.
+    if (systemConfig.debugMode)
+        DEBUG_PRINTLN(F("OTA: signature pre-check OK (Phase 1: structural only)."));
+    return true;
+}
+
+} // namespace
 
 static IDisplayRenderer *display_ = nullptr;
 
@@ -73,6 +146,16 @@ void UpdateManager_::updateFirmware()
         if (systemConfig.debugMode)
             DEBUG_PRINTLN(F("OTA update skipped: no WiFi"));
         return;
+    }
+
+    if (systemConfig.verifyUpdateSignature)
+    {
+        if (!prefetchAndCheckSignature(systemConfig.updateFirmwareUrl))
+        {
+            if (systemConfig.debugMode)
+                DEBUG_PRINTLN(F("OTA aborted: signature pre-check failed."));
+            return;
+        }
     }
 
     WiFiClientSecure client;

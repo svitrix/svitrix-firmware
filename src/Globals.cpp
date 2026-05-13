@@ -192,6 +192,11 @@ void loadDevSettings()
             systemConfig.updateFirmwareUrl = doc["update_firmware_url"].as<String>();
         }
 
+        if (doc.containsKey("verify_update_signature"))
+        {
+            systemConfig.verifyUpdateSignature = doc["verify_update_signature"].as<bool>();
+        }
+
         if (doc.containsKey("new_year"))
         {
             systemConfig.newyear = doc["new_year"].as<bool>();
@@ -302,6 +307,7 @@ void loadSettings()
 #endif
     audioConfig.soundActive = Settings.getBool("SOUND", true);
     audioConfig.soundVolume = Settings.getUInt("VOL", 25);
+    systemConfig.verifyUpdateSignature = Settings.getBool("VFYUPD", false);
     Settings.end();
     systemConfig.deviceId = getID();
     mqttConfig.prefix = systemConfig.deviceId;
@@ -359,6 +365,7 @@ void saveSettings()
 #endif
     Settings.putBool("SOUND", audioConfig.soundActive);
     Settings.putUInt("VOL", audioConfig.soundVolume);
+    Settings.putBool("VFYUPD", systemConfig.verifyUpdateSignature);
     Settings.end();
 }
 
@@ -375,4 +382,4 @@ ColorConfig colorConfig = {0xFFFFFF, 0, 0, 0, 0, 0, 0xFFFFFF, 0x666666, 0xFF0000
 TimeConfig timeConfig = {"%H:%M:%S", "%d.%m.%y", 1, false, "de.pool.ntp.org", "CET-1CEST,M3.5.0,M10.5.0/3", false, 0};
 AppConfig appConfig = {true, true, true, true, true, true, false, 1, 400, 7000, 100, IconLayout::Left, false, false, 1260, 360, 5, 0xFF0000, true};
 AudioConfig audioConfig = {false, 30, ""};
-SystemConfig systemConfig = {true, 15, 80, "", false, 10000, false, false, "", "", false, false, "", ""};
+SystemConfig systemConfig = {true, 15, 80, "", false, 10000, false, false, "", "", false, false, "", "", false};
