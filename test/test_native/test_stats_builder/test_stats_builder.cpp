@@ -28,6 +28,7 @@ static StatsData makeDefaults()
     d.uid = "awtrix_abc123";
     d.matrixOn = true;
     d.ipAddress = "192.168.1.100";
+    d.resetReason = "poweron";
     return d;
 }
 
@@ -76,6 +77,7 @@ void test_json_contains_all_keys(void)
     TEST_ASSERT_TRUE(jsonContains(json, "\"uid\":"));
     TEST_ASSERT_TRUE(jsonContains(json, "\"matrix\":"));
     TEST_ASSERT_TRUE(jsonContains(json, "\"ip_address\":"));
+    TEST_ASSERT_TRUE(jsonContains(json, "\"reset_reason\":"));
 }
 
 // --- sensor conditional fields ---
@@ -171,6 +173,22 @@ void test_json_large_ram_value(void)
 void setUp(void) {}
 void tearDown(void) {}
 
+void test_json_includes_reset_reason(void)
+{
+    StatsData d = makeDefaults();
+    d.resetReason = "panic";
+    String json = buildStatsJson(d);
+    TEST_ASSERT_TRUE(jsonContains(json, "\"reset_reason\":\"panic\""));
+}
+
+void test_json_reset_reason_empty_string(void)
+{
+    StatsData d = makeDefaults();
+    d.resetReason = "";
+    String json = buildStatsJson(d);
+    TEST_ASSERT_TRUE(jsonContains(json, "\"reset_reason\":\"\""));
+}
+
 int main(int argc, char **argv)
 {
     UNITY_BEGIN();
@@ -194,6 +212,10 @@ int main(int argc, char **argv)
     RUN_TEST(test_json_negative_temperature);
     RUN_TEST(test_json_type_always_zero);
     RUN_TEST(test_json_large_ram_value);
+
+    // reset reason
+    RUN_TEST(test_json_includes_reset_reason);
+    RUN_TEST(test_json_reset_reason_empty_string);
 
     return UNITY_END();
 }

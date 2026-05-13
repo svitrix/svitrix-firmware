@@ -20,6 +20,7 @@
  ***************************************************************************/
 
 #include <Arduino.h>
+#include <esp_system.h>
 #include "DisplayManager.h"
 #include "PeripheryManager.h"
 #include "MQTTManager.h"
@@ -37,6 +38,7 @@
 #include "AlarmManager/AlarmManager.h"
 #include "policies/NightModePolicy.h"
 #include "Apps/Apps.h"
+#include "ResetReason.h"
 #include <cassert>
 
 TaskHandle_t taskHandle = nullptr;
@@ -80,6 +82,10 @@ void setup()
     digitalWrite(15, LOW);
     delay(2000);
     Serial.begin(115200);
+    // Capture last reset reason before anything else can mutate state.
+    // The cause is preserved by hardware across reboots; cheap to query.
+    lastResetReason = resetReasonToString(static_cast<uint8_t>(esp_reset_reason()));
+    DEBUG_PRINTF("Boot. Last reset: %s", lastResetReason.c_str());
     setTextFont(&SvitrixFont);
     loadSettings();
     PeripheryManager.setup();

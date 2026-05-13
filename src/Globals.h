@@ -64,3 +64,7 @@ void saveSettings();
 void validateSettings();
 String exportSettings();
 bool importSettings(const char *json);
+
+// Captured once at boot via esp_reset_reason(); mapped via ResetReason service.
+// Read-only after setup(). Empty string before setup() runs.
+extern String lastResetReason;

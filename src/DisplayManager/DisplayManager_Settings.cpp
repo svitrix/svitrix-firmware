@@ -53,6 +53,7 @@ String DisplayManager_::getStats()
     data.uid = systemConfig.deviceId;
     data.matrixOn = !displayConfig.matrixOff;
     data.ipAddress = WiFi.localIP().toString();
+    data.resetReason = lastResetReason;
     return buildStatsJson(data);
 }
 

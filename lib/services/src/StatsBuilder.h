@@ -55,6 +55,7 @@ struct StatsData
     String uid;                 // "uid" — unique device identifier
     bool matrixOn;              // "matrix" — true if display is on
     String ipAddress;           // "ip_address" — device IP address
+    String resetReason;         // "reset_reason" — last reboot cause (see ResetReason service)
 };
 
 /**
