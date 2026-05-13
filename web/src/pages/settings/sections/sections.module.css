@@ -129,6 +129,13 @@
   min-width: 100px;
 }
 
+/* Button row (side by side) */
+.buttonRow {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
 /* Weather status display */
 .weatherStatus {
   margin-top: 8px;

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "preact/hooks";
-import { scanWifi, getWifiNetworks, saveWifiNetworks } from "../../../api/client";
+import { scanWifi, getWifiNetworks, saveWifiNetworks, reboot } from "../../../api/client";
 import type { WifiNetwork } from "../../../api/client";
 import { toast } from "../../../components/Toast";
 import { TextField, Card, FormRow, Button, Select } from "../../../components/ui";
@@ -50,11 +50,16 @@ export function WifiSection() {
     setNetworks(updated);
   }
 
-  async function doSave() {
+  async function doSave(andReboot = false) {
     setSaving(true);
     try {
       await saveWifiNetworks(networks);
-      toast("WiFi networks saved. Reboot to apply.");
+      if (andReboot) {
+        toast("WiFi saved. Rebooting...");
+        setTimeout(() => reboot(), 500);
+      } else {
+        toast("WiFi networks saved. Reboot to apply.");
+      }
     } catch {
       toast("Failed to save");
     }
@@ -118,9 +123,14 @@ export function WifiSection() {
           ))
         )}
 
-        <Button variant="primary" onClick={doSave} disabled={saving}>
-          {saving ? "Saving..." : "Save WiFi Networks"}
-        </Button>
+        <div class={styles.buttonRow}>
+          <Button onClick={() => doSave(false)} disabled={saving}>
+            {saving ? "Saving..." : "Save"}
+          </Button>
+          <Button variant="primary" onClick={() => doSave(true)} disabled={saving}>
+            {saving ? "Saving..." : "Save & Reboot"}
+          </Button>
+        </div>
       </div>
     </Card>
   );

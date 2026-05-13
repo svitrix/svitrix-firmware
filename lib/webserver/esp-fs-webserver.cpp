@@ -234,7 +234,17 @@ IPAddress FSWebServer::setAPmode(const char *ssid, const char *psk)
     m_apmode = true;
     WiFi.mode(WIFI_AP_STA);
     WiFi.persistent(false);
-    WiFi.softAP(ssid, psk);
+
+    // Configure AP with explicit settings for stability
+    IPAddress apIP(192, 168, 4, 1);
+    IPAddress gateway(192, 168, 4, 1);
+    IPAddress subnet(255, 255, 255, 0);
+    WiFi.softAPConfig(apIP, gateway, subnet);
+
+    // Start AP on channel 1 with max 4 connections, not hidden
+    WiFi.softAP(ssid, psk, 1, false, 4);
+    delay(100); // Allow AP to stabilize
+
     m_dnsServer.setErrorReplyCode(DNSReplyCode::NoError);
     m_dnsServer.start(53, "*", WiFi.softAPIP());
     return WiFi.softAPIP();
@@ -329,6 +339,11 @@ IPAddress FSWebServer::startWiFi(uint32_t timeout, const char *apSSID, const cha
 
     // All failed - go to AP mode
     Serial.println(F("\nNo WiFi connection -> Access Point mode"));
+
+    // Clean up any partial STA connection state before starting AP
+    WiFi.disconnect(true);
+    delay(100);
+
     if (apSSID != nullptr && apPsw != nullptr)
         setAPmode(apSSID, apPsw);
     else
@@ -440,14 +455,11 @@ void FSWebServer::doWifiConnection(AsyncWebServerRequest *request)
             IPAddress ip = WiFi.localIP();
             Serial.print("\nConnected to Wifi! IP address: ");
             Serial.println(ip);
-            request->send(200, "text/plain", ip.toString());
-            m_apmode = false;
-            delay(500);
-            ESP.restart();
+
+            // Save credentials BEFORE restarting
             if (persistent)
             {
                 wifi_config_t stationConf;
-                esp_wifi_get_config(WIFI_IF_STA, &stationConf);
                 memset(&stationConf, 0, sizeof(stationConf));
                 memcpy(&stationConf.sta.ssid, ssid.c_str(), ssid.length());
                 memcpy(&stationConf.sta.password, pass.c_str(), pass.length());
@@ -456,15 +468,25 @@ void FSWebServer::doWifiConnection(AsyncWebServerRequest *request)
             else
             {
                 wifi_config_t stationConf;
-                esp_wifi_get_config(WIFI_IF_STA, &stationConf);
                 memset(&stationConf, 0, sizeof(stationConf));
                 esp_wifi_set_config(WIFI_IF_STA, &stationConf);
             }
+
+            request->send(200, "text/plain", ip.toString());
+            m_apmode = false;
+            delay(500);
+            ESP.restart();
         }
         else
+        {
             request->send(500, "text/plain", "Connection error, maybe the password is wrong?");
+            return;
+        }
     }
-    request->send(500, "text/plain", "Wrong credentials provided");
+    else
+    {
+        request->send(400, "text/plain", "SSID and password required");
+    }
 }
 
 void FSWebServer::handleScanNetworks(AsyncWebServerRequest *request)
@@ -474,8 +496,9 @@ void FSWebServer::handleScanNetworks(AsyncWebServerRequest *request)
     if (n == WIFI_SCAN_FAILED)
     {
         // No scan running — start async scan
+        // Use shorter dwell time (120ms) to reduce AP disconnection time
         DebugPrintln("Starting async WiFi scan...");
-        WiFi.scanNetworks(true);
+        WiFi.scanNetworks(true, false, false, 120, 0);
         request->send(202, "text/json", "{\"status\":\"scanning\"}");
         return;
     }
