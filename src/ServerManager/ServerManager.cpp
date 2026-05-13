@@ -122,8 +122,6 @@ void addHandler()
                    { request->send(200, "application/json", smNav_->getEffectNames()); });
     mws.addHandler("/api/transitions", HTTP_GET, [](AsyncWebServerRequest *request)
                    { request->send(200, "application/json", smNav_->getTransitionNames()); });
-    mws.addHandler("/api/reboot", HTTP_ANY, [](AsyncWebServerRequest *request)
-                   { request->send(200, "text/plain", "OK"); delay(200); ESP.restart(); });
     mws.addHandlerWithBody("/api/rtttl", HTTP_POST, [](AsyncWebServerRequest *request)
                            { String body = getBody(request); request->send(200, "text/plain", "OK"); smSound_->playRTTTLString(body.c_str()); });
     mws.addHandlerWithBody("/api/sound", HTTP_POST, [](AsyncWebServerRequest *request)
@@ -187,34 +185,6 @@ void addHandler()
                            { String body = getBody(request); smNav_->reorderApps(body.c_str()); request->send(200, "text/plain", "OK"); });
     mws.addHandler("/api/settings", HTTP_GET, [](AsyncWebServerRequest *request)
                    { request->send(200, "application/json", smControl_->getSettings()); });
-    mws.addHandler("/api/wifi", HTTP_GET, [](AsyncWebServerRequest *request)
-                   {
-                    StaticJsonDocument<512> doc;
-                    JsonArray networks = doc.createNestedArray("networks");
-                    for (int i = 0; i < 3; i++) {
-                        JsonObject net = networks.createNestedObject();
-                        net["ssid"] = wifiConfig.networks[i].ssid;
-                        net["configured"] = wifiConfig.networks[i].ssid.length() > 0;
-                    }
-                    String json;
-                    serializeJson(doc, json);
-                    request->send(200, "application/json", json); });
-    mws.addHandlerWithBody("/api/wifi", HTTP_POST, [](AsyncWebServerRequest *request)
-                           {
-                            String body = getBody(request);
-                            StaticJsonDocument<512> doc;
-                            DeserializationError err = deserializeJson(doc, body);
-                            if (err) {
-                                request->send(400, "text/plain", "InvalidJSON");
-                                return;
-                            }
-                            JsonArray networks = doc["networks"];
-                            for (int i = 0; i < 3 && i < (int)networks.size(); i++) {
-                                wifiConfig.networks[i].ssid = networks[i]["ssid"].as<String>();
-                                wifiConfig.networks[i].password = networks[i]["password"].as<String>();
-                            }
-                            saveSettings();
-                            request->send(200, "text/plain", "OK"); });
     // NOTE: more specific routes must be registered BEFORE the parent route
     mws.addHandler("/api/weather/fetch", HTTP_POST, [](AsyncWebServerRequest *request)
                    {
@@ -404,6 +374,43 @@ void ServerManager_::setup()
     if (systemConfig.debugMode)
         DEBUG_PRINTF("My IP: %d.%d.%d.%d", myIP[0], myIP[1], myIP[2], myIP[3]);
     mws.setAuth(authConfig.user, authConfig.pass);
+
+    // WiFi config endpoints - available in AP mode for initial setup
+    mws.addHandler("/api/wifi", HTTP_GET, [](AsyncWebServerRequest *request)
+                   {
+                    StaticJsonDocument<512> doc;
+                    JsonArray networks = doc.createNestedArray("networks");
+                    for (int i = 0; i < 3; i++) {
+                        JsonObject net = networks.createNestedObject();
+                        net["ssid"] = wifiConfig.networks[i].ssid;
+                        net["configured"] = wifiConfig.networks[i].ssid.length() > 0;
+                    }
+                    String json;
+                    serializeJson(doc, json);
+                    request->send(200, "application/json", json); });
+    mws.addHandlerWithBody("/api/wifi", HTTP_POST, [](AsyncWebServerRequest *request)
+                           {
+                            String body = getBody(request);
+                            StaticJsonDocument<512> doc;
+                            DeserializationError err = deserializeJson(doc, body);
+                            if (err) {
+                                request->send(400, "text/plain", "InvalidJSON");
+                                return;
+                            }
+                            JsonArray networks = doc["networks"];
+                            for (int i = 0; i < 3 && i < (int)networks.size(); i++) {
+                                wifiConfig.networks[i].ssid = networks[i]["ssid"].as<String>();
+                                // Only update password if provided (non-empty) to avoid overwriting existing
+                                String newPass = networks[i]["password"].as<String>();
+                                if (newPass.length() > 0) {
+                                    wifiConfig.networks[i].password = newPass;
+                                }
+                            }
+                            saveSettings();
+                            request->send(200, "text/plain", "OK"); });
+    mws.addHandler("/api/reboot", HTTP_ANY, [](AsyncWebServerRequest *request)
+                   { request->send(200, "text/plain", "OK"); delay(200); ESP.restart(); });
+
     if (isConnected)
     {
         initConfigDefaults();

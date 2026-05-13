@@ -56,11 +56,18 @@ export function WifiSection() {
       await saveWifiNetworks(networks);
       if (andReboot) {
         toast("WiFi saved. Rebooting...");
-        setTimeout(() => reboot(), 500);
+        try {
+          const res = await reboot();
+          console.log("[WiFi] Reboot response:", res.status);
+        } catch (e) {
+          console.error("[WiFi] Reboot failed:", e);
+          toast("Reboot failed - please restart manually");
+        }
       } else {
         toast("WiFi networks saved. Reboot to apply.");
       }
-    } catch {
+    } catch (e) {
+      console.error("[WiFi] Save failed:", e);
       toast("Failed to save");
     }
     setSaving(false);
@@ -129,6 +136,16 @@ export function WifiSection() {
           </Button>
           <Button variant="primary" onClick={() => doSave(true)} disabled={saving}>
             {saving ? "Saving..." : "Save & Reboot"}
+          </Button>
+          <Button onClick={async () => {
+            toast("Rebooting...");
+            try {
+              await reboot();
+            } catch {
+              toast("Reboot failed");
+            }
+          }}>
+            Reboot
           </Button>
         </div>
       </div>

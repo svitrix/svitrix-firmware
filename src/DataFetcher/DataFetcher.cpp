@@ -52,7 +52,8 @@ void DataFetcher_::tick()
     if (!weatherConfig.apiKey.isEmpty())
     {
         unsigned long weatherInterval = weatherConfig.updateInterval * 60000UL;
-        if (now - lastWeatherFetch_ >= weatherInterval)
+        // Fetch immediately on first tick (lastWeatherFetch_ == 0) or after interval
+        if (lastWeatherFetch_ == 0 || now - lastWeatherFetch_ >= weatherInterval)
         {
             if (ESP.getFreeHeap() > MIN_FREE_HEAP)
             {
