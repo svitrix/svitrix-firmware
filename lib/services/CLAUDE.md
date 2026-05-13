@@ -1,6 +1,6 @@
 # Services Library — AI Reference
 
-15 pure-logic utility libraries extracted from managers for testability. All stateless (except TextUtils), no hardware dependencies, 100% test coverage.
+17 pure-logic utility libraries extracted from managers for testability. All stateless (except TextUtils), no hardware dependencies, 100% test coverage.
 
 ## Service Map
 
@@ -21,6 +21,8 @@
 | **PlaceholderUtils** | `{{key}}` template substitution via callback | Yes | `replacePlaceholdersWith(input, getValue)` |
 | **LayoutEngine** | Icon/text position: left, right, none layouts | Yes | `computeLayout()`, `layoutToString()`, `layoutFromString()` |
 | **FormatStringValidator** | Whitelist for user-supplied printf format strings (CWE-134 defense) | Yes | `isSafeSingleArgFormat(fmt)` |
+| **ResetReason** | Map ESP32 reset code (`esp_reset_reason_t`) to a short stable tag | Yes | `resetReasonToString(code)` |
+| **SignatureVerifier** | Phase 1 structural check for OTA signatures (see ADR 0005) | Yes | `isPlausibleRsa2048SignatureBase64()`, `buildSignatureUrl()` |
 
 ## Dependency Graph
 
@@ -78,6 +80,8 @@ Every service has dedicated tests in `test/test_native/`:
 | PlaceholderUtils | `test_placeholder_utils/` |
 | LayoutEngine | `test_layout_engine/` |
 | FormatStringValidator | `test_format_validator/` |
+| ResetReason | `test_reset_reason/` |
+| SignatureVerifier | `test_signature_verifier/` |
 
 Run all: `pio test -e native_test`
 
