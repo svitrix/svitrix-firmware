@@ -500,7 +500,66 @@ curl -X POST http://[IP]/api/notify/dismiss
 
 ---
 
-## 12. Solución de Problemas
+## 12. Backup y Restauración
+
+El sistema de backup permite guardar y restaurar toda la configuración del dispositivo.
+
+### Acceder al Backup
+
+1. Ve a: `http://[IP]/backup`
+2. Verás dos opciones: **Backup** y **Restore**
+
+### Qué se Incluye en el Backup
+
+| Categoría | Contenido |
+|-----------|-----------|
+| **Archivos (LittleFS)** | Iconos personalizados, melodías RTTTL, apps personalizadas, alarmas |
+| **Configuración (NVS)** | Brillo, colores, WiFi, MQTT, Weather API, config de apps, tiempo, audio, display |
+
+### Crear un Backup
+
+1. Haz clic en **"Download Backup"**
+2. Espera mientras se recopilan archivos y configuración
+3. Se descargará un archivo `svitrix-backup.json`
+
+### Restaurar un Backup
+
+1. Haz clic en **"Choose File"** y selecciona tu archivo de backup
+2. El sistema restaurará:
+   - Primero los archivos (iconos, melodías, apps)
+   - Luego la configuración
+3. El dispositivo se reiniciará automáticamente
+
+### Formato del Backup
+
+```json
+{
+  "version": 2,
+  "files": {
+    "/ICONS/miicono.jpg": "base64...",
+    "/MELODIES/alarma.txt": "base64..."
+  },
+  "settings": {
+    "BRI": 120,
+    "TCOL": 16777215,
+    "TIME_COL": 0,
+    ...
+  }
+}
+```
+
+### Compatibilidad
+
+| Versión | Contenido | Compatibilidad |
+|---------|-----------|----------------|
+| **v1** | Solo archivos | ✅ Se puede restaurar en firmware actual |
+| **v2** | Archivos + configuración | ✅ Formato actual |
+
+> **Tip:** Haz un backup antes de actualizar el firmware o hacer cambios importantes. Los backups v1 (solo archivos) siguen siendo compatibles.
+
+---
+
+## 13. Solución de Problemas
 
 ### El flasher no detecta el dispositivo
 - Prueba otro cable USB (debe soportar datos)
@@ -522,7 +581,7 @@ curl -X POST http://[IP]/api/notify/dismiss
 
 ---
 
-## 13. Enlaces Útiles
+## 14. Enlaces Útiles
 
 - **Documentación oficial:** https://svitrix.dev
 - **Repositorio original:** https://github.com/svitrix/svitrix-firmware
@@ -531,7 +590,7 @@ curl -X POST http://[IP]/api/notify/dismiss
 
 ---
 
-## 14. Configurar GitHub Pages (Flasher Propio)
+## 15. Configurar GitHub Pages (Flasher Propio)
 
 Para tener tu propio flasher web:
 
@@ -552,7 +611,7 @@ https://xe1e.github.io/svitrix-firmware-XE1E/
 
 ---
 
-## 15. Información del Fork
+## 16. Información del Fork
 
 | Campo | Valor |
 |-------|-------|
@@ -563,7 +622,7 @@ https://xe1e.github.io/svitrix-firmware-XE1E/
 
 ---
 
-## 16. Git - Flujo de Trabajo del Fork
+## 17. Git - Flujo de Trabajo del Fork
 
 Este repositorio es un fork del proyecto original SVITRIX.
 
