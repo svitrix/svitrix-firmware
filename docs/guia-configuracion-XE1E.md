@@ -286,20 +286,36 @@ Agrega estas fuentes en el Data Fetcher (`http://[IP]/datafetcher`):
 
 ---
 
-## 8. Apps Nativas (Sin configuración)
+## 8. Apps Nativas
 
 El firmware incluye estas apps preinstaladas:
+
+### Apps Básicas (con duración configurable)
 
 | App | Descripción |
 |-----|-------------|
 | **Time** | Reloj con 7 modos (TMODE 0-6) |
 | **Date** | Fecha actual |
-| **Temperature** | Sensor interno del dispositivo |
-| **Humidity** | Sensor interno del dispositivo |
-| **Battery** | Nivel de batería |
-| **Timer** | Temporizador con cuenta regresiva |
-| **Stopwatch** | Cronómetro con centésimas |
-| **Alarms** | Próxima alarma programada |
+| **Temperature** | Sensor interno, con color y offset configurable |
+| **Humidity** | Sensor interno, con color configurable |
+| **Battery** | Nivel de batería, con color configurable |
+
+### Apps Autónomas (sin duración, se muestran cuando están activas)
+
+| App | Descripción | Colores Auto |
+|-----|-------------|--------------|
+| **Timer** | Temporizador con cuenta regresiva | Verde=corriendo, Rojo=terminado, Blanco=pausado |
+| **Stopwatch** | Cronómetro con centésimas | Verde=corriendo, Blanco=pausado |
+| **Alarms** | Próxima alarma programada | Amarillo=activa, Gris=inactiva |
+
+### Colores de Apps
+
+En **Settings > Apps** puedes configurar colores para cada app:
+
+- **Temperature, Humidity, Battery:** Selector de color directo
+- **Timer, Stopwatch, Alarms:** Toggle **Auto** para colores dinámicos o color fijo personalizado
+
+> **Tip:** Las apps Timer, Stopwatch y Alarms usan colores dinámicos por defecto que indican su estado. Desactiva "Auto" para elegir un color fijo.
 
 ---
 
@@ -427,7 +443,64 @@ Las apps Timer, Stopwatch y Alarms están deshabilitadas por defecto. Para mostr
 
 ---
 
-## 11. Solución de Problemas
+## 11. Enviar Notificaciones
+
+Las notificaciones muestran mensajes temporales en la pantalla con opciones de personalización.
+
+### Desde la Interfaz Web
+
+1. Ve a: `http://[IP]` (Settings)
+2. Busca la sección **"Send Notification"**
+
+| Campo | Descripción |
+|-------|-------------|
+| **Text** | Mensaje a mostrar (requerido) |
+| **Icon** | ID de icono de LaMetric o nombre de archivo en `/ICONS/` |
+| **Layout** | Posición del icono: Left o Right (solo si hay icono) |
+| **Hold** | Mantiene la notificación hasta presionar Dismiss |
+| **Duration** | Duración en segundos (1-60, solo si Hold está desactivado) |
+| **Rainbow** | Cicla el texto a través de colores del arcoíris |
+| **Color** | Color del texto (cuando Rainbow está desactivado) |
+| **Sound** | Nombre de archivo RTTTL en `/MELODIES/` (sin extensión) |
+| **RTTTL** | Cadena de melodía RTTTL directa |
+
+### Archivos de Sonido
+
+Los sonidos son melodías en formato RTTTL (Ring Tone Text Transfer Language).
+
+**Ubicación:** `/MELODIES/{nombre}.txt`
+
+**Ejemplo de archivo** (`alarma.txt`):
+```
+Alarm:d=4,o=5,b=140:8c6,8p,8c6,8p,8c6,8p,8c6
+```
+
+**Recursos para melodías RTTTL:**
+- [Laub-Home Wiki: RTTTL Songs](https://www.laub-home.de/wiki/RTTTL_Songs)
+- [Reproductor RTTTL Online](https://adamonsoon.github.io/rtttl-play/)
+- [Editor RTTTL](https://corax89.github.io/esp8266Game/soundEditor.html)
+
+### API HTTP
+
+```bash
+# Notificación simple
+curl -X POST http://[IP]/api/notify -d '{"text":"Hola mundo!"}'
+
+# Con icono y duración
+curl -X POST http://[IP]/api/notify -d '{"text":"Mensaje","icon":"1234","duration":10}'
+
+# Hold (indefinida hasta dismiss)
+curl -X POST http://[IP]/api/notify -d '{"text":"Importante","hold":true}'
+
+# Dismiss
+curl -X POST http://[IP]/api/notify/dismiss
+```
+
+> **Tip:** Si no especificas icono, el texto usa los 32 píxeles completos. Textos largos hacen scroll automáticamente.
+
+---
+
+## 12. Solución de Problemas
 
 ### El flasher no detecta el dispositivo
 - Prueba otro cable USB (debe soportar datos)
@@ -449,7 +522,7 @@ Las apps Timer, Stopwatch y Alarms están deshabilitadas por defecto. Para mostr
 
 ---
 
-## 12. Enlaces Útiles
+## 13. Enlaces Útiles
 
 - **Documentación oficial:** https://svitrix.dev
 - **Repositorio original:** https://github.com/svitrix/svitrix-firmware
@@ -458,7 +531,7 @@ Las apps Timer, Stopwatch y Alarms están deshabilitadas por defecto. Para mostr
 
 ---
 
-## 13. Configurar GitHub Pages (Flasher Propio)
+## 14. Configurar GitHub Pages (Flasher Propio)
 
 Para tener tu propio flasher web:
 
@@ -479,7 +552,7 @@ https://xe1e.github.io/svitrix-firmware-XE1E/
 
 ---
 
-## 14. Información del Fork
+## 15. Información del Fork
 
 | Campo | Valor |
 |-------|-------|
@@ -490,7 +563,7 @@ https://xe1e.github.io/svitrix-firmware-XE1E/
 
 ---
 
-## 15. Git - Flujo de Trabajo del Fork
+## 16. Git - Flujo de Trabajo del Fork
 
 Este repositorio es un fork del proyecto original SVITRIX.
 
