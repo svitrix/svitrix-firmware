@@ -418,9 +418,9 @@ void OutdoorHumApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16
         if (!humIconChecked)
         {
             humIconChecked = true;
-            if (LittleFS.exists("/ICONS/53628.gif"))
+            if (LittleFS.exists("/ICONS/61756.gif"))
             {
-                humIconGif = LittleFS.open("/ICONS/53628.gif");
+                humIconGif = LittleFS.open("/ICONS/61756.gif");
                 humIconIsGif = true;
             }
         }
@@ -475,9 +475,9 @@ void PressureApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_t
         if (!pressIconChecked)
         {
             pressIconChecked = true;
-            if (LittleFS.exists("/ICONS/66892.gif"))
+            if (LittleFS.exists("/ICONS/66893.gif"))
             {
-                pressIconGif = LittleFS.open("/ICONS/66892.gif");
+                pressIconGif = LittleFS.open("/ICONS/66893.gif");
                 pressIconIsGif = true;
             }
         }
@@ -536,19 +536,41 @@ void AirQualityApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16
 
     LayoutMetrics m = LayoutEngine::computeLayout(appConfig.nativeIconLayout, 0);
 
+    static File aqiIconGif;
+    static bool aqiIconChecked = false;
+    static bool aqiIconIsGif = false;
+    static uint16_t aqiIconFrame = 0;
+
     if (m.hasIcon)
     {
-        matrix->drawRGBBitmap(x + m.iconX, y, icon_6622, 8, 8);
+        if (!aqiIconChecked)
+        {
+            aqiIconChecked = true;
+            if (LittleFS.exists("/ICONS/73559.gif"))
+            {
+                aqiIconGif = LittleFS.open("/ICONS/73559.gif");
+                aqiIconIsGif = true;
+            }
+        }
+        if (aqiIconIsGif)
+        {
+            gifPlayer->playGif(x + m.iconX, y, &aqiIconGif, aqiIconFrame);
+            aqiIconFrame = gifPlayer->getFrame();
+        }
+        else
+        {
+            matrix->drawRGBBitmap(x + m.iconX, y, icon_6622, 8, 8);
+        }
     }
 
     String aqiStr;
     if (weatherData.valid && weatherData.aqi > 0)
     {
-        aqiStr = "AQI:" + String(weatherData.aqi);
+        aqiStr = "ICA:" + String(weatherData.aqi);
     }
     else
     {
-        aqiStr = "AQI:--";
+        aqiStr = "ICA:--";
     }
 
     uint16_t textWidth = getTextWidth(aqiStr.c_str(), 0);
@@ -592,9 +614,9 @@ void UVApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_t x, in
         if (!uvIconChecked)
         {
             uvIconChecked = true;
-            if (LittleFS.exists("/ICONS/59801.gif"))
+            if (LittleFS.exists("/ICONS/64310.gif"))
             {
-                uvIconGif = LittleFS.open("/ICONS/59801.gif");
+                uvIconGif = LittleFS.open("/ICONS/64310.gif");
                 uvIconIsGif = true;
             }
         }
