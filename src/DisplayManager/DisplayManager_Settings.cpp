@@ -279,7 +279,8 @@ void DisplayManager_::setNewSettings(const char *json)
     readColorField(obj, "BAT_COL", colorConfig.batColor, colorConfig.textColor);
 
     bool appsChanged = doc.containsKey("TIM") || doc.containsKey("DAT") ||
-                       doc.containsKey("TEMP") || doc.containsKey("HUM") || doc.containsKey("BAT");
+                       doc.containsKey("TEMP") || doc.containsKey("HUM") || doc.containsKey("BAT") ||
+                       doc.containsKey("STIMER") || doc.containsKey("SSW") || doc.containsKey("SALARMS");
     doc.clear();
     if (appsChanged)
         loadNativeApps();
