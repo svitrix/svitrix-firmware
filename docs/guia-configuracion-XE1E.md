@@ -359,7 +359,7 @@ Cuenta ascendente con centésimas de segundo (MM:SS.cs).
 **En el dispositivo (botones):**
 - Botón izquierdo: Reset
 - Botón central: Start/Pause
-- Botón derecho: (reservado para lap)
+- Botón derecho: App siguiente
 
 Máximo: 99:59.99
 
@@ -377,7 +377,10 @@ Hasta 10 alarmas programables con días de la semana.
 **Cuando suena una alarma:**
 - La pantalla muestra alerta roja pulsante
 - El buzzer reproduce la melodía
-- Opciones: **Snooze** (posponer 5 min) o **Dismiss** (apagar)
+
+**Botones cuando suena:**
+- Botón izquierdo: Snooze (posponer 5 min)
+- Botón central: Dismiss (apagar)
 
 ### 9.5 RTC (Reloj de Tiempo Real)
 
@@ -410,12 +413,21 @@ El Ulanzi TC001 tiene un chip DS1307 con batería de respaldo.
 
 Las apps Timer, Stopwatch y Alarms están deshabilitadas por defecto. Para mostrarlas en el carrusel:
 
+**Desde la web:**
 1. Ve a: `http://[IP]` (Settings)
 2. En la sección de apps, activa:
    - Show Timer
    - Show Stopwatch
    - Show Alarms
 3. Guarda los cambios
+
+**Desde el dispositivo (menú físico):**
+1. Mantén presionado el botón central para entrar al menú
+2. Navega con izquierda/derecha hasta **APPS**
+3. Presiona el botón central para entrar
+4. Navega hasta Timer, Stopwatch o Alarms
+5. Presiona el botón central para activar/desactivar (ON/OFF)
+6. Mantén presionado el botón central para guardar y salir
 
 ---
 

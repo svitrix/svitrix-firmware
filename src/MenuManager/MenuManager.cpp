@@ -76,7 +76,7 @@ int8_t dateFormatIndex = 0;
 uint8_t dateFormatCount = 9;
 
 int8_t appsIndex = 0;
-static const uint8_t appsCount = 5;
+static const uint8_t appsCount = 8;
 
 MenuState currentState = MainMenu;
 
@@ -222,6 +222,15 @@ String MenuManager_::menutext()
         case 4:
             renderer_->drawBMP(0, 0, icon_1486, 8, 8);
             return appConfig.showBat ? "ON" : "OFF";
+        case 5:
+            renderer_->drawBMP(0, 0, icon_13, 8, 8);
+            return appConfig.showTimer ? "ON" : "OFF";
+        case 6:
+            renderer_->drawBMP(0, 0, icon_13, 8, 8);
+            return appConfig.showStopwatch ? "ON" : "OFF";
+        case 7:
+            renderer_->drawBMP(0, 0, icon_13, 8, 8);
+            return appConfig.showAlarms ? "ON" : "OFF";
         default:
             break;
         }
@@ -409,6 +418,15 @@ void MenuManager_::selectButton()
             break;
         case 4:
             appConfig.showBat = !appConfig.showBat;
+            break;
+        case 5:
+            appConfig.showTimer = !appConfig.showTimer;
+            break;
+        case 6:
+            appConfig.showStopwatch = !appConfig.showStopwatch;
+            break;
+        case 7:
+            appConfig.showAlarms = !appConfig.showAlarms;
             break;
         default:
             break;

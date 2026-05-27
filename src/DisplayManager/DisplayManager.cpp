@@ -21,6 +21,7 @@
 #include "Apps.h"
 #include "EffectRegistry.h"
 #include "Overlays.h"
+#include "AlarmManager/AlarmManager.h"
 #include <ArtnetWifi.h>
 
 extern ArtnetWifi artnet;
@@ -373,14 +374,39 @@ void DisplayManager_::clearMatrix()
 
 void DisplayManager_::leftButton()
 {
-    if (!(isMenuActive_ && isMenuActive_()))
-        ui->previousApp();
+    if (isMenuActive_ && isMenuActive_())
+        return;
+
+    // App-specific: Reset for Timer/Stopwatch, Snooze for Alarms
+    if (currentApp == "Timer") {
+        TimerControl::reset();
+        return;
+    }
+    if (currentApp == "Stopwatch") {
+        StopwatchControl::reset();
+        return;
+    }
+    if (currentApp == "Alarms" && AlarmManager.isRinging()) {
+        AlarmManager.snooze();
+        return;
+    }
+
+    ui->previousApp();
 }
 
 void DisplayManager_::rightButton()
 {
-    if (!(isMenuActive_ && isMenuActive_()))
-        ui->nextApp();
+    if (isMenuActive_ && isMenuActive_())
+        return;
+
+    // App-specific: +1 minute for Timer
+    if (currentApp == "Timer") {
+        uint32_t current = TimerControl::getRemaining();
+        TimerControl::setTime(current + 60);
+        return;
+    }
+
+    ui->nextApp();
 }
 
 void DisplayManager_::nextApp()
@@ -416,10 +442,32 @@ void DisplayManager_::previousApp()
 
 void DisplayManager_::selectButton()
 {
-    if (!(isMenuActive_ && isMenuActive_()))
-    {
-        DisplayManager.dismissNotify();
+    if (isMenuActive_ && isMenuActive_())
+        return;
+
+    // App-specific: Start/Pause for Timer/Stopwatch, Dismiss for Alarms
+    if (currentApp == "Timer") {
+        if (TimerControl::isRunning()) {
+            TimerControl::pause();
+        } else {
+            TimerControl::start();
+        }
+        return;
     }
+    if (currentApp == "Stopwatch") {
+        if (StopwatchControl::isRunning()) {
+            StopwatchControl::pause();
+        } else {
+            StopwatchControl::start();
+        }
+        return;
+    }
+    if (currentApp == "Alarms" && AlarmManager.isRinging()) {
+        AlarmManager.dismiss();
+        return;
+    }
+
+    DisplayManager.dismissNotify();
 }
 
 void DisplayManager_::selectButtonLong()
