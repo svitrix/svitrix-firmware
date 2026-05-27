@@ -725,16 +725,16 @@ void TimerApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_t x,
     }
 
     // Format MM:SS or HH:MM:SS
-    char timeStr[12];
+    char timeStr[16];
     if (remaining >= 3600) {
         uint32_t hours = remaining / 3600;
         uint32_t mins = (remaining % 3600) / 60;
         uint32_t secs = remaining % 60;
-        snprintf(timeStr, sizeof(timeStr), "%d:%02d:%02d", hours, mins, secs);
+        snprintf(timeStr, sizeof(timeStr), "%d:%02d:%02d", (int)hours, (int)mins, (int)secs);
     } else {
         uint32_t mins = remaining / 60;
         uint32_t secs = remaining % 60;
-        snprintf(timeStr, sizeof(timeStr), "%02d:%02d", mins, secs);
+        snprintf(timeStr, sizeof(timeStr), "%02d:%02d", (int)mins, (int)secs);
     }
 
     // Use config color if set, otherwise dynamic: green running, red finished, white paused
@@ -750,9 +750,35 @@ void TimerApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_t x,
     }
     applyNativeAppColor(color);
 
-    // Center the text
+    // Icon handling
+    static File timerIconGif;
+    static bool timerIconChecked = false;
+    static bool timerIconIsGif = false;
+    static uint16_t timerIconFrame = 0;
+
+    LayoutMetrics m = LayoutEngine::computeLayout(appConfig.nativeIconLayout, 0);
+
+    if (m.hasIcon)
+    {
+        if (!timerIconChecked)
+        {
+            timerIconChecked = true;
+            if (LittleFS.exists("/ICONS/16437.gif"))
+            {
+                timerIconGif = LittleFS.open("/ICONS/16437.gif");
+                timerIconIsGif = true;
+            }
+        }
+        if (timerIconIsGif)
+        {
+            gifPlayer->playGif(x + m.iconX, y, &timerIconGif, timerIconFrame);
+            timerIconFrame = gifPlayer->getFrame();
+        }
+    }
+
     uint16_t textWidth = getTextWidth(timeStr, 0);
-    int16_t textX = (32 - textWidth) / 2;
+    LayoutMetrics tm = LayoutEngine::computeLayout(appConfig.nativeIconLayout, textWidth);
+    int16_t textX = tm.textCenterX;
 
     DisplayManager.setCursor(textX + x, 6 + y);
     DisplayManager.matrixPrint(timeStr);
@@ -797,6 +823,18 @@ namespace StopwatchControl {
     bool isRunning() { return swRunning; }
 }
 
+// ── Timer/Stopwatch visibility helpers ─────────────────────────────
+
+bool isTimerActive()
+{
+    return TimerControl::isRunning() || TimerControl::getRemaining() > 0 || TimerControl::isFinished();
+}
+
+bool isStopwatchActive()
+{
+    return StopwatchControl::isRunning() || StopwatchControl::getElapsed() > 0;
+}
+
 // ── StopwatchApp ───────────────────────────────────────────────────
 
 void StopwatchApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_t x, int16_t y, GifPlayer *gifPlayer)
@@ -816,7 +854,7 @@ void StopwatchApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_
     } else {
         uint32_t mins = totalSecs / 60;
         uint32_t secs = totalSecs % 60;
-        snprintf(timeStr, sizeof(timeStr), "%02d:%02d.%02d", mins, secs, centisecs);
+        snprintf(timeStr, sizeof(timeStr), "%02d:%02d.%02d", (int)mins, (int)secs, (int)centisecs);
     }
 
     // Use config color if set, otherwise dynamic: green running, white paused
@@ -826,9 +864,35 @@ void StopwatchApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_
     }
     applyNativeAppColor(color);
 
-    // Center the text
+    // Icon handling
+    static File swIconGif;
+    static bool swIconChecked = false;
+    static bool swIconIsGif = false;
+    static uint16_t swIconFrame = 0;
+
+    LayoutMetrics m = LayoutEngine::computeLayout(appConfig.nativeIconLayout, 0);
+
+    if (m.hasIcon)
+    {
+        if (!swIconChecked)
+        {
+            swIconChecked = true;
+            if (LittleFS.exists("/ICONS/42186.gif"))
+            {
+                swIconGif = LittleFS.open("/ICONS/42186.gif");
+                swIconIsGif = true;
+            }
+        }
+        if (swIconIsGif)
+        {
+            gifPlayer->playGif(x + m.iconX, y, &swIconGif, swIconFrame);
+            swIconFrame = gifPlayer->getFrame();
+        }
+    }
+
     uint16_t textWidth = getTextWidth(timeStr, 0);
-    int16_t textX = (32 - textWidth) / 2;
+    LayoutMetrics tm = LayoutEngine::computeLayout(appConfig.nativeIconLayout, textWidth);
+    int16_t textX = tm.textCenterX;
 
     DisplayManager.setCursor(textX + x, 6 + y);
     DisplayManager.matrixPrint(timeStr);

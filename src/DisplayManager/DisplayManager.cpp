@@ -45,6 +45,12 @@ MatrixDisplayUi *ui = nullptr;
 bool artnetMode = false;
 bool moodlightMode = false;
 
+// Timer/Stopwatch state tracking for dynamic app list updates
+static bool lastTimerActive = false;
+static bool lastStopwatchActive = false;
+static bool lastHasEnabledAlarms = false;
+static bool lastAlarmRinging = false;
+
 // Display calibration (declared extern in DisplayManager_internal.h)
 float displayGamma = 0;
 CRGB colorCorrection;
@@ -339,6 +345,50 @@ void DisplayManager_::tick()
 
     if (systemConfig.newyear)
         DisplayManager.checkNewYear();
+
+    // Update app list when Timer/Stopwatch active state changes
+    bool timerActive = isTimerActive();
+    bool stopwatchActive = isStopwatchActive();
+    if (timerActive != lastTimerActive || stopwatchActive != lastStopwatchActive)
+    {
+        lastTimerActive = timerActive;
+        lastStopwatchActive = stopwatchActive;
+        loadNativeApps();
+    }
+
+    // Update indicator 3 for alarms: show when any alarm is enabled
+    if (appConfig.showAlarms && AlarmManager.hasServices())
+    {
+        bool hasEnabledAlarms = false;
+        for (const auto& alarm : AlarmManager.getAlarms())
+        {
+            if (alarm.enabled)
+            {
+                hasEnabledAlarms = true;
+                break;
+            }
+        }
+        bool isRinging = AlarmManager.isRinging();
+
+        if (hasEnabledAlarms != lastHasEnabledAlarms || isRinging != lastAlarmRinging)
+        {
+            lastHasEnabledAlarms = hasEnabledAlarms;
+            lastAlarmRinging = isRinging;
+            ui->setIndicator3State(hasEnabledAlarms || isRinging);
+            if (isRinging)
+            {
+                ui->setIndicator3Color(0xFF0000);  // Red when ringing
+                ui->setIndicator3Blink(300);       // Fast blink
+                ui->setIndicator3Fade(0);
+            }
+            else if (hasEnabledAlarms)
+            {
+                ui->setIndicator3Color(0xFFAA00);  // Amber when alarm set
+                ui->setIndicator3Blink(0);         // Solid, no blink
+                ui->setIndicator3Fade(0);
+            }
+        }
+    }
 }
 
 bool newYearEventTriggered = false;

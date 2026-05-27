@@ -81,3 +81,7 @@ namespace StopwatchControl {
     uint32_t getElapsed();
     bool isRunning();
 }
+
+// Check if Timer/Stopwatch should be visible in app loop
+bool isTimerActive();
+bool isStopwatchActive();

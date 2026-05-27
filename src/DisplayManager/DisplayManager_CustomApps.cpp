@@ -541,10 +541,10 @@ void DisplayManager_::loadNativeApps()
     updateApp("AirQuality", AirQualityApp, weatherConfig.showAirQuality, 8);
     updateApp("UV", UVApp, weatherConfig.showUV, 9);
 
-    // Autonomous mode apps
-    updateApp("Timer", TimerApp, appConfig.showTimer, 10);
-    updateApp("Stopwatch", StopwatchApp, appConfig.showStopwatch, 11);
-    updateApp("Alarms", AlarmsApp, appConfig.showAlarms, 12);
+    // Autonomous mode apps - only show when active
+    updateApp("Timer", TimerApp, appConfig.showTimer && isTimerActive(), 10);
+    updateApp("Stopwatch", StopwatchApp, appConfig.showStopwatch && isStopwatchActive(), 11);
+    // Alarms app removed - uses indicator 3 instead
 
     ui->setApps(Apps);
     setAutoTransition(true);
