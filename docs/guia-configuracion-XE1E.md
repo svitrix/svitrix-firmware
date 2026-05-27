@@ -297,10 +297,113 @@ El firmware incluye estas apps preinstaladas:
 | **Temperature** | Sensor interno del dispositivo |
 | **Humidity** | Sensor interno del dispositivo |
 | **Battery** | Nivel de batería |
+| **Timer** | Temporizador con cuenta regresiva |
+| **Stopwatch** | Cronómetro con centésimas |
+| **Alarms** | Próxima alarma programada |
 
 ---
 
-## 9. Efectos de Fondo Disponibles
+## 9. Modo Autónomo (Timer, Cronómetro, Alarmas)
+
+El Modo Autónomo permite usar el dispositivo sin WiFi ni Home Assistant. Incluye un RTC (DS1307) que mantiene la hora durante reinicios.
+
+### 9.1 Acceder a la Configuración
+
+1. Ve a: `http://[IP]/autonomous`
+2. Verás tres secciones: Timer, Stopwatch, Alarms
+
+### 9.2 Timer (Temporizador)
+
+Cuenta regresiva configurable.
+
+| Control | Función |
+|---------|---------|
+| **Set** | Establecer tiempo (minutos:segundos) |
+| **Start** | Iniciar cuenta regresiva |
+| **Pause** | Pausar |
+| **Reset** | Reiniciar al tiempo configurado |
+
+**En el dispositivo (botones):**
+- Botón izquierdo: Reset
+- Botón central: Start/Pause
+- Botón derecho: +1 minuto
+
+Cuando termina, suena una melodía y la pantalla parpadea en rojo.
+
+### 9.3 Stopwatch (Cronómetro)
+
+Cuenta ascendente con centésimas de segundo (MM:SS.cs).
+
+| Control | Función |
+|---------|---------|
+| **Start** | Iniciar cronómetro |
+| **Pause** | Pausar |
+| **Reset** | Reiniciar a 00:00.00 |
+
+**En el dispositivo (botones):**
+- Botón izquierdo: Reset
+- Botón central: Start/Pause
+- Botón derecho: (reservado para lap)
+
+Máximo: 99:59.99
+
+### 9.4 Alarmas
+
+Hasta 10 alarmas programables con días de la semana.
+
+| Campo | Descripción |
+|-------|-------------|
+| **Hora** | Formato 24h (HH:MM) |
+| **Días** | Selector de días (S M T W T F S) |
+| **Label** | Etiqueta opcional |
+| **Toggle** | Activar/desactivar alarma |
+
+**Cuando suena una alarma:**
+- La pantalla muestra alerta roja pulsante
+- El buzzer reproduce la melodía
+- Opciones: **Snooze** (posponer 5 min) o **Dismiss** (apagar)
+
+### 9.5 RTC (Reloj de Tiempo Real)
+
+El Ulanzi TC001 tiene un chip DS1307 con batería de respaldo.
+
+| Comportamiento | Descripción |
+|----------------|-------------|
+| **Con WiFi** | Sincroniza con NTP y actualiza el RTC |
+| **Sin WiFi** | Usa la hora del RTC |
+| **Reinicio** | El RTC mantiene la hora |
+
+**Precisión del DS1307:** ±2 ppm típico (~1 segundo/semana). Suficiente para uso normal; se recorrige automáticamente cuando hay WiFi.
+
+### 9.6 API HTTP
+
+| Endpoint | Método | Descripción |
+|----------|--------|-------------|
+| `/api/timer` | GET | Estado del timer |
+| `/api/timer` | POST | Control: `{"action": "start\|pause\|reset\|setTime", "time": 300}` |
+| `/api/stopwatch` | GET | Estado del cronómetro |
+| `/api/stopwatch` | POST | Control: `{"action": "start\|pause\|reset"}` |
+| `/api/alarms` | GET | Lista de alarmas |
+| `/api/alarms` | POST | Agregar alarma |
+| `/api/alarms` | PUT | Actualizar alarma |
+| `/api/alarms` | DELETE | Eliminar alarma: `{"id": 1}` |
+| `/api/alarms/snooze` | POST | Posponer: `{"minutes": 5}` |
+| `/api/alarms/dismiss` | POST | Apagar alarma actual |
+
+### 9.7 Habilitar Apps en Pantalla
+
+Las apps Timer, Stopwatch y Alarms están deshabilitadas por defecto. Para mostrarlas en el carrusel:
+
+1. Ve a: `http://[IP]` (Settings)
+2. En la sección de apps, activa:
+   - Show Timer
+   - Show Stopwatch
+   - Show Alarms
+3. Guarda los cambios
+
+---
+
+## 10. Efectos de Fondo Disponibles
 
 20 efectos visuales para usar como fondo:
 
@@ -324,7 +427,7 @@ El firmware incluye estas apps preinstaladas:
 
 ---
 
-## 10. Solución de Problemas
+## 11. Solución de Problemas
 
 ### El flasher no detecta el dispositivo
 - Prueba otro cable USB (debe soportar datos)
@@ -346,7 +449,7 @@ El firmware incluye estas apps preinstaladas:
 
 ---
 
-## 11. Enlaces Útiles
+## 12. Enlaces Útiles
 
 - **Documentación oficial:** https://svitrix.dev
 - **Repositorio original:** https://github.com/svitrix/svitrix-firmware
@@ -355,7 +458,7 @@ El firmware incluye estas apps preinstaladas:
 
 ---
 
-## 12. Configurar GitHub Pages (Flasher Propio)
+## 13. Configurar GitHub Pages (Flasher Propio)
 
 Para tener tu propio flasher web:
 
@@ -376,7 +479,7 @@ https://xe1e.github.io/svitrix-firmware-XE1E/
 
 ---
 
-## 13. Información del Fork
+## 14. Información del Fork
 
 | Campo | Valor |
 |-------|-------|
@@ -387,7 +490,7 @@ https://xe1e.github.io/svitrix-firmware-XE1E/
 
 ---
 
-## 14. Git - Flujo de Trabajo del Fork
+## 15. Git - Flujo de Trabajo del Fork
 
 Este repositorio es un fork del proyecto original SVITRIX.
 
