@@ -269,6 +269,9 @@ void loadSettings()
     colorConfig.dateColor = Settings.getUInt("DATE_COL", 0);
     colorConfig.tempColor = Settings.getUInt("TEMP_COL", 0);
     colorConfig.humColor = Settings.getUInt("HUM_COL", 0);
+    colorConfig.timerColor = Settings.getUInt("TIMER_COL", 0);
+    colorConfig.stopwatchColor = Settings.getUInt("SW_COL", 0);
+    colorConfig.alarmsColor = Settings.getUInt("ALARMS_COL", 0);
 #ifdef ULANZI
     colorConfig.batColor = Settings.getUInt("BAT_COL", 0);
 #endif
@@ -372,6 +375,9 @@ void saveSettings()
     Settings.putUInt("DATE_COL", colorConfig.dateColor);
     Settings.putUInt("TEMP_COL", colorConfig.tempColor);
     Settings.putUInt("HUM_COL", colorConfig.humColor);
+    Settings.putUInt("TIMER_COL", colorConfig.timerColor);
+    Settings.putUInt("SW_COL", colorConfig.stopwatchColor);
+    Settings.putUInt("ALARMS_COL", colorConfig.alarmsColor);
 #ifdef ULANZI
     Settings.putUInt("BAT_COL", colorConfig.batColor);
 #endif
@@ -454,7 +460,7 @@ AuthConfig authConfig = {"", "svitrix"};
 
 DisplayConfig displayConfig = {0, 42, false, false, false, true, -1};
 BrightnessConfig brightnessConfig = {120, 0, true, 2, 160, 3.0, 1.0, false};
-ColorConfig colorConfig = {0xFFFFFF, 0, 0, 0, 0, 0, 0xFFFFFF, 0x666666, 0xFF0000, 0x000000, 0xFFFFFF};
+ColorConfig colorConfig = {0xFFFFFF, 0, 0, 0, 0, 0, 0, 0, 0, 0xFFFFFF, 0x666666, 0xFF0000, 0x000000, 0xFFFFFF};
 TimeConfig timeConfig = {"%H:%M:%S", "%d.%m.%y", 1, false, "time.cloudflare.com", "CST6", false, 0};
 AppConfig appConfig = {true, true, true, true, true, true, false, false, false, false, 1, 400, 7000, 100, 7, 7, 7, 7, 7, IconLayout::Left, false, false, 1260, 360, 5, 0xFF0000, true};
 AudioConfig audioConfig = {false, 30, ""};

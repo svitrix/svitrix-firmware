@@ -737,12 +737,16 @@ void TimerApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_t x,
         snprintf(timeStr, sizeof(timeStr), "%02d:%02d", mins, secs);
     }
 
-    // Color: green when running, red when finished, white when paused
-    uint32_t color = 0xFFFFFF;
-    if (timerFinished) {
-        color = 0xFF0000;
-    } else if (timerRunning) {
-        color = 0x00FF00;
+    // Use config color if set, otherwise dynamic: green running, red finished, white paused
+    uint32_t color = colorConfig.timerColor;
+    if (color == 0) {
+        if (timerFinished) {
+            color = 0xFF0000;
+        } else if (timerRunning) {
+            color = 0x00FF00;
+        } else {
+            color = 0xFFFFFF;
+        }
     }
     applyNativeAppColor(color);
 
@@ -815,8 +819,11 @@ void StopwatchApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_
         snprintf(timeStr, sizeof(timeStr), "%02d:%02d.%02d", mins, secs, centisecs);
     }
 
-    // Color: green when running, white when paused
-    uint32_t color = swRunning ? 0x00FF00 : 0xFFFFFF;
+    // Use config color if set, otherwise dynamic: green running, white paused
+    uint32_t color = colorConfig.stopwatchColor;
+    if (color == 0) {
+        color = swRunning ? 0x00FF00 : 0xFFFFFF;
+    }
     applyNativeAppColor(color);
 
     // Center the text
@@ -840,7 +847,9 @@ void AlarmsApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_t x
     auto alarms = AlarmManager.getAlarms();
 
     String displayText;
-    uint32_t color = 0xFFFFFF;
+    // Use config color if set, otherwise dynamic: red when ringing, white otherwise
+    uint32_t color = colorConfig.alarmsColor;
+    bool useConfigColor = (color != 0);
 
     if (AlarmManager.isRinging())
     {
@@ -848,7 +857,7 @@ void AlarmsApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_t x
         if (ringing)
         {
             displayText = ringing->label.isEmpty() ? "ALARM!" : ringing->label;
-            color = 0xFF0000;  // Red when ringing
+            if (!useConfigColor) color = 0xFF0000;  // Red when ringing
         }
     }
     else
@@ -873,12 +882,12 @@ void AlarmsApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_t x
             char timeStr[8];
             snprintf(timeStr, sizeof(timeStr), "%02d:%02d", nextAlarm->hour, nextAlarm->minute);
             displayText = timeStr;
-            color = 0x00FFFF;  // Cyan for next alarm
+            if (!useConfigColor) color = 0x00FFFF;  // Cyan for next alarm
         }
         else
         {
             displayText = "No alarm";
-            color = 0x666666;  // Gray when no alarms
+            if (!useConfigColor) color = 0x666666;  // Gray when no alarms
         }
     }
 

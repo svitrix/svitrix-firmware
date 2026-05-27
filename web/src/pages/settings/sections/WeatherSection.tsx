@@ -169,7 +169,8 @@ export function WeatherSection() {
 
         <div class={styles.appRow}>
           <Toggle label="Air Quality" checked={w.showAirQuality} onChange={(v) => updateWeatherConfig({ showAirQuality: v })} />
-          <ColorField label={w.aqiColor === 0 ? "Auto" : ""} value={w.aqiColor} onChange={(v) => updateWeatherConfig({ aqiColor: v })} />
+          <Toggle label="Auto" checked={w.aqiColor === 0} onChange={(v) => updateWeatherConfig({ aqiColor: v ? 0 : 0xFFFFFF })} />
+          {w.aqiColor !== 0 && <ColorField label="" value={w.aqiColor} onChange={(v) => updateWeatherConfig({ aqiColor: v })} />}
           <div class={styles.appSlider}>
             <Slider label="" min={1} max={60} value={w.aqiDuration || 7} onChange={(v) => updateWeatherConfig({ aqiDuration: v })} unit="s" />
           </div>
@@ -177,14 +178,15 @@ export function WeatherSection() {
 
         <div class={styles.appRow}>
           <Toggle label="UV Index" checked={w.showUV} onChange={(v) => updateWeatherConfig({ showUV: v })} />
-          <ColorField label={w.uvColor === 0 ? "Auto" : ""} value={w.uvColor} onChange={(v) => updateWeatherConfig({ uvColor: v })} />
+          <Toggle label="Auto" checked={w.uvColor === 0} onChange={(v) => updateWeatherConfig({ uvColor: v ? 0 : 0xFFFFFF })} />
+          {w.uvColor !== 0 && <ColorField label="" value={w.uvColor} onChange={(v) => updateWeatherConfig({ uvColor: v })} />}
           <div class={styles.appSlider}>
             <Slider label="" min={1} max={60} value={w.uvDuration || 7} onChange={(v) => updateWeatherConfig({ uvDuration: v })} unit="s" />
           </div>
         </div>
 
         <p class={styles.hint}>
-          Air Quality and UV use automatic colors based on level (green→yellow→orange→red). Set a custom color to override.
+          Auto color changes based on level (green→yellow→orange→red).
         </p>
 
         <FormRow>

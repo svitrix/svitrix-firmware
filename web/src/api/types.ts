@@ -32,6 +32,9 @@ export interface Settings {
   HUM_COL: number;
   TEMP_COL: number;
   BAT_COL: number;
+  TIMER_COL: number;
+  SW_COL: number;
+  ALARMS_COL: number;
   SSPEED: number;
   TIM: boolean;
   DAT: boolean;

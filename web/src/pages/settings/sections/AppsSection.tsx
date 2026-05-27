@@ -57,7 +57,9 @@ export function AppsSection() {
       TEMP: s.TEMP, TEMP_COL: s.TEMP_COL,
       HUM: s.HUM, HUM_COL: s.HUM_COL,
       BAT: s.BAT, BAT_COL: s.BAT_COL,
-      STIMER: s.STIMER, SSW: s.SSW, SALARMS: s.SALARMS,
+      STIMER: s.STIMER, TIMER_COL: s.TIMER_COL,
+      SSW: s.SSW, SW_COL: s.SW_COL,
+      SALARMS: s.SALARMS, ALARMS_COL: s.ALARMS_COL,
       ATIME: s.ATIME, ATRANS: s.ATRANS,
       TEFF: s.TEFF, TSPEED: s.TSPEED,
       SSPEED: s.SSPEED, BLOCKN: s.BLOCKN,
@@ -120,9 +122,20 @@ export function AppsSection() {
           </div>
         </div>
 
-        <Toggle label="Timer" checked={s.STIMER} onChange={(v) => updateSettings({ STIMER: v })} />
-        <Toggle label="Stopwatch" checked={s.SSW} onChange={(v) => updateSettings({ SSW: v })} />
-        <Toggle label="Alarms" checked={s.SALARMS} onChange={(v) => updateSettings({ SALARMS: v })} />
+        <div class={styles.appRow}>
+          <Toggle label="Timer" checked={s.STIMER} onChange={(v) => updateSettings({ STIMER: v })} />
+          <ColorField label="" value={s.TIMER_COL} onChange={(v) => updateSettings({ TIMER_COL: v })} />
+        </div>
+
+        <div class={styles.appRow}>
+          <Toggle label="Stopwatch" checked={s.SSW} onChange={(v) => updateSettings({ SSW: v })} />
+          <ColorField label="" value={s.SW_COL} onChange={(v) => updateSettings({ SW_COL: v })} />
+        </div>
+
+        <div class={styles.appRow}>
+          <Toggle label="Alarms" checked={s.SALARMS} onChange={(v) => updateSettings({ SALARMS: v })} />
+          <ColorField label="" value={s.ALARMS_COL} onChange={(v) => updateSettings({ ALARMS_COL: v })} />
+        </div>
 
         <Toggle label="Auto Transition" checked={s.ATRANS} onChange={(v) => updateSettings({ ATRANS: v })} />
         <Select

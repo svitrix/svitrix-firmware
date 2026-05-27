@@ -94,6 +94,9 @@ String DisplayManager_::getSettings()
     doc["HUM_COL"] = colorConfig.humColor;
     doc["TEMP_COL"] = colorConfig.tempColor;
     doc["BAT_COL"] = colorConfig.batColor;
+    doc["TIMER_COL"] = colorConfig.timerColor;
+    doc["SW_COL"] = colorConfig.stopwatchColor;
+    doc["ALARMS_COL"] = colorConfig.alarmsColor;
     doc["SSPEED"] = appConfig.scrollSpeed;
     doc["NILAYOUT"] = layoutToString(appConfig.nativeIconLayout);
     doc["NMODE"] = appConfig.nightMode;
@@ -277,6 +280,9 @@ void DisplayManager_::setNewSettings(const char *json)
     readColorField(obj, "TEMP_COL", colorConfig.tempColor, colorConfig.textColor);
     readColorField(obj, "HUM_COL", colorConfig.humColor, colorConfig.textColor);
     readColorField(obj, "BAT_COL", colorConfig.batColor, colorConfig.textColor);
+    readColorField(obj, "TIMER_COL", colorConfig.timerColor, colorConfig.textColor);
+    readColorField(obj, "SW_COL", colorConfig.stopwatchColor, colorConfig.textColor);
+    readColorField(obj, "ALARMS_COL", colorConfig.alarmsColor, colorConfig.textColor);
 
     bool appsChanged = doc.containsKey("TIM") || doc.containsKey("DAT") ||
                        doc.containsKey("TEMP") || doc.containsKey("HUM") || doc.containsKey("BAT") ||

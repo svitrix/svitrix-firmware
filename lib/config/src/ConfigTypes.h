@@ -94,6 +94,9 @@ struct ColorConfig {
     uint32_t batColor;
     uint32_t tempColor;
     uint32_t humColor;
+    uint32_t timerColor;
+    uint32_t stopwatchColor;
+    uint32_t alarmsColor;
     uint32_t wdcActive;
     uint32_t wdcInactive;
     uint32_t calendarHeaderColor;
