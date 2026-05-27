@@ -37,6 +37,8 @@ async function del(url: string): Promise<Response> {
 // Settings
 export const getSettings = () => get<Settings>("/api/settings");
 export const saveSettings = (s: Partial<Settings>) => post("/api/settings", s);
+export const exportSettings = () => get<Record<string, unknown>>("/api/settings/export");
+export const importSettings = (settings: Record<string, unknown>) => post("/api/settings/import", settings);
 
 // Stats
 export const getStats = () => get<Stats>("/api/stats");

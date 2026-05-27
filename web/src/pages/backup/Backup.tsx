@@ -1,8 +1,14 @@
 import { useState } from "preact/hooks";
-import { listDir, uploadFile, reboot } from "../../api/client";
+import { listDir, uploadFile, reboot, exportSettings, importSettings } from "../../api/client";
 import type { FileEntry } from "../../api/types";
 import { toast } from "../../components/Toast";
 import styles from "./Backup.module.css";
+
+interface BackupData {
+  files: Record<string, string>;
+  settings?: Record<string, unknown>;
+  version?: number;
+}
 
 async function collectFiles(
   dir: string,
@@ -29,14 +35,24 @@ export function BackupPage(_props: { path?: string }) {
       const files: { path: string; blob: Blob }[] = [];
       await collectFiles("/", files);
 
-      const backup: Record<string, string> = {};
+      const fileData: Record<string, string> = {};
       for (const f of files) {
         const buf = await f.blob.arrayBuffer();
         const bytes = new Uint8Array(buf);
         let binary = "";
         for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
-        backup[f.path] = btoa(binary);
+        fileData[f.path] = btoa(binary);
       }
+
+      setBusy("Exporting settings...");
+      const settings = await exportSettings();
+
+      const backup: BackupData = {
+        version: 2,
+        files: fileData,
+        settings,
+      };
+
       const blob = new Blob([JSON.stringify(backup, null, 2)], {
         type: "application/json",
       });
@@ -56,16 +72,28 @@ export function BackupPage(_props: { path?: string }) {
     setBusy("Restoring...");
     try {
       const text = await file.text();
-      const backup: Record<string, string> = JSON.parse(text);
-      const paths = Object.keys(backup);
+      const raw = JSON.parse(text);
+
+      // Support both old format (flat file map) and new format (with settings)
+      const backup: BackupData = raw.version === 2
+        ? raw
+        : { files: raw, version: 1 };
+
+      const paths = Object.keys(backup.files);
       let done = 0;
       for (const path of paths) {
-        setBusy(`Restoring ${++done}/${paths.length}...`);
-        const binary = atob(backup[path]);
+        setBusy(`Restoring files ${++done}/${paths.length}...`);
+        const binary = atob(backup.files[path]);
         const bytes = new Uint8Array(binary.length);
         for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
         await uploadFile(path, new Blob([bytes]));
       }
+
+      if (backup.settings) {
+        setBusy("Restoring settings...");
+        await importSettings(backup.settings);
+      }
+
       toast("Restore complete! Rebooting...");
       await reboot();
     } catch {
@@ -81,7 +109,8 @@ export function BackupPage(_props: { path?: string }) {
       <div class="card">
         <h3 class={styles.cardHeading}>Backup</h3>
         <p class={styles.hint}>
-          Download all files from device filesystem as a JSON backup.
+          Download all files and settings from device as a JSON backup.
+          Includes: icons, melodies, custom apps, alarms, and all configuration.
         </p>
         <button class="btn-primary" onClick={doBackup} disabled={!!busy}>
           {busy || "Download Backup"}
@@ -91,7 +120,7 @@ export function BackupPage(_props: { path?: string }) {
       <div class="card">
         <h3 class={styles.cardHeading}>Restore</h3>
         <p class={styles.hint}>
-          Upload a previously downloaded backup file. Device will reboot after restore.
+          Upload a previously downloaded backup file. Files and settings will be restored. Device will reboot after restore.
         </p>
         <input
           type="file"

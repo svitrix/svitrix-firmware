@@ -187,6 +187,10 @@ void addHandler()
                            { String body = getBody(request); smNav_->reorderApps(body.c_str()); request->send(200, "text/plain", "OK"); });
     mws.addHandler("/api/settings", HTTP_GET, [](AsyncWebServerRequest *request)
                    { request->send(200, "application/json", smControl_->getSettings()); });
+    mws.addHandler("/api/settings/export", HTTP_GET, [](AsyncWebServerRequest *request)
+                   { request->send(200, "application/json", exportSettings()); });
+    mws.addHandlerWithBody("/api/settings/import", HTTP_POST, [](AsyncWebServerRequest *request)
+                           { String body = getBody(request); bool ok = importSettings(body.c_str()); request->send(ok ? 200 : 400, "text/plain", ok ? "OK" : "Error"); });
     // NOTE: more specific routes must be registered BEFORE the parent route
     mws.addHandler("/api/weather/fetch", HTTP_POST, [](AsyncWebServerRequest *request)
                    {
