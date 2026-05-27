@@ -1,7 +1,7 @@
 import { defineConfig } from 'vitepress'
 
 const sharedSocialLinks = [
-  { icon: 'github', link: 'https://github.com/svitrix/svitrix-firmware' }
+  { icon: 'github', link: 'https://github.com/XE1E/svitrix-firmware-XE1E' }
 ]
 
 function sidebarEn() {
@@ -90,6 +90,49 @@ function sidebarUk() {
   ]
 }
 
+function sidebarEs() {
+  return [
+    {
+      text: 'Primeros Pasos',
+      collapsed: false,
+      items: [
+        { text: 'Inicio Rápido', link: '/es/quickstart' },
+        { text: 'Flasher', link: '/es/flasher' },
+        { text: 'Hardware', link: '/es/hardware' },
+        { text: 'FAQ', link: '/es/faq' },
+        { text: 'Eliminar SVITRIX', link: '/es/original' }
+      ]
+    },
+    {
+      text: 'Configuración',
+      collapsed: false,
+      items: [
+        { text: 'Interfaz Web', link: '/es/webinterface' },
+        { text: 'Menú en Pantalla', link: '/es/onscreen' },
+        { text: 'Data Fetcher', link: '/es/datafetcher' }
+      ]
+    },
+    {
+      text: 'Funciones',
+      collapsed: false,
+      items: [
+        { text: 'Apps', link: '/es/apps' },
+        { text: 'Efectos', link: '/es/effects' },
+        { text: 'Iconos', link: '/es/icons' },
+        { text: 'Sonidos', link: '/es/sounds' },
+        { text: 'Funciones Ocultas', link: '/es/dev' }
+      ]
+    },
+    {
+      text: 'API',
+      collapsed: false,
+      items: [
+        { text: 'MQTT / HTTP', link: '/es/api' }
+      ]
+    }
+  ]
+}
+
 export default defineConfig({
   title: 'SVITRIX',
   base: '/svitrix-firmware-XE1E/',
@@ -133,6 +176,28 @@ export default defineConfig({
         docFooter: {
           prev: 'Попередня сторінка',
           next: 'Наступна сторінка'
+        }
+      }
+    },
+    es: {
+      label: 'Español',
+      lang: 'es',
+      description: 'Firmware personalizado para el reloj Ulanzi Smart Pixel y relojes matriciales caseros.',
+      themeConfig: {
+        nav: [
+          { text: 'Inicio', link: '/es/' },
+          { text: 'Inicio Rápido', link: '/es/quickstart' },
+          { text: 'API', link: '/es/api' }
+        ],
+        sidebar: sidebarEs(),
+        socialLinks: sharedSocialLinks,
+        outline: { level: [2, 3], label: 'En esta página' },
+        returnToTopLabel: 'Volver arriba',
+        sidebarMenuLabel: 'Menú',
+        darkModeSwitchLabel: 'Tema',
+        docFooter: {
+          prev: 'Página anterior',
+          next: 'Página siguiente'
         }
       }
     }

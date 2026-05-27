@@ -17,7 +17,7 @@ hero:
       link: /uk/flasher
     - theme: alt
       text: GitHub
-      link: https://github.com/svitrix/svitrix-firmware
+      link: https://github.com/XE1E/svitrix-firmware-XE1E
 
 features:
   - title: Готовий до роботи
@@ -53,4 +53,4 @@ SVITRIX розробляється за підходом **AI-first**. [Claude](
 
 ## Підтримка
 
-Якщо вам подобається цей проєкт, поставте зірку на [GitHub](https://github.com/svitrix/svitrix-firmware) та долучайтесь!
+Якщо вам подобається цей проєкт, поставте зірку на [GitHub](https://github.com/XE1E/svitrix-firmware-XE1E) та долучайтесь!

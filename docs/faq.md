@@ -1,6 +1,6 @@
 # Frequently Asked Questions (FAQ)
 
-If you don't find what you're looking for, please open an issue on [GitHub](https://github.com/svitrix/svitrix-firmware/issues).
+If you don't find what you're looking for, please open an issue on [GitHub](https://github.com/XE1E/svitrix-firmware-XE1E/issues).
 
 ## General
 
@@ -108,4 +108,4 @@ Reboot the device after saving.
 
 A: Open the [web interface](./webinterface) in your browser, go to the update section, and upload the new `firmware.bin` file. The device will reboot automatically after the update.
 
-You can download the latest firmware from the [GitHub releases](https://github.com/svitrix/svitrix-firmware/releases) page.
+You can download the latest firmware from the [GitHub releases](https://github.com/XE1E/svitrix-firmware-XE1E/releases) page.

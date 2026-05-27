@@ -36,7 +36,7 @@ Please note: Once the GIF is displayed in BigTime mode, it cannot be directly re
 To replace the icon, switch the mode to TMODE first, and then you'll be able to update the GIF.
 If no GIF is found, the global textcolor is used.
 
-[You can get some bigtime GIFs examples here](https://github.com/svitrix/svitrix-firmware/tree/main/docs/assets/bigtime-gifs).
+[You can get some bigtime GIFs examples here](https://github.com/XE1E/svitrix-firmware-XE1E/tree/main/docs/assets/bigtime-gifs).
 
 **TMODE=6**
 <img src="./assets/TMODE6.png" style="max-height:70px;">

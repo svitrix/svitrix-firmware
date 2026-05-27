@@ -1,6 +1,6 @@
 # Часті запитання (FAQ)
 
-Якщо ви не знайшли відповідь на своє запитання, створіть issue на [GitHub](https://github.com/svitrix/svitrix-firmware/issues).
+Якщо ви не знайшли відповідь на своє запитання, створіть issue на [GitHub](https://github.com/XE1E/svitrix-firmware-XE1E/issues).
 
 ## Загальне
 
@@ -108,4 +108,4 @@
 
 В: Відкрийте [веб-інтерфейс](./webinterface) у браузері, перейдіть до розділу оновлення та завантажте новий файл `firmware.bin`. Пристрій перезавантажиться автоматично після оновлення.
 
-Останню версію прошивки можна завантажити зі сторінки [GitHub Releases](https://github.com/svitrix/svitrix-firmware/releases).
+Останню версію прошивки можна завантажити зі сторінки [GitHub Releases](https://github.com/XE1E/svitrix-firmware-XE1E/releases).

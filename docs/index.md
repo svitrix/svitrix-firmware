@@ -17,7 +17,7 @@ hero:
       link: /flasher
     - theme: alt
       text: GitHub
-      link: https://github.com/svitrix/svitrix-firmware
+      link: https://github.com/XE1E/svitrix-firmware-XE1E
 
 features:
   - title: Ready Out of the Box
@@ -53,4 +53,4 @@ SVITRIX is developed using an **AI-first** approach. [Claude](https://claude.ai)
 
 ## Support
 
-If you like this project, star it on [GitHub](https://github.com/svitrix/svitrix-firmware) and contribute!
+If you like this project, star it on [GitHub](https://github.com/XE1E/svitrix-firmware-XE1E) and contribute!

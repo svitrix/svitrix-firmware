@@ -36,7 +36,7 @@
 Щоб замінити іконку, спочатку переключіть режим на TMODE, і тоді ви зможете оновити GIF.
 Якщо GIF не знайдено, використовується глобальний колір тексту.
 
-[Тут можна знайти приклади GIF-файлів для bigtime](https://github.com/svitrix/svitrix-firmware/tree/main/docs/assets/bigtime-gifs).
+[Тут можна знайти приклади GIF-файлів для bigtime](https://github.com/XE1E/svitrix-firmware-XE1E/tree/main/docs/assets/bigtime-gifs).
 
 **TMODE=6**
 <img src="../assets/TMODE6.png" style="max-height:70px;">
