@@ -10,6 +10,10 @@ import type {
   TransitionInfo,
   WeatherConfig,
   WeatherData,
+  TimerState,
+  StopwatchState,
+  Alarm,
+  AlarmsState,
 } from "./types";
 
 async function get<T>(url: string): Promise<T> {
@@ -173,3 +177,30 @@ export const saveWeatherConfig = (config: Partial<WeatherConfig>) =>
   post("/api/weather", config);
 export const getWeatherData = () => get<WeatherData>("/api/weather/data");
 export const forceWeatherFetch = () => post("/api/weather/fetch");
+
+// Timer
+export const getTimer = () => get<TimerState>("/api/timer");
+export const timerStart = () => post("/api/timer", { action: "start" });
+export const timerPause = () => post("/api/timer", { action: "pause" });
+export const timerReset = () => post("/api/timer", { action: "reset" });
+export const timerSetTime = (seconds: number) => post("/api/timer", { seconds });
+
+// Stopwatch
+export const getStopwatch = () => get<StopwatchState>("/api/stopwatch");
+export const stopwatchStart = () => post("/api/stopwatch", { action: "start" });
+export const stopwatchPause = () => post("/api/stopwatch", { action: "pause" });
+export const stopwatchReset = () => post("/api/stopwatch", { action: "reset" });
+
+// Alarms
+export const getAlarms = () => get<AlarmsState>("/api/alarms");
+export const addAlarm = (alarm: Omit<Alarm, "id">) => post("/api/alarms", alarm);
+export const updateAlarm = (alarm: Alarm) =>
+  fetch("/api/alarms", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(alarm),
+  });
+export const deleteAlarm = (id: number) => del(`/api/alarms?id=${id}`);
+export const snoozeAlarm = (minutes = 5) =>
+  post("/api/alarms", { action: "snooze", minutes });
+export const dismissAlarm = () => post("/api/alarms", { action: "dismiss" });

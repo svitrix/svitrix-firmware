@@ -287,6 +287,9 @@ void loadSettings()
     appConfig.showDate = Settings.getBool("DAT", false);
     appConfig.showTemp = Settings.getBool("TEMP", true);
     appConfig.showHum = Settings.getBool("HUM", true);
+    appConfig.showTimer = Settings.getBool("STIMER", false);
+    appConfig.showStopwatch = Settings.getBool("SSW", false);
+    appConfig.showAlarms = Settings.getBool("SALARMS", false);
     sensorConfig.tempOffset = Settings.getFloat("TOFF", -9.0);
     displayConfig.matrixLayout = Settings.getUInt("MAT", 0);
     displayConfig.backgroundEffect = Settings.getInt("BEFF", -1);
@@ -381,6 +384,9 @@ void saveSettings()
     Settings.putBool("DAT", appConfig.showDate);
     Settings.putBool("TEMP", appConfig.showTemp);
     Settings.putBool("HUM", appConfig.showHum);
+    Settings.putBool("STIMER", appConfig.showTimer);
+    Settings.putBool("SSW", appConfig.showStopwatch);
+    Settings.putBool("SALARMS", appConfig.showAlarms);
     Settings.putFloat("TOFF", sensorConfig.tempOffset);
     Settings.putUInt("SSPEED", appConfig.scrollSpeed);
     Settings.putUShort("TIMEDUR", appConfig.timeDuration);
@@ -444,7 +450,7 @@ DisplayConfig displayConfig = {0, 42, false, false, false, true, -1};
 BrightnessConfig brightnessConfig = {120, 0, true, 2, 160, 3.0, 1.0, false};
 ColorConfig colorConfig = {0xFFFFFF, 0, 0, 0, 0, 0, 0xFFFFFF, 0x666666, 0xFF0000, 0x000000, 0xFFFFFF};
 TimeConfig timeConfig = {"%H:%M:%S", "%d.%m.%y", 1, false, "time.cloudflare.com", "CST6", false, 0};
-AppConfig appConfig = {true, true, true, true, true, true, false, 1, 400, 7000, 100, 7, 7, 7, 7, 7, IconLayout::Left, false, false, 1260, 360, 5, 0xFF0000, true};
+AppConfig appConfig = {true, true, true, true, true, true, false, false, false, false, 1, 400, 7000, 100, 7, 7, 7, 7, 7, IconLayout::Left, false, false, 1260, 360, 5, 0xFF0000, true};
 AudioConfig audioConfig = {false, 30, ""};
 SystemConfig systemConfig = {true, 15, 80, "", false, 10000, false, false, "", "", false, false, "", ""};
 WeatherConfig weatherConfig = {"", WEATHER_LOC_CITY, "", 0.0, 0.0, "", 30, true, false, false, false, false, false, 0, 0, 0, 0, 7, 7, 7, 7};

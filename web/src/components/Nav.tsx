@@ -22,6 +22,7 @@ const links = [
   { href: "/", label: "Settings" },
   { href: "/screen", label: "Screen" },
   { href: "/datafetcher", label: "Data" },
+  { href: "/autonomous", label: "Timer" },
   { href: "/files", label: "Files" },
   { href: "/backup", label: "Backup" },
   { href: "/update", label: "Update" },

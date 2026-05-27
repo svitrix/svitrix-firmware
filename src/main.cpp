@@ -32,13 +32,17 @@
 #include "PowerManager.h"
 #include "DataFetcher/DataFetcher.h"
 #include "timer.h"
-#include "RealTimeProvider.h"
+#include "RtcTimeProvider.h"
+#include "PeripheryManager/DS1307Provider.h"
+#include "AlarmManager/AlarmManager.h"
 #include "policies/NightModePolicy.h"
 #include <cassert>
 
 TaskHandle_t taskHandle = nullptr;
 volatile bool StopTask = false;
 bool stopBoot;
+static DS1307Provider* rtcInstance = nullptr;
+static bool rtcSynced = false;
 
 void BootAnimation(void *parameter)
 {
@@ -97,11 +101,23 @@ void setup()
     DisplayManager.setMenuActiveQuery([]()
                                       { return MenuManager.inMenu; });
 
+    // RTC initialization (DS1307 at 0x68, detected after I2C init in PeripheryManager.setup())
+    static DS1307Provider ds1307;
+    static RtcTimeProvider rtcTimeProvider;
+    if (ds1307.begin())
+    {
+        rtcTimeProvider.setRtc(&ds1307);
+        rtcInstance = &ds1307;
+        if (!ds1307.isRunning())
+        {
+            DEBUG_PRINTLN(F("RTC battery may be dead - clock halted"));
+        }
+    }
+
     // Display policies (scheduled/event-driven overrides for brightness,
     // text color, auto-transition). Order of registration = priority.
     // Statics so the objects outlive main(); DisplayManager only stores pointers.
-    static RealTimeProvider realTimeProvider;
-    static NightModePolicy nightModePolicy(appConfig, realTimeProvider);
+    static NightModePolicy nightModePolicy(appConfig, rtcTimeProvider);
     DisplayManager.registerPolicy(&nightModePolicy);
 
     // Wire up IDisplay interfaces (Phase 8, updated Phase 11: renderer + notifier split)
@@ -116,6 +132,11 @@ void setup()
     MQTTManager.setServices(&PeripheryManager, &PowerManager, &UpdateManager, &PeripheryManager);
     MenuManager.setServices(&PeripheryManager, &UpdateManager);
 
+    // Wire up AlarmManager (autonomous mode)
+    AlarmManager.setSound(&PeripheryManager, &PeripheryManager);
+    AlarmManager.setNotifier(&DisplayManager.getNotifier());
+    AlarmManager.setTimeProvider(&rtcTimeProvider);
+
     // Verify all interface wiring is complete (Phase 10)
     assert(UpdateManager.hasDisplay());
     assert(MenuManager.hasDisplay());
@@ -125,6 +146,7 @@ void setup()
     assert(ServerManager.hasServices());
     assert(MQTTManager.hasServices());
     assert(MenuManager.hasServices());
+    assert(AlarmManager.hasServices());
 
     ServerManager.loadSettings();
     DisplayManager.setup();
@@ -166,11 +188,13 @@ void setup()
             MQTTManager.tick();
         }
         DataFetcher.setup();
+        AlarmManager.setup();
     }
     else
     {
         systemConfig.apMode = true;
         stopBootAnimation();
+        AlarmManager.setup();  // Alarms work in AP mode too
     }
     delay(200);
     DisplayManager.setBrightness(brightnessConfig.brightness);
@@ -182,9 +206,25 @@ void loop()
     ServerManager.tick();
     DisplayManager.tick();
     PeripheryManager.tick();
+    AlarmManager.tick(time(nullptr));  // Alarms work even without WiFi
     if (ServerManager.isConnected)
     {
         MQTTManager.tick();
         DataFetcher.tick();
+
+        // Sync NTP → RTC once after time becomes valid
+        if (!rtcSynced && rtcInstance)
+        {
+            const struct tm* t = timer_localtime();
+            if (t && t->tm_year >= 120)
+            {
+                time_t now = mktime(const_cast<struct tm*>(t));
+                if (rtcInstance->setTime(now))
+                {
+                    rtcSynced = true;
+                    DEBUG_PRINTLN(F("NTP time synced to RTC"));
+                }
+            }
+        }
     }
 }

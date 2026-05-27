@@ -55,3 +55,27 @@ void PressureApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_t
 void AirQualityApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_t x, int16_t y, GifPlayer *gifPlayer);
 
 void ShowCustomApp(const String& name, FastLED_NeoMatrix *matrix, const MatrixDisplayUiState *state, int16_t x, int16_t y, GifPlayer *gifPlayer);
+
+// Autonomous mode apps
+void TimerApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_t x, int16_t y, GifPlayer *gifPlayer);
+void StopwatchApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_t x, int16_t y, GifPlayer *gifPlayer);
+void AlarmsApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_t x, int16_t y, GifPlayer *gifPlayer);
+
+// Timer/Stopwatch control functions
+namespace TimerControl {
+    void start();
+    void pause();
+    void reset();
+    void setTime(uint32_t seconds);
+    uint32_t getRemaining();
+    bool isRunning();
+    bool isFinished();
+}
+
+namespace StopwatchControl {
+    void start();
+    void pause();
+    void reset();
+    uint32_t getElapsed();
+    bool isRunning();
+}

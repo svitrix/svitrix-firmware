@@ -176,3 +176,30 @@ export interface WeatherData {
   conditionCode: number;
   lastUpdate: number;
 }
+
+// Autonomous Mode Types
+export interface TimerState {
+  remaining: number;
+  running: boolean;
+  finished: boolean;
+}
+
+export interface StopwatchState {
+  elapsed: number;
+  running: boolean;
+}
+
+export interface Alarm {
+  id: number;
+  hour: number;
+  minute: number;
+  days: number;  // Bitmask: Sun=0x01, Mon=0x02, Tue=0x04, Wed=0x08, Thu=0x10, Fri=0x20, Sat=0x40
+  enabled: boolean;
+  label: string;
+  melody: string;
+}
+
+export interface AlarmsState {
+  alarms: Alarm[];
+  ringing: boolean;
+}

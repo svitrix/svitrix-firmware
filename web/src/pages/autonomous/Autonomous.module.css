@@ -1,0 +1,260 @@
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.section {
+  background: var(--card-bg, #1a1a2e);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.sectionTitle {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--text-primary, #fff);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.timerDisplay {
+  font-size: 2.5rem;
+  font-family: monospace;
+  text-align: center;
+  padding: 1rem;
+  background: var(--bg-dark, #0f0f1a);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.timerDisplay.running {
+  color: #00ff00;
+}
+
+.timerDisplay.finished {
+  color: #ff0000;
+  animation: blink 0.5s infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0.5; }
+}
+
+.controls {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.controls button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  min-width: 80px;
+}
+
+.controls button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btnStart {
+  background: #00aa00;
+  color: white;
+}
+
+.btnPause {
+  background: #ffaa00;
+  color: black;
+}
+
+.btnReset {
+  background: #666;
+  color: white;
+}
+
+.btnDanger {
+  background: #aa0000;
+  color: white;
+}
+
+.timeInput {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.timeInput input {
+  width: 60px;
+  padding: 0.5rem;
+  text-align: center;
+  border: 1px solid var(--border, #333);
+  border-radius: 4px;
+  background: var(--input-bg, #0f0f1a);
+  color: var(--text-primary, #fff);
+}
+
+.timeInput span {
+  color: var(--text-secondary, #888);
+}
+
+.alarmList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.alarmItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: var(--bg-dark, #0f0f1a);
+  border-radius: 6px;
+}
+
+.alarmTime {
+  font-size: 1.5rem;
+  font-family: monospace;
+  min-width: 70px;
+}
+
+.alarmDays {
+  display: flex;
+  gap: 2px;
+  flex-wrap: wrap;
+}
+
+.dayBadge {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 0.7rem;
+  background: var(--border, #333);
+  color: var(--text-secondary, #888);
+}
+
+.dayBadge.active {
+  background: var(--accent, #4a9eff);
+  color: white;
+}
+
+.alarmLabel {
+  flex: 1;
+  color: var(--text-secondary, #888);
+  font-size: 0.9rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.alarmActions {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.alarmActions button {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.toggle {
+  width: 44px;
+  height: 24px;
+  border-radius: 12px;
+  background: var(--border, #333);
+  position: relative;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.toggle.on {
+  background: var(--accent, #4a9eff);
+}
+
+.toggle::after {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: white;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.2s;
+}
+
+.toggle.on::after {
+  transform: translateX(20px);
+}
+
+.addAlarm {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  padding: 0.75rem;
+  background: var(--bg-dark, #0f0f1a);
+  border-radius: 6px;
+  margin-top: 0.5rem;
+}
+
+.addAlarm input[type="time"] {
+  padding: 0.5rem;
+  border: 1px solid var(--border, #333);
+  border-radius: 4px;
+  background: var(--input-bg, #1a1a2e);
+  color: var(--text-primary, #fff);
+}
+
+.addAlarm input[type="text"] {
+  flex: 1;
+  min-width: 100px;
+  padding: 0.5rem;
+  border: 1px solid var(--border, #333);
+  border-radius: 4px;
+  background: var(--input-bg, #1a1a2e);
+  color: var(--text-primary, #fff);
+}
+
+.ringingAlert {
+  background: #aa0000;
+  color: white;
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+  margin-bottom: 1rem;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  50% { opacity: 0.7; }
+}
+
+.ringingAlert button {
+  margin: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-secondary, #888);
+}

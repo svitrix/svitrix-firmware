@@ -15,6 +15,8 @@
 #include "IPower.h"
 #include "IUpdater.h"
 #include "DataFetcher/DataFetcher.h"
+#include "Apps/Apps.h"
+#include "AlarmManager/AlarmManager.h"
 #include <WiFiUdp.h>
 #include <HTTPClient.h>
 #include <EEPROM.h>
@@ -347,6 +349,151 @@ void addHandler()
                             } });
     mws.addHandlerWithBody("/api/r2d2", HTTP_POST, [](AsyncWebServerRequest *request)
                            { String body = getBody(request); smSound_->r2d2(body.c_str()); request->send(200, "text/plain", "OK"); });
+
+    // ── Timer API ──────────────────────────────────────────────────────
+    mws.addHandler("/api/timer", HTTP_GET, [](AsyncWebServerRequest *request)
+                   {
+                    StaticJsonDocument<128> doc;
+                    doc["remaining"] = TimerControl::getRemaining();
+                    doc["running"] = TimerControl::isRunning();
+                    doc["finished"] = TimerControl::isFinished();
+                    String json;
+                    serializeJson(doc, json);
+                    request->send(200, "application/json", json); });
+    mws.addHandlerWithBody("/api/timer", HTTP_POST, [](AsyncWebServerRequest *request)
+                           {
+                            String body = getBody(request);
+                            StaticJsonDocument<128> doc;
+                            DeserializationError err = deserializeJson(doc, body);
+                            if (err) {
+                                request->send(400, "text/plain", "InvalidJSON");
+                                return;
+                            }
+                            if (doc.containsKey("action")) {
+                                String action = doc["action"].as<String>();
+                                if (action == "start") TimerControl::start();
+                                else if (action == "pause") TimerControl::pause();
+                                else if (action == "reset") TimerControl::reset();
+                            }
+                            if (doc.containsKey("seconds")) {
+                                TimerControl::setTime(doc["seconds"].as<uint32_t>());
+                            }
+                            request->send(200, "text/plain", "OK"); });
+
+    // ── Stopwatch API ──────────────────────────────────────────────────
+    mws.addHandler("/api/stopwatch", HTTP_GET, [](AsyncWebServerRequest *request)
+                   {
+                    StaticJsonDocument<128> doc;
+                    doc["elapsed"] = StopwatchControl::getElapsed();
+                    doc["running"] = StopwatchControl::isRunning();
+                    String json;
+                    serializeJson(doc, json);
+                    request->send(200, "application/json", json); });
+    mws.addHandlerWithBody("/api/stopwatch", HTTP_POST, [](AsyncWebServerRequest *request)
+                           {
+                            String body = getBody(request);
+                            StaticJsonDocument<128> doc;
+                            DeserializationError err = deserializeJson(doc, body);
+                            if (err) {
+                                request->send(400, "text/plain", "InvalidJSON");
+                                return;
+                            }
+                            if (doc.containsKey("action")) {
+                                String action = doc["action"].as<String>();
+                                if (action == "start") StopwatchControl::start();
+                                else if (action == "pause") StopwatchControl::pause();
+                                else if (action == "reset") StopwatchControl::reset();
+                            }
+                            request->send(200, "text/plain", "OK"); });
+
+    // ── Alarms API ─────────────────────────────────────────────────────
+    mws.addHandler("/api/alarms", HTTP_GET, [](AsyncWebServerRequest *request)
+                   {
+                    DynamicJsonDocument doc(2048);
+                    JsonArray arr = doc.createNestedArray("alarms");
+                    auto alarms = AlarmManager.getAlarms();
+                    for (const auto& alarm : alarms) {
+                        JsonObject obj = arr.createNestedObject();
+                        obj["id"] = alarm.id;
+                        obj["hour"] = alarm.hour;
+                        obj["minute"] = alarm.minute;
+                        obj["days"] = alarm.days;
+                        obj["enabled"] = alarm.enabled;
+                        obj["label"] = alarm.label;
+                        obj["melody"] = alarm.melody;
+                    }
+                    doc["ringing"] = AlarmManager.isRinging();
+                    String json;
+                    serializeJson(doc, json);
+                    request->send(200, "application/json", json); });
+    mws.addHandlerWithBody("/api/alarms", HTTP_POST, [](AsyncWebServerRequest *request)
+                           {
+                            String body = getBody(request);
+                            StaticJsonDocument<256> doc;
+                            DeserializationError err = deserializeJson(doc, body);
+                            if (err) {
+                                request->send(400, "text/plain", "InvalidJSON");
+                                return;
+                            }
+                            // Handle snooze/dismiss
+                            if (doc.containsKey("action")) {
+                                String action = doc["action"].as<String>();
+                                if (action == "snooze") {
+                                    uint8_t minutes = doc["minutes"] | 5;
+                                    AlarmManager.snooze(minutes);
+                                } else if (action == "dismiss") {
+                                    AlarmManager.dismiss();
+                                }
+                                request->send(200, "text/plain", "OK");
+                                return;
+                            }
+                            // Add new alarm
+                            Alarm alarm;
+                            alarm.hour = doc["hour"] | 0;
+                            alarm.minute = doc["minute"] | 0;
+                            alarm.days = doc["days"] | 0x7F;
+                            alarm.enabled = doc["enabled"] | true;
+                            alarm.label = doc["label"] | "";
+                            alarm.melody = doc["melody"] | "";
+                            if (AlarmManager.addAlarm(alarm)) {
+                                request->send(200, "text/plain", "OK");
+                            } else {
+                                request->send(400, "text/plain", "MaxAlarmsReached");
+                            } });
+    mws.addHandlerWithBody("/api/alarms", HTTP_PUT, [](AsyncWebServerRequest *request)
+                           {
+                            String body = getBody(request);
+                            StaticJsonDocument<256> doc;
+                            DeserializationError err = deserializeJson(doc, body);
+                            if (err) {
+                                request->send(400, "text/plain", "InvalidJSON");
+                                return;
+                            }
+                            Alarm alarm;
+                            alarm.id = doc["id"] | 0;
+                            alarm.hour = doc["hour"] | 0;
+                            alarm.minute = doc["minute"] | 0;
+                            alarm.days = doc["days"] | 0x7F;
+                            alarm.enabled = doc["enabled"] | true;
+                            alarm.label = doc["label"] | "";
+                            alarm.melody = doc["melody"] | "";
+                            if (AlarmManager.updateAlarm(alarm)) {
+                                request->send(200, "text/plain", "OK");
+                            } else {
+                                request->send(404, "text/plain", "NotFound");
+                            } });
+    mws.addHandler("/api/alarms", HTTP_DELETE, [](AsyncWebServerRequest *request)
+                   {
+                    if (request->hasParam("id")) {
+                        uint8_t id = request->getParam("id")->value().toInt();
+                        if (AlarmManager.removeAlarm(id)) {
+                            request->send(200, "text/plain", "OK");
+                        } else {
+                            request->send(404, "text/plain", "NotFound");
+                        }
+                    } else {
+                        request->send(400, "text/plain", "MissingId");
+                    } });
 }
 
 void ServerManager_::setup()

@@ -540,6 +540,11 @@ void DisplayManager_::loadNativeApps()
     updateApp("Pressure", PressureApp, weatherConfig.showPressure, 7);
     updateApp("AirQuality", AirQualityApp, weatherConfig.showAirQuality, 8);
 
+    // Autonomous mode apps
+    updateApp("Timer", TimerApp, appConfig.showTimer, 9);
+    updateApp("Stopwatch", StopwatchApp, appConfig.showStopwatch, 10);
+    updateApp("Alarms", AlarmsApp, appConfig.showAlarms, 11);
+
     ui->setApps(Apps);
     setAutoTransition(true);
 }

@@ -119,6 +119,9 @@ struct AppConfig {
     bool showTemp;
     bool showHum;
     bool showWeekday;
+    bool showTimer;
+    bool showStopwatch;
+    bool showAlarms;
     bool autoTransition;
     int8_t transEffect;
     int timePerTransition;

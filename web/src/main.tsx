@@ -8,6 +8,7 @@ import { DataFetcherPage } from "./pages/data-fetcher";
 import { BackupPage } from "./pages/backup";
 import { UpdatePage } from "./pages/update";
 import { FilesPage } from "./pages/files";
+import { AutonomousPage } from "./pages/autonomous/Autonomous";
 import "./styles/global.css";
 import styles from "./main.module.css";
 
@@ -20,6 +21,7 @@ function App() {
           <SettingsPage path="/" />
           <ScreenPage path="/screen" />
           <DataFetcherPage path="/datafetcher" />
+          <AutonomousPage path="/autonomous" />
           <BackupPage path="/backup" />
           <UpdatePage path="/update" />
           <FilesPage path="/files" />
