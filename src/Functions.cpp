@@ -32,6 +32,10 @@ uint32_t getColorFromJsonVariant(JsonVariant colorVariant, uint32_t defaultColor
             return (r << 16) | (g << 8) | b;
         }
     }
+    else if (colorVariant.is<unsigned int>() || colorVariant.is<int>())
+    {
+        return colorVariant.as<uint32_t>();
+    }
 
     return defaultColor;
 }

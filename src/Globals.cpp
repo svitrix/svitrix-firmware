@@ -603,20 +603,20 @@ bool importSettings(const char* json)
     if (doc.containsKey("BEFF")) displayConfig.backgroundEffect = doc["BEFF"];
 
     // Colors
-    if (doc.containsKey("TCOL")) colorConfig.textColor = doc["TCOL"];
-    if (doc.containsKey("CHCOL")) colorConfig.calendarHeaderColor = doc["CHCOL"];
-    if (doc.containsKey("CTCOL")) colorConfig.calendarTextColor = doc["CTCOL"];
-    if (doc.containsKey("CBCOL")) colorConfig.calendarBodyColor = doc["CBCOL"];
-    if (doc.containsKey("TIME_COL")) colorConfig.timeColor = doc["TIME_COL"];
-    if (doc.containsKey("DATE_COL")) colorConfig.dateColor = doc["DATE_COL"];
-    if (doc.containsKey("TEMP_COL")) colorConfig.tempColor = doc["TEMP_COL"];
-    if (doc.containsKey("HUM_COL")) colorConfig.humColor = doc["HUM_COL"];
-    if (doc.containsKey("TIMER_COL")) colorConfig.timerColor = doc["TIMER_COL"];
-    if (doc.containsKey("SW_COL")) colorConfig.stopwatchColor = doc["SW_COL"];
-    if (doc.containsKey("ALARMS_COL")) colorConfig.alarmsColor = doc["ALARMS_COL"];
-    if (doc.containsKey("BAT_COL")) colorConfig.batColor = doc["BAT_COL"];
-    if (doc.containsKey("WDCA")) colorConfig.wdcActive = doc["WDCA"];
-    if (doc.containsKey("WDCI")) colorConfig.wdcInactive = doc["WDCI"];
+    if (doc.containsKey("TCOL")) colorConfig.textColor = doc["TCOL"].as<uint32_t>();
+    if (doc.containsKey("CHCOL")) colorConfig.calendarHeaderColor = doc["CHCOL"].as<uint32_t>();
+    if (doc.containsKey("CTCOL")) colorConfig.calendarTextColor = doc["CTCOL"].as<uint32_t>();
+    if (doc.containsKey("CBCOL")) colorConfig.calendarBodyColor = doc["CBCOL"].as<uint32_t>();
+    if (doc.containsKey("TIME_COL")) colorConfig.timeColor = doc["TIME_COL"].as<uint32_t>();
+    if (doc.containsKey("DATE_COL")) colorConfig.dateColor = doc["DATE_COL"].as<uint32_t>();
+    if (doc.containsKey("TEMP_COL")) colorConfig.tempColor = doc["TEMP_COL"].as<uint32_t>();
+    if (doc.containsKey("HUM_COL")) colorConfig.humColor = doc["HUM_COL"].as<uint32_t>();
+    if (doc.containsKey("TIMER_COL")) colorConfig.timerColor = doc["TIMER_COL"].as<uint32_t>();
+    if (doc.containsKey("SW_COL")) colorConfig.stopwatchColor = doc["SW_COL"].as<uint32_t>();
+    if (doc.containsKey("ALARMS_COL")) colorConfig.alarmsColor = doc["ALARMS_COL"].as<uint32_t>();
+    if (doc.containsKey("BAT_COL")) colorConfig.batColor = doc["BAT_COL"].as<uint32_t>();
+    if (doc.containsKey("WDCA")) colorConfig.wdcActive = doc["WDCA"].as<uint32_t>();
+    if (doc.containsKey("WDCI")) colorConfig.wdcInactive = doc["WDCI"].as<uint32_t>();
 
     // App config
     if (doc.containsKey("TEFF")) appConfig.transEffect = doc["TEFF"];
@@ -644,7 +644,7 @@ bool importSettings(const char* json)
     if (doc.containsKey("NSTART")) appConfig.nightStart = doc["NSTART"];
     if (doc.containsKey("NEND")) appConfig.nightEnd = doc["NEND"];
     if (doc.containsKey("NBRI")) appConfig.nightBrightness = doc["NBRI"];
-    if (doc.containsKey("NCOL")) appConfig.nightColor = doc["NCOL"];
+    if (doc.containsKey("NCOL")) appConfig.nightColor = doc["NCOL"].as<uint32_t>();
     if (doc.containsKey("NBTRANS")) appConfig.nightBlockTransition = doc["NBTRANS"];
 
     // Time config
@@ -683,16 +683,16 @@ bool importSettings(const char* json)
     if (doc.containsKey("WAPI_AQI")) weatherConfig.showAirQuality = doc["WAPI_AQI"];
     if (doc.containsKey("WAPI_ITEMP")) weatherConfig.showIndoorTemp = doc["WAPI_ITEMP"];
     if (doc.containsKey("WAPI_IHUM")) weatherConfig.showIndoorHumidity = doc["WAPI_IHUM"];
-    if (doc.containsKey("WAPI_OTCOL")) weatherConfig.outdoorTempColor = doc["WAPI_OTCOL"];
-    if (doc.containsKey("WAPI_OHCOL")) weatherConfig.outdoorHumColor = doc["WAPI_OHCOL"];
-    if (doc.containsKey("WAPI_PCOL")) weatherConfig.pressureColor = doc["WAPI_PCOL"];
-    if (doc.containsKey("WAPI_AQCOL")) weatherConfig.aqiColor = doc["WAPI_AQCOL"];
+    if (doc.containsKey("WAPI_OTCOL")) weatherConfig.outdoorTempColor = doc["WAPI_OTCOL"].as<uint32_t>();
+    if (doc.containsKey("WAPI_OHCOL")) weatherConfig.outdoorHumColor = doc["WAPI_OHCOL"].as<uint32_t>();
+    if (doc.containsKey("WAPI_PCOL")) weatherConfig.pressureColor = doc["WAPI_PCOL"].as<uint32_t>();
+    if (doc.containsKey("WAPI_AQCOL")) weatherConfig.aqiColor = doc["WAPI_AQCOL"].as<uint32_t>();
     if (doc.containsKey("WAPI_OTDUR")) weatherConfig.outdoorTempDuration = doc["WAPI_OTDUR"];
     if (doc.containsKey("WAPI_OHDUR")) weatherConfig.outdoorHumDuration = doc["WAPI_OHDUR"];
     if (doc.containsKey("WAPI_PDUR")) weatherConfig.pressureDuration = doc["WAPI_PDUR"];
     if (doc.containsKey("WAPI_AQDUR")) weatherConfig.aqiDuration = doc["WAPI_AQDUR"];
     if (doc.containsKey("WAPI_UV")) weatherConfig.showUV = doc["WAPI_UV"];
-    if (doc.containsKey("WAPI_UVCOL")) weatherConfig.uvColor = doc["WAPI_UVCOL"];
+    if (doc.containsKey("WAPI_UVCOL")) weatherConfig.uvColor = doc["WAPI_UVCOL"].as<uint32_t>();
     if (doc.containsKey("WAPI_UVDUR")) weatherConfig.uvDuration = doc["WAPI_UVDUR"];
 
     // Save to NVS
