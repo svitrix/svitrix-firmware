@@ -100,8 +100,25 @@ Durante el tiempo programado, la pantalla reduce su brillo a la configuración e
 
 ### Apps
 
-Activa/desactiva apps integradas, cada una con su propio selector de color:
-- **Hora**, **Fecha**, **Temperatura** (con color), **Humedad** (con color), **Batería** (con color)
+Activa/desactiva apps integradas. Cada app tiene opciones de personalización:
+
+**Apps básicas:**
+- **Hora** — reloj digital con duración configurable
+- **Fecha** — fecha con duración configurable
+
+**Apps con color:**
+- **Temperatura** — sensor interno, con selector de color, escala Celsius/Fahrenheit y offset
+- **Humedad** — sensor interno, con selector de color
+- **Batería** — nivel de batería, con selector de color
+
+**Apps autónomas (sin duración, se muestran cuando están activas):**
+- **Timer** — temporizador con color Auto (verde=corriendo, rojo=terminado, blanco=pausado) o color personalizado
+- **Stopwatch** — cronómetro con color Auto (verde=corriendo, blanco=pausado) o color personalizado
+- **Alarms** — próxima alarma con color Auto (amarillo=activa, gris=inactiva) o color personalizado
+
+::: tip
+Las apps Timer, Stopwatch y Alarms usan colores dinámicos por defecto. Desactiva "Auto" para elegir un color fijo.
+:::
 
 Comportamiento de apps:
 - **Duración de App** — cuánto tiempo se muestra cada app antes de cambiar (1–60s)
@@ -132,12 +149,19 @@ Comportamiento de apps:
 Envía un mensaje único a la pantalla:
 - **Texto** — mensaje a mostrar (requerido)
 - **Icono** — ID de icono o nombre de archivo de `/ICONS/`
-- **Disposición de Icono** — posiciona el icono a la izquierda, derecha u ocultarlo
-- **Duración** — cuánto tiempo se muestra la notificación (1–60s)
+- **Disposición** — posiciona el icono a la izquierda o derecha (solo visible cuando hay icono)
+- **Hold (indefinido)** — mantiene la notificación hasta presionar Dismiss o el botón central
+- **Duración** — cuánto tiempo se muestra la notificación (1–60s, solo cuando Hold está desactivado)
 - **Arcoíris** — cicla el texto a través de colores del arcoíris
 - **Color** — color de texto (cuando arcoíris está apagado)
-- **Sonido** — reproduce un archivo de sonido de `/MELODIES/`
-- **RTTTL** — reproduce una melodía en [formato RTTTL](https://en.wikipedia.org/wiki/Ring_Tone_Text_Transfer_Language)
+- **Sonido** — nombre de archivo de melodía RTTTL en `/MELODIES/` (sin extensión)
+- **RTTTL** — cadena de melodía en [formato RTTTL](https://en.wikipedia.org/wiki/Ring_Tone_Text_Transfer_Language) directo
+
+::: tip
+Si no especificas icono, el texto usa los 32 píxeles completos de la pantalla. Los textos largos hacen scroll automáticamente.
+:::
+
+Ver [Sonidos](./sounds) para crear archivos de melodía.
 
 ### Selector de Iconos
 

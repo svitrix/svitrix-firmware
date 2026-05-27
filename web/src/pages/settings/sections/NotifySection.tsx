@@ -13,6 +13,7 @@ export function NotifySection() {
     color: "#ffffff",
     rainbow: false,
   });
+  const [hold, setHold] = useState(false);
   const [sending, setSending] = useState(false);
 
   function upd(patch: Partial<Notification>) {
@@ -27,9 +28,17 @@ export function NotifySection() {
     setSending(true);
     try {
       const payload: Notification = { text: notif.text };
-      if (notif.icon) payload.icon = notif.icon;
-      if (notif.layout && notif.layout !== "left") payload.layout = notif.layout;
-      if (notif.duration && notif.duration !== 5) payload.duration = notif.duration;
+      if (notif.icon) {
+        payload.icon = notif.icon;
+        if (notif.layout && notif.layout !== "left") payload.layout = notif.layout;
+      } else {
+        payload.layout = "none";
+      }
+      if (hold) {
+        payload.hold = true;
+      } else if (notif.duration && notif.duration !== 5) {
+        payload.duration = notif.duration;
+      }
       if (notif.rainbow) payload.rainbow = true;
       if (notif.color && !notif.rainbow) payload.color = notif.color;
       if (notif.rtttl) payload.rtttl = notif.rtttl;
@@ -68,25 +77,35 @@ export function NotifySection() {
             onChange={(v) => upd({ icon: v })}
             placeholder="Icon ID or name"
           />
-          <Select
-            label="Icon Layout"
-            value={notif.layout || "left"}
-            options={[
-              { value: "left", label: "Left" },
-              { value: "right", label: "Right" },
-              { value: "none", label: "None" },
-            ]}
-            onChange={(v) => upd({ layout: v as "left" | "right" | "none" })}
-          />
+          {notif.icon && (
+            <Select
+              label="Layout"
+              value={notif.layout || "left"}
+              options={[
+                { value: "left", label: "Left" },
+                { value: "right", label: "Right" },
+              ]}
+              onChange={(v) => upd({ layout: v as "left" | "right" | "none" })}
+            />
+          )}
         </FormRow>
-        <Slider
-          label="Duration"
-          min={1}
-          max={60}
-          value={notif.duration || 5}
-          onChange={(v) => upd({ duration: v })}
-          unit="s"
-        />
+        <FormRow>
+          <Toggle
+            label="Hold (indefinite)"
+            checked={hold}
+            onChange={(v) => setHold(v)}
+          />
+          {!hold && (
+            <Slider
+              label="Duration"
+              min={1}
+              max={60}
+              value={notif.duration || 5}
+              onChange={(v) => upd({ duration: v })}
+              unit="s"
+            />
+          )}
+        </FormRow>
         <FormRow>
           <Toggle
             label="Rainbow"

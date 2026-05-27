@@ -110,6 +110,7 @@ export interface Notification {
   icon?: string;
   layout?: "left" | "right" | "none";
   duration?: number;
+  hold?: boolean;
   color?: string | [number, number, number];
   rainbow?: boolean;
   rtttl?: string;

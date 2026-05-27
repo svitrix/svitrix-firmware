@@ -100,8 +100,25 @@ During the scheduled time, the display dims to the configured brightness and all
 
 ### Apps
 
-Toggle built-in apps on/off, each with its own color picker:
-- **Time**, **Date**, **Temperature** (with color), **Humidity** (with color), **Battery** (with color)
+Toggle built-in apps on/off. Each app has customization options:
+
+**Basic apps:**
+- **Time** — digital clock with configurable duration
+- **Date** — date display with configurable duration
+
+**Apps with color:**
+- **Temperature** — internal sensor, with color picker, Celsius/Fahrenheit scale and offset
+- **Humidity** — internal sensor, with color picker
+- **Battery** — battery level, with color picker
+
+**Autonomous apps (no duration, shown when active):**
+- **Timer** — countdown timer with Auto color (green=running, red=finished, white=paused) or custom color
+- **Stopwatch** — stopwatch with Auto color (green=running, white=paused) or custom color
+- **Alarms** — next alarm with Auto color (yellow=active, gray=inactive) or custom color
+
+::: tip
+Timer, Stopwatch and Alarms apps use dynamic colors by default. Disable "Auto" to choose a fixed color.
+:::
 
 App behavior:
 - **App Duration** — how long each app shows before switching (1–60s)
@@ -132,12 +149,19 @@ App behavior:
 Send a one-time message to the display:
 - **Text** — message to show (required)
 - **Icon** — icon ID or filename from `/ICONS/`
-- **Icon Layout** — position the icon on the left, right, or hide it
-- **Duration** — how long the notification shows (1–60s)
+- **Layout** — position the icon on the left or right (only visible when icon is set)
+- **Hold (indefinite)** — keeps the notification until Dismiss is pressed or the center button
+- **Duration** — how long the notification shows (1–60s, only when Hold is off)
 - **Rainbow** — cycle text through rainbow colors
 - **Color** — text color (when rainbow is off)
-- **Sound** — play a sound file from `/MELODIES/`
-- **RTTTL** — play a melody in [RTTTL format](https://en.wikipedia.org/wiki/Ring_Tone_Text_Transfer_Language)
+- **Sound** — RTTTL melody filename from `/MELODIES/` (without extension)
+- **RTTTL** — melody string in [RTTTL format](https://en.wikipedia.org/wiki/Ring_Tone_Text_Transfer_Language) directly
+
+::: tip
+If you don't specify an icon, the text uses the full 32 pixels of the display. Long texts scroll automatically.
+:::
+
+See [Sounds](./sounds) for creating melody files.
 
 ### Icon Picker
 
