@@ -57,6 +57,7 @@ export function AppsSection() {
       TEMP: s.TEMP, TEMP_COL: s.TEMP_COL,
       HUM: s.HUM, HUM_COL: s.HUM_COL,
       BAT: s.BAT, BAT_COL: s.BAT_COL,
+      STIMER: s.STIMER, SSW: s.SSW, SALARMS: s.SALARMS,
       ATIME: s.ATIME, ATRANS: s.ATRANS,
       TEFF: s.TEFF, TSPEED: s.TSPEED,
       SSPEED: s.SSPEED, BLOCKN: s.BLOCKN,
@@ -118,6 +119,10 @@ export function AppsSection() {
             <Slider label="" min={1} max={60} value={s.BATDUR || 7} onChange={(v) => updateSettings({ BATDUR: v })} unit="s" />
           </div>
         </div>
+
+        <Toggle label="Timer" checked={s.STIMER} onChange={(v) => updateSettings({ STIMER: v })} />
+        <Toggle label="Stopwatch" checked={s.SSW} onChange={(v) => updateSettings({ SSW: v })} />
+        <Toggle label="Alarms" checked={s.SALARMS} onChange={(v) => updateSettings({ SALARMS: v })} />
 
         <Toggle label="Auto Transition" checked={s.ATRANS} onChange={(v) => updateSettings({ ATRANS: v })} />
         <Select

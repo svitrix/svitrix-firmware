@@ -107,6 +107,9 @@ String DisplayManager_::getSettings()
     doc["HUM"] = appConfig.showHum;
     doc["TEMP"] = appConfig.showTemp;
     doc["BAT"] = appConfig.showBat;
+    doc["STIMER"] = appConfig.showTimer;
+    doc["SSW"] = appConfig.showStopwatch;
+    doc["SALARMS"] = appConfig.showAlarms;
     doc["TOFF"] = sensorConfig.tempOffset;
     doc["VOL"] = audioConfig.soundVolume;
     doc["OVERLAY"] = overlayToString(ui->getGlobalOverlay());
@@ -219,6 +222,9 @@ void DisplayManager_::setNewSettings(const char *json)
     appConfig.showHum = doc.containsKey("HUM") ? doc["HUM"].as<bool>() : appConfig.showHum;
     appConfig.showTemp = doc.containsKey("TEMP") ? doc["TEMP"].as<bool>() : appConfig.showTemp;
     appConfig.showBat = doc.containsKey("BAT") ? doc["BAT"].as<bool>() : appConfig.showBat;
+    appConfig.showTimer = doc.containsKey("STIMER") ? doc["STIMER"].as<bool>() : appConfig.showTimer;
+    appConfig.showStopwatch = doc.containsKey("SSW") ? doc["SSW"].as<bool>() : appConfig.showStopwatch;
+    appConfig.showAlarms = doc.containsKey("SALARMS") ? doc["SALARMS"].as<bool>() : appConfig.showAlarms;
     sensorConfig.tempOffset = doc.containsKey("TOFF") ? doc["TOFF"].as<float>() : sensorConfig.tempOffset;
     appConfig.timeDuration = doc.containsKey("TIMEDUR") ? doc["TIMEDUR"].as<uint16_t>() : appConfig.timeDuration;
     appConfig.dateDuration = doc.containsKey("DATEDUR") ? doc["DATEDUR"].as<uint16_t>() : appConfig.dateDuration;

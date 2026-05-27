@@ -38,6 +38,9 @@ export interface Settings {
   HUM: boolean;
   TEMP: boolean;
   BAT: boolean;
+  STIMER: boolean;
+  SSW: boolean;
+  SALARMS: boolean;
   VOL: number;
   NMODE: boolean;
   NSTART: number;
