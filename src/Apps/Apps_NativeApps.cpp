@@ -592,9 +592,9 @@ void UVApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_t x, in
         if (!uvIconChecked)
         {
             uvIconChecked = true;
-            if (LittleFS.exists("/ICONS/52016.gif"))
+            if (LittleFS.exists("/ICONS/59801.gif"))
             {
-                uvIconGif = LittleFS.open("/ICONS/52016.gif");
+                uvIconGif = LittleFS.open("/ICONS/59801.gif");
                 uvIconIsGif = true;
             }
         }
@@ -605,7 +605,7 @@ void UVApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_t x, in
         }
         else
         {
-            matrix->drawRGBBitmap(x + m.iconX, y, icon_52016, 8, 8);
+            matrix->drawRGBBitmap(x + m.iconX, y, icon_59801, 8, 8);
         }
     }
 
