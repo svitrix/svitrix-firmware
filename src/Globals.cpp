@@ -339,6 +339,9 @@ void loadSettings()
     weatherConfig.outdoorHumDuration = Settings.getUChar("WAPI_OHDUR", 7);
     weatherConfig.pressureDuration = Settings.getUChar("WAPI_PDUR", 7);
     weatherConfig.aqiDuration = Settings.getUChar("WAPI_AQDUR", 7);
+    weatherConfig.showUV = Settings.getBool("WAPI_UV", false);
+    weatherConfig.uvColor = Settings.getUInt("WAPI_UVCOL", 0x9C27B0);
+    weatherConfig.uvDuration = Settings.getUChar("WAPI_UVDUR", 7);
     Settings.end();
     systemConfig.deviceId = getID();
     mqttConfig.prefix = systemConfig.deviceId;
@@ -435,6 +438,9 @@ void saveSettings()
     Settings.putUChar("WAPI_OHDUR", weatherConfig.outdoorHumDuration);
     Settings.putUChar("WAPI_PDUR", weatherConfig.pressureDuration);
     Settings.putUChar("WAPI_AQDUR", weatherConfig.aqiDuration);
+    Settings.putBool("WAPI_UV", weatherConfig.showUV);
+    Settings.putUInt("WAPI_UVCOL", weatherConfig.uvColor);
+    Settings.putUChar("WAPI_UVDUR", weatherConfig.uvDuration);
     Settings.end();
 }
 
@@ -454,4 +460,4 @@ AppConfig appConfig = {true, true, true, true, true, true, false, false, false, 
 AudioConfig audioConfig = {false, 30, ""};
 SystemConfig systemConfig = {true, 15, 80, "", false, 10000, false, false, "", "", false, false, "", ""};
 WeatherConfig weatherConfig = {"", WEATHER_LOC_CITY, "", 0.0, 0.0, "", 30, true, false, false, false, false, false, 0, 0, 0, 0, 7, 7, 7, 7};
-WeatherData weatherData = {0, 0, 0, 0, "", 0, 0, false};
+WeatherData weatherData = {0, 0, 0, 0, 0, "", 0, 0, false};

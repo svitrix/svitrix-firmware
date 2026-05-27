@@ -175,6 +175,14 @@ export function WeatherSection() {
           </div>
         </div>
 
+        <div class={styles.appRow}>
+          <Toggle label="UV Index" checked={w.showUV} onChange={(v) => updateWeatherConfig({ showUV: v })} />
+          <ColorField label="" value={w.uvColor} onChange={(v) => updateWeatherConfig({ uvColor: v })} />
+          <div class={styles.appSlider}>
+            <Slider label="" min={1} max={60} value={w.uvDuration || 7} onChange={(v) => updateWeatherConfig({ uvDuration: v })} unit="s" />
+          </div>
+        </div>
+
         <FormRow>
           <Button variant="primary" onClick={handleSave} loading={saving}>
             Save Weather
@@ -202,6 +210,8 @@ export function WeatherSection() {
                   <span>{weatherData.aqi}</span>
                 </>
               )}
+              <span>UV Index:</span>
+              <span>{weatherData.uv?.toFixed(1) ?? "--"}</span>
             </div>
           </div>
         )}

@@ -544,14 +544,18 @@ void DataFetcher_::fetchWeather()
         weatherData.aqi = 0;
     }
 
+    // UV Index
+    weatherData.uv = current["uv"].as<float>();
+
     weatherData.lastUpdate = millis();
     weatherData.valid = true;
 
-    DEBUG_PRINTF("DataFetcher: weather updated - %.1f%s, %s, AQI=%d",
+    DEBUG_PRINTF("DataFetcher: weather updated - %.1f%s, %s, AQI=%d, UV=%.1f",
                  weatherData.outdoorTemp,
                  timeConfig.isCelsius ? "C" : "F",
                  weatherData.condition.c_str(),
-                 weatherData.aqi);
+                 weatherData.aqi,
+                 weatherData.uv);
 }
 
 void DataFetcher_::forceWeatherFetch()

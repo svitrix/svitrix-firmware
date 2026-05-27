@@ -186,15 +186,18 @@ struct WeatherConfig {
     bool showAirQuality;
     bool showIndoorTemp;
     bool showIndoorHumidity;
+    bool showUV;
     // Display settings for weather apps
     uint32_t outdoorTempColor;
     uint32_t outdoorHumColor;
     uint32_t pressureColor;
     uint32_t aqiColor;
+    uint32_t uvColor;
     uint8_t outdoorTempDuration;  // seconds
     uint8_t outdoorHumDuration;
     uint8_t pressureDuration;
     uint8_t aqiDuration;
+    uint8_t uvDuration;
 };
 
 struct WeatherData {
@@ -202,6 +205,7 @@ struct WeatherData {
     float outdoorHumidity;
     float pressure;           // mb/hPa
     int aqi;                  // US EPA index (1-6)
+    float uv;                 // UV index (0-11+)
     String condition;         // "sunny", "cloudy", etc.
     int conditionCode;        // WeatherAPI condition code
     unsigned long lastUpdate; // millis() of last update

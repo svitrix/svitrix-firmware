@@ -158,15 +158,18 @@ export interface WeatherConfig {
   showAirQuality: boolean;
   showIndoorTemp: boolean;
   showIndoorHumidity: boolean;
+  showUV: boolean;
   // Display settings
   outdoorTempColor: number;
   outdoorHumColor: number;
   pressureColor: number;
   aqiColor: number;
+  uvColor: number;
   outdoorTempDuration: number;
   outdoorHumDuration: number;
   pressureDuration: number;
   aqiDuration: number;
+  uvDuration: number;
 }
 
 export interface WeatherData {
@@ -175,6 +178,7 @@ export interface WeatherData {
   outdoorHumidity: number;
   pressure: number;
   aqi: number;
+  uv: number;
   condition: string;
   conditionCode: number;
   lastUpdate: number;

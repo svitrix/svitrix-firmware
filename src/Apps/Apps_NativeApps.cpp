@@ -559,6 +559,74 @@ void AirQualityApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16
     DisplayManager.matrixPrint(aqiStr.c_str());
 }
 
+// ── UVApp ──────────────────────────────────────────────────────────
+
+/// Weather app showing UV Index from WeatherAPI.
+void UVApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_t x, int16_t y, GifPlayer *gifPlayer)
+{
+    if (nativeAppGuard("UV"))
+        return;
+
+    // Use config color if set, otherwise dynamic color based on UV level
+    uint32_t uvColor = weatherConfig.uvColor;
+    if (uvColor == 0 && weatherData.valid)
+    {
+        float uv = weatherData.uv;
+        if (uv < 3)       uvColor = 0x00FF00; // Low - green
+        else if (uv < 6)  uvColor = 0xFFFF00; // Moderate - yellow
+        else if (uv < 8)  uvColor = 0xFFA500; // High - orange
+        else if (uv < 11) uvColor = 0xFF0000; // Very high - red
+        else              uvColor = 0x9400D3; // Extreme - violet
+    }
+    applyNativeAppColor(uvColor);
+
+    LayoutMetrics m = LayoutEngine::computeLayout(appConfig.nativeIconLayout, 0);
+
+    static File uvIconGif;
+    static bool uvIconChecked = false;
+    static bool uvIconIsGif = false;
+    static uint16_t uvIconFrame = 0;
+
+    if (m.hasIcon)
+    {
+        if (!uvIconChecked)
+        {
+            uvIconChecked = true;
+            if (LittleFS.exists("/ICONS/52016.gif"))
+            {
+                uvIconGif = LittleFS.open("/ICONS/52016.gif");
+                uvIconIsGif = true;
+            }
+        }
+        if (uvIconIsGif)
+        {
+            gifPlayer->playGif(x + m.iconX, y, &uvIconGif, uvIconFrame);
+            uvIconFrame = gifPlayer->getFrame();
+        }
+        else
+        {
+            matrix->drawRGBBitmap(x + m.iconX, y, icon_52016, 8, 8);
+        }
+    }
+
+    String uvStr;
+    if (weatherData.valid)
+    {
+        uvStr = "UV:" + String(static_cast<int>(weatherData.uv));
+    }
+    else
+    {
+        uvStr = "UV:--";
+    }
+
+    uint16_t textWidth = getTextWidth(uvStr.c_str(), 0);
+    LayoutMetrics tm = LayoutEngine::computeLayout(appConfig.nativeIconLayout, textWidth);
+    int16_t textX = tm.textCenterX;
+
+    DisplayManager.setCursor(textX + x, 6 + y);
+    DisplayManager.matrixPrint(uvStr.c_str());
+}
+
 // ── Timer State ────────────────────────────────────────────────────
 
 namespace {

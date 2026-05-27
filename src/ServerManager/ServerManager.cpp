@@ -200,6 +200,7 @@ void addHandler()
                     doc["outdoorHumidity"] = weatherData.outdoorHumidity;
                     doc["pressure"] = weatherData.pressure;
                     doc["aqi"] = weatherData.aqi;
+                    doc["uv"] = weatherData.uv;
                     doc["condition"] = weatherData.condition;
                     doc["conditionCode"] = weatherData.conditionCode;
                     doc["lastUpdate"] = weatherData.lastUpdate;
@@ -222,14 +223,17 @@ void addHandler()
                     doc["showAirQuality"] = weatherConfig.showAirQuality;
                     doc["showIndoorTemp"] = weatherConfig.showIndoorTemp;
                     doc["showIndoorHumidity"] = weatherConfig.showIndoorHumidity;
+                    doc["showUV"] = weatherConfig.showUV;
                     doc["outdoorTempColor"] = weatherConfig.outdoorTempColor;
                     doc["outdoorHumColor"] = weatherConfig.outdoorHumColor;
                     doc["pressureColor"] = weatherConfig.pressureColor;
                     doc["aqiColor"] = weatherConfig.aqiColor;
+                    doc["uvColor"] = weatherConfig.uvColor;
                     doc["outdoorTempDuration"] = weatherConfig.outdoorTempDuration;
                     doc["outdoorHumDuration"] = weatherConfig.outdoorHumDuration;
                     doc["pressureDuration"] = weatherConfig.pressureDuration;
                     doc["aqiDuration"] = weatherConfig.aqiDuration;
+                    doc["uvDuration"] = weatherConfig.uvDuration;
                     String json;
                     serializeJson(doc, json);
                     request->send(200, "application/json", json); });
@@ -255,16 +259,20 @@ void addHandler()
                             if (doc.containsKey("showAirQuality")) weatherConfig.showAirQuality = doc["showAirQuality"].as<bool>();
                             if (doc.containsKey("showIndoorTemp")) weatherConfig.showIndoorTemp = doc["showIndoorTemp"].as<bool>();
                             if (doc.containsKey("showIndoorHumidity")) weatherConfig.showIndoorHumidity = doc["showIndoorHumidity"].as<bool>();
+                            if (doc.containsKey("showUV")) weatherConfig.showUV = doc["showUV"].as<bool>();
                             if (doc.containsKey("outdoorTempColor")) weatherConfig.outdoorTempColor = doc["outdoorTempColor"].as<uint32_t>();
                             if (doc.containsKey("outdoorHumColor")) weatherConfig.outdoorHumColor = doc["outdoorHumColor"].as<uint32_t>();
                             if (doc.containsKey("pressureColor")) weatherConfig.pressureColor = doc["pressureColor"].as<uint32_t>();
                             if (doc.containsKey("aqiColor")) weatherConfig.aqiColor = doc["aqiColor"].as<uint32_t>();
+                            if (doc.containsKey("uvColor")) weatherConfig.uvColor = doc["uvColor"].as<uint32_t>();
                             if (doc.containsKey("outdoorTempDuration")) weatherConfig.outdoorTempDuration = doc["outdoorTempDuration"].as<uint8_t>();
                             if (doc.containsKey("outdoorHumDuration")) weatherConfig.outdoorHumDuration = doc["outdoorHumDuration"].as<uint8_t>();
                             if (doc.containsKey("pressureDuration")) weatherConfig.pressureDuration = doc["pressureDuration"].as<uint8_t>();
                             if (doc.containsKey("aqiDuration")) weatherConfig.aqiDuration = doc["aqiDuration"].as<uint8_t>();
+                            if (doc.containsKey("uvDuration")) weatherConfig.uvDuration = doc["uvDuration"].as<uint8_t>();
                             bool appsChanged = doc.containsKey("showOutdoorTemp") || doc.containsKey("showOutdoorHumidity") ||
-                                               doc.containsKey("showPressure") || doc.containsKey("showAirQuality");
+                                               doc.containsKey("showPressure") || doc.containsKey("showAirQuality") ||
+                                               doc.containsKey("showUV");
                             saveSettings();
                             if (appsChanged && smNav_) smNav_->loadNativeApps();
                             if (!weatherConfig.apiKey.isEmpty()) DataFetcher.forceWeatherFetch();
