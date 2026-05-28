@@ -111,14 +111,8 @@ Toggle built-in apps on/off. Each app has customization options:
 - **Humidity** — internal sensor, with color picker
 - **Battery** — battery level, with color picker
 
-**Autonomous apps (no duration, shown when active):**
-- **Timer** — countdown timer with Auto color (green=running, red=finished, white=paused) or custom color
-- **Stopwatch** — stopwatch with Auto color (green=running, white=paused) or custom color
-- **Alarms** — next alarm with Auto color (yellow=active, gray=inactive) or custom color
-
-::: tip
-Timer, Stopwatch and Alarms apps use dynamic colors by default. Disable "Auto" to choose a fixed color.
-:::
+**Alarms indicator:**
+- **Alarms Indicator** — shows a single LED in the bottom-right corner when alarms are active
 
 App behavior:
 - **App Duration** — how long each app shows before switching (1–60s)

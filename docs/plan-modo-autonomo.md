@@ -1,5 +1,7 @@
 # Plan: Modo Autónomo SVITRIX
 
+> **Nota (2026-05):** Timer y Stopwatch fueron removidos del firmware. Solo las Alarmas permanecen implementadas. Este documento es histórico.
+
 ## Contexto
 
 El Ulanzi TC001 tiene un RTC DS1307 en el bus I2C (0x68) que actualmente no se utiliza. El objetivo es habilitar un **Modo Autónomo** donde el dispositivo funcione sin WiFi ni Home Assistant: alarmas locales, temporizador, cronómetro, y sincronización de hora con RTC para mantener la hora durante reinicios o pérdida de conexión.

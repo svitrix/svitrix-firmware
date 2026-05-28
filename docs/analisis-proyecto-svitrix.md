@@ -942,8 +942,8 @@ class BLENotificationReceiver {
 
 | App | Descripción | Complejidad |
 |-----|-------------|-------------|
-| **Stopwatch** | Cronómetro con lap times | Baja |
-| **Timer** | Cuenta regresiva con alarma | Baja |
+| ~~**Stopwatch**~~ | ~~Cronómetro con lap times~~ | ~~Removido~~ |
+| ~~**Timer**~~ | ~~Cuenta regresiva con alarma~~ | ~~Removido~~ |
 | **Pomodoro** | 25/5 min work/break cycles | Media |
 | **World Clock** | Múltiples zonas horarias | Baja |
 | **Sunrise/Sunset** | Basado en ubicación | Media |

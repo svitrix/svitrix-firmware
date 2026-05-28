@@ -300,70 +300,28 @@ El firmware incluye estas apps preinstaladas:
 | **Humidity** | Sensor interno, con color configurable |
 | **Battery** | Nivel de batería, con color configurable |
 
-### Apps Autónomas (sin duración, se muestran cuando están activas)
+### Indicador de Alarmas
 
-| App | Descripción | Colores Auto |
-|-----|-------------|--------------|
-| **Timer** | Temporizador con cuenta regresiva | Verde=corriendo, Rojo=terminado, Blanco=pausado |
-| **Stopwatch** | Cronómetro con centésimas | Verde=corriendo, Blanco=pausado |
-| **Alarms** | Próxima alarma programada | Amarillo=activa, Gris=inactiva |
+El dispositivo muestra un LED indicador en la esquina inferior derecha cuando hay alarmas activas. Este indicador se puede activar/desactivar desde **Settings > Apps > Alarms Indicator**.
 
 ### Colores de Apps
 
-En **Settings > Apps** puedes configurar colores para cada app:
+En **Settings > Apps** puedes configurar colores para cada app nativa:
 
-- **Temperature, Humidity, Battery:** Selector de color directo
-- **Timer, Stopwatch, Alarms:** Toggle **Auto** para colores dinámicos o color fijo personalizado
-
-> **Tip:** Las apps Timer, Stopwatch y Alarms usan colores dinámicos por defecto que indican su estado. Desactiva "Auto" para elegir un color fijo.
+- **Time, Date, Temperature, Humidity, Battery:** Selector de color directo
 
 ---
 
-## 9. Modo Autónomo (Timer, Cronómetro, Alarmas)
+## 9. Alarmas
 
-El Modo Autónomo permite usar el dispositivo sin WiFi ni Home Assistant. Incluye un RTC (DS1307) que mantiene la hora durante reinicios.
+El dispositivo soporta hasta 10 alarmas programables. Incluye un RTC (DS1307) que mantiene la hora durante reinicios.
 
 ### 9.1 Acceder a la Configuración
 
 1. Ve a: `http://[IP]/autonomous`
-2. Verás tres secciones: Timer, Stopwatch, Alarms
+2. Verás la sección de Alarmas
 
-### 9.2 Timer (Temporizador)
-
-Cuenta regresiva configurable.
-
-| Control | Función |
-|---------|---------|
-| **Set** | Establecer tiempo (minutos:segundos) |
-| **Start** | Iniciar cuenta regresiva |
-| **Pause** | Pausar |
-| **Reset** | Reiniciar al tiempo configurado |
-
-**En el dispositivo (botones):**
-- Botón izquierdo: Reset
-- Botón central: Start/Pause
-- Botón derecho: +1 minuto
-
-Cuando termina, suena una melodía y la pantalla parpadea en rojo.
-
-### 9.3 Stopwatch (Cronómetro)
-
-Cuenta ascendente con centésimas de segundo (MM:SS.cs).
-
-| Control | Función |
-|---------|---------|
-| **Start** | Iniciar cronómetro |
-| **Pause** | Pausar |
-| **Reset** | Reiniciar a 00:00.00 |
-
-**En el dispositivo (botones):**
-- Botón izquierdo: Reset
-- Botón central: Start/Pause
-- Botón derecho: App siguiente
-
-Máximo: 99:59.99
-
-### 9.4 Alarmas
+### 9.2 Configurar Alarmas
 
 Hasta 10 alarmas programables con días de la semana.
 
@@ -382,7 +340,10 @@ Hasta 10 alarmas programables con días de la semana.
 - Botón izquierdo: Snooze (posponer 5 min)
 - Botón central: Dismiss (apagar)
 
-### 9.5 RTC (Reloj de Tiempo Real)
+**Indicador LED:**
+Cuando hay alarmas activas, se muestra un LED en la esquina inferior derecha de la pantalla.
+
+### 9.3 RTC (Reloj de Tiempo Real)
 
 El Ulanzi TC001 tiene un chip DS1307 con batería de respaldo.
 
@@ -394,38 +355,28 @@ El Ulanzi TC001 tiene un chip DS1307 con batería de respaldo.
 
 **Precisión del DS1307:** ±2 ppm típico (~1 segundo/semana). Suficiente para uso normal; se recorrige automáticamente cuando hay WiFi.
 
-### 9.6 API HTTP
+### 9.4 API HTTP
 
 | Endpoint | Método | Descripción |
 |----------|--------|-------------|
-| `/api/timer` | GET | Estado del timer |
-| `/api/timer` | POST | Control: `{"action": "start\|pause\|reset\|setTime", "time": 300}` |
-| `/api/stopwatch` | GET | Estado del cronómetro |
-| `/api/stopwatch` | POST | Control: `{"action": "start\|pause\|reset"}` |
 | `/api/alarms` | GET | Lista de alarmas |
-| `/api/alarms` | POST | Agregar alarma |
+| `/api/alarms` | POST | Agregar alarma o control: `{"action": "snooze", "minutes": 5}` o `{"action": "dismiss"}` |
 | `/api/alarms` | PUT | Actualizar alarma |
-| `/api/alarms` | DELETE | Eliminar alarma: `{"id": 1}` |
-| `/api/alarms/snooze` | POST | Posponer: `{"minutes": 5}` |
-| `/api/alarms/dismiss` | POST | Apagar alarma actual |
+| `/api/alarms?id=N` | DELETE | Eliminar alarma |
 
-### 9.7 Habilitar Apps en Pantalla
+### 9.5 Habilitar Indicador de Alarmas
 
-Las apps Timer, Stopwatch y Alarms están deshabilitadas por defecto. Para mostrarlas en el carrusel:
+El indicador LED de alarmas está deshabilitado por defecto.
 
 **Desde la web:**
 1. Ve a: `http://[IP]` (Settings)
-2. En la sección de apps, activa:
-   - Show Timer
-   - Show Stopwatch
-   - Show Alarms
-3. Guarda los cambios
+2. En la sección de apps, activa **Alarms Indicator**
 
 **Desde el dispositivo (menú físico):**
 1. Mantén presionado el botón central para entrar al menú
 2. Navega con izquierda/derecha hasta **APPS**
 3. Presiona el botón central para entrar
-4. Navega hasta Timer, Stopwatch o Alarms
+4. Navega hasta **Alarms**
 5. Presiona el botón central para activar/desactivar (ON/OFF)
 6. Mantén presionado el botón central para guardar y salir
 

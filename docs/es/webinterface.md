@@ -111,14 +111,8 @@ Activa/desactiva apps integradas. Cada app tiene opciones de personalización:
 - **Humedad** — sensor interno, con selector de color
 - **Batería** — nivel de batería, con selector de color
 
-**Apps autónomas (sin duración, se muestran cuando están activas):**
-- **Timer** — temporizador con color Auto (verde=corriendo, rojo=terminado, blanco=pausado) o color personalizado
-- **Stopwatch** — cronómetro con color Auto (verde=corriendo, blanco=pausado) o color personalizado
-- **Alarms** — próxima alarma con color Auto (amarillo=activa, gris=inactiva) o color personalizado
-
-::: tip
-Las apps Timer, Stopwatch y Alarms usan colores dinámicos por defecto. Desactiva "Auto" para elegir un color fijo.
-:::
+**Indicador de alarmas:**
+- **Alarms Indicator** — muestra un LED en la esquina inferior derecha cuando hay alarmas activas
 
 Comportamiento de apps:
 - **Duración de App** — cuánto tiempo se muestra cada app antes de cambiar (1–60s)
