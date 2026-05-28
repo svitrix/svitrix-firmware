@@ -336,7 +336,8 @@ void MQTTManager_::setup()
         outdoorTemp->setName(weatherDescs[0].name);
         outdoorTemp->setIcon(weatherDescs[0].icon);
         outdoorTemp->setDeviceClass(weatherDescs[0].deviceClass);
-        outdoorTemp->setUnitOfMeasurement(timeConfig.isCelsius ? "\xC2\xB0""C" : "\xC2\xB0""F");
+        const char *tempUnit = timeConfig.isCelsius ? "\xC2\xB0" "C" : "\xC2\xB0" "F";
+        outdoorTemp->setUnitOfMeasurement(tempUnit);
 
         buildEntityId(weatherDescs[1].idTemplate, macStr, outHumID, sizeof(outHumID));
         outdoorHum = new HASensor(outHumID);

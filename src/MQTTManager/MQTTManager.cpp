@@ -47,18 +47,18 @@ HABinarySensor *btnmid = nullptr;   ///< Middle hardware button state
 HABinarySensor *btnright = nullptr; ///< Right hardware button state
 
 // Weather sensors (from WeatherAPI)
-HASensor *outdoorTemp = nullptr;    ///< Outdoor temperature
-HASensor *outdoorHum = nullptr;     ///< Outdoor humidity
-HASensor *pressure = nullptr;       ///< Atmospheric pressure (hPa)
-HASensor *aqi = nullptr;            ///< Air quality index (1-6)
-HASensor *weatherCond = nullptr;    ///< Weather condition text
-HASensor *uvIndex = nullptr;        ///< UV index (0-11+)
+HASensor *outdoorTemp = nullptr;
+HASensor *outdoorHum = nullptr;
+HASensor *pressure = nullptr;
+HASensor *aqi = nullptr;
+HASensor *weatherCond = nullptr;
+HASensor *uvIndex = nullptr;
 
 // Night mode controls
-HASwitch *nightModeSwitch = nullptr;    ///< Night mode on/off toggle
-HANumber *nightBrightnessNum = nullptr; ///< Night mode brightness (1-50)
-HALight *nightColorLight = nullptr;     ///< Night mode text color (RGB)
-HASwitch *nightBlockSwitch = nullptr;   ///< Block transitions in night mode
+HASwitch *nightModeSwitch = nullptr;
+HANumber *nightBrightnessNum = nullptr;
+HALight *nightColorLight = nullptr;
+HASwitch *nightBlockSwitch = nullptr;
 
 // ── HA entity ID buffers ────────────────────────────────────────────
 // Each holds a unique HA entity ID built from MAC suffix (e.g. "abc123_mat").

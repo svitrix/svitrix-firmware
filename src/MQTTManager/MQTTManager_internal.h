@@ -63,18 +63,18 @@ extern HABinarySensor *btnmid;   ///< Middle hardware button state
 extern HABinarySensor *btnright; ///< Right hardware button state
 
 // Weather sensors (from WeatherAPI)
-extern HASensor *outdoorTemp;    ///< Outdoor temperature
-extern HASensor *outdoorHum;     ///< Outdoor humidity
-extern HASensor *pressure;       ///< Atmospheric pressure (hPa)
-extern HASensor *aqi;            ///< Air quality index (1-6)
-extern HASensor *weatherCond;    ///< Weather condition text
-extern HASensor *uvIndex;        ///< UV index (0-11+)
+extern HASensor *outdoorTemp;
+extern HASensor *outdoorHum;
+extern HASensor *pressure;
+extern HASensor *aqi;
+extern HASensor *weatherCond;
+extern HASensor *uvIndex;
 
 // Night mode controls
-extern HASwitch *nightModeSwitch;    ///< Night mode on/off toggle
-extern HANumber *nightBrightnessNum; ///< Night mode brightness (1-50)
-extern HALight *nightColorLight;     ///< Night mode text color (RGB)
-extern HASwitch *nightBlockSwitch;   ///< Block transitions in night mode
+extern HASwitch *nightModeSwitch;
+extern HANumber *nightBrightnessNum;
+extern HALight *nightColorLight;
+extern HASwitch *nightBlockSwitch;
 
 // ── HA entity ID buffers (defined in MQTTManager.cpp) ───────────────
 // Each buffer holds a unique HA entity ID built from MAC + suffix.
