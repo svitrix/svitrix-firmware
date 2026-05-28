@@ -176,7 +176,7 @@ void test_button_count(void)
 {
     size_t count;
     getButtonDescriptors(count);
-    TEST_ASSERT_EQUAL(4, count);
+    TEST_ASSERT_EQUAL(5, count);
 }
 
 void test_button_names(void)
@@ -187,6 +187,7 @@ void test_button_names(void)
     TEST_ASSERT_EQUAL_STRING("Start Update", descs[1].name);
     TEST_ASSERT_EQUAL_STRING("Next app", descs[2].name);
     TEST_ASSERT_EQUAL_STRING("Previous app", descs[3].name);
+    TEST_ASSERT_EQUAL_STRING("Reboot", descs[4].name);
 }
 
 void test_button_icons(void)
@@ -197,6 +198,7 @@ void test_button_icons(void)
     TEST_ASSERT_EQUAL_STRING("mdi:update", descs[1].icon);
     TEST_ASSERT_EQUAL_STRING("mdi:arrow-right-bold", descs[2].icon);
     TEST_ASSERT_EQUAL_STRING("mdi:arrow-left-bold", descs[3].icon);
+    TEST_ASSERT_EQUAL_STRING("mdi:restart", descs[4].icon);
 }
 
 // ── Switch ──────────────────────────────────────────────────────────
@@ -353,28 +355,61 @@ void test_binary_sensors_no_icon(void)
     }
 }
 
+// ── Night mode ──────────────────────────────────────────────────────
+
+void test_night_mode_count(void)
+{
+    size_t count;
+    getNightModeDescriptors(count);
+    TEST_ASSERT_EQUAL(4, count);
+}
+
+void test_night_mode_names(void)
+{
+    size_t count;
+    auto *descs = getNightModeDescriptors(count);
+    TEST_ASSERT_EQUAL_STRING("Night mode", descs[0].name);
+    TEST_ASSERT_EQUAL_STRING("Night brightness", descs[1].name);
+    TEST_ASSERT_EQUAL_STRING("Night color", descs[2].name);
+    TEST_ASSERT_EQUAL_STRING("Night block transition", descs[3].name);
+}
+
+void test_night_mode_icons(void)
+{
+    size_t count;
+    auto *descs = getNightModeDescriptors(count);
+    TEST_ASSERT_EQUAL_STRING("mdi:weather-night", descs[0].icon);
+    TEST_ASSERT_EQUAL_STRING("mdi:brightness-4", descs[1].icon);
+    TEST_ASSERT_EQUAL_STRING("mdi:palette", descs[2].icon);
+    TEST_ASSERT_EQUAL_STRING("mdi:swap-horizontal-bold", descs[3].icon);
+}
+
 // ── Total entity count ──────────────────────────────────────────────
 
 void test_total_count_with_battery(void)
 {
-    TEST_ASSERT_EQUAL(25, getTotalEntityCount(true));
+    // 1 matrix + 3 indicators + 2 selects + 5 buttons + 1 switch
+    // + 11 sensors + 3 binary + 6 weather + 4 night mode = 36
+    TEST_ASSERT_EQUAL(36, getTotalEntityCount(true));
 }
 
 void test_total_count_without_battery(void)
 {
-    TEST_ASSERT_EQUAL(24, getTotalEntityCount(false));
+    TEST_ASSERT_EQUAL(35, getTotalEntityCount(false));
 }
 
 void test_total_count_matches_sum(void)
 {
-    size_t indicators, selects, buttons, sensors, binarySensors;
+    size_t indicators, selects, buttons, sensors, binarySensors, weather, night;
     getIndicatorLightDescriptors(indicators);
     getSelectDescriptors(selects);
     getButtonDescriptors(buttons);
     getSensorDescriptors(sensors, true);
     getBinarySensorDescriptors(binarySensors);
+    getWeatherSensorDescriptors(weather);
+    getNightModeDescriptors(night);
 
-    size_t expected = 1 + indicators + selects + buttons + 1 + sensors + binarySensors;
+    size_t expected = 1 + indicators + selects + buttons + 1 + sensors + binarySensors + weather + night;
     TEST_ASSERT_EQUAL(expected, getTotalEntityCount(true));
 }
 
@@ -383,7 +418,7 @@ void test_total_count_matches_sum(void)
 void test_all_ids_unique(void)
 {
     // Collect all idTemplates into a flat array
-    const char *ids[30];
+    const char *ids[40];
     size_t idx = 0;
 
     ids[idx++] = getMatrixLightDescriptor().idTemplate;
@@ -410,6 +445,14 @@ void test_all_ids_unique(void)
     auto *binDescs = getBinarySensorDescriptors(count);
     for (size_t i = 0; i < count; i++)
         ids[idx++] = binDescs[i].idTemplate;
+
+    auto *weatherDescs = getWeatherSensorDescriptors(count);
+    for (size_t i = 0; i < count; i++)
+        ids[idx++] = weatherDescs[i].idTemplate;
+
+    auto *nightDescs = getNightModeDescriptors(count);
+    for (size_t i = 0; i < count; i++)
+        ids[idx++] = nightDescs[i].idTemplate;
 
     // Verify all pairs are unique
     for (size_t i = 0; i < idx; i++)
@@ -495,6 +538,11 @@ int main(void)
     RUN_TEST(test_binary_sensor_count);
     RUN_TEST(test_binary_sensor_names);
     RUN_TEST(test_binary_sensors_no_icon);
+
+    // Night mode
+    RUN_TEST(test_night_mode_count);
+    RUN_TEST(test_night_mode_names);
+    RUN_TEST(test_night_mode_icons);
 
     // Total count
     RUN_TEST(test_total_count_with_battery);

@@ -17,4 +17,5 @@ public:
     virtual String getStats() = 0;
     virtual bool moodlight(const char *json) = 0;
     virtual String ledsAsJson() = 0;
+    virtual void markPolicyConfigDirty() = 0;
 };

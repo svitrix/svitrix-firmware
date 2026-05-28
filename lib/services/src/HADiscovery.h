@@ -88,6 +88,13 @@ const HAEntityDescriptor *getBinarySensorDescriptors(size_t &count);
 /// @return Pointer to static array of weather sensor descriptors.
 const HAEntityDescriptor *getWeatherSensorDescriptors(size_t &count);
 
+// --- Night mode ---
+
+/// Night mode entities: enable switch, brightness number, color light, block transition switch.
+/// @param[out] count Set to number of descriptors (always 4).
+/// @return Pointer to static array: [0]=switch, [1]=number, [2]=light, [3]=switch.
+const HAEntityDescriptor *getNightModeDescriptors(size_t &count);
+
 // --- Utilities ---
 
 /// Build an entity ID by formatting idTemplate with macStr.

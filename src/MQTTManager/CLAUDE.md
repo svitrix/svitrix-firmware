@@ -1,6 +1,6 @@
 # MQTTManager — AI Reference
 
-Central MQTT communication and Home Assistant integration singleton. Manages broker connection, message dispatch, HA auto-discovery (25 entities), and state synchronization.
+Central MQTT communication and Home Assistant integration singleton. Manages broker connection, message dispatch, HA auto-discovery (36 entities), and state synchronization.
 
 ## File Map
 
@@ -26,15 +26,16 @@ void setDisplay(IDisplayControl*, IDisplayNavigation*, IDisplayNotifier*);
 void setServices(ISound*, IPower*, IUpdater*, IPeripheryProvider*);
 ```
 
-## HA Entities (25 total)
+## HA Entities (36 total)
 
 | Type | Count | Entities |
 |------|-------|----------|
-| **HALight** | 4 | Matrix (brightness+RGB), Indicator 1/2/3 (RGB) |
-| **HASelect** | 2 | BriMode (Manual/Auto), transEffect (11 transitions) |
-| **HAButton** | 4 | dismiss, nextApp, prevApp, doUpdate |
-| **HASwitch** | 1 | transition (auto-transition toggle) |
-| **HASensor** | 10-11 | curApp, myOwnID, temp, hum, lux, signal, version, ram, uptime, ipAddr, battery* |
+| **HALight** | 5 | Matrix (brightness+RGB), Indicator 1/2/3 (RGB), nightColor (RGB) |
+| **HASelect** | 2 | BriMode (Manual/Auto), transEffect (14 transitions) |
+| **HAButton** | 5 | dismiss, nextApp, prevApp, doUpdate, reboot |
+| **HASwitch** | 3 | transition, nightMode, nightBlockTransition |
+| **HANumber** | 1 | nightBrightness (1-50) |
+| **HASensor** | 16-17 | curApp, myOwnID, temp, hum, lux, signal, version, ram, uptime, ipAddr, battery*, outdoorTemp, outdoorHum, pressure, aqi, weatherCond, uvIndex |
 | **HABinarySensor** | 3 | btnleft, btnmid, btnright |
 
 *battery only on ULANZI build
@@ -82,7 +83,7 @@ Routing via `MessageRouter::routeTopic()` → `MqttCommandType` enum → switch 
 - `getValueForTopic(topic)` → cached value or "N/A"
 - Used by custom apps: `{{topic}}` placeholders resolved via PlaceholderUtils
 
-## 7 Callback Handlers (MQTTManager_Callbacks.cpp)
+## 10 Callback Handlers (MQTTManager_Callbacks.cpp)
 
 | Callback | Entities | Action |
 |----------|----------|--------|
@@ -93,13 +94,16 @@ Routing via `MessageRouter::routeTopic()` → `MqttCommandType` enum → switch 
 | `onStateCommand` | Matrix, Indicator1-3 | Set power/state |
 | `onBrightnessCommand` | Matrix | Set brightness (skip if auto) + save |
 | `onNumberCommand` | scrollSpeed | Set scroll speed + save |
+| `onNightSwitchCommand` | nightMode, nightBlockTransition | Toggle night mode settings + mark policy dirty + save |
+| `onNightNumberCommand` | nightBrightness | Set night brightness + mark policy dirty + save |
+| `onNightColorCommand` | nightColor | Set night color + mark policy dirty + save |
 
 All callbacks call `saveSettings()` after modifying config structs.
 
 ## Connection Lifecycle
 
 ```
-setup() → destroyHAEntities() + resetDevicesCount() → create 25 HA entities (if discovery enabled) → register callbacks
+setup() → destroyHAEntities() + resetDevicesCount() → create 36 HA entities (if discovery enabled) → register callbacks
   └→ connect() → mqtt.begin(host, port, user, pass)
        └→ onMqttConnected()
             ├─ Subscribe to ~20 command topics (30ms delay each)

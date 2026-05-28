@@ -29,6 +29,7 @@ HAButton *dismiss = nullptr;        ///< Dismiss notification button
 HAButton *nextApp = nullptr;        ///< Next app button
 HAButton *prevApp = nullptr;        ///< Previous app button
 HAButton *doUpdate = nullptr;       ///< Start firmware update button
+HAButton *rebootBtn = nullptr;      ///< Reboot device button
 HASwitch *transition = nullptr;     ///< Auto-transition toggle
 HASensor *battery = nullptr;        ///< Battery percentage (ULANZI only)
 HASensor *temperature = nullptr;    ///< Temperature (°C)
@@ -51,6 +52,13 @@ HASensor *outdoorHum = nullptr;     ///< Outdoor humidity
 HASensor *pressure = nullptr;       ///< Atmospheric pressure (hPa)
 HASensor *aqi = nullptr;            ///< Air quality index (1-6)
 HASensor *weatherCond = nullptr;    ///< Weather condition text
+HASensor *uvIndex = nullptr;        ///< UV index (0-11+)
+
+// Night mode controls
+HASwitch *nightModeSwitch = nullptr;    ///< Night mode on/off toggle
+HANumber *nightBrightnessNum = nullptr; ///< Night mode brightness (1-50)
+HALight *nightColorLight = nullptr;     ///< Night mode text color (RGB)
+HASwitch *nightBlockSwitch = nullptr;   ///< Block transitions in night mode
 
 // ── HA entity ID buffers ────────────────────────────────────────────
 // Each holds a unique HA entity ID built from MAC suffix (e.g. "abc123_mat").
@@ -58,13 +66,14 @@ HASensor *weatherCond = nullptr;    ///< Weather condition text
 long receivedMessages_;
 bool connected;
 char matID[40], ind1ID[40], ind2ID[40], ind3ID[40];
-char briID[40], btnAID[40], btnBID[40], btnCID[40];
+char briID[40], btnAID[40], btnBID[40], btnCID[40], rebootID[40];
 char appID[40], tempID[40], humID[40], luxID[40];
 char verID[40], ramID[40], upID[40], sigID[40];
 char btnLID[40], btnMID[40], btnRID[40];
 char transID[40], doUpdateID[40], batID[40];
 char myID[40], sSpeed[40], effectID[40], ipAddrID[40];
-char outTempID[40], outHumID[40], pressID[40], aqiID[40], weatherCondID[40];
+char outTempID[40], outHumID[40], pressID[40], aqiID[40], weatherCondID[40], uvID[40];
+char nightModeID[40], nightBriID[40], nightColID[40], nightBlockID[40];
 
 unsigned long previousMillis_Stats;    ///< Timestamp of last stats publish (millis)
 std::map<String, String> mqttValues;   ///< Cached values for subscribed external topics
@@ -150,6 +159,30 @@ void onMqttConnected()
     {
         myOwnID->setValue(mqttConfig.prefix.c_str());
         version->setValue(VERSION);
+
+        // Publish initial state for interactive entities on (re)connect
+        transition->setState(appConfig.autoTransition, true);
+        BriMode->setState(brightnessConfig.autoBrightness, true);
+        transEffect->setState(appConfig.transEffect, true);
+        Matrix->setBrightness(brightnessConfig.brightness);
+        Matrix->setState(!displayConfig.matrixOff, true);
+        HALight::RGBColor color;
+        color.isSet = true;
+        color.red = (colorConfig.textColor >> 16) & 0xFF;
+        color.green = (colorConfig.textColor >> 8) & 0xFF;
+        color.blue = colorConfig.textColor & 0xFF;
+        Matrix->setRGBColor(color);
+
+        // Night mode initial state
+        nightModeSwitch->setState(appConfig.nightMode, true);
+        nightBrightnessNum->setState(appConfig.nightBrightness);
+        HALight::RGBColor nightCol;
+        nightCol.isSet = true;
+        nightCol.red = (appConfig.nightColor >> 16) & 0xFF;
+        nightCol.green = (appConfig.nightColor >> 8) & 0xFF;
+        nightCol.blue = appConfig.nightColor & 0xFF;
+        nightColorLight->setRGBColor(nightCol);
+        nightBlockSwitch->setState(appConfig.nightBlockTransition, true);
     }
 
     MQTTManager.publish("stats/effects", dmNav_->getEffectNames().c_str());

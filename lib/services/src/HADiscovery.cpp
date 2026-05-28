@@ -65,6 +65,10 @@ static const char BTNC_ID[] = "%s_btnc";
 static const char BTNC_ICON[] = "mdi:arrow-left-bold";
 static const char BTNC_NAME[] = "Previous app";
 
+static const char REBOOT_ID[] = "%s_reboot";
+static const char REBOOT_ICON[] = "mdi:restart";
+static const char REBOOT_NAME[] = "Reboot";
+
 // ── Switch ──────────────────────────────────────────────────────────
 
 static const char TRANS_ID[] = "%s_tra";
@@ -156,6 +160,28 @@ static const char WCOND_ID[] = "%s_weather_cond";
 static const char WCOND_ICON[] = "mdi:weather-partly-cloudy";
 static const char WCOND_NAME[] = "Weather Condition";
 
+static const char UV_ID[] = "%s_uv";
+static const char UV_ICON[] = "mdi:sun-wireless-outline";
+static const char UV_NAME[] = "UV Index";
+
+// ── Night mode ──────────────────────────────────────────────────────
+
+static const char NMODE_ID[] = "%s_night_mode";
+static const char NMODE_ICON[] = "mdi:weather-night";
+static const char NMODE_NAME[] = "Night mode";
+
+static const char NBRI_ID[] = "%s_night_brightness";
+static const char NBRI_ICON[] = "mdi:brightness-4";
+static const char NBRI_NAME[] = "Night brightness";
+
+static const char NCOL_ID[] = "%s_night_color";
+static const char NCOL_ICON[] = "mdi:palette";
+static const char NCOL_NAME[] = "Night color";
+
+static const char NBLOCK_ID[] = "%s_night_block_trans";
+static const char NBLOCK_ICON[] = "mdi:swap-horizontal-bold";
+static const char NBLOCK_NAME[] = "Night block transition";
+
 // ── Binary sensors ──────────────────────────────────────────────────
 
 static const char BTNL_ID[] = "%s_btnL";
@@ -185,6 +211,7 @@ static const HAEntityDescriptor buttonDescs[] = {
     {DOUP_ID, DOUP_NAME, DOUP_ICON, nullptr, nullptr},
     {BTNB_ID, BTNB_NAME, BTNB_ICON, nullptr, nullptr},
     {BTNC_ID, BTNC_NAME, BTNC_ICON, nullptr, nullptr},
+    {REBOOT_ID, REBOOT_NAME, REBOOT_ICON, nullptr, nullptr},
 };
 
 // Battery is always the last entry — count is adjusted by includeBattery.
@@ -211,13 +238,22 @@ static const HAEntityDescriptor binarySensorDescs[] = {
     {BTNR_ID, BTNR_NAME, nullptr, nullptr, nullptr},
 };
 
-// Weather sensors array (5 sensors)
+// Weather sensors array (6 sensors)
 static const HAEntityDescriptor weatherSensorDescs[] = {
     {OUTTEMP_ID, OUTTEMP_NAME, OUTTEMP_ICON, OUTTEMP_CLASS, nullptr},    // 0 - unit set dynamically (°C/°F)
     {OUTHUM_ID,  OUTHUM_NAME,  OUTHUM_ICON,  OUTHUM_CLASS,  OUTHUM_UNIT}, // 1
     {PRESS_ID,   PRESS_NAME,   PRESS_ICON,   PRESS_CLASS,   PRESS_UNIT},  // 2
     {AQI_ID,     AQI_NAME,     AQI_ICON,     AQI_CLASS,     nullptr},     // 3
     {WCOND_ID,   WCOND_NAME,   WCOND_ICON,   nullptr,       nullptr},     // 4
+    {UV_ID,      UV_NAME,      UV_ICON,      nullptr,       nullptr},     // 5
+};
+
+// Night mode array (4 entities: 2 switches, 1 number, 1 light)
+static const HAEntityDescriptor nightModeDescs[] = {
+    {NMODE_ID,  NMODE_NAME,  NMODE_ICON,  nullptr, nullptr}, // 0 - switch
+    {NBRI_ID,   NBRI_NAME,   NBRI_ICON,   nullptr, nullptr}, // 1 - number
+    {NCOL_ID,   NCOL_NAME,   NCOL_ICON,   nullptr, nullptr}, // 2 - light (RGB)
+    {NBLOCK_ID, NBLOCK_NAME, NBLOCK_ICON, nullptr, nullptr}, // 3 - switch
 };
 
 // ── Function implementations ────────────────────────────────────────
@@ -241,7 +277,7 @@ const HASelectDescriptor *getSelectDescriptors(size_t &count)
 
 const HAEntityDescriptor *getButtonDescriptors(size_t &count)
 {
-    count = 4;
+    count = 5;
     return buttonDescs;
 }
 
@@ -264,8 +300,14 @@ const HAEntityDescriptor *getBinarySensorDescriptors(size_t &count)
 
 const HAEntityDescriptor *getWeatherSensorDescriptors(size_t &count)
 {
-    count = 5;
+    count = 6;
     return weatherSensorDescs;
+}
+
+const HAEntityDescriptor *getNightModeDescriptors(size_t &count)
+{
+    count = 4;
+    return nightModeDescs;
 }
 
 void buildEntityId(const char *idTemplate, const char *macStr,
@@ -291,7 +333,7 @@ const char *getDeviceModel()
 
 size_t getTotalEntityCount(bool includeBattery)
 {
-    // 1 matrix + 3 indicators + 2 selects + 4 buttons + 1 switch
-    // + sensors (10 or 11) + 3 binary sensors + 5 weather sensors
-    return 1 + 3 + 2 + 4 + 1 + (includeBattery ? 11 : 10) + 3 + 5;
+    // 1 matrix + 3 indicators + 2 selects + 5 buttons + 1 switch
+    // + sensors (10 or 11) + 3 binary sensors + 6 weather sensors + 4 night mode
+    return 1 + 3 + 2 + 5 + 1 + (includeBattery ? 11 : 10) + 3 + 6 + 4;
 }

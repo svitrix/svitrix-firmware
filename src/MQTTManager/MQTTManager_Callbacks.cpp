@@ -35,6 +35,11 @@ void onButtonCommand(HAButton *sender)
             mqttUpdater_->updateFirmware();
         }
     }
+    else if (sender == rebootBtn)
+    {
+        delay(500);
+        ESP.restart();
+    }
 }
 
 // ── Switch callback ─────────────────────────────────────────────────
@@ -66,6 +71,7 @@ void onSelectCommand(int8_t index, HASelect *sender)
         {
         case 0:
             brightnessConfig.autoBrightness = false;
+            dmControl_->setBrightness(brightnessConfig.brightness);
             Matrix->setBrightness(brightnessConfig.brightness, true);
             break;
         case 1:
@@ -175,4 +181,53 @@ void onNumberCommand(HANumeric number, HANumber *sender)
     }
 
     sender->setState(number);
+}
+
+// ── Night mode callbacks ────────────────────────────────────────────
+
+/// Handle night mode switch commands from HA.
+/// Routes to the appropriate config field based on which switch was pressed.
+/// @param state New on/off state.
+/// @param sender The HASwitch entity that changed.
+void onNightSwitchCommand(bool state, HASwitch *sender)
+{
+    if (sender == nightModeSwitch)
+    {
+        appConfig.nightMode = state;
+    }
+    else if (sender == nightBlockSwitch)
+    {
+        appConfig.nightBlockTransition = state;
+    }
+    dmControl_->markPolicyConfigDirty();
+    saveSettings();
+    sender->setState(state);
+}
+
+/// Handle night brightness number input from HA.
+/// Updates appConfig.nightBrightness and notifies DisplayManager.
+/// @param number Numeric value from HA (may be unset on reset).
+/// @param sender The HANumber entity that changed.
+void onNightNumberCommand(HANumeric number, HANumber *sender)
+{
+    if (!number.isSet())
+    {
+        return;
+    }
+    appConfig.nightBrightness = static_cast<uint8_t>(number.toUInt8());
+    dmControl_->markPolicyConfigDirty();
+    saveSettings();
+    sender->setState(number);
+}
+
+/// Handle night color RGB changes from HA.
+/// Updates appConfig.nightColor and notifies DisplayManager.
+/// @param color RGB color struct from ArduinoHA.
+/// @param sender The HALight entity whose color changed.
+void onNightColorCommand(HALight::RGBColor color, HALight *sender)
+{
+    appConfig.nightColor = (color.red << 16) | (color.green << 8) | color.blue;
+    dmControl_->markPolicyConfigDirty();
+    saveSettings();
+    sender->setRGBColor(color);
 }

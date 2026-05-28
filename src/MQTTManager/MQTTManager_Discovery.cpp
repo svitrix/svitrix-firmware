@@ -36,6 +36,8 @@ static void destroyHAEntities()
     prevApp = nullptr;
     delete doUpdate;
     doUpdate = nullptr;
+    delete rebootBtn;
+    rebootBtn = nullptr;
     delete transition;
     transition = nullptr;
     delete battery;
@@ -76,6 +78,18 @@ static void destroyHAEntities()
     aqi = nullptr;
     delete weatherCond;
     weatherCond = nullptr;
+    delete uvIndex;
+    uvIndex = nullptr;
+
+    // Night mode
+    delete nightModeSwitch;
+    nightModeSwitch = nullptr;
+    delete nightBrightnessNum;
+    nightBrightnessNum = nullptr;
+    delete nightColorLight;
+    nightColorLight = nullptr;
+    delete nightBlockSwitch;
+    nightBlockSwitch = nullptr;
 
     mqtt.resetDevicesCount();
 }
@@ -249,6 +263,12 @@ void MQTTManager_::setup()
         prevApp->setIcon(btnDescs[3].icon);
         prevApp->setName(btnDescs[3].name);
 
+        buildEntityId(btnDescs[4].idTemplate, macStr, rebootID, sizeof(rebootID));
+        rebootBtn = new HAButton(rebootID);
+        rebootBtn->setIcon(btnDescs[4].icon);
+        rebootBtn->setName(btnDescs[4].name);
+        rebootBtn->onCommand(onButtonCommand);
+
         dismiss->onCommand(onButtonCommand);
         nextApp->onCommand(onButtonCommand);
         prevApp->onCommand(onButtonCommand);
@@ -336,6 +356,56 @@ void MQTTManager_::setup()
         weatherCond = new HASensor(weatherCondID);
         weatherCond->setName(weatherDescs[4].name);
         weatherCond->setIcon(weatherDescs[4].icon);
+
+        buildEntityId(weatherDescs[5].idTemplate, macStr, uvID, sizeof(uvID));
+        uvIndex = new HASensor(uvID);
+        uvIndex->setName(weatherDescs[5].name);
+        uvIndex->setIcon(weatherDescs[5].icon);
+
+        // Night mode controls
+        size_t nightCount;
+        const auto *nightDescs = getNightModeDescriptors(nightCount);
+
+        // Night mode switch (on/off)
+        buildEntityId(nightDescs[0].idTemplate, macStr, nightModeID, sizeof(nightModeID));
+        nightModeSwitch = new HASwitch(nightModeID);
+        nightModeSwitch->setIcon(nightDescs[0].icon);
+        nightModeSwitch->setName(nightDescs[0].name);
+        nightModeSwitch->onCommand(onNightSwitchCommand);
+        nightModeSwitch->setState(appConfig.nightMode, true);
+
+        // Night brightness number (1-50)
+        buildEntityId(nightDescs[1].idTemplate, macStr, nightBriID, sizeof(nightBriID));
+        nightBrightnessNum = new HANumber(nightBriID);
+        nightBrightnessNum->setIcon(nightDescs[1].icon);
+        nightBrightnessNum->setName(nightDescs[1].name);
+        nightBrightnessNum->setMin(1);
+        nightBrightnessNum->setMax(50);
+        nightBrightnessNum->setStep(1);
+        nightBrightnessNum->onCommand(onNightNumberCommand);
+        nightBrightnessNum->setState(appConfig.nightBrightness);
+
+        // Night color light (RGB only)
+        buildEntityId(nightDescs[2].idTemplate, macStr, nightColID, sizeof(nightColID));
+        nightColorLight = new HALight(nightColID, HALight::RGBFeature);
+        nightColorLight->setIcon(nightDescs[2].icon);
+        nightColorLight->setName(nightDescs[2].name);
+        nightColorLight->onRGBColorCommand(onNightColorCommand);
+        HALight::RGBColor nightCol;
+        nightCol.isSet = true;
+        nightCol.red = (appConfig.nightColor >> 16) & 0xFF;
+        nightCol.green = (appConfig.nightColor >> 8) & 0xFF;
+        nightCol.blue = appConfig.nightColor & 0xFF;
+        nightColorLight->setCurrentRGBColor(nightCol);
+        nightColorLight->setCurrentState(true);
+
+        // Night block transition switch
+        buildEntityId(nightDescs[3].idTemplate, macStr, nightBlockID, sizeof(nightBlockID));
+        nightBlockSwitch = new HASwitch(nightBlockID);
+        nightBlockSwitch->setIcon(nightDescs[3].icon);
+        nightBlockSwitch->setName(nightDescs[3].name);
+        nightBlockSwitch->onCommand(onNightSwitchCommand);
+        nightBlockSwitch->setState(appConfig.nightBlockTransition, true);
     }
     else
     {

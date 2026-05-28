@@ -81,7 +81,24 @@ void MQTTManager_::sendStats()
             {
                 weatherCond->setValue(weatherData.condition.c_str());
             }
+
+            if (weatherData.uv >= 0)
+            {
+                snprintf(weatherBuf, sizeof(weatherBuf), "%.1f", weatherData.uv);
+                uvIndex->setValue(weatherBuf);
+            }
         }
+
+        // Night mode state sync
+        nightModeSwitch->setState(appConfig.nightMode, false);
+        nightBrightnessNum->setState(appConfig.nightBrightness);
+        HALight::RGBColor nightCol;
+        nightCol.isSet = true;
+        nightCol.red = (appConfig.nightColor >> 16) & 0xFF;
+        nightCol.green = (appConfig.nightColor >> 8) & 0xFF;
+        nightCol.blue = appConfig.nightColor & 0xFF;
+        nightColorLight->setRGBColor(nightCol);
+        nightBlockSwitch->setState(appConfig.nightBlockTransition, false);
     }
     publish(StatsTopic, dmControl_->getStats().c_str());
 }

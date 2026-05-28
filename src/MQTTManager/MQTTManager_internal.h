@@ -45,6 +45,7 @@ extern HAButton *dismiss;        ///< Dismiss notification button
 extern HAButton *nextApp;        ///< Next app button
 extern HAButton *prevApp;        ///< Previous app button
 extern HAButton *doUpdate;       ///< Start firmware update button
+extern HAButton *rebootBtn;      ///< Reboot device button
 extern HASwitch *transition;     ///< Auto-transition on/off toggle
 extern HASensor *battery;        ///< Battery percentage sensor (ULANZI only)
 extern HASensor *temperature;    ///< Temperature sensor (°C)
@@ -67,18 +68,26 @@ extern HASensor *outdoorHum;     ///< Outdoor humidity
 extern HASensor *pressure;       ///< Atmospheric pressure (hPa)
 extern HASensor *aqi;            ///< Air quality index (1-6)
 extern HASensor *weatherCond;    ///< Weather condition text
+extern HASensor *uvIndex;        ///< UV index (0-11+)
+
+// Night mode controls
+extern HASwitch *nightModeSwitch;    ///< Night mode on/off toggle
+extern HANumber *nightBrightnessNum; ///< Night mode brightness (1-50)
+extern HALight *nightColorLight;     ///< Night mode text color (RGB)
+extern HASwitch *nightBlockSwitch;   ///< Block transitions in night mode
 
 // ── HA entity ID buffers (defined in MQTTManager.cpp) ───────────────
 // Each buffer holds a unique HA entity ID built from MAC + suffix.
 
 extern char matID[40], ind1ID[40], ind2ID[40], ind3ID[40];
-extern char briID[40], btnAID[40], btnBID[40], btnCID[40];
+extern char briID[40], btnAID[40], btnBID[40], btnCID[40], rebootID[40];
 extern char appID[40], tempID[40], humID[40], luxID[40];
 extern char verID[40], ramID[40], upID[40], sigID[40];
 extern char btnLID[40], btnMID[40], btnRID[40];
 extern char transID[40], doUpdateID[40], batID[40];
 extern char myID[40], sSpeed[40], effectID[40], ipAddrID[40];
-extern char outTempID[40], outHumID[40], pressID[40], aqiID[40], weatherCondID[40];
+extern char outTempID[40], outHumID[40], pressID[40], aqiID[40], weatherCondID[40], uvID[40];
+extern char nightModeID[40], nightBriID[40], nightColID[40], nightBlockID[40];
 
 // ── Other shared state (defined in MQTTManager.cpp) ─────────────────
 
@@ -112,6 +121,12 @@ void onStateCommand(bool state, HALight *sender);
 void onBrightnessCommand(uint8_t brightness, HALight *sender);
 /// HA scroll speed number input handler.
 void onNumberCommand(HANumeric number, HANumber *sender);
+/// HA night mode switch handler (nightMode, nightBlockTransition).
+void onNightSwitchCommand(bool state, HASwitch *sender);
+/// HA night brightness number handler.
+void onNightNumberCommand(HANumeric number, HANumber *sender);
+/// HA night color RGB handler.
+void onNightColorCommand(HALight::RGBColor color, HALight *sender);
 
 // ── Display interfaces (defined in MQTTManager.cpp, set via setDisplay) ──
 
