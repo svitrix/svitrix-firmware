@@ -362,62 +362,6 @@ void addHandler()
     mws.addHandlerWithBody("/api/r2d2", HTTP_POST, [](AsyncWebServerRequest *request)
                            { String body = getBody(request); smSound_->r2d2(body.c_str()); request->send(200, "text/plain", "OK"); });
 
-    // ── Timer API ──────────────────────────────────────────────────────
-    mws.addHandler("/api/timer", HTTP_GET, [](AsyncWebServerRequest *request)
-                   {
-                    StaticJsonDocument<128> doc;
-                    doc["remaining"] = TimerControl::getRemaining();
-                    doc["running"] = TimerControl::isRunning();
-                    doc["finished"] = TimerControl::isFinished();
-                    String json;
-                    serializeJson(doc, json);
-                    request->send(200, "application/json", json); });
-    mws.addHandlerWithBody("/api/timer", HTTP_POST, [](AsyncWebServerRequest *request)
-                           {
-                            String body = getBody(request);
-                            StaticJsonDocument<128> doc;
-                            DeserializationError err = deserializeJson(doc, body);
-                            if (err) {
-                                request->send(400, "text/plain", "InvalidJSON");
-                                return;
-                            }
-                            if (doc.containsKey("action")) {
-                                String action = doc["action"].as<String>();
-                                if (action == "start") TimerControl::start();
-                                else if (action == "pause") TimerControl::pause();
-                                else if (action == "reset") TimerControl::reset();
-                            }
-                            if (doc.containsKey("seconds")) {
-                                TimerControl::setTime(doc["seconds"].as<uint32_t>());
-                            }
-                            request->send(200, "text/plain", "OK"); });
-
-    // ── Stopwatch API ──────────────────────────────────────────────────
-    mws.addHandler("/api/stopwatch", HTTP_GET, [](AsyncWebServerRequest *request)
-                   {
-                    StaticJsonDocument<128> doc;
-                    doc["elapsed"] = StopwatchControl::getElapsed();
-                    doc["running"] = StopwatchControl::isRunning();
-                    String json;
-                    serializeJson(doc, json);
-                    request->send(200, "application/json", json); });
-    mws.addHandlerWithBody("/api/stopwatch", HTTP_POST, [](AsyncWebServerRequest *request)
-                           {
-                            String body = getBody(request);
-                            StaticJsonDocument<128> doc;
-                            DeserializationError err = deserializeJson(doc, body);
-                            if (err) {
-                                request->send(400, "text/plain", "InvalidJSON");
-                                return;
-                            }
-                            if (doc.containsKey("action")) {
-                                String action = doc["action"].as<String>();
-                                if (action == "start") StopwatchControl::start();
-                                else if (action == "pause") StopwatchControl::pause();
-                                else if (action == "reset") StopwatchControl::reset();
-                            }
-                            request->send(200, "text/plain", "OK"); });
-
     // ── Alarms API ─────────────────────────────────────────────────────
     mws.addHandler("/api/alarms", HTTP_GET, [](AsyncWebServerRequest *request)
                    {

@@ -45,9 +45,7 @@ MatrixDisplayUi *ui = nullptr;
 bool artnetMode = false;
 bool moodlightMode = false;
 
-// Timer/Stopwatch state tracking for dynamic app list updates
-static bool lastTimerActive = false;
-static bool lastStopwatchActive = false;
+// Alarm indicator state tracking
 static bool lastHasEnabledAlarms = false;
 static bool lastAlarmRinging = false;
 
@@ -346,16 +344,6 @@ void DisplayManager_::tick()
     if (systemConfig.newyear)
         DisplayManager.checkNewYear();
 
-    // Update app list when Timer/Stopwatch active state changes
-    bool timerActive = isTimerActive();
-    bool stopwatchActive = isStopwatchActive();
-    if (timerActive != lastTimerActive || stopwatchActive != lastStopwatchActive)
-    {
-        lastTimerActive = timerActive;
-        lastStopwatchActive = stopwatchActive;
-        loadNativeApps();
-    }
-
     // Update indicator 3 for alarms: show when any alarm is enabled
     if (appConfig.showAlarms && AlarmManager.hasServices())
     {
@@ -427,16 +415,8 @@ void DisplayManager_::leftButton()
     if (isMenuActive_ && isMenuActive_())
         return;
 
-    // App-specific: Reset for Timer/Stopwatch, Snooze for Alarms
-    if (currentApp == "Timer") {
-        TimerControl::reset();
-        return;
-    }
-    if (currentApp == "Stopwatch") {
-        StopwatchControl::reset();
-        return;
-    }
-    if (currentApp == "Alarms" && AlarmManager.isRinging()) {
+    // Global: Snooze ringing alarm from any app
+    if (AlarmManager.isRinging()) {
         AlarmManager.snooze();
         return;
     }
@@ -449,10 +429,9 @@ void DisplayManager_::rightButton()
     if (isMenuActive_ && isMenuActive_())
         return;
 
-    // App-specific: +1 minute for Timer
-    if (currentApp == "Timer") {
-        uint32_t current = TimerControl::getRemaining();
-        TimerControl::setTime(current + 60);
+    // Global: Snooze ringing alarm from any app
+    if (AlarmManager.isRinging()) {
+        AlarmManager.snooze();
         return;
     }
 
@@ -495,24 +474,8 @@ void DisplayManager_::selectButton()
     if (isMenuActive_ && isMenuActive_())
         return;
 
-    // App-specific: Start/Pause for Timer/Stopwatch, Dismiss for Alarms
-    if (currentApp == "Timer") {
-        if (TimerControl::isRunning()) {
-            TimerControl::pause();
-        } else {
-            TimerControl::start();
-        }
-        return;
-    }
-    if (currentApp == "Stopwatch") {
-        if (StopwatchControl::isRunning()) {
-            StopwatchControl::pause();
-        } else {
-            StopwatchControl::start();
-        }
-        return;
-    }
-    if (currentApp == "Alarms" && AlarmManager.isRinging()) {
+    // Global: Dismiss ringing alarm from any app
+    if (AlarmManager.isRinging()) {
         AlarmManager.dismiss();
         return;
     }

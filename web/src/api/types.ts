@@ -188,18 +188,7 @@ export interface WeatherData {
   lastUpdate: number;
 }
 
-// Autonomous Mode Types
-export interface TimerState {
-  remaining: number;
-  running: boolean;
-  finished: boolean;
-}
-
-export interface StopwatchState {
-  elapsed: number;
-  running: boolean;
-}
-
+// Alarms Types
 export interface Alarm {
   id: number;
   hour: number;

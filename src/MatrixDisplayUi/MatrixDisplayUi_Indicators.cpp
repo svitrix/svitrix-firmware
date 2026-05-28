@@ -11,7 +11,7 @@
  * Indicator positions on the matrix:
  *   Indicator 1 (top-right):    pixels (31,0), (30,0), (31,1)
  *   Indicator 2 (middle-right): pixels (31,3), (31,4)
- *   Indicator 3 (bottom-right): pixels (31,7), (31,6), (30,7)
+ *   Indicator 3 (bottom-right): pixel (31,7) - single LED for alarm
  */
 #include "MatrixDisplayUi.h"
 
@@ -96,9 +96,7 @@ void MatrixDisplayUi::drawIndicators()
         {
             drawColor = indicator3Color;
         }
-        matrix->drawPixel(31, 7, drawColor);
-        matrix->drawPixel(31, 6, drawColor);
-        matrix->drawPixel(30, 7, drawColor);
+        matrix->drawPixel(31, 7, drawColor);  // Single LED bottom-right corner
     }
 }
 

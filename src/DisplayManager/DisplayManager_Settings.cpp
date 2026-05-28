@@ -94,9 +94,6 @@ String DisplayManager_::getSettings()
     doc["HUM_COL"] = colorConfig.humColor;
     doc["TEMP_COL"] = colorConfig.tempColor;
     doc["BAT_COL"] = colorConfig.batColor;
-    doc["TIMER_COL"] = colorConfig.timerColor;
-    doc["SW_COL"] = colorConfig.stopwatchColor;
-    doc["ALARMS_COL"] = colorConfig.alarmsColor;
     doc["SSPEED"] = appConfig.scrollSpeed;
     doc["NILAYOUT"] = layoutToString(appConfig.nativeIconLayout);
     doc["NMODE"] = appConfig.nightMode;
@@ -110,8 +107,6 @@ String DisplayManager_::getSettings()
     doc["HUM"] = appConfig.showHum;
     doc["TEMP"] = appConfig.showTemp;
     doc["BAT"] = appConfig.showBat;
-    doc["STIMER"] = appConfig.showTimer;
-    doc["SSW"] = appConfig.showStopwatch;
     doc["SALARMS"] = appConfig.showAlarms;
     doc["TOFF"] = sensorConfig.tempOffset;
     doc["VOL"] = audioConfig.soundVolume;
@@ -225,8 +220,6 @@ void DisplayManager_::setNewSettings(const char *json)
     appConfig.showHum = doc.containsKey("HUM") ? doc["HUM"].as<bool>() : appConfig.showHum;
     appConfig.showTemp = doc.containsKey("TEMP") ? doc["TEMP"].as<bool>() : appConfig.showTemp;
     appConfig.showBat = doc.containsKey("BAT") ? doc["BAT"].as<bool>() : appConfig.showBat;
-    appConfig.showTimer = doc.containsKey("STIMER") ? doc["STIMER"].as<bool>() : appConfig.showTimer;
-    appConfig.showStopwatch = doc.containsKey("SSW") ? doc["SSW"].as<bool>() : appConfig.showStopwatch;
     appConfig.showAlarms = doc.containsKey("SALARMS") ? doc["SALARMS"].as<bool>() : appConfig.showAlarms;
     sensorConfig.tempOffset = doc.containsKey("TOFF") ? doc["TOFF"].as<float>() : sensorConfig.tempOffset;
     appConfig.timeDuration = doc.containsKey("TIMEDUR") ? doc["TIMEDUR"].as<uint16_t>() : appConfig.timeDuration;
@@ -280,13 +273,10 @@ void DisplayManager_::setNewSettings(const char *json)
     readColorField(obj, "TEMP_COL", colorConfig.tempColor, colorConfig.textColor);
     readColorField(obj, "HUM_COL", colorConfig.humColor, colorConfig.textColor);
     readColorField(obj, "BAT_COL", colorConfig.batColor, colorConfig.textColor);
-    readColorField(obj, "TIMER_COL", colorConfig.timerColor, colorConfig.textColor);
-    readColorField(obj, "SW_COL", colorConfig.stopwatchColor, colorConfig.textColor);
-    readColorField(obj, "ALARMS_COL", colorConfig.alarmsColor, colorConfig.textColor);
 
     bool appsChanged = doc.containsKey("TIM") || doc.containsKey("DAT") ||
                        doc.containsKey("TEMP") || doc.containsKey("HUM") || doc.containsKey("BAT") ||
-                       doc.containsKey("STIMER") || doc.containsKey("SSW") || doc.containsKey("SALARMS");
+                       doc.containsKey("SALARMS");
     doc.clear();
     if (appsChanged)
         loadNativeApps();

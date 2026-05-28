@@ -122,23 +122,7 @@ export function AppsSection() {
           </div>
         </div>
 
-        <div class={styles.appRow}>
-          <Toggle label="Timer" checked={s.STIMER} onChange={(v) => updateSettings({ STIMER: v })} />
-          <Toggle label="Auto" checked={s.TIMER_COL === 0} onChange={(v) => updateSettings({ TIMER_COL: v ? 0 : 0xFFFFFF })} />
-          {s.TIMER_COL !== 0 && <ColorField label="" value={s.TIMER_COL} onChange={(v) => updateSettings({ TIMER_COL: v })} />}
-        </div>
-
-        <div class={styles.appRow}>
-          <Toggle label="Stopwatch" checked={s.SSW} onChange={(v) => updateSettings({ SSW: v })} />
-          <Toggle label="Auto" checked={s.SW_COL === 0} onChange={(v) => updateSettings({ SW_COL: v ? 0 : 0xFFFFFF })} />
-          {s.SW_COL !== 0 && <ColorField label="" value={s.SW_COL} onChange={(v) => updateSettings({ SW_COL: v })} />}
-        </div>
-
-        <div class={styles.appRow}>
-          <Toggle label="Alarms" checked={s.SALARMS} onChange={(v) => updateSettings({ SALARMS: v })} />
-          <Toggle label="Auto" checked={s.ALARMS_COL === 0} onChange={(v) => updateSettings({ ALARMS_COL: v ? 0 : 0xFFFFFF })} />
-          {s.ALARMS_COL !== 0 && <ColorField label="" value={s.ALARMS_COL} onChange={(v) => updateSettings({ ALARMS_COL: v })} />}
-        </div>
+        <Toggle label="Alarms Indicator" checked={s.SALARMS} onChange={(v) => updateSettings({ SALARMS: v })} />
 
         <Toggle label="Auto Transition" checked={s.ATRANS} onChange={(v) => updateSettings({ ATRANS: v })} />
         <Select

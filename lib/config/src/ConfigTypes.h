@@ -94,9 +94,6 @@ struct ColorConfig {
     uint32_t batColor;
     uint32_t tempColor;
     uint32_t humColor;
-    uint32_t timerColor;
-    uint32_t stopwatchColor;
-    uint32_t alarmsColor;
     uint32_t wdcActive;
     uint32_t wdcInactive;
     uint32_t calendarHeaderColor;
@@ -122,8 +119,6 @@ struct AppConfig {
     bool showTemp;
     bool showHum;
     bool showWeekday;
-    bool showTimer;
-    bool showStopwatch;
     bool showAlarms;
     bool autoTransition;
     int8_t transEffect;
