@@ -41,7 +41,8 @@ function sidebarEn() {
       text: 'API',
       collapsed: false,
       items: [
-        { text: 'MQTT / HTTP', link: '/api' }
+        { text: 'MQTT / HTTP', link: '/api' },
+        { text: 'Home Assistant', link: '/home-assistant' }
       ]
     }
   ]
@@ -84,7 +85,8 @@ function sidebarUk() {
       text: 'API',
       collapsed: false,
       items: [
-        { text: 'MQTT / HTTP', link: '/uk/api' }
+        { text: 'MQTT / HTTP', link: '/uk/api' },
+        { text: 'Home Assistant', link: '/home-assistant' }
       ]
     }
   ]
@@ -127,7 +129,8 @@ function sidebarEs() {
       text: 'API',
       collapsed: false,
       items: [
-        { text: 'MQTT / HTTP', link: '/es/api' }
+        { text: 'MQTT / HTTP', link: '/es/api' },
+        { text: 'Home Assistant', link: '/home-assistant' }
       ]
     }
   ]
