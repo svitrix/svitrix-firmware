@@ -69,6 +69,20 @@ static const char REBOOT_ID[] = "%s_reboot";
 static const char REBOOT_ICON[] = "mdi:restart";
 static const char REBOOT_NAME[] = "Reboot";
 
+static const char PLAYSOUND_ID[] = "%s_play_sound";
+static const char PLAYSOUND_ICON[] = "mdi:play-circle";
+static const char PLAYSOUND_NAME[] = "Play test sound";
+
+// ── Audio controls ──────────────────────────────────────────────────
+
+static const char SOUND_EN_ID[] = "%s_sound_enabled";
+static const char SOUND_EN_ICON[] = "mdi:volume-high";
+static const char SOUND_EN_NAME[] = "Sound enabled";
+
+static const char SOUND_VOL_ID[] = "%s_sound_volume";
+static const char SOUND_VOL_ICON[] = "mdi:volume-medium";
+static const char SOUND_VOL_NAME[] = "Sound volume";
+
 // ── Switch ──────────────────────────────────────────────────────────
 
 static const char TRANS_ID[] = "%s_tra";
@@ -212,6 +226,13 @@ static const HAEntityDescriptor buttonDescs[] = {
     {BTNB_ID, BTNB_NAME, BTNB_ICON, nullptr, nullptr},
     {BTNC_ID, BTNC_NAME, BTNC_ICON, nullptr, nullptr},
     {REBOOT_ID, REBOOT_NAME, REBOOT_ICON, nullptr, nullptr},
+    {PLAYSOUND_ID, PLAYSOUND_NAME, PLAYSOUND_ICON, nullptr, nullptr},
+};
+
+// Audio controls array (2 entities: 1 switch, 1 number)
+static const HAEntityDescriptor audioDescs[] = {
+    {SOUND_EN_ID, SOUND_EN_NAME, SOUND_EN_ICON, nullptr, nullptr},  // 0 - switch
+    {SOUND_VOL_ID, SOUND_VOL_NAME, SOUND_VOL_ICON, nullptr, nullptr}, // 1 - number
 };
 
 // Battery is always the last entry — count is adjusted by includeBattery.
@@ -277,8 +298,14 @@ const HASelectDescriptor *getSelectDescriptors(size_t &count)
 
 const HAEntityDescriptor *getButtonDescriptors(size_t &count)
 {
-    count = 5;
+    count = 6;
     return buttonDescs;
+}
+
+const HAEntityDescriptor *getAudioDescriptors(size_t &count)
+{
+    count = 2;
+    return audioDescs;
 }
 
 HAEntityDescriptor getTransitionSwitchDescriptor()
@@ -333,7 +360,7 @@ const char *getDeviceModel()
 
 size_t getTotalEntityCount(bool includeBattery)
 {
-    // 1 matrix + 3 indicators + 2 selects + 5 buttons + 1 switch
-    // + sensors (10 or 11) + 3 binary sensors + 6 weather sensors + 4 night mode
-    return 1 + 3 + 2 + 5 + 1 + (includeBattery ? 11 : 10) + 3 + 6 + 4;
+    // 1 matrix + 3 indicators + 2 selects + 6 buttons + 1 switch
+    // + sensors (10 or 11) + 3 binary sensors + 6 weather sensors + 4 night mode + 2 audio
+    return 1 + 3 + 2 + 6 + 1 + (includeBattery ? 11 : 10) + 3 + 6 + 4 + 2;
 }

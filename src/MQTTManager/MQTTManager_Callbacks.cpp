@@ -40,6 +40,10 @@ void onButtonCommand(HAButton *sender)
         delay(500);
         ESP.restart();
     }
+    else if (sender == playSoundBtn)
+    {
+        mqttSound_->playRTTTLString("beep:d=4,o=5,b=100:16e6");
+    }
 }
 
 // ── Switch callback ─────────────────────────────────────────────────
@@ -230,4 +234,29 @@ void onNightColorCommand(HALight::RGBColor color, HALight *sender)
     dmControl_->markPolicyConfigDirty();
     saveSettings();
     sender->setRGBColor(color);
+}
+
+// ── Audio callbacks ─────────────────────────────────────────────────
+
+/// Handle sound enabled switch from HA.
+/// @param state New on/off state.
+/// @param sender The HASwitch entity that changed.
+void onSoundSwitchCommand(bool state, HASwitch *sender)
+{
+    audioConfig.soundActive = state;
+    saveSettings();
+    sender->setState(state);
+}
+
+/// Handle sound volume number input from HA.
+/// @param number Numeric value from HA (may be unset on reset).
+/// @param sender The HANumber entity that changed.
+void onSoundVolumeCommand(HANumeric number, HANumber *sender)
+{
+    if (!number.isSet())
+        return;
+    audioConfig.soundVolume = static_cast<uint8_t>(number.toUInt8());
+    mqttPeriphery_->setVolume(audioConfig.soundVolume);
+    saveSettings();
+    sender->setState(number);
 }

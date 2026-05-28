@@ -1,6 +1,6 @@
 # MQTTManager — AI Reference
 
-Central MQTT communication and Home Assistant integration singleton. Manages broker connection, message dispatch, HA auto-discovery (36 entities), and state synchronization.
+Central MQTT communication and Home Assistant integration singleton. Manages broker connection, message dispatch, HA auto-discovery (39 entities), and state synchronization.
 
 ## File Map
 
@@ -26,15 +26,15 @@ void setDisplay(IDisplayControl*, IDisplayNavigation*, IDisplayNotifier*);
 void setServices(ISound*, IPower*, IUpdater*, IPeripheryProvider*);
 ```
 
-## HA Entities (36 total)
+## HA Entities (39 total)
 
 | Type | Count | Entities |
 |------|-------|----------|
 | **HALight** | 5 | Matrix (brightness+RGB), Indicator 1/2/3 (RGB), nightColor (RGB) |
 | **HASelect** | 2 | BriMode (Manual/Auto), transEffect (14 transitions) |
-| **HAButton** | 5 | dismiss, nextApp, prevApp, doUpdate, reboot |
-| **HASwitch** | 3 | transition, nightMode, nightBlockTransition |
-| **HANumber** | 1 | nightBrightness (1-50) |
+| **HAButton** | 6 | dismiss, nextApp, prevApp, doUpdate, reboot, playSound |
+| **HASwitch** | 4 | transition, nightMode, nightBlockTransition, soundEnabled |
+| **HANumber** | 2 | nightBrightness (1-50), soundVolume (0-100) |
 | **HASensor** | 16-17 | curApp, myOwnID, temp, hum, lux, signal, version, ram, uptime, ipAddr, battery*, outdoorTemp, outdoorHum, pressure, aqi, weatherCond, uvIndex |
 | **HABinarySensor** | 3 | btnleft, btnmid, btnright |
 
@@ -83,11 +83,11 @@ Routing via `MessageRouter::routeTopic()` → `MqttCommandType` enum → switch 
 - `getValueForTopic(topic)` → cached value or "N/A"
 - Used by custom apps: `{{topic}}` placeholders resolved via PlaceholderUtils
 
-## 10 Callback Handlers (MQTTManager_Callbacks.cpp)
+## 12 Callback Handlers (MQTTManager_Callbacks.cpp)
 
 | Callback | Entities | Action |
 |----------|----------|--------|
-| `onButtonCommand` | dismiss, nextApp, prevApp, doUpdate | Dispatch to managers |
+| `onButtonCommand` | dismiss, nextApp, prevApp, doUpdate, reboot, playSound | Dispatch to managers |
 | `onSwitchCommand` | transition | Toggle autoTransition + save |
 | `onSelectCommand` | BriMode, transEffect | Set mode/effect + save |
 | `onRGBColorCommand` | Matrix, Indicator1-3 | Set color + save |
@@ -97,6 +97,8 @@ Routing via `MessageRouter::routeTopic()` → `MqttCommandType` enum → switch 
 | `onNightSwitchCommand` | nightMode, nightBlockTransition | Toggle night mode settings + mark policy dirty + save |
 | `onNightNumberCommand` | nightBrightness | Set night brightness + mark policy dirty + save |
 | `onNightColorCommand` | nightColor | Set night color + mark policy dirty + save |
+| `onSoundSwitchCommand` | soundEnabled | Toggle sound on/off + save |
+| `onSoundVolumeCommand` | soundVolume | Set volume + apply to periphery + save |
 
 All callbacks call `saveSettings()` after modifying config structs.
 

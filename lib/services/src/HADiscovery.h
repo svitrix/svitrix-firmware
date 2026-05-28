@@ -95,6 +95,13 @@ const HAEntityDescriptor *getWeatherSensorDescriptors(size_t &count);
 /// @return Pointer to static array: [0]=switch, [1]=number, [2]=light, [3]=switch.
 const HAEntityDescriptor *getNightModeDescriptors(size_t &count);
 
+// --- Audio controls ---
+
+/// Audio control entities: sound enabled switch, volume number.
+/// @param[out] count Set to number of descriptors (always 2).
+/// @return Pointer to static array: [0]=switch, [1]=number.
+const HAEntityDescriptor *getAudioDescriptors(size_t &count);
+
 // --- Utilities ---
 
 /// Build an entity ID by formatting idTemplate with macStr.

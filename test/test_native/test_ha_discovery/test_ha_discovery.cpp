@@ -176,7 +176,7 @@ void test_button_count(void)
 {
     size_t count;
     getButtonDescriptors(count);
-    TEST_ASSERT_EQUAL(5, count);
+    TEST_ASSERT_EQUAL(6, count);
 }
 
 void test_button_names(void)
@@ -188,6 +188,7 @@ void test_button_names(void)
     TEST_ASSERT_EQUAL_STRING("Next app", descs[2].name);
     TEST_ASSERT_EQUAL_STRING("Previous app", descs[3].name);
     TEST_ASSERT_EQUAL_STRING("Reboot", descs[4].name);
+    TEST_ASSERT_EQUAL_STRING("Play test sound", descs[5].name);
 }
 
 void test_button_icons(void)
@@ -199,6 +200,32 @@ void test_button_icons(void)
     TEST_ASSERT_EQUAL_STRING("mdi:arrow-right-bold", descs[2].icon);
     TEST_ASSERT_EQUAL_STRING("mdi:arrow-left-bold", descs[3].icon);
     TEST_ASSERT_EQUAL_STRING("mdi:restart", descs[4].icon);
+    TEST_ASSERT_EQUAL_STRING("mdi:play-circle", descs[5].icon);
+}
+
+// ── Audio controls ──────────────────────────────────────────────────
+
+void test_audio_count(void)
+{
+    size_t count;
+    getAudioDescriptors(count);
+    TEST_ASSERT_EQUAL(2, count);
+}
+
+void test_audio_names(void)
+{
+    size_t count;
+    auto *descs = getAudioDescriptors(count);
+    TEST_ASSERT_EQUAL_STRING("Sound enabled", descs[0].name);
+    TEST_ASSERT_EQUAL_STRING("Sound volume", descs[1].name);
+}
+
+void test_audio_icons(void)
+{
+    size_t count;
+    auto *descs = getAudioDescriptors(count);
+    TEST_ASSERT_EQUAL_STRING("mdi:volume-high", descs[0].icon);
+    TEST_ASSERT_EQUAL_STRING("mdi:volume-medium", descs[1].icon);
 }
 
 // ── Switch ──────────────────────────────────────────────────────────
@@ -388,19 +415,19 @@ void test_night_mode_icons(void)
 
 void test_total_count_with_battery(void)
 {
-    // 1 matrix + 3 indicators + 2 selects + 5 buttons + 1 switch
-    // + 11 sensors + 3 binary + 6 weather + 4 night mode = 36
-    TEST_ASSERT_EQUAL(36, getTotalEntityCount(true));
+    // 1 matrix + 3 indicators + 2 selects + 6 buttons + 1 switch
+    // + 11 sensors + 3 binary + 6 weather + 4 night + 2 audio = 39
+    TEST_ASSERT_EQUAL(39, getTotalEntityCount(true));
 }
 
 void test_total_count_without_battery(void)
 {
-    TEST_ASSERT_EQUAL(35, getTotalEntityCount(false));
+    TEST_ASSERT_EQUAL(38, getTotalEntityCount(false));
 }
 
 void test_total_count_matches_sum(void)
 {
-    size_t indicators, selects, buttons, sensors, binarySensors, weather, night;
+    size_t indicators, selects, buttons, sensors, binarySensors, weather, night, audio;
     getIndicatorLightDescriptors(indicators);
     getSelectDescriptors(selects);
     getButtonDescriptors(buttons);
@@ -408,8 +435,9 @@ void test_total_count_matches_sum(void)
     getBinarySensorDescriptors(binarySensors);
     getWeatherSensorDescriptors(weather);
     getNightModeDescriptors(night);
+    getAudioDescriptors(audio);
 
-    size_t expected = 1 + indicators + selects + buttons + 1 + sensors + binarySensors + weather + night;
+    size_t expected = 1 + indicators + selects + buttons + 1 + sensors + binarySensors + weather + night + audio;
     TEST_ASSERT_EQUAL(expected, getTotalEntityCount(true));
 }
 
@@ -418,7 +446,7 @@ void test_total_count_matches_sum(void)
 void test_all_ids_unique(void)
 {
     // Collect all idTemplates into a flat array
-    const char *ids[40];
+    const char *ids[45];
     size_t idx = 0;
 
     ids[idx++] = getMatrixLightDescriptor().idTemplate;
@@ -453,6 +481,10 @@ void test_all_ids_unique(void)
     auto *nightDescs = getNightModeDescriptors(count);
     for (size_t i = 0; i < count; i++)
         ids[idx++] = nightDescs[i].idTemplate;
+
+    auto *audioDescs = getAudioDescriptors(count);
+    for (size_t i = 0; i < count; i++)
+        ids[idx++] = audioDescs[i].idTemplate;
 
     // Verify all pairs are unique
     for (size_t i = 0; i < idx; i++)
@@ -543,6 +575,11 @@ int main(void)
     RUN_TEST(test_night_mode_count);
     RUN_TEST(test_night_mode_names);
     RUN_TEST(test_night_mode_icons);
+
+    // Audio controls
+    RUN_TEST(test_audio_count);
+    RUN_TEST(test_audio_names);
+    RUN_TEST(test_audio_icons);
 
     // Total count
     RUN_TEST(test_total_count_with_battery);

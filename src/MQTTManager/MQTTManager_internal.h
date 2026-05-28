@@ -46,6 +46,11 @@ extern HAButton *nextApp;        ///< Next app button
 extern HAButton *prevApp;        ///< Previous app button
 extern HAButton *doUpdate;       ///< Start firmware update button
 extern HAButton *rebootBtn;      ///< Reboot device button
+extern HAButton *playSoundBtn;   ///< Play test sound button
+
+// Audio controls
+extern HASwitch *soundEnabled;
+extern HANumber *soundVolume;
 extern HASwitch *transition;     ///< Auto-transition on/off toggle
 extern HASensor *battery;        ///< Battery percentage sensor (ULANZI only)
 extern HASensor *temperature;    ///< Temperature sensor (°C)
@@ -80,7 +85,8 @@ extern HASwitch *nightBlockSwitch;
 // Each buffer holds a unique HA entity ID built from MAC + suffix.
 
 extern char matID[40], ind1ID[40], ind2ID[40], ind3ID[40];
-extern char briID[40], btnAID[40], btnBID[40], btnCID[40], rebootID[40];
+extern char briID[40], btnAID[40], btnBID[40], btnCID[40], rebootID[40], playSoundID[40];
+extern char soundEnID[40], soundVolID[40];
 extern char appID[40], tempID[40], humID[40], luxID[40];
 extern char verID[40], ramID[40], upID[40], sigID[40];
 extern char btnLID[40], btnMID[40], btnRID[40];
@@ -127,6 +133,10 @@ void onNightSwitchCommand(bool state, HASwitch *sender);
 void onNightNumberCommand(HANumeric number, HANumber *sender);
 /// HA night color RGB handler.
 void onNightColorCommand(HALight::RGBColor color, HALight *sender);
+/// HA sound enabled switch handler.
+void onSoundSwitchCommand(bool state, HASwitch *sender);
+/// HA sound volume number handler.
+void onSoundVolumeCommand(HANumeric number, HANumber *sender);
 
 // ── Display interfaces (defined in MQTTManager.cpp, set via setDisplay) ──
 

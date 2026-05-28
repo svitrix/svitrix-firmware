@@ -38,6 +38,12 @@ static void destroyHAEntities()
     doUpdate = nullptr;
     delete rebootBtn;
     rebootBtn = nullptr;
+    delete playSoundBtn;
+    playSoundBtn = nullptr;
+    delete soundEnabled;
+    soundEnabled = nullptr;
+    delete soundVolume;
+    soundVolume = nullptr;
     delete transition;
     transition = nullptr;
     delete battery;
@@ -269,9 +275,36 @@ void MQTTManager_::setup()
         rebootBtn->setName(btnDescs[4].name);
         rebootBtn->onCommand(onButtonCommand);
 
+        buildEntityId(btnDescs[5].idTemplate, macStr, playSoundID, sizeof(playSoundID));
+        playSoundBtn = new HAButton(playSoundID);
+        playSoundBtn->setIcon(btnDescs[5].icon);
+        playSoundBtn->setName(btnDescs[5].name);
+        playSoundBtn->onCommand(onButtonCommand);
+
         dismiss->onCommand(onButtonCommand);
         nextApp->onCommand(onButtonCommand);
         prevApp->onCommand(onButtonCommand);
+
+        // Audio controls
+        size_t audioCount;
+        const auto *audioDescs = getAudioDescriptors(audioCount);
+
+        buildEntityId(audioDescs[0].idTemplate, macStr, soundEnID, sizeof(soundEnID));
+        soundEnabled = new HASwitch(soundEnID);
+        soundEnabled->setIcon(audioDescs[0].icon);
+        soundEnabled->setName(audioDescs[0].name);
+        soundEnabled->onCommand(onSoundSwitchCommand);
+        soundEnabled->setState(audioConfig.soundActive, true);
+
+        buildEntityId(audioDescs[1].idTemplate, macStr, soundVolID, sizeof(soundVolID));
+        soundVolume = new HANumber(soundVolID);
+        soundVolume->setIcon(audioDescs[1].icon);
+        soundVolume->setName(audioDescs[1].name);
+        soundVolume->setMin(0);
+        soundVolume->setMax(30);
+        soundVolume->setStep(1);
+        soundVolume->onCommand(onSoundVolumeCommand);
+        soundVolume->setState(audioConfig.soundVolume);
 
         buildEntityId(senDescs[2].idTemplate, macStr, tempID, sizeof(tempID));
         temperature = new HASensor(tempID);

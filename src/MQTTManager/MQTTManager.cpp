@@ -30,6 +30,11 @@ HAButton *nextApp = nullptr;        ///< Next app button
 HAButton *prevApp = nullptr;        ///< Previous app button
 HAButton *doUpdate = nullptr;       ///< Start firmware update button
 HAButton *rebootBtn = nullptr;      ///< Reboot device button
+HAButton *playSoundBtn = nullptr;   ///< Play test sound button
+
+// Audio controls
+HASwitch *soundEnabled = nullptr;
+HANumber *soundVolume = nullptr;
 HASwitch *transition = nullptr;     ///< Auto-transition toggle
 HASensor *battery = nullptr;        ///< Battery percentage (ULANZI only)
 HASensor *temperature = nullptr;    ///< Temperature (°C)
@@ -66,7 +71,8 @@ HASwitch *nightBlockSwitch = nullptr;
 long receivedMessages_;
 bool connected;
 char matID[40], ind1ID[40], ind2ID[40], ind3ID[40];
-char briID[40], btnAID[40], btnBID[40], btnCID[40], rebootID[40];
+char briID[40], btnAID[40], btnBID[40], btnCID[40], rebootID[40], playSoundID[40];
+char soundEnID[40], soundVolID[40];
 char appID[40], tempID[40], humID[40], luxID[40];
 char verID[40], ramID[40], upID[40], sigID[40];
 char btnLID[40], btnMID[40], btnRID[40];
@@ -183,6 +189,10 @@ void onMqttConnected()
         nightCol.blue = appConfig.nightColor & 0xFF;
         nightColorLight->setRGBColor(nightCol);
         nightBlockSwitch->setState(appConfig.nightBlockTransition, true);
+
+        // Audio initial state
+        soundEnabled->setState(audioConfig.soundActive, true);
+        soundVolume->setState(audioConfig.soundVolume);
     }
 
     MQTTManager.publish("stats/effects", dmNav_->getEffectNames().c_str());

@@ -99,6 +99,10 @@ void MQTTManager_::sendStats()
         nightCol.blue = appConfig.nightColor & 0xFF;
         nightColorLight->setRGBColor(nightCol);
         nightBlockSwitch->setState(appConfig.nightBlockTransition, false);
+
+        // Audio state sync
+        soundEnabled->setState(audioConfig.soundActive, false);
+        soundVolume->setState(audioConfig.soundVolume);
     }
     publish(StatsTopic, dmControl_->getStats().c_str());
 }

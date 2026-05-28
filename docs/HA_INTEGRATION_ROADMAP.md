@@ -2,15 +2,15 @@
 
 ## Estado Actual (actualizado)
 
-### Entidades HA Existentes (36 total)
+### Entidades HA Existentes (39 total)
 
 | Tipo | Cantidad | Entidades |
 |------|----------|-----------|
 | **HALight** | 5 | Matrix (brillo+RGB), Indicator 1/2/3 (RGB), nightColor (RGB) |
 | **HASelect** | 2 | BriMode (Manual/Auto), transEffect (14 transiciones) |
-| **HAButton** | 5 | Dismiss, doUpdate, nextApp, prevApp, reboot |
-| **HASwitch** | 3 | transition, nightMode, nightBlockTransition |
-| **HANumber** | 1 | nightBrightness (1-50) |
+| **HAButton** | 6 | Dismiss, doUpdate, nextApp, prevApp, reboot, playSound |
+| **HASwitch** | 4 | transition, nightMode, nightBlockTransition, soundEnabled |
+| **HANumber** | 2 | nightBrightness (1-50), soundVolume (0-100) |
 | **HASensor** | 16-17 | curApp, deviceId, temp, hum, lux, signal, version, ram, uptime, ipAddr, battery*, outdoorTemp, outdoorHum, pressure, aqi, weatherCond, uvIndex |
 | **HABinarySensor** | 3 | btnleft, btnmid, btnright |
 
@@ -48,6 +48,11 @@
 ### Estado Inicial en Reconexión ✅
 - Al conectar/reconectar a MQTT, se publican los estados de todas las entidades interactivas
 
+### Audio Controls ✅
+- `soundEnabled` (HASwitch) — Habilitar/deshabilitar sonido
+- `soundVolume` (HANumber) — Volumen del buzzer (0-100)
+- `playSoundBtn` (HAButton) — Reproducir sonido de prueba
+
 ---
 
 ## Propuestas Pendientes
@@ -56,26 +61,7 @@
 
 #### 1. ~~Night Mode Controls~~ ✅ IMPLEMENTADO
 
-#### 2. Sound/Audio Controls
-**Valor:** Control completo del modo nocturno desde HA automatizaciones.
-
-| Entidad | Tipo | Descripción |
-|---------|------|-------------|
-| `nightMode` | HASwitch | Habilitar/deshabilitar modo nocturno |
-| `nightBrightness` | HANumber | Brillo durante modo nocturno (1-50) |
-| `nightColor` | HALight | Color del texto en modo nocturno (solo RGB) |
-| `nightBlockTransition` | HASwitch | Bloquear transiciones en modo nocturno |
-
-**Casos de uso:**
-- Automatización HA: activar night mode cuando TV está encendida
-- Ajustar brillo nocturno según sensor de luz de HA
-- Sincronizar con modo "Do Not Disturb" del teléfono
-
-**Archivos a modificar:**
-- `MQTTManager_Discovery.cpp` — crear entidades
-- `MQTTManager_Callbacks.cpp` — handlers
-- `MQTTManager_StateUpdates.cpp` — sincronizar estado
-- `HADiscovery.cpp` — descriptores
+#### 2. ~~Sound/Audio Controls~~ ✅ IMPLEMENTADO
 
 ---
 
