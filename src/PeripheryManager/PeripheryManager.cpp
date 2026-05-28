@@ -425,9 +425,10 @@ void PeripheryManager_::tick()
         sensorConfig.currentLux = (roundf(photocell.getSmoothedLux() * 1000) / 1000);
         if (brightnessConfig.autoBrightness && !displayConfig.matrixOff)
         {
-            brightnessConfig.brightness = calculateBrightness(sensorConfig.ldrRaw, brightnessConfig.ldrFactor, brightnessConfig.ldrGamma, brightnessConfig.minBrightness, brightnessConfig.maxBrightness);
+            // Calculate auto brightness but don't overwrite the stored manual value
+            int autoBri = calculateBrightness(sensorConfig.ldrRaw, brightnessConfig.ldrFactor, brightnessConfig.ldrGamma, brightnessConfig.minBrightness, brightnessConfig.maxBrightness);
             if (onBrightnessChange_)
-                onBrightnessChange_(brightnessConfig.brightness);
+                onBrightnessChange_(autoBri);
         }
     }
 }
