@@ -121,7 +121,8 @@ void MQTTManager_::sendStats()
         dateDurationNum->setState(static_cast<float>(appConfig.dateDuration));
 
         // Native app colors sync
-        auto syncColorLight = [](HALight *light, uint32_t color) {
+        auto syncColorLight = [](HALight *light, uint32_t color)
+        {
             HALight::RGBColor c;
             c.isSet = true;
             c.red = (color >> 16) & 0xFF;

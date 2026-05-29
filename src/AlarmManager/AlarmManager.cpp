@@ -13,7 +13,7 @@ AlarmManager_& AlarmManager_::getInstance()
 
 AlarmManager_& AlarmManager = AlarmManager.getInstance();
 
-void AlarmManager_::setSound(ISound* sound, IPeripheryProvider* periphery)
+void AlarmManager_::setSound(ISound *sound, IPeripheryProvider *periphery)
 {
     assert(sound != nullptr);
     assert(periphery != nullptr);
@@ -21,13 +21,13 @@ void AlarmManager_::setSound(ISound* sound, IPeripheryProvider* periphery)
     periphery_ = periphery;
 }
 
-void AlarmManager_::setNotifier(IDisplayNotifier* notifier)
+void AlarmManager_::setNotifier(IDisplayNotifier *notifier)
 {
     assert(notifier != nullptr);
     notifier_ = notifier;
 }
 
-void AlarmManager_::setTimeProvider(ITimeProvider* timeProvider)
+void AlarmManager_::setTimeProvider(ITimeProvider *timeProvider)
 {
     assert(timeProvider != nullptr);
     timeProvider_ = timeProvider;
@@ -55,7 +55,7 @@ void AlarmManager_::tick(time_t now)
     if (ringing_ && snoozeUntil_ > 0 && now >= snoozeUntil_)
     {
         snoozeUntil_ = 0;
-        const Alarm* alarm = getAlarm(ringingAlarmId_);
+        const Alarm *alarm = getAlarm(ringingAlarmId_);
         if (alarm)
         {
             triggerAlarm(*alarm);
@@ -119,7 +119,7 @@ void AlarmManager_::triggerAlarm(const Alarm& alarm)
         StaticJsonDocument<256> doc;
         doc["text"] = alarm.label.isEmpty() ? "ALARM" : alarm.label;
         doc["color"] = "#FF0000";
-        doc["repeat"] = -1;  // Repeat until dismissed
+        doc["repeat"] = -1; // Repeat until dismissed
         doc["hold"] = true;
 
         String json;
@@ -183,7 +183,7 @@ bool AlarmManager_::isRinging() const
     return ringing_;
 }
 
-const Alarm* AlarmManager_::getRingingAlarm() const
+const Alarm *AlarmManager_::getRingingAlarm() const
 {
     if (!ringing_)
         return nullptr;
@@ -244,7 +244,7 @@ std::vector<Alarm> AlarmManager_::getAlarms() const
     return alarms_;
 }
 
-const Alarm* AlarmManager_::getAlarm(uint8_t id) const
+const Alarm *AlarmManager_::getAlarm(uint8_t id) const
 {
     for (const auto& alarm : alarms_)
     {

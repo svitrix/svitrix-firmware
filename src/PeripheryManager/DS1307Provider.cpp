@@ -54,7 +54,7 @@ bool DS1307Provider::setTime(time_t epoch)
     if (!detected_)
         return false;
 
-    struct tm* t = gmtime(&epoch);
+    struct tm *t = gmtime(&epoch);
     if (!t)
         return false;
 
@@ -80,7 +80,7 @@ bool DS1307Provider::setTime(time_t epoch)
     return true;
 }
 
-bool DS1307Provider::readRegisters(uint8_t reg, uint8_t* buffer, uint8_t count)
+bool DS1307Provider::readRegisters(uint8_t reg, uint8_t *buffer, uint8_t count)
 {
     Wire.beginTransmission(kI2cAddress);
     Wire.write(reg);
@@ -99,7 +99,7 @@ bool DS1307Provider::readRegisters(uint8_t reg, uint8_t* buffer, uint8_t count)
     return true;
 }
 
-bool DS1307Provider::writeRegisters(uint8_t reg, const uint8_t* buffer, uint8_t count)
+bool DS1307Provider::writeRegisters(uint8_t reg, const uint8_t *buffer, uint8_t count)
 {
     Wire.beginTransmission(kI2cAddress);
     Wire.write(reg);

@@ -19,19 +19,19 @@ HAMqtt mqtt(espClient, device, 32); ///< ArduinoHA MQTT client (max 32 HA entiti
 // ── HA entity pointers ──────────────────────────────────────────────
 // Allocated in setup() when HA discovery is enabled; remain nullptr otherwise.
 
-HALight *Matrix = nullptr;          ///< Main matrix light (brightness + RGB)
-HALight *Indikator1 = nullptr;      ///< Top-right indicator light (RGB)
-HALight *Indikator2 = nullptr;      ///< Middle-right indicator light (RGB)
-HALight *Indikator3 = nullptr;      ///< Bottom-right indicator light (RGB)
-HASelect *BriMode = nullptr;        ///< Brightness mode select (Manual / Auto)
-HASelect *transEffect = nullptr;    ///< Transition effect select
-HASelect *bgEffect = nullptr;       ///< Background effect select
-HAButton *dismiss = nullptr;        ///< Dismiss notification button
-HAButton *nextApp = nullptr;        ///< Next app button
-HAButton *prevApp = nullptr;        ///< Previous app button
-HAButton *doUpdate = nullptr;       ///< Start firmware update button
-HAButton *rebootBtn = nullptr;      ///< Reboot device button
-HAButton *playSoundBtn = nullptr;   ///< Play test sound button
+HALight *Matrix = nullptr;        ///< Main matrix light (brightness + RGB)
+HALight *Indikator1 = nullptr;    ///< Top-right indicator light (RGB)
+HALight *Indikator2 = nullptr;    ///< Middle-right indicator light (RGB)
+HALight *Indikator3 = nullptr;    ///< Bottom-right indicator light (RGB)
+HASelect *BriMode = nullptr;      ///< Brightness mode select (Manual / Auto)
+HASelect *transEffect = nullptr;  ///< Transition effect select
+HASelect *bgEffect = nullptr;     ///< Background effect select
+HAButton *dismiss = nullptr;      ///< Dismiss notification button
+HAButton *nextApp = nullptr;      ///< Next app button
+HAButton *prevApp = nullptr;      ///< Previous app button
+HAButton *doUpdate = nullptr;     ///< Start firmware update button
+HAButton *rebootBtn = nullptr;    ///< Reboot device button
+HAButton *playSoundBtn = nullptr; ///< Play test sound button
 
 // Audio controls
 HASwitch *soundEnabled = nullptr;
@@ -244,7 +244,8 @@ void onMqttConnected()
         dateDurationNum->setState(static_cast<float>(appConfig.dateDuration));
 
         // Native app colors initial state
-        auto setColorLight = [](HALight *light, uint32_t color) {
+        auto setColorLight = [](HALight *light, uint32_t color)
+        {
             HALight::RGBColor c;
             c.isSet = true;
             c.red = (color >> 16) & 0xFF;

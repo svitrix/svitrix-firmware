@@ -13,7 +13,7 @@
  */
 class DS1307Provider : public IRtcProvider
 {
-public:
+  public:
     DS1307Provider() = default;
     ~DS1307Provider() override = default;
 
@@ -25,7 +25,7 @@ public:
     time_t getTime() override;
     bool setTime(time_t epoch) override;
 
-private:
+  private:
     static constexpr uint8_t kI2cAddress = 0x68;
     static constexpr uint8_t kRegSeconds = 0x00;
     static constexpr uint8_t kRegMinutes = 0x01;
@@ -40,9 +40,15 @@ private:
 
     bool detected_ = false;
 
-    uint8_t bcdToDec(uint8_t val) const { return (val >> 4) * 10 + (val & 0x0F); }
-    uint8_t decToBcd(uint8_t val) const { return ((val / 10) << 4) | (val % 10); }
+    uint8_t bcdToDec(uint8_t val) const
+    {
+        return (val >> 4) * 10 + (val & 0x0F);
+    }
+    uint8_t decToBcd(uint8_t val) const
+    {
+        return ((val / 10) << 4) | (val % 10);
+    }
 
-    bool readRegisters(uint8_t reg, uint8_t* buffer, uint8_t count);
-    bool writeRegisters(uint8_t reg, const uint8_t* buffer, uint8_t count);
+    bool readRegisters(uint8_t reg, uint8_t *buffer, uint8_t count);
+    bool writeRegisters(uint8_t reg, const uint8_t *buffer, uint8_t count);
 };

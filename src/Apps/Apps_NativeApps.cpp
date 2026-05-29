@@ -352,12 +352,14 @@ void BatApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_t x, i
 // ── OutdoorTempApp ─────────────────────────────────────────────────
 
 /// Returns weather condition icon based on WeatherAPI condition code.
-static const uint16_t* getWeatherConditionIcon(int code)
+static const uint16_t *getWeatherConditionIcon(int code)
 {
     // Sunny/Clear: 1000
-    if (code == 1000) return icon_sunny;
+    if (code == 1000)
+        return icon_sunny;
     // Rain: 1063, 1150-1201, 1240-1246
-    if (code == 1063 || (code >= 1150 && code <= 1201) || (code >= 1240 && code <= 1246)) return icon_rainy;
+    if (code == 1063 || (code >= 1150 && code <= 1201) || (code >= 1240 && code <= 1246))
+        return icon_rainy;
     // Cloudy/Overcast/Fog: 1003, 1006, 1009, 1030, 1135, 1147
     return icon_cloudy;
 }
@@ -374,7 +376,7 @@ void OutdoorTempApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int1
 
     if (m.hasIcon)
     {
-        const uint16_t* condIcon = getWeatherConditionIcon(weatherData.conditionCode);
+        const uint16_t *condIcon = getWeatherConditionIcon(weatherData.conditionCode);
         matrix->drawRGBBitmap(x + m.iconX, y, condIcon, 8, 8);
     }
 
@@ -524,12 +526,24 @@ void AirQualityApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16
     {
         switch (weatherData.aqi)
         {
-        case 1: aqiColor = 0x00FF00; break; // Good - green
-        case 2: aqiColor = 0xFFFF00; break; // Moderate - yellow
-        case 3: aqiColor = 0xFFA500; break; // Unhealthy for sensitive - orange
-        case 4: aqiColor = 0xFF0000; break; // Unhealthy - red
-        case 5: aqiColor = 0x800080; break; // Very unhealthy - purple
-        case 6: aqiColor = 0x800000; break; // Hazardous - maroon
+        case 1:
+            aqiColor = 0x00FF00;
+            break; // Good - green
+        case 2:
+            aqiColor = 0xFFFF00;
+            break; // Moderate - yellow
+        case 3:
+            aqiColor = 0xFFA500;
+            break; // Unhealthy for sensitive - orange
+        case 4:
+            aqiColor = 0xFF0000;
+            break; // Unhealthy - red
+        case 5:
+            aqiColor = 0x800080;
+            break; // Very unhealthy - purple
+        case 6:
+            aqiColor = 0x800000;
+            break; // Hazardous - maroon
         }
     }
     applyNativeAppColor(aqiColor);
@@ -594,11 +608,16 @@ void UVApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_t x, in
     if (uvColor == 0 && weatherData.valid)
     {
         float uv = weatherData.uv;
-        if (uv < 3)       uvColor = 0x00FF00; // Low - green
-        else if (uv < 6)  uvColor = 0xFFFF00; // Moderate - yellow
-        else if (uv < 8)  uvColor = 0xFFA500; // High - orange
-        else if (uv < 11) uvColor = 0xFF0000; // Very high - red
-        else              uvColor = 0x9400D3; // Extreme - violet
+        if (uv < 3)
+            uvColor = 0x00FF00; // Low - green
+        else if (uv < 6)
+            uvColor = 0xFFFF00; // Moderate - yellow
+        else if (uv < 8)
+            uvColor = 0xFFA500; // High - orange
+        else if (uv < 11)
+            uvColor = 0xFF0000; // Very high - red
+        else
+            uvColor = 0x9400D3; // Extreme - violet
     }
     applyNativeAppColor(uvColor);
 

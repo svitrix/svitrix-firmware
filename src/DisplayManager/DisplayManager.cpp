@@ -61,15 +61,24 @@ String currentApp;
 /// Custom apps and unknown names fall back to the global timePerApp setting.
 static long getDurationForApp(const String& appName)
 {
-    if (appName == "Time") return appConfig.timeDuration * 1000L;
-    if (appName == "Date") return appConfig.dateDuration * 1000L;
-    if (appName == "Temperature") return appConfig.tempDuration * 1000L;
-    if (appName == "Humidity") return appConfig.humDuration * 1000L;
-    if (appName == "Battery") return appConfig.batDuration * 1000L;
-    if (appName == "OutdoorTemp") return weatherConfig.outdoorTempDuration * 1000L;
-    if (appName == "OutdoorHum") return weatherConfig.outdoorHumDuration * 1000L;
-    if (appName == "Pressure") return weatherConfig.pressureDuration * 1000L;
-    if (appName == "AirQuality") return weatherConfig.aqiDuration * 1000L;
+    if (appName == "Time")
+        return appConfig.timeDuration * 1000L;
+    if (appName == "Date")
+        return appConfig.dateDuration * 1000L;
+    if (appName == "Temperature")
+        return appConfig.tempDuration * 1000L;
+    if (appName == "Humidity")
+        return appConfig.humDuration * 1000L;
+    if (appName == "Battery")
+        return appConfig.batDuration * 1000L;
+    if (appName == "OutdoorTemp")
+        return weatherConfig.outdoorTempDuration * 1000L;
+    if (appName == "OutdoorHum")
+        return weatherConfig.outdoorHumDuration * 1000L;
+    if (appName == "Pressure")
+        return weatherConfig.pressureDuration * 1000L;
+    if (appName == "AirQuality")
+        return weatherConfig.aqiDuration * 1000L;
     return appConfig.timePerApp;
 }
 
@@ -365,14 +374,14 @@ void DisplayManager_::tick()
             ui->setIndicator3State(hasEnabledAlarms || isRinging);
             if (isRinging)
             {
-                ui->setIndicator3Color(0xFF0000);  // Red when ringing
-                ui->setIndicator3Blink(300);       // Fast blink
+                ui->setIndicator3Color(0xFF0000); // Red when ringing
+                ui->setIndicator3Blink(300);      // Fast blink
                 ui->setIndicator3Fade(0);
             }
             else if (hasEnabledAlarms)
             {
-                ui->setIndicator3Color(0xFFAA00);  // Amber when alarm set
-                ui->setIndicator3Blink(0);         // Solid, no blink
+                ui->setIndicator3Color(0xFFAA00); // Amber when alarm set
+                ui->setIndicator3Blink(0);        // Solid, no blink
                 ui->setIndicator3Fade(0);
             }
         }
@@ -416,7 +425,8 @@ void DisplayManager_::leftButton()
         return;
 
     // Global: Snooze ringing alarm from any app
-    if (AlarmManager.isRinging()) {
+    if (AlarmManager.isRinging())
+    {
         AlarmManager.snooze();
         return;
     }
@@ -430,7 +440,8 @@ void DisplayManager_::rightButton()
         return;
 
     // Global: Snooze ringing alarm from any app
-    if (AlarmManager.isRinging()) {
+    if (AlarmManager.isRinging())
+    {
         AlarmManager.snooze();
         return;
     }
@@ -475,7 +486,8 @@ void DisplayManager_::selectButton()
         return;
 
     // Global: Dismiss ringing alarm from any app
-    if (AlarmManager.isRinging()) {
+    if (AlarmManager.isRinging())
+    {
         AlarmManager.dismiss();
         return;
     }

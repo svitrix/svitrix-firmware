@@ -20,18 +20,21 @@
  */
 class RtcTimeProvider : public ITimeProvider
 {
-public:
-    void setRtc(IRtcProvider* rtc)
+  public:
+    void setRtc(IRtcProvider *rtc)
     {
         assert(rtc != nullptr);
         rtc_ = rtc;
     }
 
-    bool hasRtc() const { return rtc_ != nullptr; }
+    bool hasRtc() const
+    {
+        return rtc_ != nullptr;
+    }
 
     bool now(struct tm& out) const override
     {
-        const struct tm* sysTime = timer_localtime();
+        const struct tm *sysTime = timer_localtime();
         if (sysTime && sysTime->tm_year >= 120)
         {
             out = *sysTime;
@@ -43,7 +46,7 @@ public:
             time_t epoch = rtc_->getTime();
             if (epoch > 0)
             {
-                struct tm* rtcTime = localtime(&epoch);
+                struct tm *rtcTime = localtime(&epoch);
                 if (rtcTime && rtcTime->tm_year >= 120)
                 {
                     out = *rtcTime;
@@ -55,6 +58,6 @@ public:
         return false;
     }
 
-private:
-    IRtcProvider* rtc_ = nullptr;
+  private:
+    IRtcProvider *rtc_ = nullptr;
 };

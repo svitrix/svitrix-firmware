@@ -566,7 +566,7 @@ String exportSettings()
     return output;
 }
 
-bool importSettings(const char* json)
+bool importSettings(const char *json)
 {
     DynamicJsonDocument doc(4096);
     DeserializationError error = deserializeJson(doc, json);
@@ -577,103 +577,184 @@ bool importSettings(const char* json)
     }
 
     // Brightness
-    if (doc.containsKey("BRI")) brightnessConfig.brightness = doc["BRI"];
-    if (doc.containsKey("ABRI")) brightnessConfig.autoBrightness = doc["ABRI"];
-    if (doc.containsKey("MINBRI")) brightnessConfig.minBrightness = doc["MINBRI"];
-    if (doc.containsKey("MAXBRI")) brightnessConfig.maxBrightness = doc["MAXBRI"];
+    if (doc.containsKey("BRI"))
+        brightnessConfig.brightness = doc["BRI"];
+    if (doc.containsKey("ABRI"))
+        brightnessConfig.autoBrightness = doc["ABRI"];
+    if (doc.containsKey("MINBRI"))
+        brightnessConfig.minBrightness = doc["MINBRI"];
+    if (doc.containsKey("MAXBRI"))
+        brightnessConfig.maxBrightness = doc["MAXBRI"];
 
     // Display
-    if (doc.containsKey("UPPER")) displayConfig.uppercaseLetters = doc["UPPER"];
-    if (doc.containsKey("MAT")) displayConfig.matrixLayout = doc["MAT"];
-    if (doc.containsKey("BEFF")) displayConfig.backgroundEffect = doc["BEFF"];
+    if (doc.containsKey("UPPER"))
+        displayConfig.uppercaseLetters = doc["UPPER"];
+    if (doc.containsKey("MAT"))
+        displayConfig.matrixLayout = doc["MAT"];
+    if (doc.containsKey("BEFF"))
+        displayConfig.backgroundEffect = doc["BEFF"];
 
     // Colors
-    if (doc.containsKey("TCOL")) colorConfig.textColor = doc["TCOL"].as<uint32_t>();
-    if (doc.containsKey("CHCOL")) colorConfig.calendarHeaderColor = doc["CHCOL"].as<uint32_t>();
-    if (doc.containsKey("CTCOL")) colorConfig.calendarTextColor = doc["CTCOL"].as<uint32_t>();
-    if (doc.containsKey("CBCOL")) colorConfig.calendarBodyColor = doc["CBCOL"].as<uint32_t>();
-    if (doc.containsKey("TIME_COL")) colorConfig.timeColor = doc["TIME_COL"].as<uint32_t>();
-    if (doc.containsKey("DATE_COL")) colorConfig.dateColor = doc["DATE_COL"].as<uint32_t>();
-    if (doc.containsKey("TEMP_COL")) colorConfig.tempColor = doc["TEMP_COL"].as<uint32_t>();
-    if (doc.containsKey("HUM_COL")) colorConfig.humColor = doc["HUM_COL"].as<uint32_t>();
-    if (doc.containsKey("BAT_COL")) colorConfig.batColor = doc["BAT_COL"].as<uint32_t>();
-    if (doc.containsKey("WDCA")) colorConfig.wdcActive = doc["WDCA"].as<uint32_t>();
-    if (doc.containsKey("WDCI")) colorConfig.wdcInactive = doc["WDCI"].as<uint32_t>();
+    if (doc.containsKey("TCOL"))
+        colorConfig.textColor = doc["TCOL"].as<uint32_t>();
+    if (doc.containsKey("CHCOL"))
+        colorConfig.calendarHeaderColor = doc["CHCOL"].as<uint32_t>();
+    if (doc.containsKey("CTCOL"))
+        colorConfig.calendarTextColor = doc["CTCOL"].as<uint32_t>();
+    if (doc.containsKey("CBCOL"))
+        colorConfig.calendarBodyColor = doc["CBCOL"].as<uint32_t>();
+    if (doc.containsKey("TIME_COL"))
+        colorConfig.timeColor = doc["TIME_COL"].as<uint32_t>();
+    if (doc.containsKey("DATE_COL"))
+        colorConfig.dateColor = doc["DATE_COL"].as<uint32_t>();
+    if (doc.containsKey("TEMP_COL"))
+        colorConfig.tempColor = doc["TEMP_COL"].as<uint32_t>();
+    if (doc.containsKey("HUM_COL"))
+        colorConfig.humColor = doc["HUM_COL"].as<uint32_t>();
+    if (doc.containsKey("BAT_COL"))
+        colorConfig.batColor = doc["BAT_COL"].as<uint32_t>();
+    if (doc.containsKey("WDCA"))
+        colorConfig.wdcActive = doc["WDCA"].as<uint32_t>();
+    if (doc.containsKey("WDCI"))
+        colorConfig.wdcInactive = doc["WDCI"].as<uint32_t>();
 
     // App config
-    if (doc.containsKey("TEFF")) appConfig.transEffect = doc["TEFF"];
-    if (doc.containsKey("ATRANS")) appConfig.autoTransition = doc["ATRANS"];
-    if (doc.containsKey("WD")) appConfig.showWeekday = doc["WD"];
-    if (doc.containsKey("TSPEED")) appConfig.timePerTransition = doc["TSPEED"];
-    if (doc.containsKey("ATIME")) appConfig.timePerApp = doc["ATIME"];
-    if (doc.containsKey("BLOCKN")) appConfig.blockNavigation = doc["BLOCKN"];
-    if (doc.containsKey("TIM")) appConfig.showTime = doc["TIM"];
-    if (doc.containsKey("DAT")) appConfig.showDate = doc["DAT"];
-    if (doc.containsKey("TEMP")) appConfig.showTemp = doc["TEMP"];
-    if (doc.containsKey("HUM")) appConfig.showHum = doc["HUM"];
-    if (doc.containsKey("BAT")) appConfig.showBat = doc["BAT"];
-    if (doc.containsKey("SALARMS")) appConfig.showAlarms = doc["SALARMS"];
-    if (doc.containsKey("SSPEED")) appConfig.scrollSpeed = doc["SSPEED"];
-    if (doc.containsKey("TIMEDUR")) appConfig.timeDuration = doc["TIMEDUR"];
-    if (doc.containsKey("DATEDUR")) appConfig.dateDuration = doc["DATEDUR"];
-    if (doc.containsKey("TEMPDUR")) appConfig.tempDuration = doc["TEMPDUR"];
-    if (doc.containsKey("HUMDUR")) appConfig.humDuration = doc["HUMDUR"];
-    if (doc.containsKey("BATDUR")) appConfig.batDuration = doc["BATDUR"];
-    if (doc.containsKey("NILAYOUT")) appConfig.nativeIconLayout = static_cast<IconLayout>(doc["NILAYOUT"].as<uint8_t>());
-    if (doc.containsKey("NMODE")) appConfig.nightMode = doc["NMODE"];
-    if (doc.containsKey("NSTART")) appConfig.nightStart = doc["NSTART"];
-    if (doc.containsKey("NEND")) appConfig.nightEnd = doc["NEND"];
-    if (doc.containsKey("NBRI")) appConfig.nightBrightness = doc["NBRI"];
-    if (doc.containsKey("NCOL")) appConfig.nightColor = doc["NCOL"].as<uint32_t>();
-    if (doc.containsKey("NBTRANS")) appConfig.nightBlockTransition = doc["NBTRANS"];
+    if (doc.containsKey("TEFF"))
+        appConfig.transEffect = doc["TEFF"];
+    if (doc.containsKey("ATRANS"))
+        appConfig.autoTransition = doc["ATRANS"];
+    if (doc.containsKey("WD"))
+        appConfig.showWeekday = doc["WD"];
+    if (doc.containsKey("TSPEED"))
+        appConfig.timePerTransition = doc["TSPEED"];
+    if (doc.containsKey("ATIME"))
+        appConfig.timePerApp = doc["ATIME"];
+    if (doc.containsKey("BLOCKN"))
+        appConfig.blockNavigation = doc["BLOCKN"];
+    if (doc.containsKey("TIM"))
+        appConfig.showTime = doc["TIM"];
+    if (doc.containsKey("DAT"))
+        appConfig.showDate = doc["DAT"];
+    if (doc.containsKey("TEMP"))
+        appConfig.showTemp = doc["TEMP"];
+    if (doc.containsKey("HUM"))
+        appConfig.showHum = doc["HUM"];
+    if (doc.containsKey("BAT"))
+        appConfig.showBat = doc["BAT"];
+    if (doc.containsKey("SALARMS"))
+        appConfig.showAlarms = doc["SALARMS"];
+    if (doc.containsKey("SSPEED"))
+        appConfig.scrollSpeed = doc["SSPEED"];
+    if (doc.containsKey("TIMEDUR"))
+        appConfig.timeDuration = doc["TIMEDUR"];
+    if (doc.containsKey("DATEDUR"))
+        appConfig.dateDuration = doc["DATEDUR"];
+    if (doc.containsKey("TEMPDUR"))
+        appConfig.tempDuration = doc["TEMPDUR"];
+    if (doc.containsKey("HUMDUR"))
+        appConfig.humDuration = doc["HUMDUR"];
+    if (doc.containsKey("BATDUR"))
+        appConfig.batDuration = doc["BATDUR"];
+    if (doc.containsKey("NILAYOUT"))
+        appConfig.nativeIconLayout = static_cast<IconLayout>(doc["NILAYOUT"].as<uint8_t>());
+    if (doc.containsKey("NMODE"))
+        appConfig.nightMode = doc["NMODE"];
+    if (doc.containsKey("NSTART"))
+        appConfig.nightStart = doc["NSTART"];
+    if (doc.containsKey("NEND"))
+        appConfig.nightEnd = doc["NEND"];
+    if (doc.containsKey("NBRI"))
+        appConfig.nightBrightness = doc["NBRI"];
+    if (doc.containsKey("NCOL"))
+        appConfig.nightColor = doc["NCOL"].as<uint32_t>();
+    if (doc.containsKey("NBTRANS"))
+        appConfig.nightBlockTransition = doc["NBTRANS"];
 
     // Time config
-    if (doc.containsKey("TMODE")) timeConfig.timeMode = doc["TMODE"];
-    if (doc.containsKey("TFORMAT")) timeConfig.timeFormat = doc["TFORMAT"].as<String>();
-    if (doc.containsKey("DFORMAT")) timeConfig.dateFormat = doc["DFORMAT"].as<String>();
-    if (doc.containsKey("SOM")) timeConfig.startOnMonday = doc["SOM"];
-    if (doc.containsKey("CEL")) timeConfig.isCelsius = doc["CEL"];
+    if (doc.containsKey("TMODE"))
+        timeConfig.timeMode = doc["TMODE"];
+    if (doc.containsKey("TFORMAT"))
+        timeConfig.timeFormat = doc["TFORMAT"].as<String>();
+    if (doc.containsKey("DFORMAT"))
+        timeConfig.dateFormat = doc["DFORMAT"].as<String>();
+    if (doc.containsKey("SOM"))
+        timeConfig.startOnMonday = doc["SOM"];
+    if (doc.containsKey("CEL"))
+        timeConfig.isCelsius = doc["CEL"];
 
     // Sensor
-    if (doc.containsKey("TOFF")) sensorConfig.tempOffset = doc["TOFF"];
+    if (doc.containsKey("TOFF"))
+        sensorConfig.tempOffset = doc["TOFF"];
 
     // Audio
-    if (doc.containsKey("SOUND")) audioConfig.soundActive = doc["SOUND"];
-    if (doc.containsKey("VOL")) audioConfig.soundVolume = doc["VOL"];
+    if (doc.containsKey("SOUND"))
+        audioConfig.soundActive = doc["SOUND"];
+    if (doc.containsKey("VOL"))
+        audioConfig.soundVolume = doc["VOL"];
 
     // WiFi
-    if (doc.containsKey("WSSID1")) wifiConfig.networks[0].ssid = doc["WSSID1"].as<String>();
-    if (doc.containsKey("WPASS1")) wifiConfig.networks[0].password = doc["WPASS1"].as<String>();
-    if (doc.containsKey("WSSID2")) wifiConfig.networks[1].ssid = doc["WSSID2"].as<String>();
-    if (doc.containsKey("WPASS2")) wifiConfig.networks[1].password = doc["WPASS2"].as<String>();
-    if (doc.containsKey("WSSID3")) wifiConfig.networks[2].ssid = doc["WSSID3"].as<String>();
-    if (doc.containsKey("WPASS3")) wifiConfig.networks[2].password = doc["WPASS3"].as<String>();
+    if (doc.containsKey("WSSID1"))
+        wifiConfig.networks[0].ssid = doc["WSSID1"].as<String>();
+    if (doc.containsKey("WPASS1"))
+        wifiConfig.networks[0].password = doc["WPASS1"].as<String>();
+    if (doc.containsKey("WSSID2"))
+        wifiConfig.networks[1].ssid = doc["WSSID2"].as<String>();
+    if (doc.containsKey("WPASS2"))
+        wifiConfig.networks[1].password = doc["WPASS2"].as<String>();
+    if (doc.containsKey("WSSID3"))
+        wifiConfig.networks[2].ssid = doc["WSSID3"].as<String>();
+    if (doc.containsKey("WPASS3"))
+        wifiConfig.networks[2].password = doc["WPASS3"].as<String>();
 
     // Weather API
-    if (doc.containsKey("WAPI_KEY")) weatherConfig.apiKey = doc["WAPI_KEY"].as<String>();
-    if (doc.containsKey("WAPI_LOC")) weatherConfig.locationType = static_cast<WeatherLocationType>(doc["WAPI_LOC"].as<uint8_t>());
-    if (doc.containsKey("WAPI_CITY")) weatherConfig.city = doc["WAPI_CITY"].as<String>();
-    if (doc.containsKey("WAPI_LAT")) weatherConfig.latitude = doc["WAPI_LAT"];
-    if (doc.containsKey("WAPI_LON")) weatherConfig.longitude = doc["WAPI_LON"];
-    if (doc.containsKey("WAPI_STA")) weatherConfig.stationId = doc["WAPI_STA"].as<String>();
-    if (doc.containsKey("WAPI_INT")) weatherConfig.updateInterval = doc["WAPI_INT"];
-    if (doc.containsKey("WAPI_OTEMP")) weatherConfig.showOutdoorTemp = doc["WAPI_OTEMP"];
-    if (doc.containsKey("WAPI_OHUM")) weatherConfig.showOutdoorHumidity = doc["WAPI_OHUM"];
-    if (doc.containsKey("WAPI_PRES")) weatherConfig.showPressure = doc["WAPI_PRES"];
-    if (doc.containsKey("WAPI_AQI")) weatherConfig.showAirQuality = doc["WAPI_AQI"];
-    if (doc.containsKey("WAPI_ITEMP")) weatherConfig.showIndoorTemp = doc["WAPI_ITEMP"];
-    if (doc.containsKey("WAPI_IHUM")) weatherConfig.showIndoorHumidity = doc["WAPI_IHUM"];
-    if (doc.containsKey("WAPI_OTCOL")) weatherConfig.outdoorTempColor = doc["WAPI_OTCOL"].as<uint32_t>();
-    if (doc.containsKey("WAPI_OHCOL")) weatherConfig.outdoorHumColor = doc["WAPI_OHCOL"].as<uint32_t>();
-    if (doc.containsKey("WAPI_PCOL")) weatherConfig.pressureColor = doc["WAPI_PCOL"].as<uint32_t>();
-    if (doc.containsKey("WAPI_AQCOL")) weatherConfig.aqiColor = doc["WAPI_AQCOL"].as<uint32_t>();
-    if (doc.containsKey("WAPI_OTDUR")) weatherConfig.outdoorTempDuration = doc["WAPI_OTDUR"];
-    if (doc.containsKey("WAPI_OHDUR")) weatherConfig.outdoorHumDuration = doc["WAPI_OHDUR"];
-    if (doc.containsKey("WAPI_PDUR")) weatherConfig.pressureDuration = doc["WAPI_PDUR"];
-    if (doc.containsKey("WAPI_AQDUR")) weatherConfig.aqiDuration = doc["WAPI_AQDUR"];
-    if (doc.containsKey("WAPI_UV")) weatherConfig.showUV = doc["WAPI_UV"];
-    if (doc.containsKey("WAPI_UVCOL")) weatherConfig.uvColor = doc["WAPI_UVCOL"].as<uint32_t>();
-    if (doc.containsKey("WAPI_UVDUR")) weatherConfig.uvDuration = doc["WAPI_UVDUR"];
+    if (doc.containsKey("WAPI_KEY"))
+        weatherConfig.apiKey = doc["WAPI_KEY"].as<String>();
+    if (doc.containsKey("WAPI_LOC"))
+        weatherConfig.locationType = static_cast<WeatherLocationType>(doc["WAPI_LOC"].as<uint8_t>());
+    if (doc.containsKey("WAPI_CITY"))
+        weatherConfig.city = doc["WAPI_CITY"].as<String>();
+    if (doc.containsKey("WAPI_LAT"))
+        weatherConfig.latitude = doc["WAPI_LAT"];
+    if (doc.containsKey("WAPI_LON"))
+        weatherConfig.longitude = doc["WAPI_LON"];
+    if (doc.containsKey("WAPI_STA"))
+        weatherConfig.stationId = doc["WAPI_STA"].as<String>();
+    if (doc.containsKey("WAPI_INT"))
+        weatherConfig.updateInterval = doc["WAPI_INT"];
+    if (doc.containsKey("WAPI_OTEMP"))
+        weatherConfig.showOutdoorTemp = doc["WAPI_OTEMP"];
+    if (doc.containsKey("WAPI_OHUM"))
+        weatherConfig.showOutdoorHumidity = doc["WAPI_OHUM"];
+    if (doc.containsKey("WAPI_PRES"))
+        weatherConfig.showPressure = doc["WAPI_PRES"];
+    if (doc.containsKey("WAPI_AQI"))
+        weatherConfig.showAirQuality = doc["WAPI_AQI"];
+    if (doc.containsKey("WAPI_ITEMP"))
+        weatherConfig.showIndoorTemp = doc["WAPI_ITEMP"];
+    if (doc.containsKey("WAPI_IHUM"))
+        weatherConfig.showIndoorHumidity = doc["WAPI_IHUM"];
+    if (doc.containsKey("WAPI_OTCOL"))
+        weatherConfig.outdoorTempColor = doc["WAPI_OTCOL"].as<uint32_t>();
+    if (doc.containsKey("WAPI_OHCOL"))
+        weatherConfig.outdoorHumColor = doc["WAPI_OHCOL"].as<uint32_t>();
+    if (doc.containsKey("WAPI_PCOL"))
+        weatherConfig.pressureColor = doc["WAPI_PCOL"].as<uint32_t>();
+    if (doc.containsKey("WAPI_AQCOL"))
+        weatherConfig.aqiColor = doc["WAPI_AQCOL"].as<uint32_t>();
+    if (doc.containsKey("WAPI_OTDUR"))
+        weatherConfig.outdoorTempDuration = doc["WAPI_OTDUR"];
+    if (doc.containsKey("WAPI_OHDUR"))
+        weatherConfig.outdoorHumDuration = doc["WAPI_OHDUR"];
+    if (doc.containsKey("WAPI_PDUR"))
+        weatherConfig.pressureDuration = doc["WAPI_PDUR"];
+    if (doc.containsKey("WAPI_AQDUR"))
+        weatherConfig.aqiDuration = doc["WAPI_AQDUR"];
+    if (doc.containsKey("WAPI_UV"))
+        weatherConfig.showUV = doc["WAPI_UV"];
+    if (doc.containsKey("WAPI_UVCOL"))
+        weatherConfig.uvColor = doc["WAPI_UVCOL"].as<uint32_t>();
+    if (doc.containsKey("WAPI_UVDUR"))
+        weatherConfig.uvDuration = doc["WAPI_UVDUR"];
 
     // Save to NVS
     saveSettings();

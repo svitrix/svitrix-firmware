@@ -69,7 +69,7 @@ enum AnimationDirection
 enum TransitionType
 {
     RANDOM,
-    SLIDE,          // Slide Down (legacy, index 1)
+    SLIDE, // Slide Down (legacy, index 1)
     FADE,
     ZOOM,
     ROTATE,
@@ -79,9 +79,9 @@ enum TransitionType
     BLINK,
     RELOAD,
     CROSSFADE,
-    SLIDE_UP,       // New (index 11)
-    SLIDE_LEFT,     // New (index 12)
-    SLIDE_RIGHT     // New (index 13)
+    SLIDE_UP,   // New (index 11)
+    SLIDE_LEFT, // New (index 12)
+    SLIDE_RIGHT // New (index 13)
 };
 
 /// Current phase of the app display cycle.
@@ -150,7 +150,7 @@ class MatrixDisplayUi
     CRGB ledsCopy[256];        ///< Temporary buffer for transition effects (32x8 pixels)
 
     AnimationDirection appAnimationDirection = ANIM_SLIDE_DOWN; ///< Slide direction for SLIDE transition
-    int8_t lastTransitionDirection = 1;                    ///< Saved direction before manual override
+    int8_t lastTransitionDirection = 1;                         ///< Saved direction before manual override
 
     unsigned long ticksPerApp = 151;  ///< Ticks to display each app (~5000ms at 30 FPS)
     uint16_t ticksPerTransition = 15; ///< Ticks for transition animation (~500ms at 30 FPS)

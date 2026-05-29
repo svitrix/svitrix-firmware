@@ -41,7 +41,7 @@
 TaskHandle_t taskHandle = nullptr;
 volatile bool StopTask = false;
 bool stopBoot;
-static DS1307Provider* rtcInstance = nullptr;
+static DS1307Provider *rtcInstance = nullptr;
 static bool rtcSynced = false;
 
 void BootAnimation(void *parameter)
@@ -194,7 +194,7 @@ void setup()
     {
         systemConfig.apMode = true;
         stopBootAnimation();
-        AlarmManager.setup();  // Alarms work in AP mode too
+        AlarmManager.setup(); // Alarms work in AP mode too
     }
     delay(200);
     DisplayManager.setBrightness(brightnessConfig.brightness);
@@ -206,7 +206,7 @@ void loop()
     ServerManager.tick();
     DisplayManager.tick();
     PeripheryManager.tick();
-    AlarmManager.tick(time(nullptr));  // Alarms work even without WiFi
+    AlarmManager.tick(time(nullptr)); // Alarms work even without WiFi
     if (ServerManager.isConnected)
     {
         MQTTManager.tick();
@@ -215,10 +215,10 @@ void loop()
         // Sync NTP → RTC once after time becomes valid
         if (!rtcSynced && rtcInstance)
         {
-            const struct tm* t = timer_localtime();
+            const struct tm *t = timer_localtime();
             if (t && t->tm_year >= 120)
             {
-                time_t now = mktime(const_cast<struct tm*>(t));
+                time_t now = mktime(const_cast<struct tm *>(t));
                 if (rtcInstance->setTime(now))
                 {
                     rtcSynced = true;

@@ -96,7 +96,7 @@ void MatrixDisplayUi::drawIndicators()
         {
             drawColor = indicator3Color;
         }
-        matrix->drawPixel(31, 7, drawColor);  // Single LED bottom-right corner
+        matrix->drawPixel(31, 7, drawColor); // Single LED bottom-right corner
     }
 }
 

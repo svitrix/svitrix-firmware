@@ -35,19 +35,19 @@ extern HAMqtt mqtt;          ///< ArduinoHA MQTT client (wraps PubSubClient)
 // ── HA entity pointers (defined in MQTTManager.cpp) ─────────────────
 // Created in setup() when HA discovery is enabled; nullptr otherwise.
 
-extern HALight *Matrix;          ///< Main matrix light (brightness + RGB)
-extern HALight *Indikator1;      ///< Top-right indicator light (RGB)
-extern HALight *Indikator2;      ///< Middle-right indicator light (RGB)
-extern HALight *Indikator3;      ///< Bottom-right indicator light (RGB)
-extern HASelect *BriMode;        ///< Brightness mode select (Manual / Auto)
-extern HASelect *transEffect;    ///< Transition effect select
-extern HASelect *bgEffect;       ///< Background effect select
-extern HAButton *dismiss;        ///< Dismiss notification button
-extern HAButton *nextApp;        ///< Next app button
-extern HAButton *prevApp;        ///< Previous app button
-extern HAButton *doUpdate;       ///< Start firmware update button
-extern HAButton *rebootBtn;      ///< Reboot device button
-extern HAButton *playSoundBtn;   ///< Play test sound button
+extern HALight *Matrix;        ///< Main matrix light (brightness + RGB)
+extern HALight *Indikator1;    ///< Top-right indicator light (RGB)
+extern HALight *Indikator2;    ///< Middle-right indicator light (RGB)
+extern HALight *Indikator3;    ///< Bottom-right indicator light (RGB)
+extern HASelect *BriMode;      ///< Brightness mode select (Manual / Auto)
+extern HASelect *transEffect;  ///< Transition effect select
+extern HASelect *bgEffect;     ///< Background effect select
+extern HAButton *dismiss;      ///< Dismiss notification button
+extern HAButton *nextApp;      ///< Next app button
+extern HAButton *prevApp;      ///< Previous app button
+extern HAButton *doUpdate;     ///< Start firmware update button
+extern HAButton *rebootBtn;    ///< Reboot device button
+extern HAButton *playSoundBtn; ///< Play test sound button
 
 // Audio controls
 extern HASwitch *soundEnabled;

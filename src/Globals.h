@@ -60,4 +60,4 @@ constexpr double movementFactor = 0.5;
 void loadSettings();
 void saveSettings();
 String exportSettings();
-bool importSettings(const char* json);
+bool importSettings(const char *json);

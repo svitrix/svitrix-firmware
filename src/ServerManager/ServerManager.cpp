@@ -467,7 +467,8 @@ void ServerManager_::setup()
     }
     WiFi.setHostname(systemConfig.hostname.c_str()); // define hostname
     WifiNetworkEntry wifiEntries[3];
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++)
+    {
         wifiEntries[i].ssid = wifiConfig.networks[i].ssid;
         wifiEntries[i].password = wifiConfig.networks[i].password;
     }
