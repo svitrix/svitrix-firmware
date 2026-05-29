@@ -73,6 +73,12 @@ HASwitch *showTempSwitch = nullptr;
 HASwitch *showHumSwitch = nullptr;
 HASwitch *showBatSwitch = nullptr;
 
+// Display timing numbers
+HANumber *timePerAppNum = nullptr;
+HANumber *scrollSpeedNum = nullptr;
+HANumber *timeDurationNum = nullptr;
+HANumber *dateDurationNum = nullptr;
+
 // ── HA entity ID buffers ────────────────────────────────────────────
 // Each holds a unique HA entity ID built from MAC suffix (e.g. "abc123_mat").
 
@@ -90,6 +96,7 @@ char outTempID[40], outHumID[40], pressID[40], aqiID[40], weatherCondID[40], uvI
 char nightModeID[40], nightBriID[40], nightColID[40], nightBlockID[40];
 char showTimeID[40], showDateID[40], showTempID[40], showHumID[40], showBatID[40];
 char bgEffectID[40];
+char timePerAppID[40], scrollSpeedID[40], timeDurID[40], dateDurID[40];
 
 unsigned long previousMillis_Stats;    ///< Timestamp of last stats publish (millis)
 std::map<String, String> mqttValues;   ///< Cached values for subscribed external topics
@@ -213,6 +220,12 @@ void onMqttConnected()
 
         // Background effect initial state (0 = None, 1-20 = effect index + 1)
         bgEffect->setState(displayConfig.backgroundEffect, true);
+
+        // Display timing initial state
+        timePerAppNum->setState(static_cast<float>(appConfig.timePerApp));
+        scrollSpeedNum->setState(static_cast<float>(appConfig.scrollSpeed));
+        timeDurationNum->setState(static_cast<float>(appConfig.timeDuration));
+        dateDurationNum->setState(static_cast<float>(appConfig.dateDuration));
     }
 
     MQTTManager.publish("stats/effects", dmNav_->getEffectNames().c_str());

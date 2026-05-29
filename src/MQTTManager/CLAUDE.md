@@ -1,6 +1,6 @@
 # MQTTManager — AI Reference
 
-Central MQTT communication and Home Assistant integration singleton. Manages broker connection, message dispatch, HA auto-discovery (45 entities), and state synchronization.
+Central MQTT communication and Home Assistant integration singleton. Manages broker connection, message dispatch, HA auto-discovery (49 entities), and state synchronization.
 
 ## File Map
 
@@ -26,7 +26,7 @@ void setDisplay(IDisplayControl*, IDisplayNavigation*, IDisplayNotifier*);
 void setServices(ISound*, IPower*, IUpdater*, IPeripheryProvider*);
 ```
 
-## HA Entities (45 total)
+## HA Entities (49 total)
 
 | Type | Count | Entities |
 |------|-------|----------|
@@ -34,7 +34,7 @@ void setServices(ISound*, IPower*, IUpdater*, IPeripheryProvider*);
 | **HASelect** | 3 | BriMode (Manual/Auto), transEffect (14 transitions), bgEffect (21 effects) |
 | **HAButton** | 6 | dismiss, nextApp, prevApp, doUpdate, reboot, playSound |
 | **HASwitch** | 9 | transition, nightMode, nightBlockTransition, soundEnabled, showTime, showDate, showTemp, showHum, showBat |
-| **HANumber** | 2 | nightBrightness (1-50), soundVolume (0-30) |
+| **HANumber** | 6 | nightBrightness, soundVolume, timePerApp, scrollSpeed, timeDuration, dateDuration |
 | **HASensor** | 16-17 | curApp, myOwnID, temp, hum, lux, signal, version, ram, uptime, ipAddr, battery*, outdoorTemp, outdoorHum, pressure, aqi, weatherCond, uvIndex |
 | **HABinarySensor** | 3 | btnleft, btnmid, btnright |
 
@@ -83,13 +83,13 @@ Routing via `MessageRouter::routeTopic()` → `MqttCommandType` enum → switch 
 - `getValueForTopic(topic)` → cached value or "N/A"
 - Used by custom apps: `{{topic}}` placeholders resolved via PlaceholderUtils
 
-## 13 Callback Handlers (MQTTManager_Callbacks.cpp)
+## 14 Callback Handlers (MQTTManager_Callbacks.cpp)
 
 | Callback | Entities | Action |
 |----------|----------|--------|
 | `onButtonCommand` | dismiss, nextApp, prevApp, doUpdate, reboot, playSound | Dispatch to managers |
 | `onSwitchCommand` | transition | Toggle autoTransition + save |
-| `onSelectCommand` | BriMode, transEffect | Set mode/effect + save |
+| `onSelectCommand` | BriMode, transEffect, bgEffect | Set mode/effect + save |
 | `onRGBColorCommand` | Matrix, Indicator1-3 | Set color + save |
 | `onStateCommand` | Matrix, Indicator1-3 | Set power/state |
 | `onBrightnessCommand` | Matrix | Set brightness (skip if auto) + save |
@@ -100,6 +100,7 @@ Routing via `MessageRouter::routeTopic()` → `MqttCommandType` enum → switch 
 | `onSoundSwitchCommand` | soundEnabled | Toggle sound on/off + save |
 | `onSoundVolumeCommand` | soundVolume | Set volume + apply to periphery + save |
 | `onAppVisibilitySwitchCommand` | showTime/Date/Temp/Hum/Bat | Toggle app visibility + reload native apps + save |
+| `onDisplayTimingCommand` | timePerApp/scrollSpeed/timeDuration/dateDuration | Set timing value + save |
 
 All callbacks call `saveSettings()` after modifying config structs.
 

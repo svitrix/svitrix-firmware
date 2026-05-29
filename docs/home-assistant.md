@@ -39,7 +39,7 @@ Una vez habilitado HA Discovery en SVITRIX y reiniciado, las entidades aparecer�
 
 ---
 
-## Entidades Disponibles (45 total)
+## Entidades Disponibles (49 total)
 
 ### Luces (5)
 
@@ -65,12 +65,16 @@ Una vez habilitado HA Discovery en SVITRIX y reiniciado, las entidades aparecer�
 | **Show humidity app** | Muestra/oculta la app de humedad |
 | **Show battery app** | Muestra/oculta la app de batería |
 
-### Números (2)
+### Números (6)
 
 | Entidad | Rango | Descripción |
 |---------|-------|-------------|
 | **Night brightness** | 1-50 | Brillo durante modo nocturno |
-| **Sound volume** | 0-100 | Volumen del buzzer |
+| **Sound volume** | 0-30 | Volumen del buzzer |
+| **Time per app** | 1-60s | Duración de cada app en rotación |
+| **Scroll speed** | 20-200ms | Velocidad de scroll del texto |
+| **Clock duration** | 1-300s | Duración de la app de hora |
+| **Date duration** | 1-60s | Duración de la app de fecha |
 
 ### Selectores (3)
 

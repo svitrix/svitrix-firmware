@@ -2,7 +2,7 @@
 
 ## Estado Actual (actualizado)
 
-### Entidades HA Existentes (45 total)
+### Entidades HA Existentes (49 total)
 
 | Tipo | Cantidad | Entidades |
 |------|----------|-----------|
@@ -10,7 +10,7 @@
 | **HASelect** | 3 | BriMode (Manual/Auto), transEffect (14 transiciones), bgEffect (21 efectos) |
 | **HAButton** | 6 | Dismiss, doUpdate, nextApp, prevApp, reboot, playSound |
 | **HASwitch** | 9 | transition, nightMode, nightBlockTransition, soundEnabled, showTime, showDate, showTemp, showHum, showBat |
-| **HANumber** | 2 | nightBrightness (1-50), soundVolume (0-30) |
+| **HANumber** | 6 | nightBrightness, soundVolume, timePerApp, scrollSpeed, timeDuration, dateDuration |
 | **HASensor** | 16-17 | curApp, deviceId, temp, hum, lux, signal, version, ram, uptime, ipAddr, battery*, outdoorTemp, outdoorHum, pressure, aqi, weatherCond, uvIndex |
 | **HABinarySensor** | 3 | btnleft, btnmid, btnright |
 
@@ -61,7 +61,13 @@
 - `showBatSwitch` (HASwitch) — Mostrar/ocultar batería
 
 ### Background Effect ✅
-- `bgEffect` (HASelect) — Selector de efecto de fondo (21 opciones: None, Fade, MovingLine, BrickBreaker, PingPong, Radar, Checkerboard, Fireworks, PlasmaCloud, Ripple, Snake, Pacifica, TheaterChase, Plasma, Matrix, SwirlIn, SwirlOut, LookingEyes, TwinklingStars, ColorWaves, Fire)
+- `bgEffect` (HASelect) — Selector de efecto de fondo (21 opciones)
+
+### Display Timing Controls ✅
+- `timePerAppNum` (HANumber 1-60s) — Duración de cada app en rotación
+- `scrollSpeedNum` (HANumber 20-200ms) — Velocidad de scroll del texto
+- `timeDurationNum` (HANumber 1-300s) — Duración de la app de hora
+- `dateDurationNum` (HANumber 1-60s) — Duración de la app de fecha
 
 ---
 
@@ -73,25 +79,10 @@
 - ~~Sound/Audio Controls~~ ✅
 - ~~Native App Visibility Switches~~ ✅
 
-### ~~Prioridad Media~~ (Parcial)
+### ~~Prioridad Media~~ (Completado)
 
 - ~~Background Effect Select~~ ✅
-
----
-
-#### 5. Display Timing Controls
-**Valor:** Ajustar tiempos de display desde HA.
-
-| Entidad | Tipo | Descripción |
-|---------|------|-------------|
-| `timePerApp` | HANumber | Duración por app (1-60s) |
-| `scrollSpeed` | HANumber | Velocidad de scroll (50-200ms) |
-| `timeDuration` | HANumber | Duración de app de hora |
-| `dateDuration` | HANumber | Duración de app de fecha |
-
-**Casos de uso:**
-- Scroll más lento para personas mayores
-- Apps más rápidas cuando hay mucho que mostrar
+- ~~Display Timing Controls~~ ✅
 
 ---
 

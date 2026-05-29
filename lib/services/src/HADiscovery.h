@@ -114,6 +114,13 @@ const HAEntityDescriptor *getAppVisibilityDescriptors(size_t &count);
 /// Background effect select descriptor.
 HASelectDescriptor getBackgroundEffectDescriptor();
 
+// --- Display timing ---
+
+/// Display timing number entities: timePerApp, scrollSpeed, timeDuration, dateDuration.
+/// @param[out] count Set to number of descriptors (always 4).
+/// @return Pointer to static array of number descriptors.
+const HAEntityDescriptor *getDisplayTimingDescriptors(size_t &count);
+
 // --- Utilities ---
 
 /// Build an entity ID by formatting idTemplate with macStr.

@@ -113,6 +113,12 @@ void MQTTManager_::sendStats()
 
         // Background effect sync
         bgEffect->setState(displayConfig.backgroundEffect, false);
+
+        // Display timing sync
+        timePerAppNum->setState(static_cast<float>(appConfig.timePerApp));
+        scrollSpeedNum->setState(static_cast<float>(appConfig.scrollSpeed));
+        timeDurationNum->setState(static_cast<float>(appConfig.timeDuration));
+        dateDurationNum->setState(static_cast<float>(appConfig.dateDuration));
     }
     publish(StatsTopic, dmControl_->getStats().c_str());
 }

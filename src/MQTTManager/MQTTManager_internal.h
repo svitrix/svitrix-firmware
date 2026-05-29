@@ -89,6 +89,12 @@ extern HASwitch *showTempSwitch;
 extern HASwitch *showHumSwitch;
 extern HASwitch *showBatSwitch;
 
+// Display timing numbers
+extern HANumber *timePerAppNum;
+extern HANumber *scrollSpeedNum;
+extern HANumber *timeDurationNum;
+extern HANumber *dateDurationNum;
+
 // ── HA entity ID buffers (defined in MQTTManager.cpp) ───────────────
 // Each buffer holds a unique HA entity ID built from MAC + suffix.
 
@@ -104,6 +110,7 @@ extern char outTempID[40], outHumID[40], pressID[40], aqiID[40], weatherCondID[4
 extern char nightModeID[40], nightBriID[40], nightColID[40], nightBlockID[40];
 extern char showTimeID[40], showDateID[40], showTempID[40], showHumID[40], showBatID[40];
 extern char bgEffectID[40];
+extern char timePerAppID[40], scrollSpeedID[40], timeDurID[40], dateDurID[40];
 
 // ── Other shared state (defined in MQTTManager.cpp) ─────────────────
 
@@ -149,6 +156,8 @@ void onSoundSwitchCommand(bool state, HASwitch *sender);
 void onSoundVolumeCommand(HANumeric number, HANumber *sender);
 /// HA app visibility switch handler.
 void onAppVisibilitySwitchCommand(bool state, HASwitch *sender);
+/// HA display timing number handler.
+void onDisplayTimingCommand(HANumeric number, HANumber *sender);
 
 // ── Display interfaces (defined in MQTTManager.cpp, set via setDisplay) ──
 

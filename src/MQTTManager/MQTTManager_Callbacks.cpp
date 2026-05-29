@@ -298,3 +298,34 @@ void onAppVisibilitySwitchCommand(bool state, HASwitch *sender)
     saveSettings();
     sender->setState(state);
 }
+
+// ── Display timing callbacks ────────────────────────────────────────
+
+/// Handle display timing number inputs from HA.
+/// Routes to the appropriate appConfig field based on which number was changed.
+/// @param number Numeric value from HA (may be unset on reset).
+/// @param sender The HANumber entity that changed.
+void onDisplayTimingCommand(HANumeric number, HANumber *sender)
+{
+    if (!number.isSet())
+        return;
+
+    if (sender == timePerAppNum)
+    {
+        appConfig.timePerApp = number.toUInt16();
+    }
+    else if (sender == scrollSpeedNum)
+    {
+        appConfig.scrollSpeed = static_cast<uint8_t>(number.toUInt8());
+    }
+    else if (sender == timeDurationNum)
+    {
+        appConfig.timeDuration = number.toUInt16();
+    }
+    else if (sender == dateDurationNum)
+    {
+        appConfig.dateDuration = number.toUInt16();
+    }
+    saveSettings();
+    sender->setState(number);
+}

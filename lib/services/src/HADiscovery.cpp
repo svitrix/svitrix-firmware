@@ -112,6 +112,28 @@ static const char BGEFFECT_ICON[] = "mdi:auto-fix";
 static const char BGEFFECT_NAME[] = "Background effect";
 static const char BGEFFECT_OPTIONS[] = "None;Fade;MovingLine;BrickBreaker;PingPong;Radar;Checkerboard;Fireworks;PlasmaCloud;Ripple;Snake;Pacifica;TheaterChase;Plasma;Matrix;SwirlIn;SwirlOut;LookingEyes;TwinklingStars;ColorWaves;Fire";
 
+// ── Display timing ─────────────────────────────────────────────────
+
+static const char TIMEPERAPP_ID[] = "%s_time_per_app";
+static const char TIMEPERAPP_ICON[] = "mdi:timer-sand";
+static const char TIMEPERAPP_NAME[] = "Time per app";
+static const char TIMEPERAPP_UNIT[] = "s";
+
+static const char SCROLLSPEED_ID[] = "%s_scroll_speed";
+static const char SCROLLSPEED_ICON[] = "mdi:speedometer";
+static const char SCROLLSPEED_NAME[] = "Scroll speed";
+static const char SCROLLSPEED_UNIT[] = "ms";
+
+static const char TIMEDUR_ID[] = "%s_time_duration";
+static const char TIMEDUR_ICON[] = "mdi:clock-outline";
+static const char TIMEDUR_NAME[] = "Clock duration";
+static const char TIMEDUR_UNIT[] = "s";
+
+static const char DATEDUR_ID[] = "%s_date_duration";
+static const char DATEDUR_ICON[] = "mdi:calendar";
+static const char DATEDUR_NAME[] = "Date duration";
+static const char DATEDUR_UNIT[] = "s";
+
 // ── Switch ──────────────────────────────────────────────────────────
 
 static const char TRANS_ID[] = "%s_tra";
@@ -315,6 +337,14 @@ static const HAEntityDescriptor appVisibilityDescs[] = {
     {SHOW_BAT_ID,  SHOW_BAT_NAME,  SHOW_BAT_ICON,  nullptr, nullptr},
 };
 
+// Display timing array (4 numbers)
+static const HAEntityDescriptor displayTimingDescs[] = {
+    {TIMEPERAPP_ID,  TIMEPERAPP_NAME,  TIMEPERAPP_ICON,  nullptr, TIMEPERAPP_UNIT},
+    {SCROLLSPEED_ID, SCROLLSPEED_NAME, SCROLLSPEED_ICON, nullptr, SCROLLSPEED_UNIT},
+    {TIMEDUR_ID,     TIMEDUR_NAME,     TIMEDUR_ICON,     nullptr, TIMEDUR_UNIT},
+    {DATEDUR_ID,     DATEDUR_NAME,     DATEDUR_ICON,     nullptr, DATEDUR_UNIT},
+};
+
 // ── Function implementations ────────────────────────────────────────
 
 HAEntityDescriptor getMatrixLightDescriptor()
@@ -386,6 +416,12 @@ HASelectDescriptor getBackgroundEffectDescriptor()
     return {{BGEFFECT_ID, BGEFFECT_NAME, BGEFFECT_ICON, nullptr, nullptr}, BGEFFECT_OPTIONS};
 }
 
+const HAEntityDescriptor *getDisplayTimingDescriptors(size_t &count)
+{
+    count = 4;
+    return displayTimingDescs;
+}
+
 void buildEntityId(const char *idTemplate, const char *macStr,
                    char *outBuf, size_t bufSize)
 {
@@ -410,6 +446,6 @@ const char *getDeviceModel()
 size_t getTotalEntityCount(bool includeBattery)
 {
     // 1 matrix + 3 indicators + 3 selects + 6 buttons + 1 switch
-    // + sensors (10 or 11) + 3 binary + 6 weather + 4 night + 2 audio + 5 app visibility
-    return 1 + 3 + 3 + 6 + 1 + (includeBattery ? 11 : 10) + 3 + 6 + 4 + 2 + 5;
+    // + sensors (10 or 11) + 3 binary + 6 weather + 4 night + 2 audio + 5 app vis + 4 timing
+    return 1 + 3 + 3 + 6 + 1 + (includeBattery ? 11 : 10) + 3 + 6 + 4 + 2 + 5 + 4;
 }

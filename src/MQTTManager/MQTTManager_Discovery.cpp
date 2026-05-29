@@ -111,6 +111,16 @@ static void destroyHAEntities()
     delete showBatSwitch;
     showBatSwitch = nullptr;
 
+    // Display timing
+    delete timePerAppNum;
+    timePerAppNum = nullptr;
+    delete scrollSpeedNum;
+    scrollSpeedNum = nullptr;
+    delete timeDurationNum;
+    timeDurationNum = nullptr;
+    delete dateDurationNum;
+    dateDurationNum = nullptr;
+
     mqtt.resetDevicesCount();
 }
 
@@ -503,6 +513,58 @@ void MQTTManager_::setup()
         showBatSwitch->setName(appVisDescs[4].name);
         showBatSwitch->onCommand(onAppVisibilitySwitchCommand);
         showBatSwitch->setState(appConfig.showBat, true);
+
+        // Display timing numbers
+        size_t timingCount;
+        const auto *timingDescs = getDisplayTimingDescriptors(timingCount);
+
+        // Time per app (1-60 seconds)
+        buildEntityId(timingDescs[0].idTemplate, macStr, timePerAppID, sizeof(timePerAppID));
+        timePerAppNum = new HANumber(timePerAppID);
+        timePerAppNum->setIcon(timingDescs[0].icon);
+        timePerAppNum->setName(timingDescs[0].name);
+        timePerAppNum->setUnitOfMeasurement(timingDescs[0].unit);
+        timePerAppNum->setMin(1);
+        timePerAppNum->setMax(60);
+        timePerAppNum->setStep(1);
+        timePerAppNum->onCommand(onDisplayTimingCommand);
+        timePerAppNum->setState(static_cast<float>(appConfig.timePerApp));
+
+        // Scroll speed (20-200 ms)
+        buildEntityId(timingDescs[1].idTemplate, macStr, scrollSpeedID, sizeof(scrollSpeedID));
+        scrollSpeedNum = new HANumber(scrollSpeedID);
+        scrollSpeedNum->setIcon(timingDescs[1].icon);
+        scrollSpeedNum->setName(timingDescs[1].name);
+        scrollSpeedNum->setUnitOfMeasurement(timingDescs[1].unit);
+        scrollSpeedNum->setMin(20);
+        scrollSpeedNum->setMax(200);
+        scrollSpeedNum->setStep(5);
+        scrollSpeedNum->onCommand(onDisplayTimingCommand);
+        scrollSpeedNum->setState(static_cast<float>(appConfig.scrollSpeed));
+
+        // Clock duration (1-300 seconds)
+        buildEntityId(timingDescs[2].idTemplate, macStr, timeDurID, sizeof(timeDurID));
+        timeDurationNum = new HANumber(timeDurID);
+        timeDurationNum->setIcon(timingDescs[2].icon);
+        timeDurationNum->setName(timingDescs[2].name);
+        timeDurationNum->setUnitOfMeasurement(timingDescs[2].unit);
+        timeDurationNum->setMin(1);
+        timeDurationNum->setMax(300);
+        timeDurationNum->setStep(1);
+        timeDurationNum->onCommand(onDisplayTimingCommand);
+        timeDurationNum->setState(static_cast<float>(appConfig.timeDuration));
+
+        // Date duration (1-60 seconds)
+        buildEntityId(timingDescs[3].idTemplate, macStr, dateDurID, sizeof(dateDurID));
+        dateDurationNum = new HANumber(dateDurID);
+        dateDurationNum->setIcon(timingDescs[3].icon);
+        dateDurationNum->setName(timingDescs[3].name);
+        dateDurationNum->setUnitOfMeasurement(timingDescs[3].unit);
+        dateDurationNum->setMin(1);
+        dateDurationNum->setMax(60);
+        dateDurationNum->setStep(1);
+        dateDurationNum->onCommand(onDisplayTimingCommand);
+        dateDurationNum->setState(static_cast<float>(appConfig.dateDuration));
     }
     else
     {
