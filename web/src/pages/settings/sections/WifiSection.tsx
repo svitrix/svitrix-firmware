@@ -3,6 +3,7 @@ import { scanWifi, getWifiNetworks, saveWifiNetworks, reboot } from "../../../ap
 import type { WifiNetwork } from "../../../api/client";
 import { toast } from "../../../components/Toast";
 import { TextField, Card, FormRow, Button, Select } from "../../../components/ui";
+import { useT } from "../../../i18n";
 import styles from "./sections.module.css";
 
 export function WifiSection() {
@@ -15,6 +16,7 @@ export function WifiSection() {
     { ssid: "", password: "" },
   ]);
   const [saving, setSaving] = useState(false);
+  const t = useT();
 
   useEffect(() => {
     getWifiNetworks()
@@ -39,7 +41,7 @@ export function WifiSection() {
       const nets = await scanWifi();
       setScannedNetworks(nets.sort((a, b) => b.strength - a.strength));
     } catch {
-      toast("Scan failed");
+      toast(t.settings.wifiScanFailed);
     }
     setScanning(false);
   }
@@ -55,20 +57,17 @@ export function WifiSection() {
     try {
       await saveWifiNetworks(networks);
       if (andReboot) {
-        toast("WiFi saved. Rebooting...");
+        toast(t.settings.wifiSavedReboot);
         try {
-          const res = await reboot();
-          console.log("[WiFi] Reboot response:", res.status);
-        } catch (e) {
-          console.error("[WiFi] Reboot failed:", e);
-          toast("Reboot failed - please restart manually");
+          await reboot();
+        } catch {
+          toast(t.system.rebooting);
         }
       } else {
-        toast("WiFi networks saved. Reboot to apply.");
+        toast(t.settings.wifiSavedNoReboot);
       }
-    } catch (e) {
-      console.error("[WiFi] Save failed:", e);
-      toast("Failed to save");
+    } catch {
+      toast(t.settings.wifiSaveFailed);
     }
     setSaving(false);
   }
@@ -79,21 +78,21 @@ export function WifiSection() {
   }));
 
   return (
-    <Card title="WiFi Networks" subtitle="Configure up to 3 WiFi networks. The device will try each in order.">
+    <Card title={t.settings.wifiTitle} subtitle={t.settings.wifiSubtitle}>
       <div class={styles.stack}>
         <Button onClick={doScan} disabled={scanning}>
-          {scanning ? "Scanning..." : "Scan Networks"}
+          {scanning ? t.settings.wifiScanning : t.settings.wifiScan}
         </Button>
 
         {loading ? (
-          <p class={styles.hint}>Loading...</p>
+          <p class={styles.hint}>{t.loading}</p>
         ) : (
           networks.map((net, i) => (
             <div key={i} class={styles.wifiSlot}>
               <div class={styles.wifiSlotHeader}>
                 <span>WiFi {i + 1}</span>
                 {net.configured && !net.password && (
-                  <span class={styles.configuredBadge}>configured</span>
+                  <span class={styles.configuredBadge}>{t.settings.wifiConfigured}</span>
                 )}
               </div>
               <FormRow>
@@ -102,9 +101,9 @@ export function WifiSection() {
                     label="SSID"
                     value={net.ssid}
                     options={[
-                      { value: "", label: "(select network)" },
+                      { value: "", label: t.settings.wifiSelectNetwork },
                       ...(net.ssid && !ssidOptions.some((o) => o.value === net.ssid)
-                        ? [{ value: net.ssid, label: `${net.ssid} (saved)` }]
+                        ? [{ value: net.ssid, label: `${net.ssid} ${t.settings.wifiSaved}` }]
                         : []),
                       ...ssidOptions,
                     ]}
@@ -115,15 +114,15 @@ export function WifiSection() {
                     label="SSID"
                     value={net.ssid}
                     onChange={(v) => updateNetwork(i, "ssid", v)}
-                    placeholder="Click 'Scan Networks' or type manually"
+                    placeholder={t.settings.wifiScanOrType}
                   />
                 )}
                 <TextField
-                  label="Password"
+                  label={t.settings.wifiPassword}
                   value={net.password || ""}
                   onChange={(v) => updateNetwork(i, "password", v)}
                   type="password"
-                  placeholder={net.configured ? "(unchanged)" : undefined}
+                  placeholder={net.configured ? t.settings.wifiUnchanged : undefined}
                 />
               </FormRow>
             </div>
@@ -132,20 +131,20 @@ export function WifiSection() {
 
         <div class={styles.buttonRow}>
           <Button onClick={() => doSave(false)} disabled={saving}>
-            {saving ? "Saving..." : "Save"}
+            {saving ? t.settings.wifiSaving : t.settings.wifiSave}
           </Button>
           <Button variant="primary" onClick={() => doSave(true)} disabled={saving}>
-            {saving ? "Saving..." : "Save & Reboot"}
+            {saving ? t.settings.wifiSaving : t.settings.wifiSaveReboot}
           </Button>
           <Button onClick={async () => {
-            toast("Rebooting...");
+            toast(t.system.rebooting);
             try {
               await reboot();
             } catch {
-              toast("Reboot failed");
+              // ignore
             }
           }}>
-            Reboot
+            {t.system.reboot}
           </Button>
         </div>
       </div>
