@@ -10,6 +10,7 @@
 #include "IUpdater.h"
 #include "timer.h"
 #include <icons.h>
+#include <WiFi.h>
 
 enum MenuState
 {
@@ -24,6 +25,8 @@ enum MenuState
     WeekdayMenu,
     TempMenu,
     Appmenu,
+    NightMenu,
+    InfoMenu,
     SoundMenu,
     VolumeMenu,
     UpdateMenu,
@@ -41,6 +44,8 @@ const char *menuItems[] PROGMEM = {
     "WEEKDAY",
     "TEMP",
     "APPS",
+    "NIGHT",
+    "INFO",
     "SOUND",
     "VOLUME",
     "UPDATE"};
@@ -76,7 +81,10 @@ int8_t dateFormatIndex = 0;
 uint8_t dateFormatCount = 9;
 
 int8_t appsIndex = 0;
-static const uint8_t appsCount = 5;
+static const uint8_t appsCount = 9;
+
+int8_t infoIndex = 0;
+static const uint8_t infoCount = 5; // IP, WIFI, VER, HOST, MEM
 
 MenuState currentState = MainMenu;
 
@@ -222,6 +230,40 @@ String MenuManager_::menutext()
         case 4:
             renderer_->drawBMP(0, 0, icon_1486, 8, 8);
             return appConfig.showBat ? "ON" : "OFF";
+        case 5:
+            renderer_->drawBMP(0, 0, icon_sunny, 8, 8);
+            return weatherConfig.showOutdoorTemp ? "ON" : "OFF";
+        case 6:
+            renderer_->drawBMP(0, 0, icon_53628, 8, 8);
+            return weatherConfig.showOutdoorHumidity ? "ON" : "OFF";
+        case 7:
+            renderer_->drawBMP(0, 0, icon_66892, 8, 8);
+            return weatherConfig.showPressure ? "ON" : "OFF";
+        case 8:
+            renderer_->drawBMP(0, 0, icon_6622, 8, 8);
+            return weatherConfig.showAirQuality ? "ON" : "OFF";
+        default:
+            break;
+        }
+        break;
+    case NightMenu:
+        return appConfig.nightMode ? "ON" : "OFF";
+    case InfoMenu:
+        renderer_->drawMenuIndicator(infoIndex, infoCount, 0x00FFFF);
+        switch (infoIndex)
+        {
+        case 0: // IP
+            return WiFi.localIP().toString();
+        case 1: // WiFi signal
+            snprintf(buf, sizeof(buf), "%ddBm", WiFi.RSSI());
+            return buf;
+        case 2: // Version
+            return VERSION;
+        case 3: // Hostname
+            return systemConfig.hostname;
+        case 4: // Free RAM
+            snprintf(buf, sizeof(buf), "%dK", ESP.getFreeHeap() / 1024);
+            return buf;
         default:
             break;
         }
@@ -272,6 +314,9 @@ void MenuManager_::rightButton()
         break;
     case Appmenu:
         appsIndex = (appsIndex + 1) % appsCount;
+        break;
+    case InfoMenu:
+        infoIndex = (infoIndex + 1) % infoCount;
         break;
     case WeekdayMenu:
         timeConfig.startOnMonday = !timeConfig.startOnMonday;
@@ -332,6 +377,9 @@ void MenuManager_::leftButton()
         break;
     case Appmenu:
         appsIndex = (appsIndex == 0) ? appsCount - 1 : appsIndex - 1;
+        break;
+    case InfoMenu:
+        infoIndex = (infoIndex == 0) ? infoCount - 1 : infoIndex - 1;
         break;
     case WeekdayMenu:
         timeConfig.startOnMonday = !timeConfig.startOnMonday;
@@ -410,9 +458,24 @@ void MenuManager_::selectButton()
         case 4:
             appConfig.showBat = !appConfig.showBat;
             break;
+        case 5:
+            weatherConfig.showOutdoorTemp = !weatherConfig.showOutdoorTemp;
+            break;
+        case 6:
+            weatherConfig.showOutdoorHumidity = !weatherConfig.showOutdoorHumidity;
+            break;
+        case 7:
+            weatherConfig.showPressure = !weatherConfig.showPressure;
+            break;
+        case 8:
+            weatherConfig.showAirQuality = !weatherConfig.showAirQuality;
+            break;
         default:
             break;
         }
+        break;
+    case NightMenu:
+        appConfig.nightMode = !appConfig.nightMode;
         break;
     default:
         break;
@@ -456,6 +519,7 @@ void MenuManager_::selectButtonLong()
         case WeekdayMenu:
         case SoundMenu:
         case TempMenu:
+        case NightMenu:
             saveSettings();
             break;
         case Appmenu:
