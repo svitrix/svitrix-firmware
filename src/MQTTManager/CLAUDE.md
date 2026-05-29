@@ -1,6 +1,6 @@
 # MQTTManager — AI Reference
 
-Central MQTT communication and Home Assistant integration singleton. Manages broker connection, message dispatch, HA auto-discovery (39 entities), and state synchronization.
+Central MQTT communication and Home Assistant integration singleton. Manages broker connection, message dispatch, HA auto-discovery (44 entities), and state synchronization.
 
 ## File Map
 
@@ -26,15 +26,15 @@ void setDisplay(IDisplayControl*, IDisplayNavigation*, IDisplayNotifier*);
 void setServices(ISound*, IPower*, IUpdater*, IPeripheryProvider*);
 ```
 
-## HA Entities (39 total)
+## HA Entities (44 total)
 
 | Type | Count | Entities |
 |------|-------|----------|
 | **HALight** | 5 | Matrix (brightness+RGB), Indicator 1/2/3 (RGB), nightColor (RGB) |
 | **HASelect** | 2 | BriMode (Manual/Auto), transEffect (14 transitions) |
 | **HAButton** | 6 | dismiss, nextApp, prevApp, doUpdate, reboot, playSound |
-| **HASwitch** | 4 | transition, nightMode, nightBlockTransition, soundEnabled |
-| **HANumber** | 2 | nightBrightness (1-50), soundVolume (0-100) |
+| **HASwitch** | 9 | transition, nightMode, nightBlockTransition, soundEnabled, showTime, showDate, showTemp, showHum, showBat |
+| **HANumber** | 2 | nightBrightness (1-50), soundVolume (0-30) |
 | **HASensor** | 16-17 | curApp, myOwnID, temp, hum, lux, signal, version, ram, uptime, ipAddr, battery*, outdoorTemp, outdoorHum, pressure, aqi, weatherCond, uvIndex |
 | **HABinarySensor** | 3 | btnleft, btnmid, btnright |
 
@@ -83,7 +83,7 @@ Routing via `MessageRouter::routeTopic()` → `MqttCommandType` enum → switch 
 - `getValueForTopic(topic)` → cached value or "N/A"
 - Used by custom apps: `{{topic}}` placeholders resolved via PlaceholderUtils
 
-## 12 Callback Handlers (MQTTManager_Callbacks.cpp)
+## 13 Callback Handlers (MQTTManager_Callbacks.cpp)
 
 | Callback | Entities | Action |
 |----------|----------|--------|
@@ -99,6 +99,7 @@ Routing via `MessageRouter::routeTopic()` → `MqttCommandType` enum → switch 
 | `onNightColorCommand` | nightColor | Set night color + mark policy dirty + save |
 | `onSoundSwitchCommand` | soundEnabled | Toggle sound on/off + save |
 | `onSoundVolumeCommand` | soundVolume | Set volume + apply to periphery + save |
+| `onAppVisibilitySwitchCommand` | showTime/Date/Temp/Hum/Bat | Toggle app visibility + reload native apps + save |
 
 All callbacks call `saveSettings()` after modifying config structs.
 

@@ -65,6 +65,13 @@ HANumber *nightBrightnessNum = nullptr;
 HALight *nightColorLight = nullptr;
 HASwitch *nightBlockSwitch = nullptr;
 
+// App visibility switches
+HASwitch *showTimeSwitch = nullptr;
+HASwitch *showDateSwitch = nullptr;
+HASwitch *showTempSwitch = nullptr;
+HASwitch *showHumSwitch = nullptr;
+HASwitch *showBatSwitch = nullptr;
+
 // ── HA entity ID buffers ────────────────────────────────────────────
 // Each holds a unique HA entity ID built from MAC suffix (e.g. "abc123_mat").
 
@@ -80,6 +87,7 @@ char transID[40], doUpdateID[40], batID[40];
 char myID[40], sSpeed[40], effectID[40], ipAddrID[40];
 char outTempID[40], outHumID[40], pressID[40], aqiID[40], weatherCondID[40], uvID[40];
 char nightModeID[40], nightBriID[40], nightColID[40], nightBlockID[40];
+char showTimeID[40], showDateID[40], showTempID[40], showHumID[40], showBatID[40];
 
 unsigned long previousMillis_Stats;    ///< Timestamp of last stats publish (millis)
 std::map<String, String> mqttValues;   ///< Cached values for subscribed external topics
@@ -193,6 +201,13 @@ void onMqttConnected()
         // Audio initial state
         soundEnabled->setState(audioConfig.soundActive, true);
         soundVolume->setState(audioConfig.soundVolume);
+
+        // App visibility initial state
+        showTimeSwitch->setState(appConfig.showTime, true);
+        showDateSwitch->setState(appConfig.showDate, true);
+        showTempSwitch->setState(appConfig.showTemp, true);
+        showHumSwitch->setState(appConfig.showHum, true);
+        showBatSwitch->setState(appConfig.showBat, true);
     }
 
     MQTTManager.publish("stats/effects", dmNav_->getEffectNames().c_str());

@@ -103,6 +103,13 @@ void MQTTManager_::sendStats()
         // Audio state sync
         soundEnabled->setState(audioConfig.soundActive, false);
         soundVolume->setState(audioConfig.soundVolume);
+
+        // App visibility state sync
+        showTimeSwitch->setState(appConfig.showTime, false);
+        showDateSwitch->setState(appConfig.showDate, false);
+        showTempSwitch->setState(appConfig.showTemp, false);
+        showHumSwitch->setState(appConfig.showHum, false);
+        showBatSwitch->setState(appConfig.showBat, false);
     }
     publish(StatsTopic, dmControl_->getStats().c_str());
 }

@@ -97,6 +97,18 @@ static void destroyHAEntities()
     delete nightBlockSwitch;
     nightBlockSwitch = nullptr;
 
+    // App visibility
+    delete showTimeSwitch;
+    showTimeSwitch = nullptr;
+    delete showDateSwitch;
+    showDateSwitch = nullptr;
+    delete showTempSwitch;
+    showTempSwitch = nullptr;
+    delete showHumSwitch;
+    showHumSwitch = nullptr;
+    delete showBatSwitch;
+    showBatSwitch = nullptr;
+
     mqtt.resetDevicesCount();
 }
 
@@ -440,6 +452,45 @@ void MQTTManager_::setup()
         nightBlockSwitch->setName(nightDescs[3].name);
         nightBlockSwitch->onCommand(onNightSwitchCommand);
         nightBlockSwitch->setState(appConfig.nightBlockTransition, true);
+
+        // App visibility switches
+        size_t appVisCount;
+        const auto *appVisDescs = getAppVisibilityDescriptors(appVisCount);
+
+        buildEntityId(appVisDescs[0].idTemplate, macStr, showTimeID, sizeof(showTimeID));
+        showTimeSwitch = new HASwitch(showTimeID);
+        showTimeSwitch->setIcon(appVisDescs[0].icon);
+        showTimeSwitch->setName(appVisDescs[0].name);
+        showTimeSwitch->onCommand(onAppVisibilitySwitchCommand);
+        showTimeSwitch->setState(appConfig.showTime, true);
+
+        buildEntityId(appVisDescs[1].idTemplate, macStr, showDateID, sizeof(showDateID));
+        showDateSwitch = new HASwitch(showDateID);
+        showDateSwitch->setIcon(appVisDescs[1].icon);
+        showDateSwitch->setName(appVisDescs[1].name);
+        showDateSwitch->onCommand(onAppVisibilitySwitchCommand);
+        showDateSwitch->setState(appConfig.showDate, true);
+
+        buildEntityId(appVisDescs[2].idTemplate, macStr, showTempID, sizeof(showTempID));
+        showTempSwitch = new HASwitch(showTempID);
+        showTempSwitch->setIcon(appVisDescs[2].icon);
+        showTempSwitch->setName(appVisDescs[2].name);
+        showTempSwitch->onCommand(onAppVisibilitySwitchCommand);
+        showTempSwitch->setState(appConfig.showTemp, true);
+
+        buildEntityId(appVisDescs[3].idTemplate, macStr, showHumID, sizeof(showHumID));
+        showHumSwitch = new HASwitch(showHumID);
+        showHumSwitch->setIcon(appVisDescs[3].icon);
+        showHumSwitch->setName(appVisDescs[3].name);
+        showHumSwitch->onCommand(onAppVisibilitySwitchCommand);
+        showHumSwitch->setState(appConfig.showHum, true);
+
+        buildEntityId(appVisDescs[4].idTemplate, macStr, showBatID, sizeof(showBatID));
+        showBatSwitch = new HASwitch(showBatID);
+        showBatSwitch->setIcon(appVisDescs[4].icon);
+        showBatSwitch->setName(appVisDescs[4].name);
+        showBatSwitch->onCommand(onAppVisibilitySwitchCommand);
+        showBatSwitch->setState(appConfig.showBat, true);
     }
     else
     {

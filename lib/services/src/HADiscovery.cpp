@@ -83,6 +83,28 @@ static const char SOUND_VOL_ID[] = "%s_sound_volume";
 static const char SOUND_VOL_ICON[] = "mdi:volume-medium";
 static const char SOUND_VOL_NAME[] = "Sound volume";
 
+// ── App visibility ─────────────────────────────────────────────────
+
+static const char SHOW_TIME_ID[] = "%s_show_time";
+static const char SHOW_TIME_ICON[] = "mdi:clock-outline";
+static const char SHOW_TIME_NAME[] = "Show time app";
+
+static const char SHOW_DATE_ID[] = "%s_show_date";
+static const char SHOW_DATE_ICON[] = "mdi:calendar";
+static const char SHOW_DATE_NAME[] = "Show date app";
+
+static const char SHOW_TEMP_ID[] = "%s_show_temp";
+static const char SHOW_TEMP_ICON[] = "mdi:thermometer";
+static const char SHOW_TEMP_NAME[] = "Show temperature app";
+
+static const char SHOW_HUM_ID[] = "%s_show_hum";
+static const char SHOW_HUM_ICON[] = "mdi:water-percent";
+static const char SHOW_HUM_NAME[] = "Show humidity app";
+
+static const char SHOW_BAT_ID[] = "%s_show_bat";
+static const char SHOW_BAT_ICON[] = "mdi:battery";
+static const char SHOW_BAT_NAME[] = "Show battery app";
+
 // ── Switch ──────────────────────────────────────────────────────────
 
 static const char TRANS_ID[] = "%s_tra";
@@ -277,6 +299,15 @@ static const HAEntityDescriptor nightModeDescs[] = {
     {NBLOCK_ID, NBLOCK_NAME, NBLOCK_ICON, nullptr, nullptr}, // 3 - switch
 };
 
+// App visibility array (5 switches)
+static const HAEntityDescriptor appVisibilityDescs[] = {
+    {SHOW_TIME_ID, SHOW_TIME_NAME, SHOW_TIME_ICON, nullptr, nullptr},
+    {SHOW_DATE_ID, SHOW_DATE_NAME, SHOW_DATE_ICON, nullptr, nullptr},
+    {SHOW_TEMP_ID, SHOW_TEMP_NAME, SHOW_TEMP_ICON, nullptr, nullptr},
+    {SHOW_HUM_ID,  SHOW_HUM_NAME,  SHOW_HUM_ICON,  nullptr, nullptr},
+    {SHOW_BAT_ID,  SHOW_BAT_NAME,  SHOW_BAT_ICON,  nullptr, nullptr},
+};
+
 // ── Function implementations ────────────────────────────────────────
 
 HAEntityDescriptor getMatrixLightDescriptor()
@@ -337,6 +368,12 @@ const HAEntityDescriptor *getNightModeDescriptors(size_t &count)
     return nightModeDescs;
 }
 
+const HAEntityDescriptor *getAppVisibilityDescriptors(size_t &count)
+{
+    count = 5;
+    return appVisibilityDescs;
+}
+
 void buildEntityId(const char *idTemplate, const char *macStr,
                    char *outBuf, size_t bufSize)
 {
@@ -361,6 +398,6 @@ const char *getDeviceModel()
 size_t getTotalEntityCount(bool includeBattery)
 {
     // 1 matrix + 3 indicators + 2 selects + 6 buttons + 1 switch
-    // + sensors (10 or 11) + 3 binary sensors + 6 weather sensors + 4 night mode + 2 audio
-    return 1 + 3 + 2 + 6 + 1 + (includeBattery ? 11 : 10) + 3 + 6 + 4 + 2;
+    // + sensors (10 or 11) + 3 binary + 6 weather + 4 night + 2 audio + 5 app visibility
+    return 1 + 3 + 2 + 6 + 1 + (includeBattery ? 11 : 10) + 3 + 6 + 4 + 2 + 5;
 }

@@ -81,6 +81,13 @@ extern HANumber *nightBrightnessNum;
 extern HALight *nightColorLight;
 extern HASwitch *nightBlockSwitch;
 
+// App visibility switches
+extern HASwitch *showTimeSwitch;
+extern HASwitch *showDateSwitch;
+extern HASwitch *showTempSwitch;
+extern HASwitch *showHumSwitch;
+extern HASwitch *showBatSwitch;
+
 // ── HA entity ID buffers (defined in MQTTManager.cpp) ───────────────
 // Each buffer holds a unique HA entity ID built from MAC + suffix.
 
@@ -94,6 +101,7 @@ extern char transID[40], doUpdateID[40], batID[40];
 extern char myID[40], sSpeed[40], effectID[40], ipAddrID[40];
 extern char outTempID[40], outHumID[40], pressID[40], aqiID[40], weatherCondID[40], uvID[40];
 extern char nightModeID[40], nightBriID[40], nightColID[40], nightBlockID[40];
+extern char showTimeID[40], showDateID[40], showTempID[40], showHumID[40], showBatID[40];
 
 // ── Other shared state (defined in MQTTManager.cpp) ─────────────────
 
@@ -137,6 +145,8 @@ void onNightColorCommand(HALight::RGBColor color, HALight *sender);
 void onSoundSwitchCommand(bool state, HASwitch *sender);
 /// HA sound volume number handler.
 void onSoundVolumeCommand(HANumeric number, HANumber *sender);
+/// HA app visibility switch handler.
+void onAppVisibilitySwitchCommand(bool state, HASwitch *sender);
 
 // ── Display interfaces (defined in MQTTManager.cpp, set via setDisplay) ──
 

@@ -102,6 +102,13 @@ const HAEntityDescriptor *getNightModeDescriptors(size_t &count);
 /// @return Pointer to static array: [0]=switch, [1]=number.
 const HAEntityDescriptor *getAudioDescriptors(size_t &count);
 
+// --- App visibility ---
+
+/// Native app visibility switches: showTime, showDate, showTemp, showHum, showBat.
+/// @param[out] count Set to number of descriptors (always 5).
+/// @return Pointer to static array of switch descriptors.
+const HAEntityDescriptor *getAppVisibilityDescriptors(size_t &count);
+
 // --- Utilities ---
 
 /// Build an entity ID by formatting idTemplate with macStr.

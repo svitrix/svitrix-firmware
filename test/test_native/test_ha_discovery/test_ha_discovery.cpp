@@ -228,6 +228,37 @@ void test_audio_icons(void)
     TEST_ASSERT_EQUAL_STRING("mdi:volume-medium", descs[1].icon);
 }
 
+// ── App visibility ─────────────────────────────────────────────────
+
+void test_app_visibility_count(void)
+{
+    size_t count;
+    getAppVisibilityDescriptors(count);
+    TEST_ASSERT_EQUAL(5, count);
+}
+
+void test_app_visibility_names(void)
+{
+    size_t count;
+    auto *descs = getAppVisibilityDescriptors(count);
+    TEST_ASSERT_EQUAL_STRING("Show time app", descs[0].name);
+    TEST_ASSERT_EQUAL_STRING("Show date app", descs[1].name);
+    TEST_ASSERT_EQUAL_STRING("Show temperature app", descs[2].name);
+    TEST_ASSERT_EQUAL_STRING("Show humidity app", descs[3].name);
+    TEST_ASSERT_EQUAL_STRING("Show battery app", descs[4].name);
+}
+
+void test_app_visibility_icons(void)
+{
+    size_t count;
+    auto *descs = getAppVisibilityDescriptors(count);
+    TEST_ASSERT_EQUAL_STRING("mdi:clock-outline", descs[0].icon);
+    TEST_ASSERT_EQUAL_STRING("mdi:calendar", descs[1].icon);
+    TEST_ASSERT_EQUAL_STRING("mdi:thermometer", descs[2].icon);
+    TEST_ASSERT_EQUAL_STRING("mdi:water-percent", descs[3].icon);
+    TEST_ASSERT_EQUAL_STRING("mdi:battery", descs[4].icon);
+}
+
 // ── Switch ──────────────────────────────────────────────────────────
 
 void test_switch_descriptor(void)
@@ -416,18 +447,18 @@ void test_night_mode_icons(void)
 void test_total_count_with_battery(void)
 {
     // 1 matrix + 3 indicators + 2 selects + 6 buttons + 1 switch
-    // + 11 sensors + 3 binary + 6 weather + 4 night + 2 audio = 39
-    TEST_ASSERT_EQUAL(39, getTotalEntityCount(true));
+    // + 11 sensors + 3 binary + 6 weather + 4 night + 2 audio + 5 app visibility = 44
+    TEST_ASSERT_EQUAL(44, getTotalEntityCount(true));
 }
 
 void test_total_count_without_battery(void)
 {
-    TEST_ASSERT_EQUAL(38, getTotalEntityCount(false));
+    TEST_ASSERT_EQUAL(43, getTotalEntityCount(false));
 }
 
 void test_total_count_matches_sum(void)
 {
-    size_t indicators, selects, buttons, sensors, binarySensors, weather, night, audio;
+    size_t indicators, selects, buttons, sensors, binarySensors, weather, night, audio, appVis;
     getIndicatorLightDescriptors(indicators);
     getSelectDescriptors(selects);
     getButtonDescriptors(buttons);
@@ -436,8 +467,9 @@ void test_total_count_matches_sum(void)
     getWeatherSensorDescriptors(weather);
     getNightModeDescriptors(night);
     getAudioDescriptors(audio);
+    getAppVisibilityDescriptors(appVis);
 
-    size_t expected = 1 + indicators + selects + buttons + 1 + sensors + binarySensors + weather + night + audio;
+    size_t expected = 1 + indicators + selects + buttons + 1 + sensors + binarySensors + weather + night + audio + appVis;
     TEST_ASSERT_EQUAL(expected, getTotalEntityCount(true));
 }
 
@@ -446,7 +478,7 @@ void test_total_count_matches_sum(void)
 void test_all_ids_unique(void)
 {
     // Collect all idTemplates into a flat array
-    const char *ids[45];
+    const char *ids[50];
     size_t idx = 0;
 
     ids[idx++] = getMatrixLightDescriptor().idTemplate;
@@ -485,6 +517,10 @@ void test_all_ids_unique(void)
     auto *audioDescs = getAudioDescriptors(count);
     for (size_t i = 0; i < count; i++)
         ids[idx++] = audioDescs[i].idTemplate;
+
+    auto *appVisDescs = getAppVisibilityDescriptors(count);
+    for (size_t i = 0; i < count; i++)
+        ids[idx++] = appVisDescs[i].idTemplate;
 
     // Verify all pairs are unique
     for (size_t i = 0; i < idx; i++)
@@ -580,6 +616,11 @@ int main(void)
     RUN_TEST(test_audio_count);
     RUN_TEST(test_audio_names);
     RUN_TEST(test_audio_icons);
+
+    // App visibility
+    RUN_TEST(test_app_visibility_count);
+    RUN_TEST(test_app_visibility_names);
+    RUN_TEST(test_app_visibility_icons);
 
     // Total count
     RUN_TEST(test_total_count_with_battery);

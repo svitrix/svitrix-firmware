@@ -260,3 +260,36 @@ void onSoundVolumeCommand(HANumeric number, HANumber *sender)
     saveSettings();
     sender->setState(number);
 }
+
+// ── App visibility callbacks ────────────────────────────────────────
+
+/// Handle app visibility switch commands from HA.
+/// Routes to the appropriate appConfig field based on which switch was pressed.
+/// @param state New on/off state.
+/// @param sender The HASwitch entity that changed.
+void onAppVisibilitySwitchCommand(bool state, HASwitch *sender)
+{
+    if (sender == showTimeSwitch)
+    {
+        appConfig.showTime = state;
+    }
+    else if (sender == showDateSwitch)
+    {
+        appConfig.showDate = state;
+    }
+    else if (sender == showTempSwitch)
+    {
+        appConfig.showTemp = state;
+    }
+    else if (sender == showHumSwitch)
+    {
+        appConfig.showHum = state;
+    }
+    else if (sender == showBatSwitch)
+    {
+        appConfig.showBat = state;
+    }
+    dmNav_->loadNativeApps();
+    saveSettings();
+    sender->setState(state);
+}

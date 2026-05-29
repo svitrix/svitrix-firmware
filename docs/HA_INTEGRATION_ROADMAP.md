@@ -2,15 +2,15 @@
 
 ## Estado Actual (actualizado)
 
-### Entidades HA Existentes (39 total)
+### Entidades HA Existentes (44 total)
 
 | Tipo | Cantidad | Entidades |
 |------|----------|-----------|
 | **HALight** | 5 | Matrix (brillo+RGB), Indicator 1/2/3 (RGB), nightColor (RGB) |
 | **HASelect** | 2 | BriMode (Manual/Auto), transEffect (14 transiciones) |
 | **HAButton** | 6 | Dismiss, doUpdate, nextApp, prevApp, reboot, playSound |
-| **HASwitch** | 4 | transition, nightMode, nightBlockTransition, soundEnabled |
-| **HANumber** | 2 | nightBrightness (1-50), soundVolume (0-100) |
+| **HASwitch** | 9 | transition, nightMode, nightBlockTransition, soundEnabled, showTime, showDate, showTemp, showHum, showBat |
+| **HANumber** | 2 | nightBrightness (1-50), soundVolume (0-30) |
 | **HASensor** | 16-17 | curApp, deviceId, temp, hum, lux, signal, version, ram, uptime, ipAddr, battery*, outdoorTemp, outdoorHum, pressure, aqi, weatherCond, uvIndex |
 | **HABinarySensor** | 3 | btnleft, btnmid, btnright |
 
@@ -50,52 +50,25 @@
 
 ### Audio Controls ✅
 - `soundEnabled` (HASwitch) — Habilitar/deshabilitar sonido
-- `soundVolume` (HANumber) — Volumen del buzzer (0-100)
+- `soundVolume` (HANumber) — Volumen del buzzer (0-30)
 - `playSoundBtn` (HAButton) — Reproducir sonido de prueba
+
+### Native App Visibility ✅
+- `showTimeSwitch` (HASwitch) — Mostrar/ocultar app de hora
+- `showDateSwitch` (HASwitch) — Mostrar/ocultar app de fecha
+- `showTempSwitch` (HASwitch) — Mostrar/ocultar temperatura interior
+- `showHumSwitch` (HASwitch) — Mostrar/ocultar humedad interior
+- `showBatSwitch` (HASwitch) — Mostrar/ocultar batería
 
 ---
 
 ## Propuestas Pendientes
 
-### Prioridad Alta
+### ~~Prioridad Alta~~ (Completado)
 
-#### 1. ~~Night Mode Controls~~ ✅ IMPLEMENTADO
-
-#### 2. ~~Sound/Audio Controls~~ ✅ IMPLEMENTADO
-
----
-
-#### 2. Sound/Audio Controls
-**Valor:** Integrar audio del reloj con automatizaciones HA.
-
-| Entidad | Tipo | Descripción |
-|---------|------|-------------|
-| `soundEnabled` | HASwitch | Habilitar/deshabilitar sonido |
-| `soundVolume` | HANumber | Volumen (0-100) |
-| `playSound` | HAButton | Reproducir sonido de prueba |
-
-**Casos de uso:**
-- Silenciar reloj cuando "casa en modo película"
-- Subir volumen durante el día, bajar de noche
-- Confirmación auditiva en automatizaciones
-
----
-
-#### 3. Native App Visibility Switches
-**Valor:** Mostrar/ocultar apps nativas desde HA sin abrir la web UI.
-
-| Entidad | Tipo | Descripción |
-|---------|------|-------------|
-| `showTime` | HASwitch | Mostrar app de hora |
-| `showDate` | HASwitch | Mostrar app de fecha |
-| `showTemp` | HASwitch | Mostrar temperatura interior |
-| `showHum` | HASwitch | Mostrar humedad interior |
-| `showBat` | HASwitch | Mostrar batería (ULANZI) |
-
-**Casos de uso:**
-- Ocultar batería cuando está conectado a corriente
-- Mostrar solo hora cuando hay invitados
-- Dashboard HA con toggles para cada app
+- ~~Night Mode Controls~~ ✅
+- ~~Sound/Audio Controls~~ ✅
+- ~~Native App Visibility Switches~~ ✅
 
 ---
 
