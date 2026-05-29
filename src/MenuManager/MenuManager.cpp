@@ -212,62 +212,81 @@ String MenuManager_::menutext()
     case TempMenu:
         return timeConfig.isCelsius ? "°C" : "°F";
     case Appmenu:
-        renderer_->drawMenuIndicator(appsIndex, appsCount, 0xFBC000);
+    {
+        const char *appResult = "OFF";
         switch (appsIndex)
         {
         case 0:
             renderer_->drawBMP(0, 0, icon_13, 8, 8);
-            return appConfig.showTime ? "ON" : "OFF";
+            appResult = appConfig.showTime ? "ON" : "OFF";
+            break;
         case 1:
             renderer_->drawBMP(0, 0, icon_1158, 8, 8);
-            return appConfig.showDate ? "ON" : "OFF";
+            appResult = appConfig.showDate ? "ON" : "OFF";
+            break;
         case 2:
             renderer_->drawBMP(0, 0, icon_234, 8, 8);
-            return appConfig.showTemp ? "ON" : "OFF";
+            appResult = appConfig.showTemp ? "ON" : "OFF";
+            break;
         case 3:
             renderer_->drawBMP(0, 0, icon_2075, 8, 8);
-            return appConfig.showHum ? "ON" : "OFF";
+            appResult = appConfig.showHum ? "ON" : "OFF";
+            break;
         case 4:
             renderer_->drawBMP(0, 0, icon_1486, 8, 8);
-            return appConfig.showBat ? "ON" : "OFF";
+            appResult = appConfig.showBat ? "ON" : "OFF";
+            break;
         case 5:
             renderer_->drawBMP(0, 0, icon_sunny, 8, 8);
-            return weatherConfig.showOutdoorTemp ? "ON" : "OFF";
+            appResult = weatherConfig.showOutdoorTemp ? "ON" : "OFF";
+            break;
         case 6:
             renderer_->drawBMP(0, 0, icon_53628, 8, 8);
-            return weatherConfig.showOutdoorHumidity ? "ON" : "OFF";
+            appResult = weatherConfig.showOutdoorHumidity ? "ON" : "OFF";
+            break;
         case 7:
             renderer_->drawBMP(0, 0, icon_66892, 8, 8);
-            return weatherConfig.showPressure ? "ON" : "OFF";
+            appResult = weatherConfig.showPressure ? "ON" : "OFF";
+            break;
         case 8:
             renderer_->drawBMP(0, 0, icon_6622, 8, 8);
-            return weatherConfig.showAirQuality ? "ON" : "OFF";
+            appResult = weatherConfig.showAirQuality ? "ON" : "OFF";
+            break;
         default:
             break;
         }
-        break;
+        renderer_->drawMenuIndicator(appsIndex, appsCount, 0xFBC000);
+        return appResult;
+    }
     case NightMenu:
         return appConfig.nightMode ? "ON" : "OFF";
     case InfoMenu:
+    {
         renderer_->drawMenuIndicator(infoIndex, infoCount, 0x00FFFF);
+        String ip;
         switch (infoIndex)
         {
-        case 0: // IP
-            return WiFi.localIP().toString();
+        case 0: // IP - show last two octets to fit
+            ip = WiFi.localIP().toString();
+            snprintf(buf, sizeof(buf), "IP %s", ip.substring(ip.lastIndexOf('.', ip.lastIndexOf('.') - 1) + 1).c_str());
+            return buf;
         case 1: // WiFi signal
-            snprintf(buf, sizeof(buf), "%ddBm", WiFi.RSSI());
+            snprintf(buf, sizeof(buf), "WIFI %d", WiFi.RSSI());
             return buf;
         case 2: // Version
-            return VERSION;
-        case 3: // Hostname
-            return systemConfig.hostname;
+            snprintf(buf, sizeof(buf), "V%s", VERSION);
+            return buf;
+        case 3: // Hostname - show device ID suffix
+            snprintf(buf, sizeof(buf), "ID %s", systemConfig.deviceId.substring(systemConfig.deviceId.length() - 6).c_str());
+            return buf;
         case 4: // Free RAM
-            snprintf(buf, sizeof(buf), "%dK", ESP.getFreeHeap() / 1024);
+            snprintf(buf, sizeof(buf), "RAM %dK", ESP.getFreeHeap() / 1024);
             return buf;
         default:
             break;
         }
         break;
+    }
     case VolumeMenu:
         snprintf(buf, sizeof(buf), "%d", audioConfig.soundVolume);
         return buf;
