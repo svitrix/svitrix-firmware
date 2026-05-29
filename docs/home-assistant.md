@@ -465,6 +465,21 @@ data:
 | Caracteres extraños | SVITRIX soporta UTF-8, pero algunos emojis pueden no renderizar |
 | Evento no se actualiza | Aumenta frecuencia del trigger `time_pattern` |
 
+### Blueprints
+
+Importa estos blueprints para configurar rápidamente las automatizaciones:
+
+| Blueprint | Descripción | Importar |
+|-----------|-------------|----------|
+| **Evento de calendario** | Muestra próximo evento como app | [![Import](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https://xe1e.github.io/svitrix-firmware-XE1E/blueprints/svitrix_calendar_event.yaml) |
+| **Cumpleaños/Aniversario** | Notificación diaria de cumpleaños | [![Import](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https://xe1e.github.io/svitrix-firmware-XE1E/blueprints/svitrix_birthday_notification.yaml) |
+| **Recordatorio reunión** | Notificación X minutos antes | [![Import](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https://xe1e.github.io/svitrix-firmware-XE1E/blueprints/svitrix_meeting_reminder.yaml) |
+
+**Importación manual:**
+1. Ve a **Settings > Automations & Scenes > Blueprints**
+2. Click **Import Blueprint**
+3. Pega la URL del blueprint
+
 ---
 
 ## Solución de Problemas

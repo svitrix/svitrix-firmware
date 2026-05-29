@@ -1,0 +1,96 @@
+blueprint:
+  name: "SVITRIX - Mostrar evento de calendario"
+  description: >
+    Muestra el próximo evento de un calendario de Google en SVITRIX como una app personalizada.
+    Se actualiza periódicamente y cuando cambia el estado del calendario.
+  domain: automation
+  author: SVITRIX
+  source_url: https://github.com/XE1E/svitrix-firmware-XE1E/blob/main/docs/public/blueprints/svitrix_calendar_event.yaml
+  input:
+    calendar_entity:
+      name: Calendario
+      description: Entidad del calendario de Google Calendar
+      selector:
+        entity:
+          domain: calendar
+    mqtt_topic:
+      name: Topic MQTT
+      description: Topic para la custom app (ej. svitrix/custom/calendar)
+      default: "svitrix/custom/calendar"
+      selector:
+        text:
+    update_interval:
+      name: Intervalo de actualización
+      description: Cada cuántos minutos actualizar el evento
+      default: 15
+      selector:
+        number:
+          min: 1
+          max: 60
+          unit_of_measurement: minutos
+    icon_id:
+      name: ID del icono
+      description: ID del icono de LaMetric (6741 = calendario)
+      default: "6741"
+      selector:
+        text:
+    text_color:
+      name: Color del texto
+      description: Color en formato hexadecimal
+      default: "#00BFFF"
+      selector:
+        text:
+    app_duration:
+      name: Duración de la app
+      description: Segundos que se muestra la app en rotación
+      default: 10
+      selector:
+        number:
+          min: 5
+          max: 60
+          unit_of_measurement: segundos
+    max_text_length:
+      name: Longitud máxima del texto
+      description: Caracteres máximos antes de truncar
+      default: 30
+      selector:
+        number:
+          min: 10
+          max: 100
+
+trigger:
+  - platform: time_pattern
+    minutes: !input update_interval
+    id: periodic
+  - platform: state
+    entity_id: !input calendar_entity
+    id: state_change
+
+condition:
+  - condition: state
+    entity_id: !input calendar_entity
+    state: "on"
+
+action:
+  - variables:
+      calendar: !input calendar_entity
+      max_len: !input max_text_length
+      message: "{{ state_attr(calendar, 'message') }}"
+      truncated: >
+        {% if message | length > max_len %}
+          {{ message[:max_len] }}...
+        {% else %}
+          {{ message }}
+        {% endif %}
+  - service: mqtt.publish
+    data:
+      topic: !input mqtt_topic
+      payload: >
+        {
+          "text": "{{ truncated }}",
+          "icon": "{{ icon_id }}",
+          "duration": {{ app_duration }},
+          "color": "{{ text_color }}"
+        }
+
+mode: single

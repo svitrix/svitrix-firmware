@@ -1,0 +1,85 @@
+blueprint:
+  name: "SVITRIX - Recordatorio de reunión"
+  description: >
+    Envía una notificación a SVITRIX antes de que comience un evento del calendario.
+    Ideal para recordatorios de reuniones de trabajo.
+  domain: automation
+  author: SVITRIX
+  source_url: https://github.com/XE1E/svitrix-firmware-XE1E/blob/main/docs/public/blueprints/svitrix_meeting_reminder.yaml
+  input:
+    calendar_entity:
+      name: Calendario
+      description: Calendario con las reuniones
+      selector:
+        entity:
+          domain: calendar
+    reminder_offset:
+      name: Minutos antes
+      description: Cuántos minutos antes del evento notificar
+      default: 15
+      selector:
+        number:
+          min: 1
+          max: 60
+          unit_of_measurement: minutos
+    mqtt_prefix:
+      name: Prefijo MQTT
+      description: Prefijo del topic MQTT de SVITRIX
+      default: "svitrix"
+      selector:
+        text:
+    icon_id:
+      name: ID del icono
+      description: ID del icono (7956 = reunión, 5765 = alarma)
+      default: "7956"
+      selector:
+        text:
+    text_color:
+      name: Color del texto
+      description: Color en formato hexadecimal
+      default: "#FFA500"
+      selector:
+        text:
+    notification_duration:
+      name: Duración de la notificación
+      description: Segundos que se muestra la notificación
+      default: 60
+      selector:
+        number:
+          min: 10
+          max: 300
+          unit_of_measurement: segundos
+    play_sound:
+      name: Reproducir sonido
+      description: Melodía RTTTL a reproducir (dejar vacío para sin sonido)
+      default: "chime:d=4,o=5,b=100:8e6,8d6,8c6"
+      selector:
+        text:
+
+trigger:
+  - platform: calendar
+    event: start
+    entity_id: !input calendar_entity
+    offset:
+      minutes: !input reminder_offset
+
+action:
+  - variables:
+      prefix: !input mqtt_prefix
+      offset: !input reminder_offset
+      event_name: "{{ trigger.calendar_event.summary }}"
+      sound: !input play_sound
+  - service: mqtt.publish
+    data:
+      topic: "{{ prefix }}/notify"
+      payload: >
+        {
+          "text": "En {{ offset }} min: {{ event_name }}",
+          "icon": "{{ icon_id }}",
+          "duration": {{ notification_duration }},
+          "color": "{{ text_color }}"
+          {% if sound != "" %}, "rtttl": "{{ sound }}"{% endif %}
+        }
+
+mode: queued
+max_queued: 5

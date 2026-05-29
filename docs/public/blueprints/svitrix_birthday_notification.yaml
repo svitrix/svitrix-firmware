@@ -1,0 +1,83 @@
+blueprint:
+  name: "SVITRIX - Notificación de cumpleaños/aniversario"
+  description: >
+    Envía una notificación a SVITRIX cuando hay un evento de cumpleaños o aniversario
+    en el calendario. Se ejecuta a una hora específica del día.
+  domain: automation
+  author: SVITRIX
+  source_url: https://github.com/XE1E/svitrix-firmware-XE1E/blob/main/docs/public/blueprints/svitrix_birthday_notification.yaml
+  input:
+    calendar_entity:
+      name: Calendario de cumpleaños
+      description: Calendario con los cumpleaños/aniversarios
+      selector:
+        entity:
+          domain: calendar
+    notification_time:
+      name: Hora de notificación
+      description: Hora del día para mostrar la notificación
+      default: "08:00:00"
+      selector:
+        time:
+    mqtt_prefix:
+      name: Prefijo MQTT
+      description: Prefijo del topic MQTT de SVITRIX
+      default: "svitrix"
+      selector:
+        text:
+    icon_id:
+      name: ID del icono
+      description: ID del icono (955 = pastel, 52 = regalo)
+      default: "955"
+      selector:
+        text:
+    text_color:
+      name: Color del texto
+      description: Color en formato hexadecimal
+      default: "#FF69B4"
+      selector:
+        text:
+    notification_duration:
+      name: Duración de la notificación
+      description: Segundos que se muestra la notificación
+      default: 30
+      selector:
+        number:
+          min: 5
+          max: 120
+          unit_of_measurement: segundos
+    play_sound:
+      name: Reproducir sonido
+      description: Melodía RTTTL a reproducir (dejar vacío para sin sonido)
+      default: "birthday:d=4,o=5,b=125:8g,8g,a,g,c6,2b"
+      selector:
+        text:
+
+trigger:
+  - platform: time
+    at: !input notification_time
+
+condition:
+  - condition: state
+    entity_id: !input calendar_entity
+    state: "on"
+
+action:
+  - variables:
+      calendar: !input calendar_entity
+      prefix: !input mqtt_prefix
+      message: "{{ state_attr(calendar, 'message') }}"
+      sound: !input play_sound
+  - service: mqtt.publish
+    data:
+      topic: "{{ prefix }}/notify"
+      payload: >
+        {
+          "text": "{{ message }}",
+          "icon": "{{ icon_id }}",
+          "duration": {{ notification_duration }},
+          "color": "{{ text_color }}"
+          {% if sound != "" %}, "rtttl": "{{ sound }}"{% endif %}
+        }
+
+mode: single
