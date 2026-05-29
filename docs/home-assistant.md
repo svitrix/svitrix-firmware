@@ -268,6 +268,205 @@ action:
 
 ---
 
+## Integración con Google Calendar
+
+Muestra eventos, aniversarios y tareas de Google Calendar en SVITRIX usando Home Assistant como puente.
+
+### Requisitos
+
+- Home Assistant con integración MQTT funcionando
+- Cuenta de Google con acceso a Google Calendar
+
+### 1. Configurar Google Calendar en Home Assistant
+
+1. Ve a **Settings > Devices & Services > Add Integration**
+2. Busca **Google Calendar**
+3. Sigue el flujo de autenticación OAuth con tu cuenta Google
+4. Selecciona los calendarios que quieres importar
+
+Una vez configurado, tendrás entidades como:
+- `calendar.mi_calendario_personal`
+- `calendar.cumpleanos`
+- `calendar.trabajo`
+
+### 2. Probar manualmente
+
+Antes de automatizar, prueba enviando un evento manualmente desde **Developer Tools > Services**:
+
+```yaml
+service: mqtt.publish
+data:
+  topic: "svitrix/notify"
+  payload: |
+    {
+      "text": "Prueba de calendario",
+      "icon": "6741",
+      "duration": 10,
+      "color": "#00BFFF"
+    }
+```
+
+Si aparece en SVITRIX, la conexión MQTT funciona correctamente.
+
+### 3. Automatizaciones
+
+#### Mostrar próximo evento como app permanente
+
+```yaml
+automation:
+  - alias: "SVITRIX - Próximo evento del calendario"
+    trigger:
+      - platform: time_pattern
+        minutes: "/15"  # actualizar cada 15 min
+      - platform: state
+        entity_id: calendar.mi_calendario
+    condition:
+      - condition: state
+        entity_id: calendar.mi_calendario
+        state: "on"  # hay evento activo o próximo
+    action:
+      - service: mqtt.publish
+        data:
+          topic: "svitrix/custom/calendar"
+          payload: >
+            {
+              "text": "{{ state_attr('calendar.mi_calendario', 'message') }}",
+              "icon": "6741",
+              "duration": 10,
+              "color": "#00BFFF"
+            }
+```
+
+#### Notificación de cumpleaños/aniversario
+
+```yaml
+automation:
+  - alias: "SVITRIX - Aniversarios del día"
+    trigger:
+      - platform: time
+        at: "08:00:00"
+    condition:
+      - condition: state
+        entity_id: calendar.cumpleanos
+        state: "on"
+    action:
+      - service: mqtt.publish
+        data:
+          topic: "svitrix/notify"
+          payload: >
+            {
+              "text": "{{ state_attr('calendar.cumpleanos', 'message') }}",
+              "icon": "955",
+              "duration": 30,
+              "color": "#FF69B4",
+              "sound": "birthday"
+            }
+```
+
+#### Recordatorio de reuniones (15 min antes)
+
+```yaml
+automation:
+  - alias: "SVITRIX - Recordatorio reunión"
+    trigger:
+      - platform: calendar
+        event: start
+        entity_id: calendar.trabajo
+        offset: "-0:15:00"
+    action:
+      - service: mqtt.publish
+        data:
+          topic: "svitrix/notify"
+          payload: >
+            {
+              "text": "En 15 min: {{ trigger.calendar_event.summary }}",
+              "icon": "7956",
+              "duration": 60,
+              "color": "#FFA500",
+              "sound": "chime"
+            }
+```
+
+#### Mostrar tareas pendientes (desde Google Tasks via calendario)
+
+```yaml
+automation:
+  - alias: "SVITRIX - Tareas del día"
+    trigger:
+      - platform: time
+        at: "09:00:00"
+    action:
+      - service: mqtt.publish
+        data:
+          topic: "svitrix/custom/tasks"
+          payload: >
+            {
+              "text": "{{ states('sensor.google_tasks_count') }} tareas pendientes",
+              "icon": "51167",
+              "color": "#9966FF"
+            }
+```
+
+### 4. Iconos recomendados
+
+| Icono | ID | Uso |
+|-------|-----|-----|
+| Calendario | 6741 | Eventos generales |
+| Pastel | 955 | Cumpleaños |
+| Regalo | 52 | Aniversarios |
+| Reunión | 7956 | Trabajo/reuniones |
+| Check | 51167 | Tareas |
+| Alarma | 5765 | Recordatorios |
+
+Puedes buscar más iconos en [LaMetric Icon Gallery](https://developer.lametric.com/icons).
+
+### 5. Template Sensors (opcional)
+
+Para más control, crea template sensors que formateen los eventos:
+
+```yaml
+# configuration.yaml
+template:
+  - sensor:
+      - name: "Próximo Evento Hoy"
+        state: >
+          {% set cal = state_attr('calendar.mi_calendario', 'message') %}
+          {% if cal %}
+            {{ cal[:30] }}{% if cal|length > 30 %}...{% endif %}
+          {% else %}
+            Sin eventos
+          {% endif %}
+        attributes:
+          full_message: "{{ state_attr('calendar.mi_calendario', 'message') }}"
+          start_time: "{{ state_attr('calendar.mi_calendario', 'start_time') }}"
+          
+      - name: "Eventos Hoy Count"
+        state: >
+          {% if is_state('calendar.mi_calendario', 'on') %}1{% else %}0{% endif %}
+```
+
+### 6. Eliminar app de calendario
+
+Para quitar la app de calendario de la rotación:
+
+```yaml
+service: mqtt.publish
+data:
+  topic: "svitrix/custom/calendar"
+  payload: "{}"
+```
+
+### Solución de problemas
+
+| Problema | Solución |
+|----------|----------|
+| Calendario no muestra eventos | Verifica que `calendar.X` tenga estado `on` cuando hay evento |
+| Texto muy largo | Usa template para truncar: `{{ message[:25] }}...` |
+| Caracteres extraños | SVITRIX soporta UTF-8, pero algunos emojis pueden no renderizar |
+| Evento no se actualiza | Aumenta frecuencia del trigger `time_pattern` |
+
+---
+
 ## Solución de Problemas
 
 ### Las entidades no aparecen en HA
