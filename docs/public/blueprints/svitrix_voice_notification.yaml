@@ -1,0 +1,85 @@
+blueprint:
+  name: "SVITRIX - Notificación por comando de voz"
+  description: >
+    Crea un script que puedes invocar desde Alexa o Google para mostrar
+    notificaciones en SVITRIX. Expón el script a tu asistente de voz.
+  domain: script
+  author: SVITRIX
+  source_url: https://github.com/XE1E/svitrix-firmware-XE1E/blob/main/docs/public/blueprints/svitrix_voice_notification.yaml
+  input:
+    mqtt_prefix:
+      name: Prefijo MQTT
+      description: Prefijo del topic MQTT de SVITRIX
+      default: "svitrix"
+      selector:
+        text:
+    default_icon:
+      name: Icono por defecto
+      description: ID del icono de LaMetric
+      default: "6919"
+      selector:
+        text:
+    default_color:
+      name: Color por defecto
+      description: Color en formato hexadecimal
+      default: "#FFFFFF"
+      selector:
+        text:
+    default_duration:
+      name: Duración por defecto
+      description: Segundos que se muestra la notificación
+      default: 10
+      selector:
+        number:
+          min: 5
+          max: 120
+          unit_of_measurement: segundos
+
+sequence:
+  - variables:
+      prefix: !input mqtt_prefix
+      text_to_show: "{{ text | default('Mensaje de voz') }}"
+      icon_to_use: "{{ icon | default(default_icon) }}"
+      color_to_use: "{{ color | default(default_color) }}"
+      duration_to_use: "{{ duration | default(default_duration) }}"
+  - service: mqtt.publish
+    data:
+      topic: "{{ prefix }}/notify"
+      payload: >
+        {
+          "text": "{{ text_to_show }}",
+          "icon": "{{ icon_to_use }}",
+          "duration": {{ duration_to_use }},
+          "color": "{{ color_to_use }}"
+        }
+
+fields:
+  text:
+    description: Texto a mostrar en SVITRIX
+    example: "Hola desde Alexa"
+    required: true
+    selector:
+      text:
+  icon:
+    description: ID del icono (opcional)
+    example: "6919"
+    required: false
+    selector:
+      text:
+  color:
+    description: Color hexadecimal (opcional)
+    example: "#FF5500"
+    required: false
+    selector:
+      text:
+  duration:
+    description: Duración en segundos (opcional)
+    example: 15
+    required: false
+    selector:
+      number:
+        min: 5
+        max: 120
+
+mode: queued
+max_queued: 5

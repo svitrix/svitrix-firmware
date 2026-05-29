@@ -1,0 +1,119 @@
+blueprint:
+  name: "SVITRIX - Botón a anuncio de voz"
+  description: >
+    Cuando se presiona un botón físico de SVITRIX, Alexa o Google anuncia un mensaje.
+    Útil para anunciar la hora, clima, o mensajes personalizados.
+  domain: automation
+  author: SVITRIX
+  source_url: https://github.com/XE1E/svitrix-firmware-XE1E/blob/main/docs/public/blueprints/svitrix_button_announcement.yaml
+  input:
+    button_entity:
+      name: Botón de SVITRIX
+      description: Botón físico que dispara el anuncio
+      selector:
+        entity:
+          domain: binary_sensor
+          device_class: button
+    voice_assistant:
+      name: Asistente de voz
+      description: Dispositivo Alexa o Google para el anuncio
+      selector:
+        entity:
+          domain: media_player
+    assistant_type:
+      name: Tipo de asistente
+      description: Alexa o Google Home
+      default: alexa
+      selector:
+        select:
+          options:
+            - label: "Alexa"
+              value: "alexa"
+            - label: "Google Home"
+              value: "google"
+    message_type:
+      name: Tipo de mensaje
+      description: Qué anunciar
+      default: time
+      selector:
+        select:
+          options:
+            - label: "Hora actual"
+              value: "time"
+            - label: "Clima"
+              value: "weather"
+            - label: "Próximo evento"
+              value: "calendar"
+            - label: "Mensaje personalizado"
+              value: "custom"
+    weather_entity:
+      name: Entidad del clima (opcional)
+      description: Solo necesario si el tipo de mensaje es "Clima"
+      default: ""
+      selector:
+        entity:
+          domain: weather
+    calendar_entity:
+      name: Calendario (opcional)
+      description: Solo necesario si el tipo de mensaje es "Próximo evento"
+      default: ""
+      selector:
+        entity:
+          domain: calendar
+    custom_message:
+      name: Mensaje personalizado (opcional)
+      description: Solo necesario si el tipo de mensaje es "Mensaje personalizado"
+      default: ""
+      selector:
+        text:
+
+trigger:
+  - platform: state
+    entity_id: !input button_entity
+    to: "on"
+
+action:
+  - variables:
+      assistant: !input voice_assistant
+      type: !input assistant_type
+      msg_type: !input message_type
+      weather: !input weather_entity
+      calendar: !input calendar_entity
+      custom: !input custom_message
+      message: >
+        {% if msg_type == "time" %}
+          Son las {{ now().strftime('%H:%M') }}
+        {% elif msg_type == "weather" and weather != "" %}
+          El clima está {{ states(weather) }}, con {{ state_attr(weather, 'temperature') }} grados
+        {% elif msg_type == "calendar" and calendar != "" %}
+          {% if is_state(calendar, 'on') %}
+            Tu próximo evento es: {{ state_attr(calendar, 'message') }}
+          {% else %}
+            No tienes eventos próximos
+          {% endif %}
+        {% elif msg_type == "custom" %}
+          {{ custom }}
+        {% else %}
+          Hola desde SVITRIX
+        {% endif %}
+  - choose:
+      - conditions:
+          - condition: template
+            value_template: "{{ type == 'alexa' }}"
+        sequence:
+          - service: notify.alexa_media
+            data:
+              target: "{{ assistant }}"
+              message: "{{ message }}"
+              data:
+                type: tts
+      - conditions:
+          - condition: template
+            value_template: "{{ type == 'google' }}"
+        sequence:
+          - service: tts.google_translate_say
+            data:
+              entity_id: "{{ assistant }}"
+              message: "{{ message }}"
+
+mode: single

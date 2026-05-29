@@ -482,6 +482,182 @@ Importa estos blueprints para configurar rápidamente las automatizaciones:
 
 ---
 
+## Integración con Alexa y Google Home
+
+Usa SVITRIX con comandos de voz a través de Home Assistant.
+
+### Requisitos
+
+- Home Assistant con integración MQTT funcionando
+- **Para Alexa:** [Alexa Media Player](https://github.com/custom-components/alexa_media_player) (HACS) o Home Assistant Cloud
+- **Para Google:** Integración nativa de Google Assistant o Home Assistant Cloud
+
+### Configuración inicial
+
+#### 1. Exponer entidades a los asistentes
+
+Para controlar SVITRIX por voz, expón estas entidades:
+
+```yaml
+# configuration.yaml
+cloud:
+  alexa:
+    filter:
+      include_entities:
+        - light.svitrix_matrix
+        - switch.svitrix_night_mode
+        - switch.svitrix_sound_enabled
+  google_assistant:
+    filter:
+      include_entities:
+        - light.svitrix_matrix
+        - switch.svitrix_night_mode
+        - switch.svitrix_sound_enabled
+```
+
+#### 2. Crear input_boolean para rutinas
+
+Para activar automatizaciones por voz:
+
+```yaml
+# configuration.yaml
+input_boolean:
+  buenos_dias:
+    name: Buenos días
+    icon: mdi:weather-sunny
+  mostrar_mensaje:
+    name: Mostrar mensaje
+    icon: mdi:message
+```
+
+Expón estos `input_boolean` a Alexa/Google. Luego crea rutinas:
+- **Alexa:** "Cuando diga 'Buenos días'" → Activar `input_boolean.buenos_dias`
+- **Google:** "Cuando diga 'Buenos días'" → Activar `input_boolean.buenos_dias`
+
+### Comandos de voz disponibles
+
+Una vez configurado, puedes usar:
+
+| Comando | Acción |
+|---------|--------|
+| "Alexa, enciende el reloj" | Enciende la matriz |
+| "Hey Google, apaga el reloj" | Apaga la matriz |
+| "Alexa, pon el brillo del reloj al 50%" | Ajusta brillo |
+| "Hey Google, activa modo noche" | Activa night mode |
+| "Alexa, Buenos días" | Ejecuta rutina matutina |
+
+### Blueprints para asistentes de voz
+
+| Blueprint | Descripción | Importar |
+|-----------|-------------|----------|
+| **Botón a anuncio** | Botón físico → Alexa/Google anuncia | [![Import](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https://xe1e.github.io/svitrix-firmware-XE1E/blueprints/svitrix_button_announcement.yaml) |
+| **Notificación por voz** | Script para enviar texto a SVITRIX | [![Import](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https://xe1e.github.io/svitrix-firmware-XE1E/blueprints/svitrix_voice_notification.yaml) |
+| **Rutina matutina** | "Buenos días" → clima + calendario | [![Import](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https://xe1e.github.io/svitrix-firmware-XE1E/blueprints/svitrix_morning_routine.yaml) |
+
+### Usar: Botón a anuncio de voz
+
+**Qué hace:** Al presionar un botón físico de SVITRIX, Alexa o Google anuncia la hora, clima, próximo evento, o un mensaje personalizado.
+
+**Configuración:**
+1. Importa el blueprint
+2. Crea una automatización desde él
+3. Selecciona:
+   - Botón de SVITRIX (ej. `binary_sensor.svitrix_button_middle`)
+   - Dispositivo Alexa/Google (ej. `media_player.echo_dot`)
+   - Tipo de mensaje (hora, clima, calendario, personalizado)
+
+**Probar:**
+1. Presiona el botón configurado en SVITRIX
+2. Alexa/Google debería anunciar el mensaje
+
+### Usar: Notificación por voz
+
+**Qué hace:** Crea un script que puedes invocar desde Alexa/Google para mostrar texto en SVITRIX.
+
+**Configuración:**
+1. Importa el blueprint como **script** (no automatización)
+2. El script se llamará `script.svitrix_voice_notification` (o el nombre que elijas)
+3. Expón el script a Alexa/Google
+
+**Probar desde Developer Tools:**
+```yaml
+service: script.svitrix_voice_notification
+data:
+  text: "Hola desde HA"
+  color: "#FF5500"
+  duration: 15
+```
+
+**Invocar desde Alexa:**
+1. Crea una rutina en la app Alexa
+2. Trigger: "Alexa, muestra mensaje en el reloj"
+3. Acción: Smart Home → Escena → `script.svitrix_voice_notification`
+
+### Usar: Rutina matutina
+
+**Qué hace:** Al decir "Buenos días", muestra clima y calendario en SVITRIX, y opcionalmente anuncia un resumen por voz.
+
+**Configuración:**
+1. Crea `input_boolean.buenos_dias` (ver arriba)
+2. Expón el input_boolean a Alexa/Google
+3. Crea rutina de voz: "Buenos días" → activar `input_boolean.buenos_dias`
+4. Importa el blueprint
+5. Configura:
+   - Trigger: `input_boolean.buenos_dias`
+   - Entidad weather (ej. `weather.home`)
+   - Calendario (opcional)
+   - Asistente para anuncio de voz (opcional)
+
+**Probar:**
+1. Di "Alexa, Buenos días" o "Hey Google, Buenos días"
+2. SVITRIX muestra clima → luego calendario
+3. (Opcional) Alexa/Google anuncia el resumen
+
+### Ejemplo completo: Mensaje bidireccional
+
+```yaml
+# Alexa → SVITRIX: Mostrar mensaje
+automation:
+  - alias: "Alexa a SVITRIX"
+    trigger:
+      - platform: state
+        entity_id: input_boolean.mostrar_mensaje
+        to: "on"
+    action:
+      - service: mqtt.publish
+        data:
+          topic: "svitrix/notify"
+          payload: '{"text": "Mensaje de Alexa", "icon": "6919", "duration": 10}'
+      - service: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.mostrar_mensaje
+
+# SVITRIX → Alexa: Anunciar al presionar botón
+  - alias: "SVITRIX a Alexa"
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.svitrix_button_right
+        to: "on"
+    action:
+      - service: notify.alexa_media
+        data:
+          target: media_player.echo_dot
+          message: "Botón presionado en SVITRIX"
+          data:
+            type: tts
+```
+
+### Solución de problemas
+
+| Problema | Solución |
+|----------|----------|
+| Alexa no encuentra el dispositivo | Pide a Alexa "descubrir dispositivos" |
+| Google no responde | Verifica sincronización en la app Google Home |
+| Script no aparece en Alexa | Solo se exponen scripts con campos definidos |
+| TTS no funciona | Verifica que Alexa Media Player esté configurado |
+
+---
+
 ## Solución de Problemas
 
 ### Las entidades no aparecen en HA

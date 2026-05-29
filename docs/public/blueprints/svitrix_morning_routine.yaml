@@ -1,0 +1,168 @@
+blueprint:
+  name: "SVITRIX - Rutina matutina"
+  description: >
+    Al decir "Buenos días" a Alexa/Google, muestra el clima y próximos eventos
+    del día en SVITRIX, y opcionalmente anuncia un resumen por voz.
+  domain: automation
+  author: SVITRIX
+  source_url: https://github.com/XE1E/svitrix-firmware-XE1E/blob/main/docs/public/blueprints/svitrix_morning_routine.yaml
+  input:
+    trigger_entity:
+      name: Trigger de rutina
+      description: >
+        Input boolean que se activa con "Buenos días" en Alexa/Google.
+        Créalo en HA y expónlo a tu asistente.
+      selector:
+        entity:
+          domain: input_boolean
+    weather_entity:
+      name: Entidad del clima
+      description: Entidad weather para mostrar el clima
+      selector:
+        entity:
+          domain: weather
+    calendar_entity:
+      name: Calendario (opcional)
+      description: Calendario para mostrar próximo evento
+      default: ""
+      selector:
+        entity:
+          domain: calendar
+    mqtt_prefix:
+      name: Prefijo MQTT
+      description: Prefijo del topic MQTT de SVITRIX
+      default: "svitrix"
+      selector:
+        text:
+    show_weather:
+      name: Mostrar clima
+      description: Mostrar el clima como notificación
+      default: true
+      selector:
+        boolean:
+    show_calendar:
+      name: Mostrar calendario
+      description: Mostrar próximo evento como app
+      default: true
+      selector:
+        boolean:
+    voice_announcement:
+      name: Anuncio de voz
+      description: Anunciar resumen por Alexa/Google
+      default: false
+      selector:
+        boolean:
+    voice_assistant:
+      name: Asistente de voz (opcional)
+      description: Dispositivo para anuncio de voz
+      default: ""
+      selector:
+        entity:
+          domain: media_player
+    assistant_type:
+      name: Tipo de asistente
+      default: alexa
+      selector:
+        select:
+          options:
+            - label: "Alexa"
+              value: "alexa"
+            - label: "Google Home"
+              value: "google"
+
+trigger:
+  - platform: state
+    entity_id: !input trigger_entity
+    to: "on"
+
+action:
+  - variables:
+      prefix: !input mqtt_prefix
+      weather: !input weather_entity
+      calendar: !input calendar_entity
+      do_weather: !input show_weather
+      do_calendar: !input show_calendar
+      do_voice: !input voice_announcement
+      assistant: !input voice_assistant
+      type: !input assistant_type
+      weather_state: "{{ states(weather) }}"
+      weather_temp: "{{ state_attr(weather, 'temperature') }}"
+      calendar_msg: >
+        {% if calendar != "" and is_state(calendar, 'on') %}
+          {{ state_attr(calendar, 'message') }}
+        {% else %}
+          Sin eventos hoy
+        {% endif %}
+
+  # Mostrar clima en SVITRIX
+  - if:
+      - condition: template
+        value_template: "{{ do_weather }}"
+    then:
+      - service: mqtt.publish
+        data:
+          topic: "{{ prefix }}/notify"
+          payload: >
+            {
+              "text": "{{ weather_temp }}° {{ weather_state }}",
+              "icon": "52016",
+              "duration": 8,
+              "color": "#00BFFF"
+            }
+      - delay:
+          seconds: 8
+
+  # Mostrar calendario en SVITRIX
+  - if:
+      - condition: template
+        value_template: "{{ do_calendar and calendar != '' }}"
+    then:
+      - service: mqtt.publish
+        data:
+          topic: "{{ prefix }}/custom/morning"
+          payload: >
+            {
+              "text": "{{ calendar_msg }}",
+              "icon": "6741",
+              "duration": 10,
+              "color": "#FFD700",
+              "lifetime": 3600
+            }
+
+  # Anuncio de voz
+  - if:
+      - condition: template
+        value_template: "{{ do_voice and assistant != '' }}"
+    then:
+      - variables:
+          voice_msg: >
+            Buenos días. Hoy está {{ weather_state }} con {{ weather_temp }} grados.
+            {% if calendar != "" and is_state(calendar, 'on') %}
+              Tu próximo evento es: {{ calendar_msg }}
+            {% endif %}
+      - choose:
+          - conditions:
+              - condition: template
+                value_template: "{{ type == 'alexa' }}"
+            sequence:
+              - service: notify.alexa_media
+                data:
+                  target: "{{ assistant }}"
+                  message: "{{ voice_msg }}"
+                  data:
+                    type: tts
+          - conditions:
+              - condition: template
+                value_template: "{{ type == 'google' }}"
+            sequence:
+              - service: tts.google_translate_say
+                data:
+                  entity_id: "{{ assistant }}"
+                  message: "{{ voice_msg }}"
+
+  # Reset del trigger
+  - service: input_boolean.turn_off
+    target:
+      entity_id: !input trigger_entity
+
+mode: single
