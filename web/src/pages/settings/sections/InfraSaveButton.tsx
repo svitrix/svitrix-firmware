@@ -1,10 +1,12 @@
 import { useState } from "preact/hooks";
 import { useSettings } from "../../../context/SettingsContext";
 import { Button } from "../../../components/ui";
+import { useT } from "../../../i18n";
 
 export function InfraSaveButton() {
   const { config, saveInfraConfig } = useSettings();
   const [saving, setSaving] = useState(false);
+  const t = useT();
   if (!config) return null;
 
   async function handleSave() {
@@ -15,7 +17,7 @@ export function InfraSaveButton() {
 
   return (
     <Button variant="primary" onClick={handleSave} loading={saving}>
-      Save Network/NTP & Time Zone
+      {t.settings.saveButton}
     </Button>
   );
 }

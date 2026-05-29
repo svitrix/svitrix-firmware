@@ -3,6 +3,7 @@ import { listDir, uploadFile, reboot, exportSettings, importSettings } from "../
 import type { FileEntry } from "../../api/types";
 import { toast } from "../../components/Toast";
 import { FileInput } from "../../components/ui";
+import { useT } from "../../i18n";
 import styles from "./Backup.module.css";
 
 interface BackupData {
@@ -29,9 +30,10 @@ async function collectFiles(
 
 export function BackupPage(_props: { path?: string }) {
   const [busy, setBusy] = useState("");
+  const t = useT();
 
   async function doBackup() {
-    setBusy("Collecting files...");
+    setBusy("...");
     try {
       const files: { path: string; blob: Blob }[] = [];
       await collectFiles("/", files);
@@ -45,7 +47,6 @@ export function BackupPage(_props: { path?: string }) {
         fileData[f.path] = btoa(binary);
       }
 
-      setBusy("Exporting settings...");
       const settings = await exportSettings();
 
       const backup: BackupData = {
@@ -62,20 +63,19 @@ export function BackupPage(_props: { path?: string }) {
       a.download = "svitrix-backup.json";
       a.click();
       URL.revokeObjectURL(a.href);
-      toast("Backup downloaded!");
+      toast("OK!");
     } catch {
-      toast("Backup failed");
+      toast("Error");
     }
     setBusy("");
   }
 
   async function doRestore(file: File) {
-    setBusy("Restoring...");
+    setBusy("...");
     try {
       const text = await file.text();
       const raw = JSON.parse(text);
 
-      // Support both old format (flat file map) and new format (with settings)
       const backup: BackupData = raw.version === 2
         ? raw
         : { files: raw, version: 1 };
@@ -83,7 +83,7 @@ export function BackupPage(_props: { path?: string }) {
       const paths = Object.keys(backup.files);
       let done = 0;
       for (const path of paths) {
-        setBusy(`Restoring files ${++done}/${paths.length}...`);
+        setBusy(`${++done}/${paths.length}...`);
         const binary = atob(backup.files[path]);
         const bytes = new Uint8Array(binary.length);
         for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
@@ -91,43 +91,37 @@ export function BackupPage(_props: { path?: string }) {
       }
 
       if (backup.settings) {
-        setBusy("Restoring settings...");
         await importSettings(backup.settings);
       }
 
-      toast("Restore complete! Rebooting...");
+      toast("OK!");
       await reboot();
     } catch {
-      toast("Restore failed");
+      toast("Error");
     }
     setBusy("");
   }
 
   return (
     <div class={styles.page}>
-      <h2>Backup & Restore</h2>
+      <h2>{t.backup.title}</h2>
 
       <div class="card">
-        <h3 class={styles.cardHeading}>Backup</h3>
-        <p class={styles.hint}>
-          Download all files and settings from device as a JSON backup.
-          Includes: icons, melodies, custom apps, alarms, and all configuration.
-        </p>
+        <h3 class={styles.cardHeading}>{t.backup.backup}</h3>
+        <p class={styles.hint}>{t.backup.backupHint}</p>
         <button class="btn-primary" onClick={doBackup} disabled={!!busy}>
-          {busy || "Download Backup"}
+          {busy || t.backup.downloadBackup}
         </button>
       </div>
 
       <div class="card">
-        <h3 class={styles.cardHeading}>Restore</h3>
-        <p class={styles.hint}>
-          Upload a previously downloaded backup file. Files and settings will be restored. Device will reboot after restore.
-        </p>
+        <h3 class={styles.cardHeading}>{t.backup.restore}</h3>
+        <p class={styles.hint}>{t.backup.restoreHint}</p>
         <FileInput
           accept=".json"
           disabled={!!busy}
           onChange={doRestore}
-          buttonText="Choose File"
+          buttonText={t.chooseFile}
         />
       </div>
     </div>

@@ -2,14 +2,16 @@ import { useState } from "preact/hooks";
 import { SettingsProvider, useSettings } from "../../context/SettingsContext";
 import { MqttSection, AuthSection } from "../settings/sections";
 import { Button } from "../../components/ui";
+import { useT } from "../../i18n";
 import styles from "../settings/Settings.module.css";
 
 function MqttContent() {
   const { settings, loading, saveInfraConfig } = useSettings();
   const [saving, setSaving] = useState(false);
+  const t = useT();
 
-  if (loading) return <p>Loading...</p>;
-  if (!settings) return <p>Loading...</p>;
+  if (loading) return <p>{t.loading}</p>;
+  if (!settings) return <p>{t.loading}</p>;
 
   async function handleSave() {
     setSaving(true);
@@ -22,7 +24,7 @@ function MqttContent() {
       <MqttSection />
       <AuthSection />
       <Button variant="primary" onClick={handleSave} loading={saving}>
-        Save MQTT/Auth
+        {t.mqtt.saveButton}
       </Button>
     </div>
   );

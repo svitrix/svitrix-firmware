@@ -2,6 +2,7 @@ import { render } from "preact";
 import Router from "preact-router";
 import { Nav } from "./components/Nav";
 import { ToastContainer } from "./components/Toast";
+import { LanguageProvider } from "./i18n";
 import { ScreenPage } from "./pages/screen";
 import { SettingsPage } from "./pages/settings";
 import { MqttPage } from "./pages/mqtt";
@@ -21,28 +22,30 @@ import styles from "./main.module.css";
 
 function App() {
   return (
-    <div>
-      <Nav />
-      <main class={styles.main}>
-        <Router>
-          <SettingsPage path="/" />
-          <MqttPage path="/mqtt" />
-          <DisplayPage path="/display" />
-          <AppsPage path="/apps" />
-          <DateTimePage path="/datetime" />
-          <SoundPage path="/sound" />
-          <ScreenPage path="/screen" />
-          <DataFetcherPage path="/datafetcher" />
-          <AutonomousPage path="/autonomous" />
-          <FilesPage path="/files" />
-          <IconsPage path="/icons" />
-          <BackupPage path="/backup" />
-          <SystemPage path="/system" />
-          <UpdatePage path="/update" />
-        </Router>
-      </main>
-      <ToastContainer />
-    </div>
+    <LanguageProvider>
+      <div>
+        <Nav />
+        <main class={styles.main}>
+          <Router>
+            <SettingsPage path="/" />
+            <MqttPage path="/mqtt" />
+            <DisplayPage path="/display" />
+            <AppsPage path="/apps" />
+            <DateTimePage path="/datetime" />
+            <SoundPage path="/sound" />
+            <ScreenPage path="/screen" />
+            <DataFetcherPage path="/datafetcher" />
+            <AutonomousPage path="/autonomous" />
+            <FilesPage path="/files" />
+            <IconsPage path="/icons" />
+            <BackupPage path="/backup" />
+            <SystemPage path="/system" />
+            <UpdatePage path="/update" />
+          </Router>
+        </main>
+        <ToastContainer />
+      </div>
+    </LanguageProvider>
   );
 }
 

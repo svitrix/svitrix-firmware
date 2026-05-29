@@ -1,28 +1,30 @@
-import { useState } from "preact/hooks";
+import { useState, useMemo } from "preact/hooks";
 import { useSettings } from "../../../context/SettingsContext";
 import { Toggle, Slider, Select, Card, Button } from "../../../components/ui";
+import { useT } from "../../../i18n";
 import styles from "./sections.module.css";
-
-const TRANSITION_OPTIONS = [
-  { value: 0, label: "Random" },
-  { value: 1, label: "Slide Down" },
-  { value: 11, label: "Slide Up" },
-  { value: 12, label: "Slide Left" },
-  { value: 13, label: "Slide Right" },
-  { value: 2, label: "Dim" },
-  { value: 3, label: "Zoom" },
-  { value: 4, label: "Rotate" },
-  { value: 5, label: "Pixelate" },
-  { value: 6, label: "Curtain" },
-  { value: 7, label: "Ripple" },
-  { value: 8, label: "Blink" },
-  { value: 9, label: "Reload" },
-  { value: 10, label: "Fade" },
-];
 
 export function AppTransitionsSection() {
   const { settings, updateSettings, saveDisplaySettings } = useSettings();
   const [saving, setSaving] = useState(false);
+  const t = useT();
+
+  const transitionOptions = useMemo(() => [
+    { value: 0, label: t.transitions.random },
+    { value: 1, label: t.transitions.slideDown },
+    { value: 11, label: t.transitions.slideUp },
+    { value: 12, label: t.transitions.slideLeft },
+    { value: 13, label: t.transitions.slideRight },
+    { value: 2, label: t.transitions.dim },
+    { value: 3, label: t.transitions.zoom },
+    { value: 4, label: t.transitions.rotate },
+    { value: 5, label: t.transitions.pixelate },
+    { value: 6, label: t.transitions.curtain },
+    { value: 7, label: t.transitions.ripple },
+    { value: 8, label: t.transitions.blink },
+    { value: 9, label: t.transitions.reload },
+    { value: 10, label: t.transitions.fade },
+  ], [t]);
 
   if (!settings) return null;
   const s = settings;
@@ -41,20 +43,20 @@ export function AppTransitionsSection() {
   }
 
   return (
-    <Card title="Transitions & Navigation">
+    <Card title={t.apps.transitions}>
       <div class={styles.stack}>
-        <Toggle label="Alarms Indicator" checked={s.SALARMS} onChange={(v) => updateSettings({ SALARMS: v })} />
-        <Toggle label="Auto Transition" checked={s.ATRANS} onChange={(v) => updateSettings({ ATRANS: v })} />
+        <Toggle label={t.apps.alarmsIndicator} checked={s.SALARMS} onChange={(v) => updateSettings({ SALARMS: v })} />
+        <Toggle label={t.apps.autoTransition} checked={s.ATRANS} onChange={(v) => updateSettings({ ATRANS: v })} />
         <Select
-          label="Transition Effect"
+          label={t.apps.transitionEffect}
           value={s.TEFF}
-          options={TRANSITION_OPTIONS}
+          options={transitionOptions}
           onChange={(v) => updateSettings({ TEFF: v as number })}
         />
-        <Slider label="Transition Speed" min={100} max={2000} step={100} value={s.TSPEED} onChange={(v) => updateSettings({ TSPEED: v })} unit="ms" />
-        <Slider label="Scroll Speed" min={10} max={100} value={s.SSPEED} onChange={(v) => updateSettings({ SSPEED: v })} />
-        <Toggle label="Block Navigation" checked={s.BLOCKN} onChange={(v) => updateSettings({ BLOCKN: v })} />
-        <Button variant="primary" onClick={handleSave} loading={saving}>Save Transitions</Button>
+        <Slider label={t.apps.transitionSpeed} min={100} max={2000} step={100} value={s.TSPEED} onChange={(v) => updateSettings({ TSPEED: v })} unit="ms" />
+        <Slider label={t.apps.scrollSpeed} min={10} max={100} value={s.SSPEED} onChange={(v) => updateSettings({ SSPEED: v })} />
+        <Toggle label={t.apps.blockNavigation} checked={s.BLOCKN} onChange={(v) => updateSettings({ BLOCKN: v })} />
+        <Button variant="primary" onClick={handleSave} loading={saving}>{t.apps.saveTransitions}</Button>
       </div>
     </Card>
   );

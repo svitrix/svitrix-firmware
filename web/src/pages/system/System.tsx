@@ -3,15 +3,17 @@ import { SettingsProvider, useSettings } from "../../context/SettingsContext";
 import { resetSettings, reboot, eraseWifi } from "../../api/client";
 import { toast } from "../../components/Toast";
 import { Button, Card } from "../../components/ui";
+import { useT } from "../../i18n";
 import styles from "../settings/Settings.module.css";
 import sectionStyles from "../settings/sections/sections.module.css";
 
 function SystemContent() {
   const { settings, saveDisplaySettings, saveInfraConfig, saveWeatherConfig, loading } = useSettings();
   const [saving, setSaving] = useState(false);
+  const t = useT();
 
-  if (loading) return <p>Loading...</p>;
-  if (!settings) return <p>Loading...</p>;
+  if (loading) return <p>{t.loading}</p>;
+  if (!settings) return <p>{t.loading}</p>;
 
   async function handleSaveAll() {
     if (!settings) return;
@@ -22,52 +24,52 @@ function SystemContent() {
       saveWeatherConfig(),
     ]);
     setSaving(false);
-    toast("All settings saved");
+    toast(t.system.allSaved);
   }
 
   return (
     <div class={styles.page}>
-      <Card title="System">
+      <Card title={t.system.title}>
         <div class={sectionStyles.stack}>
           <p class={sectionStyles.hint}>
-            Save, reset, or reboot the device.
+            {t.system.hint}
           </p>
           <div class={sectionStyles.actions}>
             <Button variant="primary" onClick={handleSaveAll} loading={saving}>
-              Save All Settings
+              {t.system.saveAll}
             </Button>
             <Button
               onClick={() => {
-                if (confirm("Reset all settings to defaults? Device will restart.")) {
+                if (confirm(t.system.confirmReset)) {
                   resetSettings().then(() => {
-                    toast("Settings reset, rebooting...");
+                    toast(t.system.settingsReset);
                   });
                 }
               }}
             >
-              Reset Defaults
+              {t.system.resetDefaults}
             </Button>
             <Button
               variant="danger"
               onClick={() => {
-                if (confirm("Erase WiFi credentials? Device will restart and enter AP mode.")) {
+                if (confirm(t.system.confirmEraseWifi)) {
                   eraseWifi().then(() => {
-                    toast("WiFi erased, rebooting...");
+                    toast(t.system.wifiErased);
                   });
                 }
               }}
             >
-              Erase WiFi
+              {t.system.eraseWifi}
             </Button>
             <Button
               variant="danger"
               onClick={() => {
-                if (confirm("Reboot device?")) {
-                  reboot().then(() => toast("Rebooting..."));
+                if (confirm(t.system.confirmReboot)) {
+                  reboot().then(() => toast(t.system.rebooting));
                 }
               }}
             >
-              Reboot
+              {t.system.reboot}
             </Button>
           </div>
         </div>

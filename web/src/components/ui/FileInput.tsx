@@ -1,4 +1,5 @@
 import { useRef, useState } from "preact/hooks";
+import { useT } from "../../i18n";
 import styles from "./FileInput.module.css";
 
 interface FileInputProps {
@@ -8,9 +9,10 @@ interface FileInputProps {
   buttonText?: string;
 }
 
-export function FileInput({ accept, disabled, onChange, buttonText = "Choose File" }: FileInputProps) {
+export function FileInput({ accept, disabled, onChange, buttonText }: FileInputProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [fileName, setFileName] = useState<string | null>(null);
+  const t = useT();
 
   function handleClick() {
     inputRef.current?.click();
@@ -40,10 +42,10 @@ export function FileInput({ accept, disabled, onChange, buttonText = "Choose Fil
         onClick={handleClick}
         disabled={disabled}
       >
-        {buttonText}
+        {buttonText || t.chooseFile}
       </button>
       <span class={styles.fileName}>
-        {fileName || "No file selected"}
+        {fileName || t.noFileSelected}
       </span>
     </div>
   );

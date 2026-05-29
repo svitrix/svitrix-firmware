@@ -1,4 +1,5 @@
 import { SettingsProvider, useSettings } from "../../context/SettingsContext";
+import { useT } from "../../i18n";
 import styles from "./Settings.module.css";
 import {
   StatsBar,
@@ -11,8 +12,9 @@ import {
 
 function SettingsContent() {
   const { settings, apiAvailable, loading } = useSettings();
+  const t = useT();
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <p>{t.loading}</p>;
 
   if (!settings && !apiAvailable) {
     return (
@@ -22,7 +24,7 @@ function SettingsContent() {
     );
   }
 
-  if (!settings) return <p>Loading...</p>;
+  if (!settings) return <p>{t.loading}</p>;
 
   return (
     <div class={styles.page}>

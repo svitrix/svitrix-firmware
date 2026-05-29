@@ -1,6 +1,7 @@
 import { useState, useMemo } from "preact/hooks";
 import { useSettings } from "../../../context/SettingsContext";
 import { Toggle, ColorField, Select, Card, FormRow, Button } from "../../../components/ui";
+import { useT } from "../../../i18n";
 import styles from "./sections.module.css";
 
 const TIME_FORMATS = [
@@ -27,29 +28,30 @@ const DATE_FORMATS = [
   { value: "%b %d", label: "Mon DD" },
 ];
 
-const ALL_TIME_MODES = [
-  { value: 0, label: "Plain Text (weekday below)" },
-  { value: 1, label: "Calendar (weekday below)" },
-  { value: 2, label: "Calendar (weekday above)" },
-  { value: 3, label: "Calendar Alt (weekday below)" },
-  { value: 4, label: "Calendar Alt (weekday above)" },
-  { value: 5, label: "Big Digits" },
-  { value: 6, label: "Binary" },
-];
-
 export function TimeDateSection() {
   const { settings, updateSettings, saveDisplaySettings } = useSettings();
   const [saving, setSaving] = useState(false);
+  const t = useT();
   if (!settings) return null;
   const s = settings;
 
+  const timeModeOptions = useMemo(() => [
+    { value: 0, label: t.timeModes.plainText },
+    { value: 1, label: t.timeModes.calendarBelow },
+    { value: 2, label: t.timeModes.calendarAbove },
+    { value: 3, label: t.timeModes.calendarAltBelow },
+    { value: 4, label: t.timeModes.calendarAltAbove },
+    { value: 5, label: t.timeModes.bigDigits },
+    { value: 6, label: t.timeModes.binary },
+  ], [t]);
+
   const hasSeconds = s.TFORMAT?.includes("%S") ?? false;
-  const timeModeOptions = useMemo(() => {
+  const filteredTimeModes = useMemo(() => {
     if (hasSeconds) {
-      return ALL_TIME_MODES.filter((m) => m.value === 0 || m.value === 6);
+      return timeModeOptions.filter((m) => m.value === 0 || m.value === 6);
     }
-    return ALL_TIME_MODES;
-  }, [hasSeconds]);
+    return timeModeOptions;
+  }, [hasSeconds, timeModeOptions]);
 
   function handleTimeFormatChange(format: string) {
     const newHasSeconds = format.includes("%S");
@@ -73,45 +75,44 @@ export function TimeDateSection() {
   }
 
   return (
-    <Card title="Time & Date Format">
+    <Card title={t.datetime.title}>
       <div class={styles.stack}>
         <FormRow>
           <Select
-            label="Time Format"
+            label={t.datetime.timeFormat}
             value={s.TFORMAT}
             options={TIME_FORMATS}
             onChange={(v) => handleTimeFormatChange(v as string)}
           />
           <Select
-            label="Date Format"
+            label={t.datetime.dateFormat}
             value={s.DFORMAT}
             options={DATE_FORMATS}
             onChange={(v) => updateSettings({ DFORMAT: v as string })}
           />
         </FormRow>
         <Select
-          label="Time Mode"
+          label={t.datetime.timeMode}
           value={s.TMODE}
-          options={timeModeOptions}
+          options={filteredTimeModes}
           onChange={(v) => updateSettings({ TMODE: v as number })}
         />
-        {hasSeconds && <p class={styles.hint}>Calendar and Big Digits modes disabled when showing seconds</p>}
-        <Toggle label="Start on Monday" checked={s.SOM} onChange={(v) => updateSettings({ SOM: v })} />
-        <Toggle label="Show Weekday" checked={s.WD} onChange={(v) => updateSettings({ WD: v })} />
+        <Toggle label={t.datetime.startOnMonday} checked={s.SOM} onChange={(v) => updateSettings({ SOM: v })} />
+        <Toggle label={t.datetime.showWeekday} checked={s.WD} onChange={(v) => updateSettings({ WD: v })} />
         <FormRow>
-          <ColorField label="Time Color" value={s.TIME_COL} onChange={(v) => updateSettings({ TIME_COL: v })} />
-          <ColorField label="Date Color" value={s.DATE_COL} onChange={(v) => updateSettings({ DATE_COL: v })} />
+          <ColorField label={t.datetime.timeColor} value={s.TIME_COL} onChange={(v) => updateSettings({ TIME_COL: v })} />
+          <ColorField label={t.datetime.dateColor} value={s.DATE_COL} onChange={(v) => updateSettings({ DATE_COL: v })} />
         </FormRow>
         <FormRow>
-          <ColorField label="Weekday Active" value={s.WDCA} onChange={(v) => updateSettings({ WDCA: v })} />
-          <ColorField label="Weekday Inactive" value={s.WDCI} onChange={(v) => updateSettings({ WDCI: v })} />
+          <ColorField label={t.datetime.weekdayActive} value={s.WDCA} onChange={(v) => updateSettings({ WDCA: v })} />
+          <ColorField label={t.datetime.weekdayInactive} value={s.WDCI} onChange={(v) => updateSettings({ WDCI: v })} />
         </FormRow>
         <FormRow>
-          <ColorField label="Cal Header" value={s.CHCOL} onChange={(v) => updateSettings({ CHCOL: v })} />
-          <ColorField label="Cal Text" value={s.CTCOL} onChange={(v) => updateSettings({ CTCOL: v })} />
+          <ColorField label={t.datetime.calHeader} value={s.CHCOL} onChange={(v) => updateSettings({ CHCOL: v })} />
+          <ColorField label={t.datetime.calText} value={s.CTCOL} onChange={(v) => updateSettings({ CTCOL: v })} />
         </FormRow>
-        <ColorField label="Cal Body" value={s.CBCOL} onChange={(v) => updateSettings({ CBCOL: v })} />
-        <Button variant="primary" onClick={handleSave} loading={saving}>Save Time & Date Settings</Button>
+        <ColorField label={t.datetime.calBody} value={s.CBCOL} onChange={(v) => updateSettings({ CBCOL: v })} />
+        <Button variant="primary" onClick={handleSave} loading={saving}>{t.datetime.saveButton}</Button>
       </div>
     </Card>
   );

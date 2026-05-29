@@ -1,6 +1,7 @@
 import { useState } from "preact/hooks";
 import { useSettings } from "../../../context/SettingsContext";
 import { Toggle, Slider, ColorField, Select, Card, Button } from "../../../components/ui";
+import { useT } from "../../../i18n";
 import styles from "./sections.module.css";
 
 const TEMP_OFFSET_OPTIONS = [
@@ -30,6 +31,7 @@ const TEMP_OFFSET_OPTIONS = [
 export function AppsSection() {
   const { settings, updateSettings, saveDisplaySettings } = useSettings();
   const [saving, setSaving] = useState(false);
+  const t = useT();
   if (!settings) return null;
   const s = settings;
 
@@ -52,28 +54,28 @@ export function AppsSection() {
   }
 
   return (
-    <Card title="Apps">
+    <Card title={t.apps.title}>
       <div class={styles.stack}>
         <div class={styles.appRow}>
-          <Toggle label="Time" checked={s.TIM} onChange={(v) => updateSettings({ TIM: v })} />
+          <Toggle label={t.apps.time} checked={s.TIM} onChange={(v) => updateSettings({ TIM: v })} />
           <div class={styles.appSlider}>
             <Slider label="" min={1} max={300} value={s.TIMEDUR || 7} onChange={(v) => updateSettings({ TIMEDUR: v })} unit="s" />
           </div>
         </div>
 
         <div class={styles.appRow}>
-          <Toggle label="Date" checked={s.DAT} onChange={(v) => updateSettings({ DAT: v })} />
+          <Toggle label={t.apps.date} checked={s.DAT} onChange={(v) => updateSettings({ DAT: v })} />
           <div class={styles.appSlider}>
             <Slider label="" min={1} max={60} value={s.DATEDUR || 7} onChange={(v) => updateSettings({ DATEDUR: v })} unit="s" />
           </div>
         </div>
 
         <div class={styles.appRow}>
-          <Toggle label="Temperature" checked={s.TEMP} onChange={(v) => updateSettings({ TEMP: v })} />
+          <Toggle label={t.apps.temperature} checked={s.TEMP} onChange={(v) => updateSettings({ TEMP: v })} />
           <ColorField label="" value={s.TEMP_COL} onChange={(v) => updateSettings({ TEMP_COL: v })} />
-          <Toggle label="Celsius" checked={s.CEL} onChange={(v) => updateSettings({ CEL: v })} />
+          <Toggle label={t.apps.celsius} checked={s.CEL} onChange={(v) => updateSettings({ CEL: v })} />
           <Select
-            label="Offset"
+            label={t.apps.offset}
             value={s.TOFF ?? -9}
             options={TEMP_OFFSET_OPTIONS}
             onChange={(v) => updateSettings({ TOFF: v as number })}
@@ -84,7 +86,7 @@ export function AppsSection() {
         </div>
 
         <div class={styles.appRow}>
-          <Toggle label="Humidity" checked={s.HUM} onChange={(v) => updateSettings({ HUM: v })} />
+          <Toggle label={t.apps.humidity} checked={s.HUM} onChange={(v) => updateSettings({ HUM: v })} />
           <ColorField label="" value={s.HUM_COL} onChange={(v) => updateSettings({ HUM_COL: v })} />
           <div class={styles.appSlider}>
             <Slider label="" min={1} max={60} value={s.HUMDUR || 7} onChange={(v) => updateSettings({ HUMDUR: v })} unit="s" />
@@ -92,14 +94,14 @@ export function AppsSection() {
         </div>
 
         <div class={styles.appRow}>
-          <Toggle label="Battery" checked={s.BAT} onChange={(v) => updateSettings({ BAT: v })} />
+          <Toggle label={t.apps.battery} checked={s.BAT} onChange={(v) => updateSettings({ BAT: v })} />
           <ColorField label="" value={s.BAT_COL} onChange={(v) => updateSettings({ BAT_COL: v })} />
           <div class={styles.appSlider}>
             <Slider label="" min={1} max={60} value={s.BATDUR || 7} onChange={(v) => updateSettings({ BATDUR: v })} unit="s" />
           </div>
         </div>
 
-        <Button variant="primary" onClick={handleSave} loading={saving}>Save Apps</Button>
+        <Button variant="primary" onClick={handleSave} loading={saving}>{t.apps.saveApps}</Button>
       </div>
     </Card>
   );
