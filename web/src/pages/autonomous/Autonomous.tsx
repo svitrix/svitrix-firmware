@@ -8,6 +8,7 @@ import {
   dismissAlarm,
 } from "../../api/client";
 import type { Alarm, AlarmsState } from "../../api/types";
+import { useT } from "../../i18n";
 import styles from "./Autonomous.module.css";
 
 const DAYS = ["S", "M", "T", "W", "T", "F", "S"];
@@ -17,6 +18,7 @@ function AlarmsSection() {
   const [newTime, setNewTime] = useState("07:00");
   const [newLabel, setNewLabel] = useState("");
   const pollRef = useRef<ReturnType<typeof setInterval>>();
+  const t = useT();
 
   const poll = async () => {
     try {
@@ -64,16 +66,16 @@ function AlarmsSection() {
 
   return (
     <div class={styles.section}>
-      <div class={styles.sectionTitle}>Alarms</div>
+      <div class={styles.sectionTitle}>{t.alarms.title}</div>
 
       {state?.ringing && (
         <div class={styles.ringingAlert}>
-          <div>ALARM RINGING!</div>
+          <div>{t.alarms.ringing}</div>
           <button class={styles.btnPause} onClick={() => { snoozeAlarm(5); poll(); }}>
-            Snooze 5min
+            {t.alarms.snooze5min}
           </button>
           <button class={styles.btnDanger} onClick={() => { dismissAlarm(); poll(); }}>
-            Dismiss
+            {t.alarms.dismiss}
           </button>
         </div>
       )}
@@ -100,7 +102,7 @@ function AlarmsSection() {
                 </div>
               ))}
             </div>
-            <div class={styles.alarmLabel}>{alarm.label || "Alarm"}</div>
+            <div class={styles.alarmLabel}>{alarm.label || t.alarms.alarm}</div>
             <div class={styles.alarmActions}>
               <button class={styles.btnDanger} onClick={() => handleDelete(alarm.id)}>
                 X
@@ -110,7 +112,7 @@ function AlarmsSection() {
         ))}
 
         {(!state?.alarms || state.alarms.length === 0) && (
-          <div class={styles.emptyState}>No alarms configured</div>
+          <div class={styles.emptyState}>{t.alarms.noAlarms}</div>
         )}
       </div>
 
@@ -122,12 +124,12 @@ function AlarmsSection() {
         />
         <input
           type="text"
-          placeholder="Label (optional)"
+          placeholder={t.alarms.labelPlaceholder}
           value={newLabel}
           onChange={(e) => setNewLabel((e.target as HTMLInputElement).value)}
         />
         <button class={styles.btnStart} onClick={handleAdd}>
-          Add
+          {t.alarms.add}
         </button>
       </div>
     </div>

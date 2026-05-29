@@ -3,6 +3,7 @@ import { sendNotify, dismissNotify } from "../../../api/client";
 import type { Notification } from "../../../api/types";
 import { Card, TextField, ColorField, Toggle, Slider, Select, Button, FormRow } from "../../../components/ui";
 import { toast } from "../../../components/Toast";
+import { useT } from "../../../i18n";
 import styles from "./sections.module.css";
 
 export function NotifySection() {
@@ -15,6 +16,7 @@ export function NotifySection() {
   });
   const [hold, setHold] = useState(false);
   const [sending, setSending] = useState(false);
+  const t = useT();
 
   function upd(patch: Partial<Notification>) {
     setNotif((prev) => ({ ...prev, ...patch }));
@@ -22,7 +24,7 @@ export function NotifySection() {
 
   async function handleSend() {
     if (!notif.text) {
-      toast("Enter message text");
+      toast(t.display.notifyEnterText);
       return;
     }
     setSending(true);
@@ -45,9 +47,9 @@ export function NotifySection() {
       if (notif.sound) payload.sound = notif.sound;
 
       await sendNotify(payload);
-      toast("Notification sent!");
+      toast(t.display.notifySent);
     } catch {
-      toast("Failed to send");
+      toast(t.display.notifyFailed);
     }
     setSending(false);
   }
@@ -55,35 +57,35 @@ export function NotifySection() {
   async function handleDismiss() {
     try {
       await dismissNotify();
-      toast("Dismissed");
+      toast(t.display.notifyDismissed);
     } catch {
-      toast("Failed to dismiss");
+      toast(t.display.notifyDismissFailed);
     }
   }
 
   return (
-    <Card title="Send Notification">
+    <Card title={t.display.sendNotification}>
       <div class={styles.stack}>
         <TextField
-          label="Text"
+          label={t.display.notifyText}
           value={notif.text}
           onChange={(v) => upd({ text: v })}
           placeholder="Hello world!"
         />
         <FormRow>
           <TextField
-            label="Icon"
+            label={t.display.notifyIcon}
             value={notif.icon || ""}
             onChange={(v) => upd({ icon: v })}
-            placeholder="Icon ID or name"
+            placeholder={t.display.notifyIconPlaceholder}
           />
           {notif.icon && (
             <Select
-              label="Layout"
+              label={t.display.notifyLayout}
               value={notif.layout || "left"}
               options={[
-                { value: "left", label: "Left" },
-                { value: "right", label: "Right" },
+                { value: "left", label: t.display.notifyLayoutLeft },
+                { value: "right", label: t.display.notifyLayoutRight },
               ]}
               onChange={(v) => upd({ layout: v as "left" | "right" | "none" })}
             />
@@ -91,13 +93,13 @@ export function NotifySection() {
         </FormRow>
         <FormRow>
           <Toggle
-            label="Hold (indefinite)"
+            label={t.display.notifyHold}
             checked={hold}
             onChange={(v) => setHold(v)}
           />
           {!hold && (
             <Slider
-              label="Duration"
+              label={t.display.notifyDuration}
               min={1}
               max={60}
               value={notif.duration || 5}
@@ -108,13 +110,13 @@ export function NotifySection() {
         </FormRow>
         <FormRow>
           <Toggle
-            label="Rainbow"
+            label={t.display.notifyRainbow}
             checked={notif.rainbow || false}
             onChange={(v) => upd({ rainbow: v })}
           />
           {!notif.rainbow && (
             <ColorField
-              label="Color"
+              label={t.display.notifyColor}
               value={typeof notif.color === "string" ? parseInt(notif.color.replace("#", ""), 16) || 0xffffff : 0xffffff}
               onChange={(v) => upd({ color: "#" + (v & 0xffffff).toString(16).padStart(6, "0") })}
             />
@@ -122,24 +124,24 @@ export function NotifySection() {
         </FormRow>
         <FormRow>
           <TextField
-            label="Sound"
+            label={t.display.notifySound}
             value={notif.sound || ""}
             onChange={(v) => upd({ sound: v })}
-            placeholder="Filename (optional)"
+            placeholder={t.display.notifySoundPlaceholder}
           />
           <TextField
-            label="RTTTL"
+            label={t.display.notifyRtttl}
             value={notif.rtttl || ""}
             onChange={(v) => upd({ rtttl: v })}
-            placeholder="RTTTL string (optional)"
+            placeholder={t.display.notifyRtttlPlaceholder}
           />
         </FormRow>
         <div class={styles.actions}>
           <Button variant="primary" onClick={handleSend} loading={sending}>
-            Send
+            {t.display.notifySend}
           </Button>
           <Button onClick={handleDismiss}>
-            Dismiss
+            {t.display.notifyDismiss}
           </Button>
         </div>
       </div>

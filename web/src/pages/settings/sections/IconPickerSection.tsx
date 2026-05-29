@@ -2,14 +2,16 @@ import { useState } from "preact/hooks";
 import { uploadFile } from "../../../api/client";
 import { toast } from "../../../components/Toast";
 import { TextField, Card, FormRow, Button } from "../../../components/ui";
+import { useT } from "../../../i18n";
 import styles from "./sections.module.css";
 
 export function IconPickerSection() {
   const [iconId, setIconId] = useState("");
   const [iconPreview, setIconPreview] = useState("");
+  const t = useT();
 
   async function downloadIcon() {
-    if (!iconId) { toast("Enter icon ID"); return; }
+    if (!iconId) { toast(t.icons.enterIconId); return; }
     try {
       const res = await fetch(
         `https://developer.lametric.com/content/apps/icon_thumbs/${iconId}`
@@ -30,7 +32,7 @@ export function IconPickerSection() {
           canvas.toBlob(async (jpgBlob) => {
             if (jpgBlob) {
               await uploadFile(`/ICONS/${iconId}.jpg`, jpgBlob);
-              toast("Icon saved!");
+              toast(t.icons.iconSaved);
             }
           }, "image/jpeg", 1);
           URL.revokeObjectURL(url);
@@ -38,24 +40,24 @@ export function IconPickerSection() {
         img.src = url;
       } else {
         await uploadFile(`/ICONS/${iconId}.gif`, blob);
-        toast("Icon saved!");
+        toast(t.icons.iconSaved);
       }
     } catch {
-      toast("Icon download failed");
+      toast(t.icons.iconDownloadFailed);
     }
   }
 
   return (
-    <Card title="Icon Picker">
+    <Card title={t.icons.title}>
       <div class={styles.stack}>
         <FormRow>
-          <TextField label="LaMetric Icon ID" value={iconId} onChange={setIconId} placeholder="13" />
+          <TextField label={t.icons.lametricId} value={iconId} onChange={setIconId} placeholder="13" />
           <div class={`form-group ${styles.formGroupEnd}`}>
             <div class={styles.btnGroup}>
               <Button onClick={() => {
                 if (iconId) setIconPreview(`https://developer.lametric.com/content/apps/icon_thumbs/${iconId}`);
-              }}>Preview</Button>
-              <Button variant="primary" onClick={downloadIcon}>Download</Button>
+              }}>{t.icons.preview}</Button>
+              <Button variant="primary" onClick={downloadIcon}>{t.icons.download}</Button>
             </div>
           </div>
         </FormRow>
@@ -64,7 +66,7 @@ export function IconPickerSection() {
             <img
               src={iconPreview}
               class={styles.iconPreviewImg}
-              onError={() => { setIconPreview(""); toast("Icon not found"); }}
+              onError={() => { setIconPreview(""); toast(t.icons.iconNotFound); }}
             />
           </div>
         )}

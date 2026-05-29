@@ -1,11 +1,13 @@
 import { useState } from "preact/hooks";
 import { useSettings } from "../../../context/SettingsContext";
 import { Toggle, Slider, ColorField, Select, Card, FormRow, Button } from "../../../components/ui";
+import { useT } from "../../../i18n";
 import styles from "./sections.module.css";
 
 export function DisplaySection() {
   const { settings, effects, updateSettings, saveDisplaySettings } = useSettings();
   const [saving, setSaving] = useState(false);
+  const t = useT();
   if (!settings) return null;
   const s = settings;
 
@@ -33,31 +35,31 @@ export function DisplaySection() {
   }
 
   return (
-    <Card title="Display">
+    <Card title={t.display.title}>
       <div class={styles.stack}>
-        <Toggle label="Matrix Power" checked={s.MATP} onChange={(v) => updateSettings({ MATP: v })} />
+        <Toggle label={t.display.matrixPower} checked={s.MATP} onChange={(v) => updateSettings({ MATP: v })} />
         <div style={{ display: "flex", alignItems: "center", gap: "16px", flexWrap: "wrap" }}>
-          <Toggle label="Auto Brightness" checked={s.ABRI} onChange={(v) => updateSettings({ ABRI: v })} />
+          <Toggle label={t.display.autoBrightness} checked={s.ABRI} onChange={(v) => updateSettings({ ABRI: v })} />
           {s.ABRI && (
             <>
               <div style={{ minWidth: "335px" }}>
-                <Slider label="Min" min={1} max={50} value={s.MINBRI ?? 2} onChange={(v) => updateSettings({ MINBRI: v })} />
+                <Slider label={t.display.minBrightness} min={1} max={50} value={s.MINBRI ?? 2} onChange={(v) => updateSettings({ MINBRI: v })} />
               </div>
               <div style={{ minWidth: "335px" }}>
-                <Slider label="Max" min={0} max={255} value={s.MAXBRI ?? 160} onChange={(v) => updateSettings({ MAXBRI: v })} />
+                <Slider label={t.display.maxBrightness} min={0} max={255} value={s.MAXBRI ?? 160} onChange={(v) => updateSettings({ MAXBRI: v })} />
               </div>
             </>
           )}
         </div>
-        <Slider label="Brightness" min={0} max={255} value={s.BRI} onChange={(v) => updateSettings({ BRI: v })} />
-        <Slider label="Gamma" min={0.5} max={3} step={0.1} value={s.GAMMA} onChange={(v) => updateSettings({ GAMMA: v })} />
-        <Toggle label="Uppercase" checked={s.UPPERCASE} onChange={(v) => updateSettings({ UPPERCASE: v })} />
-        <ColorField label="Text Color" value={s.TCOL} onChange={(v) => updateSettings({ TCOL: v })} />
+        <Slider label={t.display.brightness} min={0} max={255} value={s.BRI} onChange={(v) => updateSettings({ BRI: v })} />
+        <Slider label={t.display.gamma} min={0.5} max={3} step={0.1} value={s.GAMMA} onChange={(v) => updateSettings({ GAMMA: v })} />
+        <Toggle label={t.display.uppercase} checked={s.UPPERCASE} onChange={(v) => updateSettings({ UPPERCASE: v })} />
+        <ColorField label={t.display.textColor} value={s.TCOL} onChange={(v) => updateSettings({ TCOL: v })} />
         <Select
-          label="Background Effect"
+          label={t.display.backgroundEffect}
           value={s.BEFF ?? -1}
           options={[
-            { value: -1, label: "None" },
+            { value: -1, label: t.display.none },
             ...effects.map((e, i) => ({
               value: i,
               label: humanize(e.name, `Effect ${i + 1}`),
@@ -67,17 +69,17 @@ export function DisplaySection() {
         />
         <FormRow>
           <div class="form-group">
-            <label>Color Correction</label>
+            <label>{t.display.colorCorrection}</label>
             <input type="color" value={s.CCORRECTION}
               onInput={(e) => updateSettings({ CCORRECTION: (e.target as HTMLInputElement).value })} />
           </div>
           <div class="form-group">
-            <label>Color Temperature</label>
+            <label>{t.display.colorTemperature}</label>
             <input type="color" value={s.CTEMP}
               onInput={(e) => updateSettings({ CTEMP: (e.target as HTMLInputElement).value })} />
           </div>
         </FormRow>
-        <Button variant="primary" onClick={handleSave} loading={saving}>Save Display</Button>
+        <Button variant="primary" onClick={handleSave} loading={saving}>{t.display.saveDisplay}</Button>
       </div>
     </Card>
   );

@@ -8,6 +8,7 @@ import {
 } from "../../api/client";
 import type { FileEntry } from "../../api/types";
 import { toast } from "../../components/Toast";
+import { useT } from "../../i18n";
 import styles from "./Files.module.css";
 
 export function FilesPage(_props: { path?: string }) {
@@ -16,6 +17,7 @@ export function FilesPage(_props: { path?: string }) {
   const [content, setContent] = useState<string | null>(null);
   const [editPath, setEditPath] = useState("");
   const [modified, setModified] = useState(false);
+  const t = useT();
 
   function load(dir: string) {
     setCwd(dir);
@@ -48,7 +50,7 @@ export function FilesPage(_props: { path?: string }) {
       setEditPath(path);
       setModified(false);
     } catch {
-      toast("Cannot read file");
+      toast(t.files.cannotRead);
     }
   }
 
@@ -56,23 +58,23 @@ export function FilesPage(_props: { path?: string }) {
     if (!editPath || content === null) return;
     try {
       await uploadFile(editPath, content);
-      toast("Saved!");
+      toast(t.files.saved);
       setModified(false);
     } catch {
-      toast("Save failed");
+      toast(t.files.saveFailed);
     }
   }
 
   async function handleDelete(name: string, type: string) {
     const path = cwd === "/" ? `/${name}` : `${cwd}/${name}`;
-    if (!confirm(`Delete ${type} "${path}"?`)) return;
+    if (!confirm(`${t.files.confirmDelete} ${type} "${path}"?`)) return;
     await deleteFile(path);
-    toast("Deleted");
+    toast(t.files.deleted);
     load(cwd);
   }
 
   async function handleNewDir() {
-    const name = prompt("Directory name:");
+    const name = prompt(t.files.dirNamePrompt);
     if (!name) return;
     const path = cwd === "/" ? `/${name}` : `${cwd}/${name}`;
     await createDir(path);
@@ -82,18 +84,18 @@ export function FilesPage(_props: { path?: string }) {
   async function handleUpload(file: File) {
     const path = cwd === "/" ? `/${file.name}` : `${cwd}/${file.name}`;
     await uploadFile(path, file);
-    toast("Uploaded!");
+    toast(t.files.uploaded);
     load(cwd);
   }
 
   return (
     <div class={styles.page}>
       <div class={styles.header}>
-        <h2>Files</h2>
+        <h2>{t.files.title}</h2>
         <div class={styles.headerBtns}>
-          <button onClick={handleNewDir}>New Dir</button>
+          <button onClick={handleNewDir}>{t.files.newDir}</button>
           <label class={`btn-primary ${styles.uploadLabel}`}>
-            Upload
+            {t.files.upload}
             <input
               type="file"
               style={{ display: "none" }}
@@ -147,13 +149,13 @@ export function FilesPage(_props: { path?: string }) {
               class={`btn-danger ${styles.btnDel}`}
               onClick={() => handleDelete(e.name, e.type)}
             >
-              Del
+              {t.files.del}
             </button>
           </div>
         ))}
         {entries.length === 0 && (
           <div class={styles.emptyDir}>
-            Empty directory
+            {t.files.emptyDir}
           </div>
         )}
       </div>
@@ -167,7 +169,7 @@ export function FilesPage(_props: { path?: string }) {
             </span>
             <div class={styles.editorBtns}>
               <button class="btn-primary" onClick={saveFile} disabled={!modified}>
-                Save
+                {t.files.save}
               </button>
               <button
                 onClick={() => {
@@ -175,7 +177,7 @@ export function FilesPage(_props: { path?: string }) {
                   setEditPath("");
                 }}
               >
-                Close
+                {t.files.close}
               </button>
             </div>
           </div>

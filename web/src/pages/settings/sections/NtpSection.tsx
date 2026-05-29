@@ -1,5 +1,6 @@
 import { useSettings } from "../../../context/SettingsContext";
 import { TextField, Card, Select } from "../../../components/ui";
+import { useT } from "../../../i18n";
 import styles from "./sections.module.css";
 
 const NTP_SERVERS = [
@@ -12,16 +13,17 @@ const NTP_SERVERS = [
 
 export function NtpSection() {
   const { config, updateConfig } = useSettings();
+  const t = useT();
   if (!config) return null;
 
   const currentServer = config["NTP Server"] || "pool.ntp.org";
   const isCustom = !NTP_SERVERS.some((s) => s.value === currentServer);
 
   return (
-    <Card title="NTP & Timezone">
+    <Card title={t.settings.ntpTimezone}>
       <div class={styles.stack}>
         <Select
-          label="NTP Server"
+          label={t.settings.ntpServer}
           value={isCustom ? "custom" : currentServer}
           options={[
             ...NTP_SERVERS,
@@ -33,19 +35,19 @@ export function NtpSection() {
         />
         {isCustom && (
           <TextField
-            label="Custom NTP Server"
+            label={t.settings.customNtpServer}
             value={currentServer}
             onChange={(v) => updateConfig("NTP Server", v)}
           />
         )}
         <TextField
-          label="Timezone"
+          label={t.settings.timezone}
           value={config["Timezone"] || ""}
           onChange={(v) => updateConfig("Timezone", v)}
           placeholder="CST6"
         />
         <p class={styles.hint}>
-          Find your timezone at{" "}
+          {t.settings.timezoneHint}{" "}
           <a href="https://github.com/nayarsystems/posix_tz_db/blob/master/zones.csv" target="_blank" rel="noopener">
             posix_tz_db
           </a>

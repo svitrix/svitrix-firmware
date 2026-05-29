@@ -1,5 +1,6 @@
 import { useRef, useEffect } from "preact/hooks";
 import { getScreen, nextApp, previousApp } from "../../api/client";
+import { useT } from "../../i18n";
 import styles from "./Screen.module.css";
 
 const COLS = 32;
@@ -10,6 +11,7 @@ const PIX = 29;
 export function ScreenPage(_props: { path?: string; default?: boolean }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const running = useRef(true);
+  const t = useT();
 
   useEffect(() => {
     running.current = true;
@@ -59,9 +61,9 @@ export function ScreenPage(_props: { path?: string; default?: boolean }) {
   return (
     <div>
       <div class={styles.controls}>
-        <button onClick={() => previousApp()}>&#9664; Prev</button>
-        <button onClick={() => nextApp()}>Next &#9654;</button>
-        <button onClick={downloadPng}>Download PNG</button>
+        <button onClick={() => previousApp()}>&#9664; {t.screen.prev}</button>
+        <button onClick={() => nextApp()}>{t.screen.next} &#9654;</button>
+        <button onClick={downloadPng}>{t.screen.downloadPng}</button>
       </div>
       <canvas
         ref={canvasRef}
