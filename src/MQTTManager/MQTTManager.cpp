@@ -79,6 +79,13 @@ HANumber *scrollSpeedNum = nullptr;
 HANumber *timeDurationNum = nullptr;
 HANumber *dateDurationNum = nullptr;
 
+// Native app color lights
+HALight *timeColorLight = nullptr;
+HALight *dateColorLight = nullptr;
+HALight *tempColorLight = nullptr;
+HALight *humColorLight = nullptr;
+HALight *batColorLight = nullptr;
+
 // ── HA entity ID buffers ────────────────────────────────────────────
 // Each holds a unique HA entity ID built from MAC suffix (e.g. "abc123_mat").
 
@@ -97,6 +104,7 @@ char nightModeID[40], nightBriID[40], nightColID[40], nightBlockID[40];
 char showTimeID[40], showDateID[40], showTempID[40], showHumID[40], showBatID[40];
 char bgEffectID[40];
 char timePerAppID[40], scrollSpeedID[40], timeDurID[40], dateDurID[40];
+char timeColID[40], dateColID[40], tempColID[40], humColID[40], batColID[40];
 
 unsigned long previousMillis_Stats;    ///< Timestamp of last stats publish (millis)
 std::map<String, String> mqttValues;   ///< Cached values for subscribed external topics
@@ -226,6 +234,22 @@ void onMqttConnected()
         scrollSpeedNum->setState(static_cast<float>(appConfig.scrollSpeed));
         timeDurationNum->setState(static_cast<float>(appConfig.timeDuration));
         dateDurationNum->setState(static_cast<float>(appConfig.dateDuration));
+
+        // Native app colors initial state
+        auto setColorLight = [](HALight *light, uint32_t color) {
+            HALight::RGBColor c;
+            c.isSet = true;
+            c.red = (color >> 16) & 0xFF;
+            c.green = (color >> 8) & 0xFF;
+            c.blue = color & 0xFF;
+            light->setCurrentRGBColor(c);
+            light->setCurrentState(true);
+        };
+        setColorLight(timeColorLight, colorConfig.timeColor);
+        setColorLight(dateColorLight, colorConfig.dateColor);
+        setColorLight(tempColorLight, colorConfig.tempColor);
+        setColorLight(humColorLight, colorConfig.humColor);
+        setColorLight(batColorLight, colorConfig.batColor);
     }
 
     MQTTManager.publish("stats/effects", dmNav_->getEffectNames().c_str());

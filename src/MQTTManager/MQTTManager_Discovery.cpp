@@ -121,6 +121,18 @@ static void destroyHAEntities()
     delete dateDurationNum;
     dateDurationNum = nullptr;
 
+    // Native app colors
+    delete timeColorLight;
+    timeColorLight = nullptr;
+    delete dateColorLight;
+    dateColorLight = nullptr;
+    delete tempColorLight;
+    tempColorLight = nullptr;
+    delete humColorLight;
+    humColorLight = nullptr;
+    delete batColorLight;
+    batColorLight = nullptr;
+
     mqtt.resetDevicesCount();
 }
 
@@ -565,6 +577,32 @@ void MQTTManager_::setup()
         dateDurationNum->setStep(1);
         dateDurationNum->onCommand(onDisplayTimingCommand);
         dateDurationNum->setState(static_cast<float>(appConfig.dateDuration));
+
+        // Native app color lights (RGB only)
+        size_t colorCount;
+        const auto *colorDescs = getNativeAppColorDescriptors(colorCount);
+
+        auto createColorLight = [&](HALight *&light, const HAEntityDescriptor& desc,
+                                    char *idBuf, size_t idBufSize, uint32_t color) {
+            buildEntityId(desc.idTemplate, macStr, idBuf, idBufSize);
+            light = new HALight(idBuf, HALight::RGBFeature);
+            light->setIcon(desc.icon);
+            light->setName(desc.name);
+            light->onRGBColorCommand(onNativeAppColorCommand);
+            HALight::RGBColor c;
+            c.isSet = true;
+            c.red = (color >> 16) & 0xFF;
+            c.green = (color >> 8) & 0xFF;
+            c.blue = color & 0xFF;
+            light->setCurrentRGBColor(c);
+            light->setCurrentState(true);
+        };
+
+        createColorLight(timeColorLight, colorDescs[0], timeColID, sizeof(timeColID), colorConfig.timeColor);
+        createColorLight(dateColorLight, colorDescs[1], dateColID, sizeof(dateColID), colorConfig.dateColor);
+        createColorLight(tempColorLight, colorDescs[2], tempColID, sizeof(tempColID), colorConfig.tempColor);
+        createColorLight(humColorLight, colorDescs[3], humColID, sizeof(humColID), colorConfig.humColor);
+        createColorLight(batColorLight, colorDescs[4], batColID, sizeof(batColID), colorConfig.batColor);
     }
     else
     {

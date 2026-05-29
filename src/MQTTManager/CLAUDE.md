@@ -1,6 +1,6 @@
 # MQTTManager — AI Reference
 
-Central MQTT communication and Home Assistant integration singleton. Manages broker connection, message dispatch, HA auto-discovery (49 entities), and state synchronization.
+Central MQTT communication and Home Assistant integration singleton. Manages broker connection, message dispatch, HA auto-discovery (54 entities), and state synchronization.
 
 ## File Map
 
@@ -26,11 +26,11 @@ void setDisplay(IDisplayControl*, IDisplayNavigation*, IDisplayNotifier*);
 void setServices(ISound*, IPower*, IUpdater*, IPeripheryProvider*);
 ```
 
-## HA Entities (49 total)
+## HA Entities (54 total)
 
 | Type | Count | Entities |
 |------|-------|----------|
-| **HALight** | 5 | Matrix (brightness+RGB), Indicator 1/2/3 (RGB), nightColor (RGB) |
+| **HALight** | 10 | Matrix (brightness+RGB), Indicator 1/2/3 (RGB), nightColor, timeColor, dateColor, tempColor, humColor, batColor |
 | **HASelect** | 3 | BriMode (Manual/Auto), transEffect (14 transitions), bgEffect (21 effects) |
 | **HAButton** | 6 | dismiss, nextApp, prevApp, doUpdate, reboot, playSound |
 | **HASwitch** | 9 | transition, nightMode, nightBlockTransition, soundEnabled, showTime, showDate, showTemp, showHum, showBat |
@@ -83,7 +83,7 @@ Routing via `MessageRouter::routeTopic()` → `MqttCommandType` enum → switch 
 - `getValueForTopic(topic)` → cached value or "N/A"
 - Used by custom apps: `{{topic}}` placeholders resolved via PlaceholderUtils
 
-## 14 Callback Handlers (MQTTManager_Callbacks.cpp)
+## 15 Callback Handlers (MQTTManager_Callbacks.cpp)
 
 | Callback | Entities | Action |
 |----------|----------|--------|
@@ -101,6 +101,7 @@ Routing via `MessageRouter::routeTopic()` → `MqttCommandType` enum → switch 
 | `onSoundVolumeCommand` | soundVolume | Set volume + apply to periphery + save |
 | `onAppVisibilitySwitchCommand` | showTime/Date/Temp/Hum/Bat | Toggle app visibility + reload native apps + save |
 | `onDisplayTimingCommand` | timePerApp/scrollSpeed/timeDuration/dateDuration | Set timing value + save |
+| `onNativeAppColorCommand` | time/date/temp/hum/batColor | Set native app color + save |
 
 All callbacks call `saveSettings()` after modifying config structs.
 

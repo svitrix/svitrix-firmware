@@ -39,9 +39,9 @@ Una vez habilitado HA Discovery en SVITRIX y reiniciado, las entidades aparecer√
 
 ---
 
-## Entidades Disponibles (49 total)
+## Entidades Disponibles (54 total)
 
-### Luces (5)
+### Luces (10)
 
 | Entidad | Descripci√≥n | Controles |
 |---------|-------------|-----------|
@@ -50,6 +50,11 @@ Una vez habilitado HA Discovery en SVITRIX y reiniciado, las entidades aparecer√
 | **Indicator 2** | LED indicador medio derecho | On/Off, Color RGB |
 | **Indicator 3** | LED indicador inferior derecho | On/Off, Color RGB |
 | **Night color** | Color del texto en modo nocturno | Color RGB |
+| **Clock color** | Color de la app de hora | Color RGB |
+| **Date color** | Color de la app de fecha | Color RGB |
+| **Temperature color** | Color de la app de temperatura | Color RGB |
+| **Humidity color** | Color de la app de humedad | Color RGB |
+| **Battery color** | Color de la app de bater√≠a | Color RGB |
 
 ### Switches (9)
 

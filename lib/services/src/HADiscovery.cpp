@@ -134,6 +134,28 @@ static const char DATEDUR_ICON[] = "mdi:calendar";
 static const char DATEDUR_NAME[] = "Date duration";
 static const char DATEDUR_UNIT[] = "s";
 
+// ── Native app colors ──────────────────────────────────────────────
+
+static const char TIMECOL_ID[] = "%s_time_color";
+static const char TIMECOL_ICON[] = "mdi:clock";
+static const char TIMECOL_NAME[] = "Clock color";
+
+static const char DATECOL_ID[] = "%s_date_color";
+static const char DATECOL_ICON[] = "mdi:calendar";
+static const char DATECOL_NAME[] = "Date color";
+
+static const char TEMPCOL_ID[] = "%s_temp_color";
+static const char TEMPCOL_ICON[] = "mdi:thermometer";
+static const char TEMPCOL_NAME[] = "Temperature color";
+
+static const char HUMCOL_ID[] = "%s_hum_color";
+static const char HUMCOL_ICON[] = "mdi:water-percent";
+static const char HUMCOL_NAME[] = "Humidity color";
+
+static const char BATCOL_ID[] = "%s_bat_color";
+static const char BATCOL_ICON[] = "mdi:battery";
+static const char BATCOL_NAME[] = "Battery color";
+
 // ── Switch ──────────────────────────────────────────────────────────
 
 static const char TRANS_ID[] = "%s_tra";
@@ -345,6 +367,15 @@ static const HAEntityDescriptor displayTimingDescs[] = {
     {DATEDUR_ID,     DATEDUR_NAME,     DATEDUR_ICON,     nullptr, DATEDUR_UNIT},
 };
 
+// Native app colors array (5 lights)
+static const HAEntityDescriptor nativeAppColorDescs[] = {
+    {TIMECOL_ID, TIMECOL_NAME, TIMECOL_ICON, nullptr, nullptr},
+    {DATECOL_ID, DATECOL_NAME, DATECOL_ICON, nullptr, nullptr},
+    {TEMPCOL_ID, TEMPCOL_NAME, TEMPCOL_ICON, nullptr, nullptr},
+    {HUMCOL_ID,  HUMCOL_NAME,  HUMCOL_ICON,  nullptr, nullptr},
+    {BATCOL_ID,  BATCOL_NAME,  BATCOL_ICON,  nullptr, nullptr},
+};
+
 // ── Function implementations ────────────────────────────────────────
 
 HAEntityDescriptor getMatrixLightDescriptor()
@@ -422,6 +453,12 @@ const HAEntityDescriptor *getDisplayTimingDescriptors(size_t &count)
     return displayTimingDescs;
 }
 
+const HAEntityDescriptor *getNativeAppColorDescriptors(size_t &count)
+{
+    count = 5;
+    return nativeAppColorDescs;
+}
+
 void buildEntityId(const char *idTemplate, const char *macStr,
                    char *outBuf, size_t bufSize)
 {
@@ -446,6 +483,6 @@ const char *getDeviceModel()
 size_t getTotalEntityCount(bool includeBattery)
 {
     // 1 matrix + 3 indicators + 3 selects + 6 buttons + 1 switch
-    // + sensors (10 or 11) + 3 binary + 6 weather + 4 night + 2 audio + 5 app vis + 4 timing
-    return 1 + 3 + 3 + 6 + 1 + (includeBattery ? 11 : 10) + 3 + 6 + 4 + 2 + 5 + 4;
+    // + sensors (10 or 11) + 3 binary + 6 weather + 4 night + 2 audio + 5 app vis + 4 timing + 5 colors
+    return 1 + 3 + 3 + 6 + 1 + (includeBattery ? 11 : 10) + 3 + 6 + 4 + 2 + 5 + 4 + 5;
 }

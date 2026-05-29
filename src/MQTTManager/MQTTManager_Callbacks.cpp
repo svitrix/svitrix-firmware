@@ -329,3 +329,37 @@ void onDisplayTimingCommand(HANumeric number, HANumber *sender)
     saveSettings();
     sender->setState(number);
 }
+
+// ── Native app color callbacks ──────────────────────────────────────
+
+/// Handle native app color RGB changes from HA.
+/// Routes to the appropriate colorConfig field based on which light was changed.
+/// @param color RGB color struct from ArduinoHA.
+/// @param sender The HALight entity whose color changed.
+void onNativeAppColorCommand(HALight::RGBColor color, HALight *sender)
+{
+    uint32_t packed = (color.red << 16) | (color.green << 8) | color.blue;
+
+    if (sender == timeColorLight)
+    {
+        colorConfig.timeColor = packed;
+    }
+    else if (sender == dateColorLight)
+    {
+        colorConfig.dateColor = packed;
+    }
+    else if (sender == tempColorLight)
+    {
+        colorConfig.tempColor = packed;
+    }
+    else if (sender == humColorLight)
+    {
+        colorConfig.humColor = packed;
+    }
+    else if (sender == batColorLight)
+    {
+        colorConfig.batColor = packed;
+    }
+    saveSettings();
+    sender->setRGBColor(color);
+}

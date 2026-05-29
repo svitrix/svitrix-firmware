@@ -2,11 +2,11 @@
 
 ## Estado Actual (actualizado)
 
-### Entidades HA Existentes (49 total)
+### Entidades HA Existentes (54 total)
 
 | Tipo | Cantidad | Entidades |
 |------|----------|-----------|
-| **HALight** | 5 | Matrix (brillo+RGB), Indicator 1/2/3 (RGB), nightColor (RGB) |
+| **HALight** | 10 | Matrix (brillo+RGB), Indicator 1/2/3 (RGB), nightColor, timeColor, dateColor, tempColor, humColor, batColor |
 | **HASelect** | 3 | BriMode (Manual/Auto), transEffect (14 transiciones), bgEffect (21 efectos) |
 | **HAButton** | 6 | Dismiss, doUpdate, nextApp, prevApp, reboot, playSound |
 | **HASwitch** | 9 | transition, nightMode, nightBlockTransition, soundEnabled, showTime, showDate, showTemp, showHum, showBat |
@@ -69,6 +69,13 @@
 - `timeDurationNum` (HANumber 1-300s) — Duración de la app de hora
 - `dateDurationNum` (HANumber 1-60s) — Duración de la app de fecha
 
+### Native App Colors ✅
+- `timeColorLight` (HALight RGB) — Color de la app de hora
+- `dateColorLight` (HALight RGB) — Color de la app de fecha
+- `tempColorLight` (HALight RGB) — Color de la app de temperatura
+- `humColorLight` (HALight RGB) — Color de la app de humedad
+- `batColorLight` (HALight RGB) — Color de la app de batería
+
 ---
 
 ## Propuestas Pendientes
@@ -83,6 +90,7 @@
 
 - ~~Background Effect Select~~ ✅
 - ~~Display Timing Controls~~ ✅
+- ~~Native App Colors~~ ✅
 
 ---
 
