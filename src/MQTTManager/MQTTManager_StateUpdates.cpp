@@ -134,6 +134,13 @@ void MQTTManager_::sendStats()
         syncColorLight(tempColorLight, colorConfig.tempColor);
         syncColorLight(humColorLight, colorConfig.humColor);
         syncColorLight(batColorLight, colorConfig.batColor);
+
+        // Weather app visibility sync
+        showOutTempSwitch->setState(weatherConfig.showOutdoorTemp, false);
+        showOutHumSwitch->setState(weatherConfig.showOutdoorHumidity, false);
+        showPressureSwitch->setState(weatherConfig.showPressure, false);
+        showAqiSwitch->setState(weatherConfig.showAirQuality, false);
+        showUvSwitch->setState(weatherConfig.showUV, false);
     }
     publish(StatsTopic, dmControl_->getStats().c_str());
 }

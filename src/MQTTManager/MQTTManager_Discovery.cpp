@@ -133,6 +133,18 @@ static void destroyHAEntities()
     delete batColorLight;
     batColorLight = nullptr;
 
+    // Weather app visibility
+    delete showOutTempSwitch;
+    showOutTempSwitch = nullptr;
+    delete showOutHumSwitch;
+    showOutHumSwitch = nullptr;
+    delete showPressureSwitch;
+    showPressureSwitch = nullptr;
+    delete showAqiSwitch;
+    showAqiSwitch = nullptr;
+    delete showUvSwitch;
+    showUvSwitch = nullptr;
+
     mqtt.resetDevicesCount();
 }
 
@@ -603,6 +615,45 @@ void MQTTManager_::setup()
         createColorLight(tempColorLight, colorDescs[2], tempColID, sizeof(tempColID), colorConfig.tempColor);
         createColorLight(humColorLight, colorDescs[3], humColID, sizeof(humColID), colorConfig.humColor);
         createColorLight(batColorLight, colorDescs[4], batColID, sizeof(batColID), colorConfig.batColor);
+
+        // Weather app visibility switches
+        size_t weatherVisCount;
+        const auto *weatherVisDescs = getWeatherVisibilityDescriptors(weatherVisCount);
+
+        buildEntityId(weatherVisDescs[0].idTemplate, macStr, showOutTempID, sizeof(showOutTempID));
+        showOutTempSwitch = new HASwitch(showOutTempID);
+        showOutTempSwitch->setIcon(weatherVisDescs[0].icon);
+        showOutTempSwitch->setName(weatherVisDescs[0].name);
+        showOutTempSwitch->onCommand(onWeatherVisibilitySwitchCommand);
+        showOutTempSwitch->setState(weatherConfig.showOutdoorTemp, true);
+
+        buildEntityId(weatherVisDescs[1].idTemplate, macStr, showOutHumID, sizeof(showOutHumID));
+        showOutHumSwitch = new HASwitch(showOutHumID);
+        showOutHumSwitch->setIcon(weatherVisDescs[1].icon);
+        showOutHumSwitch->setName(weatherVisDescs[1].name);
+        showOutHumSwitch->onCommand(onWeatherVisibilitySwitchCommand);
+        showOutHumSwitch->setState(weatherConfig.showOutdoorHumidity, true);
+
+        buildEntityId(weatherVisDescs[2].idTemplate, macStr, showPressID, sizeof(showPressID));
+        showPressureSwitch = new HASwitch(showPressID);
+        showPressureSwitch->setIcon(weatherVisDescs[2].icon);
+        showPressureSwitch->setName(weatherVisDescs[2].name);
+        showPressureSwitch->onCommand(onWeatherVisibilitySwitchCommand);
+        showPressureSwitch->setState(weatherConfig.showPressure, true);
+
+        buildEntityId(weatherVisDescs[3].idTemplate, macStr, showAqiID, sizeof(showAqiID));
+        showAqiSwitch = new HASwitch(showAqiID);
+        showAqiSwitch->setIcon(weatherVisDescs[3].icon);
+        showAqiSwitch->setName(weatherVisDescs[3].name);
+        showAqiSwitch->onCommand(onWeatherVisibilitySwitchCommand);
+        showAqiSwitch->setState(weatherConfig.showAirQuality, true);
+
+        buildEntityId(weatherVisDescs[4].idTemplate, macStr, showUvID, sizeof(showUvID));
+        showUvSwitch = new HASwitch(showUvID);
+        showUvSwitch->setIcon(weatherVisDescs[4].icon);
+        showUvSwitch->setName(weatherVisDescs[4].name);
+        showUvSwitch->onCommand(onWeatherVisibilitySwitchCommand);
+        showUvSwitch->setState(weatherConfig.showUV, true);
     }
     else
     {

@@ -2,14 +2,14 @@
 
 ## Estado Actual (actualizado)
 
-### Entidades HA Existentes (54 total)
+### Entidades HA Existentes (59 total)
 
 | Tipo | Cantidad | Entidades |
 |------|----------|-----------|
 | **HALight** | 10 | Matrix (brillo+RGB), Indicator 1/2/3 (RGB), nightColor, timeColor, dateColor, tempColor, humColor, batColor |
 | **HASelect** | 3 | BriMode (Manual/Auto), transEffect (14 transiciones), bgEffect (21 efectos) |
 | **HAButton** | 6 | Dismiss, doUpdate, nextApp, prevApp, reboot, playSound |
-| **HASwitch** | 9 | transition, nightMode, nightBlockTransition, soundEnabled, showTime, showDate, showTemp, showHum, showBat |
+| **HASwitch** | 14 | transition, nightMode, nightBlockTransition, soundEnabled, showTime/Date/Temp/Hum/Bat, showOutdoorTemp/Humidity, showPressure, showAirQuality, showUV |
 | **HANumber** | 6 | nightBrightness, soundVolume, timePerApp, scrollSpeed, timeDuration, dateDuration |
 | **HASensor** | 16-17 | curApp, deviceId, temp, hum, lux, signal, version, ram, uptime, ipAddr, battery*, outdoorTemp, outdoorHum, pressure, aqi, weatherCond, uvIndex |
 | **HABinarySensor** | 3 | btnleft, btnmid, btnright |
@@ -75,6 +75,13 @@
 - `tempColorLight` (HALight RGB) — Color de la app de temperatura
 - `humColorLight` (HALight RGB) — Color de la app de humedad
 - `batColorLight` (HALight RGB) — Color de la app de batería
+
+### Weather App Visibility ✅
+- `showOutTempSwitch` (HASwitch) — Mostrar/ocultar temperatura exterior
+- `showOutHumSwitch` (HASwitch) — Mostrar/ocultar humedad exterior
+- `showPressureSwitch` (HASwitch) — Mostrar/ocultar presión atmosférica
+- `showAqiSwitch` (HASwitch) — Mostrar/ocultar índice de calidad de aire
+- `showUvSwitch` (HASwitch) — Mostrar/ocultar índice UV
 
 ---
 

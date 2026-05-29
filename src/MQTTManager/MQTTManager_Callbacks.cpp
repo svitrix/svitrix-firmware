@@ -363,3 +363,36 @@ void onNativeAppColorCommand(HALight::RGBColor color, HALight *sender)
     saveSettings();
     sender->setRGBColor(color);
 }
+
+// ── Weather app visibility callbacks ────────────────────────────────
+
+/// Handle weather app visibility switch commands from HA.
+/// Routes to the appropriate weatherConfig field based on which switch was pressed.
+/// @param state New on/off state.
+/// @param sender The HASwitch entity that changed.
+void onWeatherVisibilitySwitchCommand(bool state, HASwitch *sender)
+{
+    if (sender == showOutTempSwitch)
+    {
+        weatherConfig.showOutdoorTemp = state;
+    }
+    else if (sender == showOutHumSwitch)
+    {
+        weatherConfig.showOutdoorHumidity = state;
+    }
+    else if (sender == showPressureSwitch)
+    {
+        weatherConfig.showPressure = state;
+    }
+    else if (sender == showAqiSwitch)
+    {
+        weatherConfig.showAirQuality = state;
+    }
+    else if (sender == showUvSwitch)
+    {
+        weatherConfig.showUV = state;
+    }
+    dmNav_->loadNativeApps();
+    saveSettings();
+    sender->setState(state);
+}

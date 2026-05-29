@@ -26,14 +26,14 @@ void setDisplay(IDisplayControl*, IDisplayNavigation*, IDisplayNotifier*);
 void setServices(ISound*, IPower*, IUpdater*, IPeripheryProvider*);
 ```
 
-## HA Entities (54 total)
+## HA Entities (59 total)
 
 | Type | Count | Entities |
 |------|-------|----------|
 | **HALight** | 10 | Matrix (brightness+RGB), Indicator 1/2/3 (RGB), nightColor, timeColor, dateColor, tempColor, humColor, batColor |
 | **HASelect** | 3 | BriMode (Manual/Auto), transEffect (14 transitions), bgEffect (21 effects) |
 | **HAButton** | 6 | dismiss, nextApp, prevApp, doUpdate, reboot, playSound |
-| **HASwitch** | 9 | transition, nightMode, nightBlockTransition, soundEnabled, showTime, showDate, showTemp, showHum, showBat |
+| **HASwitch** | 14 | transition, nightMode, nightBlockTransition, soundEnabled, showTime, showDate, showTemp, showHum, showBat, showOutdoorTemp, showOutdoorHum, showPressure, showAirQuality, showUV |
 | **HANumber** | 6 | nightBrightness, soundVolume, timePerApp, scrollSpeed, timeDuration, dateDuration |
 | **HASensor** | 16-17 | curApp, myOwnID, temp, hum, lux, signal, version, ram, uptime, ipAddr, battery*, outdoorTemp, outdoorHum, pressure, aqi, weatherCond, uvIndex |
 | **HABinarySensor** | 3 | btnleft, btnmid, btnright |
@@ -83,7 +83,7 @@ Routing via `MessageRouter::routeTopic()` → `MqttCommandType` enum → switch 
 - `getValueForTopic(topic)` → cached value or "N/A"
 - Used by custom apps: `{{topic}}` placeholders resolved via PlaceholderUtils
 
-## 15 Callback Handlers (MQTTManager_Callbacks.cpp)
+## 16 Callback Handlers (MQTTManager_Callbacks.cpp)
 
 | Callback | Entities | Action |
 |----------|----------|--------|
@@ -102,6 +102,7 @@ Routing via `MessageRouter::routeTopic()` → `MqttCommandType` enum → switch 
 | `onAppVisibilitySwitchCommand` | showTime/Date/Temp/Hum/Bat | Toggle app visibility + reload native apps + save |
 | `onDisplayTimingCommand` | timePerApp/scrollSpeed/timeDuration/dateDuration | Set timing value + save |
 | `onNativeAppColorCommand` | time/date/temp/hum/batColor | Set native app color + save |
+| `onWeatherVisibilitySwitchCommand` | showOutdoorTemp/OutdoorHum/Pressure/AirQuality/UV | Toggle weather app visibility + reload native apps + save |
 
 All callbacks call `saveSettings()` after modifying config structs.
 

@@ -39,7 +39,7 @@ Una vez habilitado HA Discovery en SVITRIX y reiniciado, las entidades aparecer�
 
 ---
 
-## Entidades Disponibles (54 total)
+## Entidades Disponibles (59 total)
 
 ### Luces (10)
 
@@ -56,7 +56,7 @@ Una vez habilitado HA Discovery en SVITRIX y reiniciado, las entidades aparecer�
 | **Humidity color** | Color de la app de humedad | Color RGB |
 | **Battery color** | Color de la app de batería | Color RGB |
 
-### Switches (9)
+### Switches (14)
 
 | Entidad | Descripción |
 |---------|-------------|
@@ -69,6 +69,11 @@ Una vez habilitado HA Discovery en SVITRIX y reiniciado, las entidades aparecer�
 | **Show temperature app** | Muestra/oculta la app de temperatura |
 | **Show humidity app** | Muestra/oculta la app de humedad |
 | **Show battery app** | Muestra/oculta la app de batería |
+| **Show outdoor temp** | Muestra/oculta temperatura exterior (weather) |
+| **Show outdoor humidity** | Muestra/oculta humedad exterior (weather) |
+| **Show pressure** | Muestra/oculta presión atmosférica (weather) |
+| **Show air quality** | Muestra/oculta índice de calidad de aire (weather) |
+| **Show UV index** | Muestra/oculta índice UV (weather) |
 
 ### Números (6)
 

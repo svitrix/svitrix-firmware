@@ -128,6 +128,13 @@ const HAEntityDescriptor *getDisplayTimingDescriptors(size_t &count);
 /// @return Pointer to static array of light descriptors (RGB only).
 const HAEntityDescriptor *getNativeAppColorDescriptors(size_t &count);
 
+// --- Weather app visibility ---
+
+/// Weather app visibility switches: showOutdoorTemp, showOutdoorHum, showPressure, showAirQuality, showUV.
+/// @param[out] count Set to number of descriptors (always 5).
+/// @return Pointer to static array of switch descriptors.
+const HAEntityDescriptor *getWeatherVisibilityDescriptors(size_t &count);
+
 // --- Utilities ---
 
 /// Build an entity ID by formatting idTemplate with macStr.

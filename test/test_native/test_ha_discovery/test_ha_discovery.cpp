@@ -319,6 +319,26 @@ void test_native_app_colors_names(void)
     TEST_ASSERT_EQUAL_STRING("Battery color", descs[4].name);
 }
 
+// ── Weather visibility ─────────────────────────────────────────────
+
+void test_weather_visibility_count(void)
+{
+    size_t count;
+    getWeatherVisibilityDescriptors(count);
+    TEST_ASSERT_EQUAL(5, count);
+}
+
+void test_weather_visibility_names(void)
+{
+    size_t count;
+    auto *descs = getWeatherVisibilityDescriptors(count);
+    TEST_ASSERT_EQUAL_STRING("Show outdoor temp", descs[0].name);
+    TEST_ASSERT_EQUAL_STRING("Show outdoor humidity", descs[1].name);
+    TEST_ASSERT_EQUAL_STRING("Show pressure", descs[2].name);
+    TEST_ASSERT_EQUAL_STRING("Show air quality", descs[3].name);
+    TEST_ASSERT_EQUAL_STRING("Show UV index", descs[4].name);
+}
+
 // ── Switch ──────────────────────────────────────────────────────────
 
 void test_switch_descriptor(void)
@@ -507,18 +527,18 @@ void test_night_mode_icons(void)
 void test_total_count_with_battery(void)
 {
     // 1 matrix + 3 indicators + 3 selects + 6 buttons + 1 switch
-    // + 11 sensors + 3 binary + 6 weather + 4 night + 2 audio + 5 app vis + 4 timing + 5 colors = 54
-    TEST_ASSERT_EQUAL(54, getTotalEntityCount(true));
+    // + 11 sensors + 3 binary + 6 weather + 4 night + 2 audio + 5 app vis + 4 timing + 5 colors + 5 weather vis = 59
+    TEST_ASSERT_EQUAL(59, getTotalEntityCount(true));
 }
 
 void test_total_count_without_battery(void)
 {
-    TEST_ASSERT_EQUAL(53, getTotalEntityCount(false));
+    TEST_ASSERT_EQUAL(58, getTotalEntityCount(false));
 }
 
 void test_total_count_matches_sum(void)
 {
-    size_t indicators, selects, buttons, sensors, binarySensors, weather, night, audio, appVis, timing, colors;
+    size_t indicators, selects, buttons, sensors, binarySensors, weather, night, audio, appVis, timing, colors, weatherVis;
     getIndicatorLightDescriptors(indicators);
     getSelectDescriptors(selects);
     getButtonDescriptors(buttons);
@@ -530,9 +550,10 @@ void test_total_count_matches_sum(void)
     getAppVisibilityDescriptors(appVis);
     getDisplayTimingDescriptors(timing);
     getNativeAppColorDescriptors(colors);
+    getWeatherVisibilityDescriptors(weatherVis);
 
     // +1 for bgEffect select (returned separately, not in getSelectDescriptors)
-    size_t expected = 1 + indicators + selects + 1 + buttons + 1 + sensors + binarySensors + weather + night + audio + appVis + timing + colors;
+    size_t expected = 1 + indicators + selects + 1 + buttons + 1 + sensors + binarySensors + weather + night + audio + appVis + timing + colors + weatherVis;
     TEST_ASSERT_EQUAL(expected, getTotalEntityCount(true));
 }
 
@@ -541,7 +562,7 @@ void test_total_count_matches_sum(void)
 void test_all_ids_unique(void)
 {
     // Collect all idTemplates into a flat array
-    const char *ids[60];
+    const char *ids[65];
     size_t idx = 0;
 
     ids[idx++] = getMatrixLightDescriptor().idTemplate;
@@ -594,6 +615,10 @@ void test_all_ids_unique(void)
     auto *colorDescs = getNativeAppColorDescriptors(count);
     for (size_t i = 0; i < count; i++)
         ids[idx++] = colorDescs[i].idTemplate;
+
+    auto *weatherVisDescs = getWeatherVisibilityDescriptors(count);
+    for (size_t i = 0; i < count; i++)
+        ids[idx++] = weatherVisDescs[i].idTemplate;
 
     // Verify all pairs are unique
     for (size_t i = 0; i < idx; i++)
@@ -704,6 +729,10 @@ int main(void)
     // Native app colors
     RUN_TEST(test_native_app_colors_count);
     RUN_TEST(test_native_app_colors_names);
+
+    // Weather visibility
+    RUN_TEST(test_weather_visibility_count);
+    RUN_TEST(test_weather_visibility_names);
 
     // Total count
     RUN_TEST(test_total_count_with_battery);

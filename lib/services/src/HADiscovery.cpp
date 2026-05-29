@@ -156,6 +156,28 @@ static const char BATCOL_ID[] = "%s_bat_color";
 static const char BATCOL_ICON[] = "mdi:battery";
 static const char BATCOL_NAME[] = "Battery color";
 
+// ── Weather app visibility ─────────────────────────────────────────
+
+static const char SHOW_OUTTEMP_ID[] = "%s_show_out_temp";
+static const char SHOW_OUTTEMP_ICON[] = "mdi:thermometer";
+static const char SHOW_OUTTEMP_NAME[] = "Show outdoor temp";
+
+static const char SHOW_OUTHUM_ID[] = "%s_show_out_hum";
+static const char SHOW_OUTHUM_ICON[] = "mdi:water-percent";
+static const char SHOW_OUTHUM_NAME[] = "Show outdoor humidity";
+
+static const char SHOW_PRESS_ID[] = "%s_show_pressure";
+static const char SHOW_PRESS_ICON[] = "mdi:gauge";
+static const char SHOW_PRESS_NAME[] = "Show pressure";
+
+static const char SHOW_AQI_ID[] = "%s_show_aqi";
+static const char SHOW_AQI_ICON[] = "mdi:air-filter";
+static const char SHOW_AQI_NAME[] = "Show air quality";
+
+static const char SHOW_UV_ID[] = "%s_show_uv";
+static const char SHOW_UV_ICON[] = "mdi:sun-wireless-outline";
+static const char SHOW_UV_NAME[] = "Show UV index";
+
 // ── Switch ──────────────────────────────────────────────────────────
 
 static const char TRANS_ID[] = "%s_tra";
@@ -376,6 +398,15 @@ static const HAEntityDescriptor nativeAppColorDescs[] = {
     {BATCOL_ID,  BATCOL_NAME,  BATCOL_ICON,  nullptr, nullptr},
 };
 
+// Weather app visibility array (5 switches)
+static const HAEntityDescriptor weatherVisibilityDescs[] = {
+    {SHOW_OUTTEMP_ID, SHOW_OUTTEMP_NAME, SHOW_OUTTEMP_ICON, nullptr, nullptr},
+    {SHOW_OUTHUM_ID,  SHOW_OUTHUM_NAME,  SHOW_OUTHUM_ICON,  nullptr, nullptr},
+    {SHOW_PRESS_ID,   SHOW_PRESS_NAME,   SHOW_PRESS_ICON,   nullptr, nullptr},
+    {SHOW_AQI_ID,     SHOW_AQI_NAME,     SHOW_AQI_ICON,     nullptr, nullptr},
+    {SHOW_UV_ID,      SHOW_UV_NAME,      SHOW_UV_ICON,      nullptr, nullptr},
+};
+
 // ── Function implementations ────────────────────────────────────────
 
 HAEntityDescriptor getMatrixLightDescriptor()
@@ -459,6 +490,12 @@ const HAEntityDescriptor *getNativeAppColorDescriptors(size_t &count)
     return nativeAppColorDescs;
 }
 
+const HAEntityDescriptor *getWeatherVisibilityDescriptors(size_t &count)
+{
+    count = 5;
+    return weatherVisibilityDescs;
+}
+
 void buildEntityId(const char *idTemplate, const char *macStr,
                    char *outBuf, size_t bufSize)
 {
@@ -483,6 +520,6 @@ const char *getDeviceModel()
 size_t getTotalEntityCount(bool includeBattery)
 {
     // 1 matrix + 3 indicators + 3 selects + 6 buttons + 1 switch
-    // + sensors (10 or 11) + 3 binary + 6 weather + 4 night + 2 audio + 5 app vis + 4 timing + 5 colors
-    return 1 + 3 + 3 + 6 + 1 + (includeBattery ? 11 : 10) + 3 + 6 + 4 + 2 + 5 + 4 + 5;
+    // + sensors (10 or 11) + 3 binary + 6 weather + 4 night + 2 audio + 5 app vis + 4 timing + 5 colors + 5 weather vis
+    return 1 + 3 + 3 + 6 + 1 + (includeBattery ? 11 : 10) + 3 + 6 + 4 + 2 + 5 + 4 + 5 + 5;
 }

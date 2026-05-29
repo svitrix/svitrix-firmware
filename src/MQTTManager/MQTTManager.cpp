@@ -86,6 +86,13 @@ HALight *tempColorLight = nullptr;
 HALight *humColorLight = nullptr;
 HALight *batColorLight = nullptr;
 
+// Weather app visibility switches
+HASwitch *showOutTempSwitch = nullptr;
+HASwitch *showOutHumSwitch = nullptr;
+HASwitch *showPressureSwitch = nullptr;
+HASwitch *showAqiSwitch = nullptr;
+HASwitch *showUvSwitch = nullptr;
+
 // ── HA entity ID buffers ────────────────────────────────────────────
 // Each holds a unique HA entity ID built from MAC suffix (e.g. "abc123_mat").
 
@@ -105,6 +112,7 @@ char showTimeID[40], showDateID[40], showTempID[40], showHumID[40], showBatID[40
 char bgEffectID[40];
 char timePerAppID[40], scrollSpeedID[40], timeDurID[40], dateDurID[40];
 char timeColID[40], dateColID[40], tempColID[40], humColID[40], batColID[40];
+char showOutTempID[40], showOutHumID[40], showPressID[40], showAqiID[40], showUvID[40];
 
 unsigned long previousMillis_Stats;    ///< Timestamp of last stats publish (millis)
 std::map<String, String> mqttValues;   ///< Cached values for subscribed external topics
@@ -250,6 +258,13 @@ void onMqttConnected()
         setColorLight(tempColorLight, colorConfig.tempColor);
         setColorLight(humColorLight, colorConfig.humColor);
         setColorLight(batColorLight, colorConfig.batColor);
+
+        // Weather app visibility initial state
+        showOutTempSwitch->setState(weatherConfig.showOutdoorTemp, true);
+        showOutHumSwitch->setState(weatherConfig.showOutdoorHumidity, true);
+        showPressureSwitch->setState(weatherConfig.showPressure, true);
+        showAqiSwitch->setState(weatherConfig.showAirQuality, true);
+        showUvSwitch->setState(weatherConfig.showUV, true);
     }
 
     MQTTManager.publish("stats/effects", dmNav_->getEffectNames().c_str());

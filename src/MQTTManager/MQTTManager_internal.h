@@ -102,6 +102,13 @@ extern HALight *tempColorLight;
 extern HALight *humColorLight;
 extern HALight *batColorLight;
 
+// Weather app visibility switches
+extern HASwitch *showOutTempSwitch;
+extern HASwitch *showOutHumSwitch;
+extern HASwitch *showPressureSwitch;
+extern HASwitch *showAqiSwitch;
+extern HASwitch *showUvSwitch;
+
 // ── HA entity ID buffers (defined in MQTTManager.cpp) ───────────────
 // Each buffer holds a unique HA entity ID built from MAC + suffix.
 
@@ -119,6 +126,7 @@ extern char showTimeID[40], showDateID[40], showTempID[40], showHumID[40], showB
 extern char bgEffectID[40];
 extern char timePerAppID[40], scrollSpeedID[40], timeDurID[40], dateDurID[40];
 extern char timeColID[40], dateColID[40], tempColID[40], humColID[40], batColID[40];
+extern char showOutTempID[40], showOutHumID[40], showPressID[40], showAqiID[40], showUvID[40];
 
 // ── Other shared state (defined in MQTTManager.cpp) ─────────────────
 
@@ -168,6 +176,8 @@ void onAppVisibilitySwitchCommand(bool state, HASwitch *sender);
 void onDisplayTimingCommand(HANumeric number, HANumber *sender);
 /// HA native app color RGB handler.
 void onNativeAppColorCommand(HALight::RGBColor color, HALight *sender);
+/// HA weather app visibility switch handler.
+void onWeatherVisibilitySwitchCommand(bool state, HASwitch *sender);
 
 // ── Display interfaces (defined in MQTTManager.cpp, set via setDisplay) ──
 
