@@ -4,7 +4,7 @@ Análisis y propuesta de mejoras para el menú on-screen accesible mediante boto
 
 ## Estado Actual
 
-### Estructura del Menú (13 items)
+### Estructura del Menú (15 items)
 
 | # | Menú | Función | Valores | Estado |
 |---|------|---------|---------|--------|
@@ -17,10 +17,12 @@ Análisis y propuesta de mejoras para el menú on-screen accesible mediante boto
 | 7 | DATE | Formato de fecha | 9 opciones strftime | OK |
 | 8 | WEEKDAY | Inicio de semana | MON/SUN | OK |
 | 9 | TEMP | Unidad temperatura | °C/°F | OK |
-| 10 | APPS | Toggle apps nativas | 5 apps (Time, Date, Temp, Hum, Bat) | Incompleto |
-| 11 | SOUND | Sonido activado | ON/OFF | OK |
-| 12 | VOLUME | Volumen buzzer | 0-30 | OK |
-| 13 | UPDATE | Actualización OTA | Trigger | OK |
+| 10 | APPS | Toggle apps nativas | 9 apps (Time, Date, Temp, Hum, Bat + 4 weather) | OK |
+| 11 | NIGHT | Toggle modo nocturno | ON/OFF | OK |
+| 12 | INFO | Info del sistema (solo lectura) | IP, WIFI, VER, ID, RAM | OK |
+| 13 | SOUND | Sonido activado | ON/OFF | OK |
+| 14 | VOLUME | Volumen buzzer | 0-30 | OK |
+| 15 | UPDATE | Actualización OTA | Trigger | OK |
 
 ### Navegación Actual
 
@@ -43,18 +45,21 @@ Análisis y propuesta de mejoras para el menú on-screen accesible mediante boto
 
 ## Problemas Detectados
 
-### 1. Apps de Weather no accesibles
-- El submenú APPS solo muestra 5 apps: Time, Date, Temp, Hum, Bat
-- Las 4 apps de weather (OutdoorTemp, OutdoorHum, Pressure, AirQuality) no se pueden activar/desactivar desde el menú
-- Código relevante: `appsCount = 5` hardcodeado
+### ~~1. Apps de Weather no accesibles~~ ✅ RESUELTO
+- ~~El submenú APPS solo muestra 5 apps: Time, Date, Temp, Hum, Bat~~
+- ~~Las 4 apps de weather (OutdoorTemp, OutdoorHum, Pressure, AirQuality) no se pueden activar/desactivar desde el menú~~
+- ~~Código relevante: `appsCount = 5` hardcodeado~~
+- **Solución:** Expandido a 9 apps (commit 38dfe15)
 
-### 2. Night Mode no accesible
-- El modo nocturno solo se puede configurar desde web UI
-- No hay forma de activarlo/desactivarlo rápidamente desde el dispositivo
+### ~~2. Night Mode no accesible~~ ✅ RESUELTO
+- ~~El modo nocturno solo se puede configurar desde web UI~~
+- ~~No hay forma de activarlo/desactivarlo rápidamente desde el dispositivo~~
+- **Solución:** Nuevo menú NIGHT con toggle ON/OFF (commit 38dfe15)
 
-### 3. Sin información del sistema
-- No se puede ver IP, señal WiFi, versión de firmware desde el menú
-- Útil para troubleshooting sin acceso a web UI
+### ~~3. Sin información del sistema~~ ✅ RESUELTO
+- ~~No se puede ver IP, señal WiFi, versión de firmware desde el menú~~
+- ~~Útil para troubleshooting sin acceso a web UI~~
+- **Solución:** Nuevo menú INFO con 5 datos: IP, WIFI, VER, ID, RAM (commit 38dfe15)
 
 ### 4. Sin control de efectos
 - Los 19 efectos de fondo solo se configuran vía API/web
@@ -64,45 +69,43 @@ Análisis y propuesta de mejoras para el menú on-screen accesible mediante boto
 
 ## Propuesta de Cambios
 
-### Fase 1: Correcciones (Prioridad Alta)
+### Fase 1: Correcciones (Prioridad Alta) ✅ COMPLETADA
 
-#### 1.1 Agregar Weather Apps al submenú APPS
+#### 1.1 Agregar Weather Apps al submenú APPS ✅
 ```
 Cambio: Expandir appsCount de 5 a 9
 Nuevos items:
-- OutdoorTemp (icon_sunny o similar)
+- OutdoorTemp (icon_sunny)
 - OutdoorHum (icon_53628)
 - Pressure (icon_66892)
 - AirQuality (icon_6622)
 
-Archivo: src/MenuManager/MenuManager.cpp
-Líneas: ~79 (appsCount), ~208-227 (switch appsIndex)
+Estado: IMPLEMENTADO - commit 38dfe15
 ```
 
-#### 1.2 Agregar menú NIGHT
+#### 1.2 Agregar menú NIGHT ✅
 ```
 Nuevo menú: NIGHT
 Función: Toggle nightMode ON/OFF
-Muestra: Estado actual + hora inicio/fin
+Toggle: appConfig.nightMode
 
-Cambios:
-- Agregar NightMenu al enum MenuState
-- Agregar "NIGHT" a menuItems[]
-- Implementar toggle appConfig.nightMode
+Estado: IMPLEMENTADO - commit 38dfe15
 ```
 
-#### 1.3 Agregar menú INFO
+#### 1.3 Agregar menú INFO ✅
 ```
 Nuevo menú: INFO
 Función: Mostrar información del sistema (solo lectura)
-Submenús con scroll:
-- IP: xxx.xxx.xxx.xxx
-- WIFI: señal % o RSSI
-- VER: 0.4.0
-- HOST: svitrix_XXXXX
-- MEM: RAM libre
+Items (con etiquetas cortas para caber en 32px):
+- IP 1.100 (últimos 2 octetos)
+- WIFI -43 (señal dBm)
+- V0.4.0 (versión)
+- ID AABBCC (últimos 6 chars del deviceId)
+- RAM 93K (heap libre)
 
-Navegación: Izq/Der cambia entre datos, Select sale
+Navegación: Izq/Der cambia entre datos, Select largo sale
+
+Estado: IMPLEMENTADO - commit 38dfe15
 ```
 
 ### Fase 2: Mejoras (Prioridad Media)
@@ -182,12 +185,12 @@ Valores: UTC-12 a UTC+14 (o lista de ciudades)
 
 ## Orden de Implementación Sugerido
 
-1. **APPS expandido** - Agregar weather apps (cambio menor)
-2. **NIGHT toggle** - Alta demanda, cambio simple
-3. **INFO** - Útil para debugging sin web
-4. **EFFECT** - Acceso rápido a efectos
-5. **RESTART** - Conveniencia
-6. **SLEEP** - Ahorro energía
+1. ~~**APPS expandido** - Agregar weather apps (cambio menor)~~ ✅
+2. ~~**NIGHT toggle** - Alta demanda, cambio simple~~ ✅
+3. ~~**INFO** - Útil para debugging sin web~~ ✅
+4. **EFFECT** - Acceso rápido a efectos ⏳ PENDIENTE
+5. **RESTART** - Conveniencia ⏳ PENDIENTE
+6. **SLEEP** - Ahorro energía ⏳ PENDIENTE
 7. Resto según necesidad
 
 ---
