@@ -39,7 +39,7 @@ Una vez habilitado HA Discovery en SVITRIX y reiniciado, las entidades aparecer√
 
 ---
 
-## Entidades Disponibles (44 total)
+## Entidades Disponibles (45 total)
 
 ### Luces (5)
 
@@ -72,12 +72,13 @@ Una vez habilitado HA Discovery en SVITRIX y reiniciado, las entidades aparecer√
 | **Night brightness** | 1-50 | Brillo durante modo nocturno |
 | **Sound volume** | 0-100 | Volumen del buzzer |
 
-### Selectores (2)
+### Selectores (3)
 
 | Entidad | Opciones | Descripci√≥n |
 |---------|----------|-------------|
 | **Brightness mode** | Manual, Auto | Modo de brillo (manual o seg√∫n sensor de luz) |
 | **Transition effect** | 14 efectos | Efecto de transici√≥n entre apps |
+| **Background effect** | 21 opciones | Efecto de fondo (None, Fade, Matrix, Plasma, Fire, etc.) |
 
 ### Botones (6)
 

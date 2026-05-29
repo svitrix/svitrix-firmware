@@ -25,6 +25,7 @@ HALight *Indikator2 = nullptr;      ///< Middle-right indicator light (RGB)
 HALight *Indikator3 = nullptr;      ///< Bottom-right indicator light (RGB)
 HASelect *BriMode = nullptr;        ///< Brightness mode select (Manual / Auto)
 HASelect *transEffect = nullptr;    ///< Transition effect select
+HASelect *bgEffect = nullptr;       ///< Background effect select
 HAButton *dismiss = nullptr;        ///< Dismiss notification button
 HAButton *nextApp = nullptr;        ///< Next app button
 HAButton *prevApp = nullptr;        ///< Previous app button
@@ -88,6 +89,7 @@ char myID[40], sSpeed[40], effectID[40], ipAddrID[40];
 char outTempID[40], outHumID[40], pressID[40], aqiID[40], weatherCondID[40], uvID[40];
 char nightModeID[40], nightBriID[40], nightColID[40], nightBlockID[40];
 char showTimeID[40], showDateID[40], showTempID[40], showHumID[40], showBatID[40];
+char bgEffectID[40];
 
 unsigned long previousMillis_Stats;    ///< Timestamp of last stats publish (millis)
 std::map<String, String> mqttValues;   ///< Cached values for subscribed external topics
@@ -208,6 +210,9 @@ void onMqttConnected()
         showTempSwitch->setState(appConfig.showTemp, true);
         showHumSwitch->setState(appConfig.showHum, true);
         showBatSwitch->setState(appConfig.showBat, true);
+
+        // Background effect initial state (0 = None, 1-20 = effect index + 1)
+        bgEffect->setState(displayConfig.backgroundEffect, true);
     }
 
     MQTTManager.publish("stats/effects", dmNav_->getEffectNames().c_str());

@@ -62,9 +62,10 @@ void onSwitchCommand(bool state, HASwitch *sender)
 
 // ── Select callback ─────────────────────────────────────────────────
 
-/// Handle brightness mode or transition effect select from HA.
+/// Handle brightness mode, transition effect, or background effect select from HA.
 /// For BriMode: index 0 = Manual, index 1 = Auto brightness.
 /// For transEffect: index maps to the transition effect enum.
+/// For bgEffect: index 0 = None, indices 1-20 = effect index + 1.
 /// @param index Zero-based index of the selected option.
 /// @param sender The HASelect entity that changed.
 void onSelectCommand(int8_t index, HASelect *sender)
@@ -86,6 +87,10 @@ void onSelectCommand(int8_t index, HASelect *sender)
     else if (sender == transEffect)
     {
         appConfig.transEffect = index;
+    }
+    else if (sender == bgEffect)
+    {
+        displayConfig.backgroundEffect = index;
     }
     saveSettings();
     sender->setState(index);

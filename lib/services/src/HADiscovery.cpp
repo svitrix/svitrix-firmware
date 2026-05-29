@@ -105,6 +105,13 @@ static const char SHOW_BAT_ID[] = "%s_show_bat";
 static const char SHOW_BAT_ICON[] = "mdi:battery";
 static const char SHOW_BAT_NAME[] = "Show battery app";
 
+// ── Background effect ──────────────────────────────────────────────
+
+static const char BGEFFECT_ID[] = "%s_bg_effect";
+static const char BGEFFECT_ICON[] = "mdi:auto-fix";
+static const char BGEFFECT_NAME[] = "Background effect";
+static const char BGEFFECT_OPTIONS[] = "None;Fade;MovingLine;BrickBreaker;PingPong;Radar;Checkerboard;Fireworks;PlasmaCloud;Ripple;Snake;Pacifica;TheaterChase;Plasma;Matrix;SwirlIn;SwirlOut;LookingEyes;TwinklingStars;ColorWaves;Fire";
+
 // ── Switch ──────────────────────────────────────────────────────────
 
 static const char TRANS_ID[] = "%s_tra";
@@ -374,6 +381,11 @@ const HAEntityDescriptor *getAppVisibilityDescriptors(size_t &count)
     return appVisibilityDescs;
 }
 
+HASelectDescriptor getBackgroundEffectDescriptor()
+{
+    return {{BGEFFECT_ID, BGEFFECT_NAME, BGEFFECT_ICON, nullptr, nullptr}, BGEFFECT_OPTIONS};
+}
+
 void buildEntityId(const char *idTemplate, const char *macStr,
                    char *outBuf, size_t bufSize)
 {
@@ -397,7 +409,7 @@ const char *getDeviceModel()
 
 size_t getTotalEntityCount(bool includeBattery)
 {
-    // 1 matrix + 3 indicators + 2 selects + 6 buttons + 1 switch
+    // 1 matrix + 3 indicators + 3 selects + 6 buttons + 1 switch
     // + sensors (10 or 11) + 3 binary + 6 weather + 4 night + 2 audio + 5 app visibility
-    return 1 + 3 + 2 + 6 + 1 + (includeBattery ? 11 : 10) + 3 + 6 + 4 + 2 + 5;
+    return 1 + 3 + 3 + 6 + 1 + (includeBattery ? 11 : 10) + 3 + 6 + 4 + 2 + 5;
 }

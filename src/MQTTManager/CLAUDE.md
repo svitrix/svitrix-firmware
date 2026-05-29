@@ -1,6 +1,6 @@
 # MQTTManager — AI Reference
 
-Central MQTT communication and Home Assistant integration singleton. Manages broker connection, message dispatch, HA auto-discovery (44 entities), and state synchronization.
+Central MQTT communication and Home Assistant integration singleton. Manages broker connection, message dispatch, HA auto-discovery (45 entities), and state synchronization.
 
 ## File Map
 
@@ -26,12 +26,12 @@ void setDisplay(IDisplayControl*, IDisplayNavigation*, IDisplayNotifier*);
 void setServices(ISound*, IPower*, IUpdater*, IPeripheryProvider*);
 ```
 
-## HA Entities (44 total)
+## HA Entities (45 total)
 
 | Type | Count | Entities |
 |------|-------|----------|
 | **HALight** | 5 | Matrix (brightness+RGB), Indicator 1/2/3 (RGB), nightColor (RGB) |
-| **HASelect** | 2 | BriMode (Manual/Auto), transEffect (14 transitions) |
+| **HASelect** | 3 | BriMode (Manual/Auto), transEffect (14 transitions), bgEffect (21 effects) |
 | **HAButton** | 6 | dismiss, nextApp, prevApp, doUpdate, reboot, playSound |
 | **HASwitch** | 9 | transition, nightMode, nightBlockTransition, soundEnabled, showTime, showDate, showTemp, showHum, showBat |
 | **HANumber** | 2 | nightBrightness (1-50), soundVolume (0-30) |

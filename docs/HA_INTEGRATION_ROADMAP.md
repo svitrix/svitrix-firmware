@@ -2,12 +2,12 @@
 
 ## Estado Actual (actualizado)
 
-### Entidades HA Existentes (44 total)
+### Entidades HA Existentes (45 total)
 
 | Tipo | Cantidad | Entidades |
 |------|----------|-----------|
 | **HALight** | 5 | Matrix (brillo+RGB), Indicator 1/2/3 (RGB), nightColor (RGB) |
-| **HASelect** | 2 | BriMode (Manual/Auto), transEffect (14 transiciones) |
+| **HASelect** | 3 | BriMode (Manual/Auto), transEffect (14 transiciones), bgEffect (21 efectos) |
 | **HAButton** | 6 | Dismiss, doUpdate, nextApp, prevApp, reboot, playSound |
 | **HASwitch** | 9 | transition, nightMode, nightBlockTransition, soundEnabled, showTime, showDate, showTemp, showHum, showBat |
 | **HANumber** | 2 | nightBrightness (1-50), soundVolume (0-30) |
@@ -60,6 +60,9 @@
 - `showHumSwitch` (HASwitch) — Mostrar/ocultar humedad interior
 - `showBatSwitch` (HASwitch) — Mostrar/ocultar batería
 
+### Background Effect ✅
+- `bgEffect` (HASelect) — Selector de efecto de fondo (21 opciones: None, Fade, MovingLine, BrickBreaker, PingPong, Radar, Checkerboard, Fireworks, PlasmaCloud, Ripple, Snake, Pacifica, TheaterChase, Plasma, Matrix, SwirlIn, SwirlOut, LookingEyes, TwinklingStars, ColorWaves, Fire)
+
 ---
 
 ## Propuestas Pendientes
@@ -70,23 +73,9 @@
 - ~~Sound/Audio Controls~~ ✅
 - ~~Native App Visibility Switches~~ ✅
 
----
+### ~~Prioridad Media~~ (Parcial)
 
-### Prioridad Media
-
-#### 4. Background Effect Select
-**Valor:** Cambiar efecto de fondo desde HA.
-
-| Entidad | Tipo | Descripción |
-|---------|------|-------------|
-| `backgroundEffect` | HASelect | Lista de efectos disponibles |
-
-**Opciones:** None, Fade, Matrix, Plasma, Starfield, Noise, Fire, Fireflies, Pacifica, Lava, Ocean, Pride, Rainbow, ColorWaves, Sparkles
-
-**Casos de uso:**
-- Efecto festivo durante navidad
-- Modo "fiesta" activado por HA
-- Efecto relajante por la noche
+- ~~Background Effect Select~~ ✅
 
 ---
 

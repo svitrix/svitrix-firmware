@@ -109,6 +109,11 @@ const HAEntityDescriptor *getAudioDescriptors(size_t &count);
 /// @return Pointer to static array of switch descriptors.
 const HAEntityDescriptor *getAppVisibilityDescriptors(size_t &count);
 
+// --- Background effect ---
+
+/// Background effect select descriptor.
+HASelectDescriptor getBackgroundEffectDescriptor();
+
 // --- Utilities ---
 
 /// Build an entity ID by formatting idTemplate with macStr.

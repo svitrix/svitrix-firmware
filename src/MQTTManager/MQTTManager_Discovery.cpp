@@ -28,6 +28,8 @@ static void destroyHAEntities()
     BriMode = nullptr;
     delete transEffect;
     transEffect = nullptr;
+    delete bgEffect;
+    bgEffect = nullptr;
     delete dismiss;
     dismiss = nullptr;
     delete nextApp;
@@ -235,6 +237,16 @@ void MQTTManager_::setup()
         transEffect->setIcon(selDescs[1].base.icon);
         transEffect->setName(selDescs[1].base.name);
         transEffect->setState(appConfig.transEffect, true);
+
+        // Background effect select
+        auto bgEffectDesc = getBackgroundEffectDescriptor();
+        buildEntityId(bgEffectDesc.base.idTemplate, macStr, bgEffectID, sizeof(bgEffectID));
+        bgEffect = new HASelect(bgEffectID);
+        bgEffect->setOptions(bgEffectDesc.options);
+        bgEffect->onCommand(onSelectCommand);
+        bgEffect->setIcon(bgEffectDesc.base.icon);
+        bgEffect->setName(bgEffectDesc.base.name);
+        bgEffect->setState(displayConfig.backgroundEffect, true);
 
         // Buttons
         size_t btnCount;

@@ -110,6 +110,9 @@ void MQTTManager_::sendStats()
         showTempSwitch->setState(appConfig.showTemp, false);
         showHumSwitch->setState(appConfig.showHum, false);
         showBatSwitch->setState(appConfig.showBat, false);
+
+        // Background effect sync
+        bgEffect->setState(displayConfig.backgroundEffect, false);
     }
     publish(StatsTopic, dmControl_->getStats().c_str());
 }

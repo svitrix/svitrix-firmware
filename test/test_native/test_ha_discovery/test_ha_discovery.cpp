@@ -150,6 +150,17 @@ void test_select_count(void)
     TEST_ASSERT_EQUAL(2, count);
 }
 
+void test_background_effect_select(void)
+{
+    auto desc = getBackgroundEffectDescriptor();
+    TEST_ASSERT_EQUAL_STRING("Background effect", desc.base.name);
+    TEST_ASSERT_EQUAL_STRING("mdi:auto-fix", desc.base.icon);
+    TEST_ASSERT_EQUAL_STRING("%s_bg_effect", desc.base.idTemplate);
+    TEST_ASSERT_NOT_NULL(desc.options);
+    // Options should start with "None;Fade;..."
+    TEST_ASSERT_TRUE(strncmp(desc.options, "None;Fade;", 10) == 0);
+}
+
 void test_brightness_select(void)
 {
     size_t count;
@@ -446,14 +457,14 @@ void test_night_mode_icons(void)
 
 void test_total_count_with_battery(void)
 {
-    // 1 matrix + 3 indicators + 2 selects + 6 buttons + 1 switch
-    // + 11 sensors + 3 binary + 6 weather + 4 night + 2 audio + 5 app visibility = 44
-    TEST_ASSERT_EQUAL(44, getTotalEntityCount(true));
+    // 1 matrix + 3 indicators + 3 selects + 6 buttons + 1 switch
+    // + 11 sensors + 3 binary + 6 weather + 4 night + 2 audio + 5 app visibility = 45
+    TEST_ASSERT_EQUAL(45, getTotalEntityCount(true));
 }
 
 void test_total_count_without_battery(void)
 {
-    TEST_ASSERT_EQUAL(43, getTotalEntityCount(false));
+    TEST_ASSERT_EQUAL(44, getTotalEntityCount(false));
 }
 
 void test_total_count_matches_sum(void)
@@ -469,7 +480,8 @@ void test_total_count_matches_sum(void)
     getAudioDescriptors(audio);
     getAppVisibilityDescriptors(appVis);
 
-    size_t expected = 1 + indicators + selects + buttons + 1 + sensors + binarySensors + weather + night + audio + appVis;
+    // +1 for bgEffect select (returned separately, not in getSelectDescriptors)
+    size_t expected = 1 + indicators + selects + 1 + buttons + 1 + sensors + binarySensors + weather + night + audio + appVis;
     TEST_ASSERT_EQUAL(expected, getTotalEntityCount(true));
 }
 
@@ -491,6 +503,8 @@ void test_all_ids_unique(void)
     auto *selDescs = getSelectDescriptors(count);
     for (size_t i = 0; i < count; i++)
         ids[idx++] = selDescs[i].base.idTemplate;
+
+    ids[idx++] = getBackgroundEffectDescriptor().base.idTemplate;
 
     auto *btnDescs = getButtonDescriptors(count);
     for (size_t i = 0; i < count; i++)
@@ -578,6 +592,7 @@ int main(void)
     RUN_TEST(test_select_count);
     RUN_TEST(test_brightness_select);
     RUN_TEST(test_effect_select);
+    RUN_TEST(test_background_effect_select);
 
     // Buttons
     RUN_TEST(test_button_count);

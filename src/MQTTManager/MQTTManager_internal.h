@@ -41,6 +41,7 @@ extern HALight *Indikator2;      ///< Middle-right indicator light (RGB)
 extern HALight *Indikator3;      ///< Bottom-right indicator light (RGB)
 extern HASelect *BriMode;        ///< Brightness mode select (Manual / Auto)
 extern HASelect *transEffect;    ///< Transition effect select
+extern HASelect *bgEffect;       ///< Background effect select
 extern HAButton *dismiss;        ///< Dismiss notification button
 extern HAButton *nextApp;        ///< Next app button
 extern HAButton *prevApp;        ///< Previous app button
@@ -102,6 +103,7 @@ extern char myID[40], sSpeed[40], effectID[40], ipAddrID[40];
 extern char outTempID[40], outHumID[40], pressID[40], aqiID[40], weatherCondID[40], uvID[40];
 extern char nightModeID[40], nightBriID[40], nightColID[40], nightBlockID[40];
 extern char showTimeID[40], showDateID[40], showTempID[40], showHumID[40], showBatID[40];
+extern char bgEffectID[40];
 
 // ── Other shared state (defined in MQTTManager.cpp) ─────────────────
 
