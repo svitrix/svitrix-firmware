@@ -1,0 +1,1 @@
+export { IconsPage } from "./Icons";

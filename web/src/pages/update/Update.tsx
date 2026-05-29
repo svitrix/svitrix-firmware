@@ -1,5 +1,6 @@
 import { useState } from "preact/hooks";
 import { toast } from "../../components/Toast";
+import { FileInput } from "../../components/ui";
 import styles from "./Update.module.css";
 
 export function UpdatePage(_props: { path?: string }) {
@@ -36,14 +37,11 @@ export function UpdatePage(_props: { path?: string }) {
           Select a firmware .bin file to upload. The device will reboot automatically after a
           successful update.
         </p>
-        <input
-          type="file"
+        <FileInput
           accept=".bin,.bin.gz"
           disabled={uploading}
-          onChange={(e) => {
-            const file = (e.target as HTMLInputElement).files?.[0];
-            if (file) handleUpload(file);
-          }}
+          onChange={handleUpload}
+          buttonText="Choose File"
         />
         {progress && (
           <p class={styles.progress}>{progress}</p>

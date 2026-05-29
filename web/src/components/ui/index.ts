@@ -6,3 +6,4 @@ export { Select } from "./Select";
 export { Card } from "./Card";
 export { FormRow } from "./FormRow";
 export { Button } from "./Button";
+export { FileInput } from "./FileInput";

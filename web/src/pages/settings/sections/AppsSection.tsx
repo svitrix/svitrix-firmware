@@ -3,23 +3,6 @@ import { useSettings } from "../../../context/SettingsContext";
 import { Toggle, Slider, ColorField, Select, Card, Button } from "../../../components/ui";
 import styles from "./sections.module.css";
 
-const TRANSITION_OPTIONS = [
-  { value: 0, label: "Random" },
-  { value: 1, label: "Slide Down" },
-  { value: 11, label: "Slide Up" },
-  { value: 12, label: "Slide Left" },
-  { value: 13, label: "Slide Right" },
-  { value: 2, label: "Dim" },
-  { value: 3, label: "Zoom" },
-  { value: 4, label: "Rotate" },
-  { value: 5, label: "Pixelate" },
-  { value: 6, label: "Curtain" },
-  { value: 7, label: "Ripple" },
-  { value: 8, label: "Blink" },
-  { value: 9, label: "Reload" },
-  { value: 10, label: "Fade" },
-];
-
 const TEMP_OFFSET_OPTIONS = [
   { value: 5, label: "+5°" },
   { value: 4, label: "+4°" },
@@ -57,12 +40,6 @@ export function AppsSection() {
       TEMP: s.TEMP, TEMP_COL: s.TEMP_COL,
       HUM: s.HUM, HUM_COL: s.HUM_COL,
       BAT: s.BAT, BAT_COL: s.BAT_COL,
-      STIMER: s.STIMER, TIMER_COL: s.TIMER_COL,
-      SSW: s.SSW, SW_COL: s.SW_COL,
-      SALARMS: s.SALARMS, ALARMS_COL: s.ALARMS_COL,
-      ATIME: s.ATIME, ATRANS: s.ATRANS,
-      TEFF: s.TEFF, TSPEED: s.TSPEED,
-      SSPEED: s.SSPEED, BLOCKN: s.BLOCKN,
       TIMEDUR: s.TIMEDUR,
       DATEDUR: s.DATEDUR,
       TEMPDUR: s.TEMPDUR,
@@ -122,18 +99,6 @@ export function AppsSection() {
           </div>
         </div>
 
-        <Toggle label="Alarms Indicator" checked={s.SALARMS} onChange={(v) => updateSettings({ SALARMS: v })} />
-
-        <Toggle label="Auto Transition" checked={s.ATRANS} onChange={(v) => updateSettings({ ATRANS: v })} />
-        <Select
-          label="Transition Effect"
-          value={s.TEFF}
-          options={TRANSITION_OPTIONS}
-          onChange={(v) => updateSettings({ TEFF: v as number })}
-        />
-        <Slider label="Transition Speed" min={100} max={2000} step={100} value={s.TSPEED} onChange={(v) => updateSettings({ TSPEED: v })} unit="ms" />
-        <Slider label="Scroll Speed" min={10} max={100} value={s.SSPEED} onChange={(v) => updateSettings({ SSPEED: v })} />
-        <Toggle label="Block Navigation" checked={s.BLOCKN} onChange={(v) => updateSettings({ BLOCKN: v })} />
         <Button variant="primary" onClick={handleSave} loading={saving}>Save Apps</Button>
       </div>
     </Card>

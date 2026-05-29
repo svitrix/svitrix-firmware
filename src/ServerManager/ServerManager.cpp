@@ -181,6 +181,19 @@ void addHandler()
                            { String body = getBody(request); smControl_->setNewSettings(body.c_str()); request->send(200, "text/plain", "OK"); });
     mws.addHandler("/api/erase", HTTP_ANY, [](AsyncWebServerRequest *request)
                    { ServerManager.erase(); request->send(200, "text/plain", "OK"); delay(200); ESP.restart(); });
+    mws.addHandler("/api/eraseWifi", HTTP_ANY, [](AsyncWebServerRequest *request)
+                   {
+                    wifi_config_t conf;
+                    memset(&conf, 0, sizeof(conf));
+                    esp_wifi_set_config(WIFI_IF_STA, &conf);
+                    for (int i = 0; i < 3; i++) {
+                        wifiConfig.networks[i].ssid = "";
+                        wifiConfig.networks[i].password = "";
+                    }
+                    saveSettings();
+                    request->send(200, "text/plain", "OK");
+                    delay(200);
+                    ESP.restart(); });
     mws.addHandler("/api/resetSettings", HTTP_ANY, [](AsyncWebServerRequest *request)
                    { formatSettings(); request->send(200, "text/plain", "OK"); delay(200); ESP.restart(); });
     mws.addHandlerWithBody("/api/reorder", HTTP_POST, [](AsyncWebServerRequest *request)

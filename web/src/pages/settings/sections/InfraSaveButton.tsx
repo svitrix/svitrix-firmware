@@ -15,7 +15,7 @@ export function InfraSaveButton() {
 
   return (
     <Button variant="primary" onClick={handleSave} loading={saving}>
-      Save Network/MQTT/Time/Auth
+      Save Network/NTP & Time Zone
     </Button>
   );
 }

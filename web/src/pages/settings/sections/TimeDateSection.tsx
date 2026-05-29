@@ -97,12 +97,10 @@ export function TimeDateSection() {
         />
         {hasSeconds && <p class={styles.hint}>Calendar and Big Digits modes disabled when showing seconds</p>}
         <Toggle label="Start on Monday" checked={s.SOM} onChange={(v) => updateSettings({ SOM: v })} />
+        <Toggle label="Show Weekday" checked={s.WD} onChange={(v) => updateSettings({ WD: v })} />
         <FormRow>
           <ColorField label="Time Color" value={s.TIME_COL} onChange={(v) => updateSettings({ TIME_COL: v })} />
           <ColorField label="Date Color" value={s.DATE_COL} onChange={(v) => updateSettings({ DATE_COL: v })} />
-        </FormRow>
-        <FormRow>
-          <Toggle label="Show Weekday" checked={s.WD} onChange={(v) => updateSettings({ WD: v })} />
         </FormRow>
         <FormRow>
           <ColorField label="Weekday Active" value={s.WDCA} onChange={(v) => updateSettings({ WDCA: v })} />
@@ -113,7 +111,7 @@ export function TimeDateSection() {
           <ColorField label="Cal Text" value={s.CTCOL} onChange={(v) => updateSettings({ CTCOL: v })} />
         </FormRow>
         <ColorField label="Cal Body" value={s.CBCOL} onChange={(v) => updateSettings({ CBCOL: v })} />
-        <Button variant="primary" onClick={handleSave} loading={saving}>Save Time & Date</Button>
+        <Button variant="primary" onClick={handleSave} loading={saving}>Save Time & Date Settings</Button>
       </div>
     </Card>
   );

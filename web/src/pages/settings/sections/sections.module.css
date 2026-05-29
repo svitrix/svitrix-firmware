@@ -145,6 +145,39 @@
   border: 1px solid var(--border);
 }
 
+.weatherTitle {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 10px;
+  color: var(--text);
+}
+
+.weatherTwoCol {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 24px;
+}
+
+.weatherCol {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.weatherItem {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+}
+
+.weatherItem span:first-child {
+  color: var(--text-dim);
+}
+
+.weatherItem span:last-child {
+  font-weight: 500;
+}
+
 .weatherGrid {
   display: grid;
   grid-template-columns: auto 1fr;

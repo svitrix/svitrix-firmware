@@ -4,19 +4,9 @@ import {
   StatsBar,
   WifiSection,
   NetworkSection,
-  MqttSection,
   NtpSection,
-  AuthSection,
   InfraSaveButton,
-  DisplaySection,
-  AppsSection,
-  TimeDateSection,
-  SoundSection,
-  IconPickerSection,
-  ActionsBar,
-  NotifySection,
-  NightModeSection,
-  WeatherSection,
+  WeatherApiSection,
 } from "./sections";
 
 function SettingsContent() {
@@ -39,19 +29,9 @@ function SettingsContent() {
       <StatsBar />
       <WifiSection />
       <NetworkSection />
-      <MqttSection />
       <NtpSection />
-      <AuthSection />
       <InfraSaveButton />
-      <NightModeSection />
-      <DisplaySection />
-      <AppsSection />
-      <WeatherSection />
-      <TimeDateSection />
-      <SoundSection />
-      <NotifySection />
-      <IconPickerSection />
-      <ActionsBar />
+      <WeatherApiSection />
     </div>
   );
 }

@@ -88,6 +88,7 @@ export const setSleep = (seconds: number) => post("/api/sleep", { sleep: seconds
 export const reboot = () => fetch("/api/reboot");
 export const factoryReset = () => fetch("/api/erase");
 export const resetSettings = () => fetch("/api/resetSettings");
+export const eraseWifi = () => fetch("/api/eraseWifi");
 export const doUpdate = () => post("/api/doupdate");
 export const getVersion = () => get<string>("/version");
 

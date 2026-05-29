@@ -1,6 +1,6 @@
 import { useState, useEffect } from "preact/hooks";
 import { useSettings } from "../../../context/SettingsContext";
-import { Toggle, Select, Card, FormRow, Button, Slider, ColorField } from "../../../components/ui";
+import { Select, Card, FormRow, Button } from "../../../components/ui";
 import { getWeatherData, forceWeatherFetch } from "../../../api/client";
 import type { WeatherData } from "../../../api/types";
 import styles from "./sections.module.css";
@@ -19,8 +19,8 @@ const UPDATE_INTERVALS = [
   { value: 60, label: "60 minutes" },
 ];
 
-export function WeatherSection() {
-  const { weatherConfig, settings, updateWeatherConfig, updateSettings, saveWeatherConfig } = useSettings();
+export function WeatherApiSection() {
+  const { weatherConfig, updateWeatherConfig, saveWeatherConfig } = useSettings();
   const [saving, setSaving] = useState(false);
   const [fetching, setFetching] = useState(false);
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
@@ -138,60 +138,9 @@ export function WeatherSection() {
           onChange={(v) => updateWeatherConfig({ updateInterval: v as number })}
         />
 
-        <p class={styles.hint}>Weather Apps</p>
-
-        <div class={styles.appRow}>
-          <Toggle label="Outdoor Temp" checked={w.showOutdoorTemp} onChange={(v) => updateWeatherConfig({ showOutdoorTemp: v })} />
-          <ColorField label="" value={w.outdoorTempColor} onChange={(v) => updateWeatherConfig({ outdoorTempColor: v })} />
-          {settings && (
-            <Toggle label="Celsius" checked={settings.CEL} onChange={(v) => updateSettings({ CEL: v })} />
-          )}
-          <div style={{ width: "515px", flexShrink: 0 }}>
-            <Slider label="" min={1} max={60} value={w.outdoorTempDuration || 7} onChange={(v) => updateWeatherConfig({ outdoorTempDuration: v })} unit="s" />
-          </div>
-        </div>
-
-        <div class={styles.appRow}>
-          <Toggle label="Outdoor Hum" checked={w.showOutdoorHumidity} onChange={(v) => updateWeatherConfig({ showOutdoorHumidity: v })} />
-          <ColorField label="" value={w.outdoorHumColor} onChange={(v) => updateWeatherConfig({ outdoorHumColor: v })} />
-          <div class={styles.appSlider}>
-            <Slider label="" min={1} max={60} value={w.outdoorHumDuration || 7} onChange={(v) => updateWeatherConfig({ outdoorHumDuration: v })} unit="s" />
-          </div>
-        </div>
-
-        <div class={styles.appRow}>
-          <Toggle label="Pressure" checked={w.showPressure} onChange={(v) => updateWeatherConfig({ showPressure: v })} />
-          <ColorField label="" value={w.pressureColor} onChange={(v) => updateWeatherConfig({ pressureColor: v })} />
-          <div class={styles.appSlider}>
-            <Slider label="" min={1} max={60} value={w.pressureDuration || 7} onChange={(v) => updateWeatherConfig({ pressureDuration: v })} unit="s" />
-          </div>
-        </div>
-
-        <div class={styles.appRow}>
-          <Toggle label="Air Quality" checked={w.showAirQuality} onChange={(v) => updateWeatherConfig({ showAirQuality: v })} />
-          <Toggle label="Auto" checked={w.aqiColor === 0} onChange={(v) => updateWeatherConfig({ aqiColor: v ? 0 : 0xFFFFFF })} />
-          {w.aqiColor !== 0 && <ColorField label="" value={w.aqiColor} onChange={(v) => updateWeatherConfig({ aqiColor: v })} />}
-          <div class={styles.appSlider}>
-            <Slider label="" min={1} max={60} value={w.aqiDuration || 7} onChange={(v) => updateWeatherConfig({ aqiDuration: v })} unit="s" />
-          </div>
-        </div>
-
-        <div class={styles.appRow}>
-          <Toggle label="UV Index" checked={w.showUV} onChange={(v) => updateWeatherConfig({ showUV: v })} />
-          <Toggle label="Auto" checked={w.uvColor === 0} onChange={(v) => updateWeatherConfig({ uvColor: v ? 0 : 0xFFFFFF })} />
-          {w.uvColor !== 0 && <ColorField label="" value={w.uvColor} onChange={(v) => updateWeatherConfig({ uvColor: v })} />}
-          <div class={styles.appSlider}>
-            <Slider label="" min={1} max={60} value={w.uvDuration || 7} onChange={(v) => updateWeatherConfig({ uvDuration: v })} unit="s" />
-          </div>
-        </div>
-
-        <p class={styles.hint}>
-          Auto color changes based on level (green→yellow→orange→red).
-        </p>
-
         <FormRow>
           <Button variant="primary" onClick={handleSave} loading={saving}>
-            Save Weather
+            Save Weather API
           </Button>
           <Button variant="default" onClick={handleFetch} loading={fetching} disabled={!w.apiKey}>
             Fetch Now
@@ -200,24 +149,18 @@ export function WeatherSection() {
 
         {weatherData && weatherData.valid && (
           <div class={styles.weatherStatus}>
-            <p class={styles.hint}>Current Weather Data</p>
-            <div class={styles.weatherGrid}>
-              <span>Temperature:</span>
-              <span>{weatherData.outdoorTemp.toFixed(1)}°</span>
-              <span>Humidity:</span>
-              <span>{weatherData.outdoorHumidity.toFixed(0)}%</span>
-              <span>Pressure:</span>
-              <span>{weatherData.pressure.toFixed(0)} mb</span>
-              <span>Condition:</span>
-              <span>{weatherData.condition}</span>
-              {weatherData.aqi > 0 && (
-                <>
-                  <span>AQI:</span>
-                  <span>{weatherData.aqi}</span>
-                </>
-              )}
-              <span>UV Index:</span>
-              <span>{weatherData.uv?.toFixed(1) ?? "--"}</span>
+            <p class={styles.weatherTitle}>Current Weather Data</p>
+            <div class={styles.weatherTwoCol}>
+              <div class={styles.weatherCol}>
+                <div class={styles.weatherItem}><span>Temperature:</span><span>{weatherData.outdoorTemp.toFixed(1)}°</span></div>
+                <div class={styles.weatherItem}><span>Humidity:</span><span>{weatherData.outdoorHumidity.toFixed(0)}%</span></div>
+                <div class={styles.weatherItem}><span>Pressure:</span><span>{weatherData.pressure.toFixed(0)} mb</span></div>
+              </div>
+              <div class={styles.weatherCol}>
+                <div class={styles.weatherItem}><span>Condition:</span><span>{weatherData.condition}</span></div>
+                <div class={styles.weatherItem}><span>AQI:</span><span>{weatherData.aqi > 0 ? weatherData.aqi : "--"}</span></div>
+                <div class={styles.weatherItem}><span>UV Index:</span><span>{weatherData.uv?.toFixed(1) ?? "--"}</span></div>
+              </div>
             </div>
           </div>
         )}

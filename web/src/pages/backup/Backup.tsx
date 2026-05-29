@@ -2,6 +2,7 @@ import { useState } from "preact/hooks";
 import { listDir, uploadFile, reboot, exportSettings, importSettings } from "../../api/client";
 import type { FileEntry } from "../../api/types";
 import { toast } from "../../components/Toast";
+import { FileInput } from "../../components/ui";
 import styles from "./Backup.module.css";
 
 interface BackupData {
@@ -122,14 +123,11 @@ export function BackupPage(_props: { path?: string }) {
         <p class={styles.hint}>
           Upload a previously downloaded backup file. Files and settings will be restored. Device will reboot after restore.
         </p>
-        <input
-          type="file"
+        <FileInput
           accept=".json"
           disabled={!!busy}
-          onChange={(e) => {
-            const file = (e.target as HTMLInputElement).files?.[0];
-            if (file) doRestore(file);
-          }}
+          onChange={doRestore}
+          buttonText="Choose File"
         />
       </div>
     </div>

@@ -20,11 +20,18 @@ window.addEventListener("popstate", () => {
 
 const links = [
   { href: "/", label: "Settings" },
+  { href: "/mqtt", label: "MQTT" },
+  { href: "/display", label: "Display" },
+  { href: "/apps", label: "Apps" },
+  { href: "/datetime", label: "Time/Date" },
+  { href: "/sound", label: "Sound" },
   { href: "/screen", label: "Screen" },
   { href: "/datafetcher", label: "Data" },
   { href: "/autonomous", label: "Alarms" },
   { href: "/files", label: "Files" },
+  { href: "/icons", label: "Icons" },
   { href: "/backup", label: "Backup" },
+  { href: "/system", label: "System" },
   { href: "/update", label: "Update" },
 ];
 

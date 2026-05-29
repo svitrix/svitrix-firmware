@@ -20,7 +20,7 @@ export function SoundSection() {
       <div class={styles.stack}>
         <Toggle label="Sound Enabled" checked={s.SOUND} onChange={(v) => updateSettings({ SOUND: v })} />
         <Slider label="Volume" min={0} max={30} value={s.VOL} onChange={(v) => updateSettings({ VOL: v })} />
-        <Button variant="primary" onClick={handleSave} loading={saving}>Save Sound</Button>
+        <Button variant="primary" onClick={handleSave} loading={saving}>Save Sound Settings</Button>
       </div>
     </Card>
   );
