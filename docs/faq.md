@@ -1,67 +1,67 @@
-# Frequently Asked Questions (FAQ)
+# Preguntas Frecuentes (FAQ)
 
-If you don't find what you're looking for, please open an issue on [GitHub](https://github.com/XE1E/svitrix-firmware-XE1E/issues).
+Si no encuentras lo que buscas, por favor abre un issue en [GitHub](https://github.com/XE1E/svitrix-firmware-XE1E/issues).
 
 ## General
 
-#### Q: Does SVITRIX work without a smart home system?
+#### P: ¿SVITRIX funciona sin un sistema de hogar inteligente?
 
-A: Yes, partially. SVITRIX comes with built-in apps for time, date, temperature, humidity, and battery level — they work right out of the box without any external system.
+R: Sí, parcialmente. SVITRIX viene con apps integradas para hora, fecha, temperatura, humedad y nivel de batería — funcionan directamente sin ningún sistema externo.
 
-However, SVITRIX is primarily designed as a smart home companion. To unlock its full potential — custom apps, notifications, remote control — you need an external system (HomeAssistant, IOBroker, NodeRed, etc.) that communicates via MQTT or HTTP API.
+Sin embargo, SVITRIX está diseñado principalmente como un compañero de hogar inteligente. Para desbloquear todo su potencial — apps personalizadas, notificaciones, control remoto — necesitas un sistema externo (HomeAssistant, IOBroker, NodeRed, etc.) que se comunique vía MQTT o API HTTP.
 
-#### Q: Can I use different matrix sizes other than 32x8?
+#### P: ¿Puedo usar tamaños de matriz diferentes a 32x8?
 
-A: No. SVITRIX is optimized for the Ulanzi TC001, which uses a 32x8 pixel matrix (256 LEDs). Other sizes are not supported.
+R: No. SVITRIX está optimizado para el Ulanzi TC001, que usa una matriz de 32x8 píxeles (256 LEDs). Otros tamaños no están soportados.
 
-## Flashing & Installation
+## Flasheo e Instalación
 
-#### Q: I'm getting an error while flashing with the SVITRIX Web Flasher
+#### P: Estoy obteniendo un error al flashear con el SVITRIX Web Flasher
 
-A: Try a different USB cable and USB port. Some cables (including the one bundled with the device) support charging only, not data transfer. A good data cable is the most common fix.
+R: Prueba con un cable USB y puerto USB diferente. Algunos cables (incluyendo el que viene con el dispositivo) solo soportan carga, no transferencia de datos. Un buen cable de datos es la solución más común.
 
-#### Q: I only have 192KB of free flash memory. What's wrong?
+#### P: Solo tengo 192KB de memoria flash libre. ¿Qué está mal?
 
-A: The Ulanzi stock firmware uses a different partition table with a smaller filesystem partition.
+R: El firmware original de Ulanzi usa una tabla de particiones diferente con una partición de sistema de archivos más pequeña.
 
-To get the full ~1350KB of available storage, flash using the [SVITRIX online flasher](./flasher) — it writes to all partitions including the filesystem. The Ulanzi OTA updater only writes to the app partition and leaves the old partition layout in place.
+Para obtener los ~1350KB completos de almacenamiento disponible, flashea usando el [flasher online de SVITRIX](./flasher) — escribe en todas las particiones incluyendo el sistema de archivos. El actualizador OTA de Ulanzi solo escribe en la partición de la app y deja la configuración de particiones antigua.
 
-## Display & Icons
+## Pantalla e Iconos
 
-#### Q: I'm experiencing drawing glitches with my icons
+#### P: Estoy experimentando problemas gráficos con mis iconos
 
-A: The SVITRIX GIF renderer supports 8-bit GIFs. If you notice graphic glitches, your GIF likely has transparency. Replace transparent pixels with solid black using an online tool like [this one](https://onlinegiftools.com/add-gif-background).
+R: El renderizador de GIF de SVITRIX soporta GIFs de 8 bits. Si notas glitches gráficos, tu GIF probablemente tiene transparencia. Reemplaza los píxeles transparentes con negro sólido usando una herramienta online como [esta](https://onlinegiftools.com/add-gif-background).
 
-#### Q: I have a blinking indicator in the corner. What does it mean?
+#### P: Tengo un indicador parpadeante en la esquina. ¿Qué significa?
 
-A: SVITRIX uses small indicator LEDs in the corners of the matrix to signal connection issues:
+R: SVITRIX usa pequeños LEDs indicadores en las esquinas de la matriz para señalar problemas de conexión:
 
-| Indicator | Position | Meaning |
-|-----------|----------|---------|
-| 1 | Top-right corner | WiFi connection problem |
-| 2 | Bottom-right corner | MQTT broker connection problem |
+| Indicador | Posición | Significado |
+|-----------|----------|-------------|
+| 1 | Esquina superior derecha | Problema de conexión WiFi |
+| 2 | Esquina inferior derecha | Problema de conexión al broker MQTT |
 
-Once the connection is restored, the indicator disappears automatically.
+Una vez que se restaura la conexión, el indicador desaparece automáticamente.
 
-## Configuration
+## Configuración
 
-#### Q: What is `DoNotTouch.json` and what if I accidentally modified it?
+#### P: ¿Qué es `DoNotTouch.json` y qué pasa si lo modifiqué accidentalmente?
 
-A: `DoNotTouch.json` stores critical device settings:
+R: `DoNotTouch.json` almacena configuraciones críticas del dispositivo:
 
-- Static IP configuration
-- MQTT connection settings
-- HomeAssistant Discovery prefix
-- NTP server / timezone
-- HTTP Auth password
+- Configuración de IP estática
+- Configuración de conexión MQTT
+- Prefijo de Home Assistant Discovery
+- Servidor NTP / zona horaria
+- Contraseña de autenticación HTTP
 
-If you accidentally modified this file, delete it via the [file manager](./webinterface) and reboot the device. The file will be recreated automatically, but you will need to reconfigure the settings listed above.
+Si modificaste accidentalmente este archivo, elimínalo vía el [administrador de archivos](./webinterface) y reinicia el dispositivo. El archivo se recreará automáticamente, pero necesitarás reconfigurar las opciones listadas arriba.
 
-#### Q: The temperature sensor shows a higher value than expected
+#### P: El sensor de temperatura muestra un valor más alto de lo esperado
 
-A: The sensor on Ulanzi TC001 is located inside the sealed case. Internal heat from the LED matrix (depending on brightness) and the battery raises the reading above the actual room temperature.
+R: El sensor en el Ulanzi TC001 está ubicado dentro de la carcasa sellada. El calor interno de la matriz LED (dependiendo del brillo) y la batería eleva la lectura por encima de la temperatura real de la habitación.
 
-You can compensate by setting offsets in `dev.json` via the [file manager](./webinterface):
+Puedes compensar configurando offsets en `dev.json` vía el [administrador de archivos](./webinterface):
 
 ```json
 {
@@ -70,23 +70,23 @@ You can compensate by setting offsets in `dev.json` via the [file manager](./web
 }
 ```
 
-Reboot the device after saving. Adjust the values to match your environment — the exact offset depends on brightness settings and battery usage.
+Reinicia el dispositivo después de guardar. Ajusta los valores para que coincidan con tu ambiente — el offset exacto depende de la configuración de brillo y uso de batería.
 
-See all available developer settings in the [Hidden Features](./dev) section.
+Consulta todas las configuraciones de desarrollador disponibles en la sección [Funciones Ocultas](./dev).
 
-## Custom Builds
+## Builds Personalizados
 
-#### Q: I want to build my own SVITRIX. Which firmware should I use?
+#### P: Quiero construir mi propio SVITRIX. ¿Qué firmware debo usar?
 
-A: Use the [SVITRIX flasher](./flasher) — the firmware is compatible with both Ulanzi TC001 and custom builds using any ESP32-WROOM board (including ESP32 D1 Mini).
+R: Usa el [flasher de SVITRIX](./flasher) — el firmware es compatible tanto con Ulanzi TC001 como con builds personalizados usando cualquier placa ESP32-WROOM (incluyendo ESP32 D1 Mini).
 
-Make sure to follow the correct pinout from the [Hardware Guide](./hardware).
+Asegúrate de seguir el pinout correcto de la [Guía de Hardware](./hardware).
 
-#### Q: My self-built device shows garbled characters on the matrix
+#### P: Mi dispositivo auto-construido muestra caracteres ilegibles en la matriz
 
-A: You need to change the matrix layout type. The default is `0`, which may not match your wiring.
+R: Necesitas cambiar el tipo de configuración de matriz. El valor por defecto es `0`, que puede no coincidir con tu cableado.
 
-Create a `dev.json` file via the [file manager](./webinterface) and try values `1` or `2`:
+Crea un archivo `dev.json` vía el [administrador de archivos](./webinterface) e intenta con los valores `1` o `2`:
 
 ```json
 {
@@ -94,18 +94,18 @@ Create a `dev.json` file via the [file manager](./webinterface) and try values `
 }
 ```
 
-| Value | Layout |
-|-------|--------|
-| 0 | Single 32x8, row-major, zigzag |
-| 1 | Four tiled 8x8 panels, row-major, progressive |
-| 2 | Single 32x8, column-major, zigzag |
+| Valor | Configuración |
+|-------|---------------|
+| 0 | 32x8 único, fila mayor, zigzag |
+| 1 | Cuatro paneles 8x8 en mosaico, fila mayor, progresivo |
+| 2 | 32x8 único, columna mayor, zigzag |
 
-Reboot the device after saving.
+Reinicia el dispositivo después de guardar.
 
-## OTA Updates
+## Actualizaciones OTA
 
-#### Q: How do I update the firmware without USB?
+#### P: ¿Cómo actualizo el firmware sin USB?
 
-A: Open the [web interface](./webinterface) in your browser, go to the update section, and upload the new `firmware.bin` file. The device will reboot automatically after the update.
+R: Abre la [interfaz web](./webinterface) en tu navegador, ve a la sección de actualización y sube el nuevo archivo `firmware.bin`. El dispositivo se reiniciará automáticamente después de la actualización.
 
-You can download the latest firmware from the [GitHub releases](https://github.com/XE1E/svitrix-firmware-XE1E/releases) page.
+Puedes descargar el firmware más reciente de la página de [releases de GitHub](https://github.com/XE1E/svitrix-firmware-XE1E/releases).

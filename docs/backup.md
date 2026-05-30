@@ -1,15 +1,15 @@
-# Backup
+# Respaldo
 
-The backup and restore functionality is available in the [web interface](./webinterface) under the **Backup** page (`/backup`).
+La funcionalidad de respaldo y restauración está disponible en la [interfaz web](./webinterface) bajo la página **Respaldo** (`/backup`).
 
-## Backup (Download)
+## Respaldo (Descargar)
 
-Click **Download Backup** to save all files from the device's filesystem (icons, melodies, palettes, custom apps, configuration) as a single JSON file.
+Haz clic en **Descargar Respaldo** para guardar todos los archivos del sistema de archivos del dispositivo (iconos, melodías, paletas, apps personalizadas, configuración) como un solo archivo JSON.
 
-## Restore (Upload)
+## Restaurar (Subir)
 
-Select a previously downloaded backup file to restore. All files will be uploaded to the device, and it will reboot automatically after a successful restore.
+Selecciona un archivo de respaldo previamente descargado para restaurar. Todos los archivos se subirán al dispositivo, y se reiniciará automáticamente después de una restauración exitosa.
 
 ::: warning
-Restoring a backup will overwrite existing files on the device. Make sure you're restoring the correct backup.
+Restaurar un respaldo sobrescribirá los archivos existentes en el dispositivo. Asegúrate de que estás restaurando el respaldo correcto.
 :::

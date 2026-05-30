@@ -3,54 +3,54 @@ layout: home
 
 hero:
   name: "SVITRIX"
-  text: "Smart Pixel Clock Firmware"
-  tagline: "Custom firmware for the Ulanzi Smart Pixel clock and self build matrix clocks."
+  text: "Firmware para Reloj Pixel Inteligente"
+  tagline: "Firmware personalizado para el reloj Ulanzi Smart Pixel y relojes matriciales caseros."
   image:
     src: /assets/icon.png
     alt: SVITRIX
   actions:
     - theme: brand
-      text: Quick Start
-      link: /quickstart
+      text: Inicio Rápido
+      link: /es/quickstart
     - theme: alt
       text: Flasher
-      link: /flasher
+      link: /es/flasher
     - theme: alt
       text: GitHub
       link: https://github.com/XE1E/svitrix-firmware-XE1E
 
 features:
-  - title: Ready Out of the Box
-    details: Pre-installed with time, date, temperature, and humidity apps. Just turn it on.
-  - title: Smart Home Companion
-    details: Integrates with HomeAssistant, IOBroker, NodeRed and more via MQTT and HTTP APIs.
-  - title: Custom Apps
-    details: Create dynamic pages that rotate on your display, controlled from your smart home system.
-  - title: AI-First Development
-    details: Built with Claude (Anthropic) as the core development tool — from architecture to testing and CI.
+  - title: Listo para Usar
+    details: Preinstalado con apps de hora, fecha, temperatura y humedad. Solo enciéndelo.
+  - title: Compañero para Smart Home
+    details: Se integra con HomeAssistant, IOBroker, NodeRed y más vía MQTT y APIs HTTP.
+  - title: Apps Personalizadas
+    details: Crea páginas dinámicas que rotan en tu pantalla, controladas desde tu sistema domótico.
+  - title: Desarrollo con IA
+    details: Desarrollado con Claude (Anthropic) como herramienta principal — desde arquitectura hasta testing y CI.
 ---
 
-::: info Disclaimer
-This open-source software is not affiliated with or endorsed by the company Ulanzi in any way. Use of the software is at your own risk and discretion, and i assume no liability for any potential damages or issues that may arise from using the software. It is important to be aware that using this open-source software comes without direct support or guarantees from the company Ulanzi.
+::: info Aviso Legal
+Este software de código abierto no está afiliado ni respaldado por la empresa Ulanzi de ninguna manera. El uso del software es bajo tu propio riesgo y discreción, y no asumo responsabilidad por posibles daños o problemas que puedan surgir del uso del software. Es importante saber que usar este software de código abierto no incluye soporte directo ni garantías de la empresa Ulanzi.
 :::
 
-SVITRIX is a custom firmware for the [Ulanzi Smart Pixel clock](https://www.ulanzi.com/products/ulanzi-pixel-smart-clock-2882?ref=28e02dxl) (Ref link).
-It meant to be a companion for your smarthome like HomeAssistant, IOBroker, NodeRed and so on.
+SVITRIX es un firmware personalizado para el [reloj Ulanzi Smart Pixel](https://www.ulanzi.com/products/ulanzi-pixel-smart-clock-2882?ref=28e02dxl) (enlace de referencia).
+Está diseñado para ser un compañero para tu hogar inteligente como HomeAssistant, IOBroker, NodeRed y más.
 
-It is ready to use straight out of the box, with time, date, temperature, and humidity apps pre-installed. You don't need to do anything other than turning it on to start using these features.
-However, for those with more advanced skills, the customization options available with custom apps allow you to take SVITRIX to its full potential.
+Está listo para usar directamente desde la caja, con apps de hora, fecha, temperatura y humedad preinstaladas. No necesitas hacer nada más que encenderlo para comenzar a usar estas funciones.
+Sin embargo, para aquellos con habilidades más avanzadas, las opciones de personalización disponibles con apps personalizadas te permiten aprovechar SVITRIX al máximo.
 
 ::: warning
-In SVITRIX, the term 'Apps' does not refer to traditional smartphone apps that you download and install. Instead, in SVITRIX, CustomApps function more like dynamic pages that rotate within the Apploop rotation of the display. These pages do not store or execute their own logic; instead, they display content that is sent from an external system, such as a smarthome. This content must be transmitted using MQTT or HTTP protocols via the [CustomApp API](./api#custom-apps-and-notifications).
-It is important to note that all the logic for managing the content displayed in these CustomApps needs to be handled by your external system. SVITRIX only provides the platform for displaying the information. You have the flexibility to update the content shown on your CustomApps in real-time at any moment, making it a versatile tool for displaying personalized information in your smarthome setup.
+En SVITRIX, el término 'Apps' no se refiere a aplicaciones tradicionales de smartphone que descargas e instalas. En cambio, en SVITRIX, las CustomApps funcionan más como páginas dinámicas que rotan dentro del ciclo de apps de la pantalla. Estas páginas no almacenan ni ejecutan su propia lógica; en cambio, muestran contenido que se envía desde un sistema externo, como un hogar inteligente. Este contenido debe transmitirse usando protocolos MQTT o HTTP a través del [API de CustomApp](./api#custom-apps-and-notifications).
+Es importante notar que toda la lógica para gestionar el contenido mostrado en estas CustomApps necesita ser manejada por tu sistema externo. SVITRIX solo proporciona la plataforma para mostrar la información. Tienes la flexibilidad de actualizar el contenido mostrado en tus CustomApps en tiempo real en cualquier momento, convirtiéndolo en una herramienta versátil para mostrar información personalizada en tu configuración de hogar inteligente.
 :::
 
-SVITRIX is a community-driven fork based on the original [AWTRIX 3](https://github.com/Blueforcer/awtrix3) project. The decision to fork was made to enable active development and accept contributions from the community.
+SVITRIX es un fork impulsado por la comunidad basado en el proyecto original [AWTRIX 3](https://github.com/Blueforcer/awtrix3). La decisión de hacer un fork se tomó para permitir el desarrollo activo y aceptar contribuciones de la comunidad.
 
-## AI-First Development
+## Desarrollo con IA
 
-SVITRIX is developed using an **AI-first** approach. [Claude](https://claude.ai) by Anthropic is a core part of the development workflow — from architecture decisions and code generation to refactoring, testing, and CI pipeline management. The project uses [Claude Code](https://github.com/anthropics/claude-code) as the primary development tool, with custom hooks and skills tailored to the embedded firmware workflow.
+SVITRIX se desarrolla usando un enfoque **IA-first**. [Claude](https://claude.ai) de Anthropic es una parte central del flujo de trabajo de desarrollo — desde decisiones de arquitectura y generación de código hasta refactorización, testing y gestión del pipeline de CI. El proyecto usa [Claude Code](https://github.com/anthropics/claude-code) como herramienta principal de desarrollo, con hooks y skills personalizados adaptados al flujo de trabajo de firmware embebido.
 
-## Support
+## Soporte
 
-If you like this project, star it on [GitHub](https://github.com/XE1E/svitrix-firmware-XE1E) and contribute!
+Si te gusta este proyecto, dale una estrella en [GitHub](https://github.com/XE1E/svitrix-firmware-XE1E) y contribuye!

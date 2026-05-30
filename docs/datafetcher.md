@@ -1,51 +1,51 @@
 # Data Fetcher
 
-The Data Fetcher lets SVITRIX automatically pull data from external HTTP/HTTPS APIs and display the results on the LED matrix — no smart home system required.
+El Data Fetcher permite que SVITRIX automáticamente obtenga datos de APIs HTTP/HTTPS externas y muestre los resultados en la matriz LED — sin necesidad de un sistema de hogar inteligente.
 
-## How It Works
+## Cómo Funciona
 
-1. You configure one or more **data sources**, each pointing to an external API
-2. SVITRIX periodically fetches each source and extracts a value from the JSON response
-3. The extracted value is formatted and displayed as a custom app in the app loop
+1. Configuras una o más **fuentes de datos**, cada una apuntando a una API externa
+2. SVITRIX obtiene periódicamente cada fuente y extrae un valor de la respuesta JSON
+3. El valor extraído se formatea y muestra como una app personalizada en el ciclo de apps
 
-## Web Interface
+## Interfaz Web
 
-Navigate to `http://[IP]/datafetcher` in your browser to manage data sources through a visual interface. You can add, edit, and remove sources without writing any API calls.
+Navega a `http://[IP]/datafetcher` en tu navegador para gestionar fuentes de datos a través de una interfaz visual. Puedes agregar, editar y eliminar fuentes sin escribir ninguna llamada API.
 
-## Configuration
+## Configuración
 
-Each data source has the following settings:
+Cada fuente de datos tiene las siguientes configuraciones:
 
-| Setting | Description |
-|---------|-------------|
-| **Name** | Unique identifier — becomes the app name shown in the loop |
-| **URL** | Full HTTP or HTTPS URL of the API endpoint |
-| **JSON Path** | Dot-notation path to the value in the response (e.g., `bitcoin.usd` or `data.0.price`) |
-| **Display Format** | Optional printf-style format for a single value (e.g., `$%.0f` for "$67432", `%.1f°C` for "23.5°C"). Allowed specifiers: `%d %i %u %o %x %X %f %g %e %E %s` with optional width and precision (1–2 digits each). Use `%%` for a literal `%` (e.g., `%d%%` → "85%"). |
-| **Icon** | Optional icon name from the ICONS folder |
-| **Color** | Optional text color as hex `#RRGGBB` |
-| **Interval** | Polling interval in seconds (minimum 60, default 900) |
+| Configuración | Descripción |
+|---------------|-------------|
+| **Nombre** | Identificador único — se convierte en el nombre de la app mostrada en el ciclo |
+| **URL** | URL completa HTTP o HTTPS del endpoint de la API |
+| **Ruta JSON** | Ruta con notación de punto al valor en la respuesta (ej., `bitcoin.usd` o `data.0.price`) |
+| **Formato de Visualización** | Formato opcional estilo printf para un solo valor (ej., `$%.0f` para "$67432", `%.1f°C` para "23.5°C"). Especificadores permitidos: `%d %i %u %o %x %X %f %g %e %E %s` con ancho y precisión opcionales (1–2 dígitos cada uno). Usa `%%` para un `%` literal (ej., `%d%%` → "85%"). |
+| **Icono** | Nombre de icono opcional de la carpeta ICONS |
+| **Color** | Color de texto opcional como hex `#RRGGBB` |
+| **Intervalo** | Intervalo de polling en segundos (mínimo 60, por defecto 900) |
 
-## Example: Bitcoin Price
+## Ejemplo: Precio de Bitcoin
 
-To display the current Bitcoin price:
+Para mostrar el precio actual de Bitcoin:
 
-- **Name**: `btc`
+- **Nombre**: `btc`
 - **URL**: `https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd`
-- **JSON Path**: `bitcoin.usd`
-- **Display Format**: `$%.0f`
-- **Icon**: `btc`
+- **Ruta JSON**: `bitcoin.usd`
+- **Formato de Visualización**: `$%.0f`
+- **Icono**: `btc`
 - **Color**: `#F7931A`
-- **Interval**: `300` (every 5 minutes)
+- **Intervalo**: `300` (cada 5 minutos)
 
-## Limitations
+## Limitaciones
 
-- Maximum **8 data sources** simultaneously
-- API response must be under **4 KB**
-- Only **public APIs** are supported (no custom authentication headers)
-- Minimum polling interval is **60 seconds**
-- HTTPS is supported but without certificate validation
+- Máximo **8 fuentes de datos** simultáneamente
+- La respuesta de la API debe ser menor a **4 KB**
+- Solo se soportan **APIs públicas** (sin encabezados de autenticación personalizados)
+- Intervalo mínimo de polling es **60 segundos**
+- HTTPS está soportado pero sin validación de certificado
 
 ## API
 
-Data sources can also be managed via the [HTTP API](./api#data-fetcher).
+Las fuentes de datos también pueden gestionarse vía el [API HTTP](./api#data-fetcher).

@@ -1,20 +1,20 @@
 
-# Online flasher
+# Flasher Online
 
-Available in Google Chrome and Microsoft Edge browsers.
-If you flash your Ulanzi Clock the first time you need to check "erase".
+Disponible en navegadores Google Chrome y Microsoft Edge.
+Si flasheas tu reloj Ulanzi por primera vez, necesitas marcar "erase".
 
-The flasher installs both the firmware and the web interface (SPA) in a single step.
+El flasher instala tanto el firmware como la interfaz web (SPA) en un solo paso.
 
-## Ulanzi TC001 and custom builds flasher
+## Flasher para Ulanzi TC001 y builds personalizados
 
-<iframe src="/svitrix-firmware-XE1E/ulanzi_flasher/index.html?lang=en" width="100%" height="400" frameborder="0" style="border: 1px solid var(--vp-c-border); border-radius: 8px;"></iframe>
+<iframe src="/svitrix-firmware-XE1E/ulanzi_flasher/index.html?lang=es" width="100%" height="400" frameborder="0" style="border: 1px solid var(--vp-c-border); border-radius: 8px;"></iframe>
 
-## What gets flashed
+## Qué se flashea
 
-| Partition | File | Offset | Description |
-|-----------|------|--------|-------------|
-| Bootloader | `bootloader.bin` | 0x1000 | ESP32 bootloader |
-| Partitions | `partitions.bin` | 0x8000 | Partition table |
-| Firmware | `firmware.bin` | 0x10000 | SVITRIX firmware |
-| LittleFS | `littlefs.bin` | 0x3C0000 | Web interface (SPA) + default files |
+| Partición | Archivo | Offset | Descripción |
+|-----------|---------|--------|-------------|
+| Bootloader | `bootloader.bin` | 0x1000 | Bootloader del ESP32 |
+| Particiones | `partitions.bin` | 0x8000 | Tabla de particiones |
+| Firmware | `firmware.bin` | 0x10000 | Firmware SVITRIX |
+| LittleFS | `littlefs.bin` | 0x3C0000 | Interfaz web (SPA) + archivos por defecto |

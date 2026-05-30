@@ -1,56 +1,56 @@
-# Sounds
+# Sonidos
 
-SVITRIX uses the integrated passive buzzer in the Ulanzi TC001 to play monophonic RTTTL melodies.
+SVITRIX usa el buzzer pasivo integrado en el Ulanzi TC001 para reproducir melodías RTTTL monofónicas.
 
-## Playing Melodies
+## Reproducir Melodías
 
-You can play RTTTL melodies in two ways:
+Puedes reproducir melodías RTTTL de dos formas:
 
-**Via API:**
-Send the RTTTL string directly with your API request.
-See documentation for commands:
-- [Single sounds](./api#sound-playback)
-- [With your notification](./api#json-properties)
+**Vía API:**
+Envía la cadena RTTTL directamente con tu petición API.
+Ver documentación para comandos:
+- [Sonidos individuales](./api#sound-playback)
+- [Con tu notificación](./api#json-properties)
 
-**Via file:**
-This method avoids long JSON payloads since the receive buffer is limited.
-Go to the file manager in the [web interface](./webinterface) and create a new text file in the `MELODIES` folder.
-Name it whatever you like but use the `.txt` extension, e.g. `alarm.txt`. Inside the file, place a melody in RTTTL format.
-When referencing the sound file in API calls, omit the file extension.
+**Vía archivo:**
+Este método evita payloads JSON largos ya que el buffer de recepción es limitado.
+Ve al administrador de archivos en la [interfaz web](./webinterface) y crea un nuevo archivo de texto en la carpeta `MELODIES`.
+Nómbralo como quieras pero usa la extensión `.txt`, ej. `alarma.txt`. Dentro del archivo, coloca una melodía en formato RTTTL.
+Cuando hagas referencia al archivo de sonido en llamadas API, omite la extensión del archivo.
 
-You can find many melodies on the internet:
+Puedes encontrar muchas melodías en internet:
 * [Laub-Home Wiki: RTTTL Songs](https://www.laub-home.de/wiki/RTTTL_Songs)
-* [Online RTTTL player](https://adamonsoon.github.io/rtttl-play/)
-* [RTTTL editor](https://corax89.github.io/esp8266Game/soundEditor.html)
+* [Reproductor RTTTL Online](https://adamonsoon.github.io/rtttl-play/)
+* [Editor RTTTL](https://corax89.github.io/esp8266Game/soundEditor.html)
 
-## Volume Control
+## Control de Volumen
 
-Volume controls the PWM duty cycle of the buzzer. Range: **0–30** (default: **25**).
+El volumen controla el ciclo de trabajo PWM del buzzer. Rango: **0–30** (por defecto: **25**).
 
-**On-screen menu:**
-Navigate to the `VOLUME` menu item on the clock. Use left/right buttons to adjust. Long-press select to save.
+**Menú en pantalla:**
+Navega al elemento de menú `VOLUME` en el reloj. Usa los botones izquierdo/derecho para ajustar. Mantén presionado seleccionar para guardar.
 
-**Via API:**
+**Vía API:**
 ```bash
-# Set volume to 15
+# Establecer volumen a 15
 curl -X POST http://<ip>/api/settings -d '{"VOL": 15}'
 
-# Get current volume
+# Obtener volumen actual
 curl http://<ip>/api/settings
 ```
 
-The volume setting is saved to flash and persists across reboots.
+La configuración de volumen se guarda en flash y persiste entre reinicios.
 
-## Sound Toggle
+## Alternar Sonido
 
-Sound can be enabled or disabled globally:
+El sonido puede habilitarse o deshabilitarse globalmente:
 
-**On-screen menu:**
-Navigate to the `SOUND` menu item. Toggle with left/right buttons. Long-press select to save.
+**Menú en pantalla:**
+Navega al elemento de menú `SOUND`. Alterna con los botones izquierdo/derecho. Mantén presionado seleccionar para guardar.
 
-**Via API:**
+**Vía API:**
 ```json
 {"SOUND": true}
 ```
 
-When sound is disabled, all melody playback (notifications, boot sound, API calls) is muted. The volume level is preserved and restored when sound is re-enabled.
+Cuando el sonido está deshabilitado, toda la reproducción de melodías (notificaciones, sonido de arranque, llamadas API) está silenciada. El nivel de volumen se preserva y restaura cuando el sonido se vuelve a habilitar.

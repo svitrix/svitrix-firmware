@@ -1,196 +1,179 @@
-# Web Interface
+# Interfaz Web
 
-SVITRIX uses a modern Single Page Application (SPA) built with Preact as its web interface. The SPA is served from the device's LittleFS filesystem and communicates with the firmware via REST API.
+SVITRIX usa una moderna Aplicación de Página Única (SPA) construida con Preact como su interfaz web. La SPA se sirve desde el sistema de archivos LittleFS del dispositivo y se comunica con el firmware vía API REST.
 
-Once SVITRIX is connected to your Wi-Fi network, access the web interface by entering the device's IP address in your browser (port 80). The IP address is displayed on the matrix at each boot.
+Una vez que SVITRIX está conectado a tu red WiFi, accede a la interfaz web ingresando la dirección IP del dispositivo en tu navegador (puerto 80). La dirección IP se muestra en la matriz en cada arranque.
 
-## Language
+## Páginas
 
-The interface supports **Spanish** (default) and **English**. Use the **ES/EN** toggle in the navigation bar to switch languages. Your preference is saved in the browser.
+| Página | Ruta | Descripción |
+|--------|------|-------------|
+| **Pantalla** | `/` | Vista en vivo de la matriz LED 32x8 con navegación de apps (anterior/siguiente), descarga PNG y grabación GIF. |
+| **Configuración** | `/settings` | Configuración del dispositivo dividida en secciones independientes, cada una con su propio botón Guardar: WiFi, Red, MQTT, NTP/Zona horaria, Autenticación, Pantalla, Apps, Hora y Fecha, Sonido, Enviar Notificación y Selector de Iconos. Incluye alternador de tema oscuro/claro. |
+| **Data Fetcher** | `/datafetcher` | Configura fuentes de datos HTTP externas que automáticamente obtienen y muestran datos en la matriz. Ver [Data Fetcher](./datafetcher) para detalles. |
+| **Archivos** | `/files` | Administrador de archivos integrado para navegar, subir, descargar, editar y eliminar archivos en el dispositivo (iconos, melodías, apps personalizadas, paletas). |
+| **Respaldo** | `/backup` | Descarga todos los archivos del dispositivo como un respaldo JSON, o restaura desde un respaldo previamente descargado. |
+| **Actualizar** | `/update` | Sube firmware (.bin) para actualización OTA. El dispositivo se reinicia automáticamente después de una subida exitosa. |
 
-## Tabs
+## Primera Configuración (Modo AP)
 
-The interface is organized into focused tabs, each with its own **Save** button that only saves settings for that section.
+Cuando SVITRIX no puede conectarse a una red WiFi guardada, crea su propio punto de acceso:
 
-| Tab | Description |
-|-----|-------------|
-| **Ajustes / Settings** | WiFi networks, static IP, NTP server, timezone, and Weather API configuration. |
-| **MQTT** | MQTT broker connection and HTTP authentication settings. |
-| **Pantalla / Display** | Matrix power, brightness, gamma, text color, background effects, night mode, and send notifications. |
-| **Apps** | Native apps (time, date, temperature, humidity, battery), weather apps, transitions, and navigation settings. |
-| **Fecha/Hora / Time/Date** | Time and date formats, display modes (calendar, big digits, binary), colors. |
-| **Sonido / Sound** | Buzzer enable/disable and volume. |
-| **Vista / Screen** | Live view of the 32x8 LED matrix with app navigation and PNG download. |
-| **Datos / Data** | Configure external HTTP data sources. See [Data Fetcher](./datafetcher). |
-| **Alarmas / Alarms** | Configure wake-up alarms with day selection and snooze. |
-| **Archivos / Files** | File manager to browse, upload, edit, and delete files on the device. |
-| **Iconos / Icons** | Download icons from the LaMetric icon library. |
-| **Respaldo / Backup** | Download/restore device backup as JSON. |
-| **Sistema / System** | Save all settings, reset to defaults, erase WiFi, or reboot. |
-| **Actualizar / Update** | Upload firmware (.bin) for OTA update. |
-
-## First-Time Setup (AP Mode)
-
-When SVITRIX cannot connect to a saved WiFi network, it creates its own access point:
-
-| Parameter | Value |
+| Parámetro | Valor |
 |-----------|-------|
-| Network name | `svitrix_XXXXX` |
-| Password | `12345678` |
+| Nombre de red | `svitrix_XXXXX` |
+| Contraseña | `12345678` |
 
-Connect to this network and open **http://192.168.4.1** in your browser. A minimal WiFi setup page will appear with network scanning and connection. After connecting to your home WiFi, the device reboots and the full SPA becomes available.
+Conéctate a esta red y abre **http://192.168.4.1** en tu navegador. Aparecerá una página mínima de configuración WiFi con escaneo de redes y conexión. Después de conectarte a tu WiFi doméstico, el dispositivo se reinicia y la SPA completa estará disponible.
 
-## SPA Deployment
+## Despliegue de la SPA
 
-The web interface is stored separately from the firmware in the LittleFS filesystem partition. After flashing the firmware, upload the SPA files to the device:
+La interfaz web se almacena por separado del firmware en la partición del sistema de archivos LittleFS. Después de flashear el firmware, sube los archivos de la SPA al dispositivo:
 
 ```bash
 cd web && npm run upload
 ```
 
-This builds the SPA and uploads it to the device's LittleFS root directory. The SPA bundle is approximately 30 KB (gzip compressed).
+Esto compila la SPA y la sube al directorio raíz de LittleFS del dispositivo. El bundle de la SPA es aproximadamente 18 KB (comprimido con gzip) e incluye las 6 páginas.
 
 ::: tip
-Once uploaded, the SPA persists across firmware updates. You only need to re-upload the SPA when the web interface itself is updated.
+Una vez subida, la SPA persiste entre actualizaciones de firmware. Solo necesitas volver a subir la SPA cuando la interfaz web misma se actualice.
 :::
 
-## Tab Details
+## Guía de Configuración
 
-### Ajustes / Settings
+La página de Configuración está organizada en secciones independientes. Cada sección tiene su propio botón **Guardar** — solo guardas lo que cambiaste.
 
-**Stats Bar** — Read-only bar at the top showing: firmware version, free RAM, WiFi signal, ambient light (lux), uptime, temperature, humidity, and brightness.
+Un **alternador de tema oscuro/claro** (☀/☽) está disponible en la esquina superior derecha de la barra de navegación. Tu preferencia se guarda en el navegador.
 
-**WiFi** — Configure up to 3 WiFi networks. The device tries each in order. Scan for networks or enter manually.
+### Barra de Estadísticas
 
-**Network** — Enable **Static IP** to configure fixed IP, gateway, subnet, and DNS.
+Una barra de solo lectura en la parte superior mostrando información del dispositivo en tiempo real: versión del firmware, RAM libre, intensidad de señal WiFi, luz ambiental (lux), tiempo de actividad, temperatura, humedad y brillo actual.
 
-**NTP & Timezone** — Select NTP server and configure timezone using POSIX format. Find yours at [posix_tz_db](https://github.com/nayarsystems/posix_tz_db/blob/master/zones.csv).
+### WiFi
 
-**Weather API** — Configure weatherapi.com API key, location method (city, coordinates, auto-IP, or station ID), and update interval. Click **Fetch Data** to test the configuration.
+Escanea redes disponibles, selecciona una e ingresa la contraseña para conectar. El dispositivo se reinicia después de conectar.
+
+### Red
+
+Habilita **IP Estática** para configurar una dirección IP fija, puerta de enlace, subred y servidor DNS en lugar de DHCP.
 
 ### MQTT
 
-**MQTT Settings:**
-- **Broker** — hostname or IP of your MQTT broker
-- **Port** — default 1883
-- **Username / Password** — broker credentials
-- **Prefix** — MQTT topic prefix (default: device ID)
-- **HA Discovery** — enable Home Assistant auto-discovery
+Conéctate a un broker MQTT para integración con Home Assistant y control remoto:
+- **Broker** — hostname o IP de tu broker MQTT
+- **Puerto** — por defecto 1883
+- **Usuario / Contraseña** — credenciales del broker
+- **Prefijo** — prefijo del topic MQTT (por defecto: ID del dispositivo)
+- **Home Assistant Discovery** — habilita auto-descubrimiento de entidades del dispositivo en HA
 
-**Authentication** — Set web username/password. Leave empty to disable. All pages and API calls require credentials when set.
+### NTP y Zona Horaria
 
-::: warning
-Do not lose your auth credentials — otherwise you will need to factory reset the device.
-:::
+- **Servidor NTP** — servidor de tiempo (por defecto: `pool.ntp.org`)
+- **Zona horaria** — cadena de zona horaria POSIX (encuentra la tuya en [posix_tz_db](https://github.com/nayarsystems/posix_tz_db/blob/master/zones.csv))
 
-### Pantalla / Display
+### Autenticación
 
-**Display Settings:**
-- **Matrix Power** — turn the LED matrix on/off
-- **Auto Brightness** — adjust brightness based on ambient light (with min/max range)
-- **Brightness** — manual brightness level (0–255)
-- **Gamma** — gamma correction (0.5–3.0)
-- **Uppercase** — force all text to uppercase
-- **Text Color** — default text color
-- **Background Effect** — visual effect behind apps
-- **Color Correction / Temperature** — advanced LED tuning
+Ver la sección [Autenticación](#autenticación) abajo.
 
-**Night Mode** — Schedule low-brightness mode for nighttime:
-- **Enable** — toggle on/off
-- **Start / End** — time range (supports crossing midnight)
-- **Night Brightness** — brightness during night (1–50)
-- **Night Color** — text color (default: red)
-- **Block Auto-Transition** — stop app cycling during night
+### Modo Nocturno
 
-**Send Notification** — Send a one-time message:
-- **Text** — message (required)
-- **Icon** — icon ID or filename
-- **Layout** — icon position (left/right)
-- **Hold** — keep until dismissed
-- **Duration** — display time (1–60s)
-- **Rainbow** — rainbow text effect
-- **Color** — text color
-- **Sound / RTTTL** — play melody
+Programa un modo de bajo brillo y un solo color para uso nocturno (ej. reloj de dormitorio):
+
+- **Habilitar Modo Nocturno** — activa/desactiva la función
+- **Inicio / Fin** — rango de tiempo (ej. 21:00 a 06:00, soporta cruzar medianoche)
+- **Brillo Nocturno** — brillo de pantalla durante horas nocturnas (1–50)
+- **Color Nocturno** — color de texto durante modo nocturno (por defecto: rojo — más fácil para los ojos)
+- **Bloquear Auto-Transición** — cuando está marcado, las apps no ciclan automáticamente; usa botones para navegar
+
+Durante el tiempo programado, la pantalla reduce su brillo a la configuración establecida y todo el texto se renderiza en el color nocturno elegido. Cuando termina la ventana de tiempo, la configuración normal se restaura automáticamente.
+
+### Pantalla
+
+- **Energía de Matriz** — enciende/apaga la matriz LED
+- **Brillo Automático** — ajusta automáticamente el brillo basado en luz ambiental
+- **Brillo** — nivel de brillo manual (0–255)
+- **Gamma** — curva de corrección gamma (0.5–3.0)
+- **Mayúsculas** — fuerza todo el texto a mayúsculas
+- **Color de Texto** — color de texto por defecto para todas las apps
+- **Corrección de Color / Temperatura de Color** — ajuste avanzado de color LED
 
 ### Apps
 
-**Native Apps** — Toggle and configure:
-- **Time** — digital clock
-- **Date** — date display
-- **Temperature** — internal sensor (Celsius/Fahrenheit, offset, color)
-- **Humidity** — internal sensor (color)
-- **Battery** — battery level (color)
+Activa/desactiva apps integradas. Cada app tiene opciones de personalización:
 
-**Weather Apps** — Toggle outdoor data from Weather API:
-- Outdoor Temperature, Humidity, Pressure, Air Quality, UV Index
-- **Auto Color** — color changes based on level (green → yellow → orange → red)
+**Apps básicas:**
+- **Hora** — reloj digital con duración configurable
+- **Fecha** — fecha con duración configurable
 
-**Transitions & Navigation:**
-- **Alarms Indicator** — LED in corner when alarms active
-- **Auto Transition** — cycle through apps automatically
-- **Transition Effect** — animation style (slide, dim, zoom, etc.)
-- **Transition Speed** — animation speed (100–2000ms)
-- **Scroll Speed** — text scroll speed
-- **Block Navigation** — disable button navigation
+**Apps con color:**
+- **Temperatura** — sensor interno, con selector de color, escala Celsius/Fahrenheit y offset
+- **Humedad** — sensor interno, con selector de color
+- **Batería** — nivel de batería, con selector de color
 
-### Fecha/Hora / Time/Date
+**Indicador de alarmas:**
+- **Alarms Indicator** — muestra un LED en la esquina inferior derecha cuando hay alarmas activas
 
-- **Time Format / Date Format** — strftime format strings
-- **Time Mode** — Plain Text, Calendar, Calendar Alt, Big Digits, Binary
-- **Start on Monday** — week starts Monday
-- **Show Weekday** — weekday indicator bar
-- **Time / Date Color** — individual colors
-- **Weekday Active / Inactive** — weekday dot colors
-- **Calendar Header / Text / Body** — calendar box colors
+Comportamiento de apps:
+- **Duración de App** — cuánto tiempo se muestra cada app antes de cambiar (1–60s)
+- **Auto Transición** — cicla automáticamente a través de las apps
+- **Efecto de Transición** — efecto visual al cambiar apps (Ninguno, Deslizar, Atenuar, Zoom, etc.)
+- **Velocidad de Transición** — qué tan rápido reproduce la animación de transición (100–2000ms)
+- **Velocidad de Desplazamiento** — velocidad de desplazamiento de texto para texto largo
+- **Bloquear Navegación** — deshabilita navegación con botones entre apps
 
-### Sonido / Sound
+### Hora y Fecha
 
-- **Sound Enabled** — enable/disable buzzer
-- **Volume** — buzzer volume (0–30)
+- **Formato de Hora / Formato de Fecha** — cadenas de formato strftime (ej., `%H:%M`, `%d.%m.%y`)
+- **Modo de Hora** — estilo de visualización: Texto Plano, Calendario, Calendario Arriba, Calendario Alt, Dígitos Grandes o Binario
+- **Comenzar en Lunes** — la semana comienza en lunes en lugar de domingo
+- **Celsius** — muestra temperatura en °C (apagado = °F)
+- **Color de Hora / Fecha** — colores individuales para apps de hora y fecha
+- **Mostrar Día de Semana** — muestra barra indicadora de día de semana
+- **Color Día Activo / Inactivo** — colores para puntos de día de semana
+- **Color Encabezado / Texto / Cuerpo de Calendario** — colores para el cuadro de calendario
 
-### Vista / Screen
+### Sonido
 
-Live preview of the 32x8 LED matrix. Use **Prev/Next** buttons to navigate apps. **Download PNG** saves the current frame.
+- **Sonido Habilitado** — habilita/deshabilita el buzzer
+- **Volumen** — nivel de volumen del buzzer (0–30)
 
-### Datos / Data
+### Enviar Notificación
 
-Configure external HTTP data sources. See [Data Fetcher](./datafetcher) for details.
+Envía un mensaje único a la pantalla:
+- **Texto** — mensaje a mostrar (requerido)
+- **Icono** — ID de icono o nombre de archivo de `/ICONS/`
+- **Disposición** — posiciona el icono a la izquierda o derecha (solo visible cuando hay icono)
+- **Hold (indefinido)** — mantiene la notificación hasta presionar Dismiss o el botón central
+- **Duración** — cuánto tiempo se muestra la notificación (1–60s, solo cuando Hold está desactivado)
+- **Arcoíris** — cicla el texto a través de colores del arcoíris
+- **Color** — color de texto (cuando arcoíris está apagado)
+- **Sonido** — nombre de archivo de melodía RTTTL en `/MELODIES/` (sin extensión)
+- **RTTTL** — cadena de melodía en [formato RTTTL](https://en.wikipedia.org/wiki/Ring_Tone_Text_Transfer_Language) directo
 
-### Alarmas / Alarms
+::: tip
+Si no especificas icono, el texto usa los 32 píxeles completos de la pantalla. Los textos largos hacen scroll automáticamente.
+:::
 
-Configure wake-up alarms:
-- Set time and select days
-- Add optional label
-- Snooze (5 min) or dismiss when ringing
+Ver [Sonidos](./sounds) para crear archivos de melodía.
 
-### Archivos / Files
+### Selector de Iconos
 
-Built-in file manager:
-- Browse directories
-- Upload files
-- Edit text files inline
-- Delete files/folders
-- Create new directories
+Descarga iconos de la [biblioteca de iconos LaMetric](https://developer.lametric.com/icons):
+1. Ingresa el número de ID del icono
+2. Haz clic en **Vista Previa** para verlo
+3. Haz clic en **Descargar** para guardarlo en la carpeta `/ICONS/` del dispositivo
 
-### Iconos / Icons
+### Acciones
 
-Download icons from [LaMetric icon library](https://developer.lametric.com/icons):
-1. Enter the icon ID number
-2. Click **Preview** to see it
-3. Click **Download** to save to `/ICONS/`
+- **Guardar Configuración de Pantalla** — guarda todas las configuraciones relacionadas con la pantalla de una vez (alternativa si se omitieron los botones individuales de Guardar)
+- **Restablecer Valores** — restaura todas las configuraciones a valores de fábrica (requiere confirmación)
+- **Reiniciar** — reinicia el dispositivo (requiere confirmación)
 
-### Respaldo / Backup
+## Autenticación
 
-- **Download Backup** — saves all files and settings as JSON
-- **Restore** — upload a backup file to restore (device reboots)
+Puedes establecer un nombre de usuario y contraseña en Configuración → Autenticación. Cuando está configurado, cada página, llamada API y la app SVITRIX requerirán estas credenciales. Deja ambos campos vacíos para deshabilitar la autenticación.
 
-### Sistema / System
-
-- **Save All Settings** — saves display, MQTT, and weather config at once
-- **Reset Defaults** — restore factory settings (confirmation required)
-- **Erase WiFi** — clear all WiFi credentials (device enters AP mode)
-- **Reboot** — restart device (confirmation required)
-
-### Actualizar / Update
-
-Upload firmware (.bin or .bin.gz) for OTA update. The device reboots automatically after successful upload.
+::: warning
+No pierdas tus credenciales de autenticación — de lo contrario necesitarás hacer un reset de fábrica del dispositivo.
+:::

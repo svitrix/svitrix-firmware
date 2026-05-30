@@ -1,86 +1,86 @@
 
-# Quick Start
+# Inicio Rápido
 
-Setting up SVITRIX-XE1E takes just a few minutes. Follow the steps below to go from unboxing to a working smart clock.
+Configurar SVITRIX-XE1E toma solo unos minutos. Sigue los pasos a continuación para ir desde el desempaquetado hasta un reloj inteligente funcionando.
 
-## Step 1. Flash the firmware
+## Paso 1. Flashea el firmware
 
-Connect your Ulanzi TC001 to a computer via USB cable and open the [online flasher](./flasher).
+Conecta tu Ulanzi TC001 a una computadora mediante cable USB y abre el [flasher online](./flasher).
 
 ::: tip
-If flashing doesn't start — try a different USB cable or port. Some cables only support charging, not data transfer.
+Si el flasheo no comienza — prueba con un cable USB o puerto diferente. Algunos cables solo soportan carga, no transferencia de datos.
 :::
 
-## Step 2. Connect to WiFi
+## Paso 2. Conéctate al WiFi
 
-After flashing, the device will create a WiFi access point:
+Después de flashear, el dispositivo creará un punto de acceso WiFi:
 
-| Parameter | Value |
+| Parámetro | Valor |
 |-----------|-------|
-| Network name | `svitrix_XXXXX` |
-| Password | `12345678` |
+| Nombre de red | `svitrix_XXXXX` |
+| Contraseña | `12345678` |
 
-Connect to this network from your phone or computer.
+Conéctate a esta red desde tu teléfono o computadora.
 
-## Step 3. Configure your network
+## Paso 3. Configura tu red
 
-Open a browser and navigate to:
+Abre un navegador y ve a:
 
 **http://192.168.4.1**
 
-A WiFi setup page will appear. Scan for available networks, select yours, enter the password, and click Connect. The device will reboot and connect to your home WiFi.
+Aparecerá una página de configuración WiFi. Escanea las redes disponibles, selecciona la tuya, ingresa la contraseña y haz clic en Conectar. El dispositivo se reiniciará y se conectará a tu WiFi doméstico.
 
-## Step 4. Find the device on your network
+## Paso 4. Encuentra el dispositivo en tu red
 
-Once connected to WiFi, the device will show:
-1. The firmware version (e.g., `0.4.0`) for a few seconds
-2. A scrolling banner with "SVITRIX XE1E", the IP address, and the mDNS hostname
+Una vez conectado al WiFi, el dispositivo mostrará:
+1. La versión del firmware (ej. `0.4.0`) por unos segundos
+2. Un banner desplazable con "SVITRIX XE1E", la dirección IP y el hostname mDNS
 
-Enter the IP address in your browser to open the [web interface](./webinterface).
+Ingresa la dirección IP en tu navegador para abrir la [interfaz web](./webinterface).
 
 ::: tip
-You can also access the device using `http://svitrix_XXXXX.local` (where XXXXX is your device ID).
-If you missed the IP address on screen — look for the device in your router's connected devices list.
+También puedes acceder al dispositivo usando `http://svitrix_XXXXX.local` (donde XXXXX es el ID de tu dispositivo).
+Si te perdiste la dirección IP en pantalla — busca el dispositivo en la lista de dispositivos conectados de tu router.
 :::
 
-## Step 5. Upload the Web UI (developers only)
+## Paso 5. Sube la interfaz web (solo desarrolladores)
 
-If you're building from source, upload the SPA web interface to the device:
+Si estás compilando desde el código fuente, sube la interfaz web SPA al dispositivo:
 
 ```bash
 cd web && npm run upload
 ```
 
 ::: tip
-Pre-built firmware releases include this step in the online flasher. You only need this if you're building from source.
+Las versiones pre-compiladas del firmware incluyen este paso en el flasher online. Solo necesitas esto si estás compilando desde el código fuente.
 :::
 
-## Step 6. Set up Weather (optional)
+## Paso 6. Configura el clima (opcional)
 
-SVITRIX-XE1E includes native weather apps that show outdoor temperature, humidity, pressure, and air quality. To enable them:
+SVITRIX-XE1E incluye apps nativas de clima que muestran temperatura exterior, humedad, presión y calidad del aire. Para habilitarlas:
 
-1. Sign up for a free account at [WeatherAPI.com](https://www.weatherapi.com)
-2. Copy your API key from the dashboard
-3. In the web interface, go to **Settings → Weather**
-4. Paste your API key
-5. Choose your location method:
-   - **City Name** — e.g., "Mexico City"
-   - **Coordinates** — latitude and longitude
-   - **Auto (IP)** — automatic detection based on your IP
-   - **Station ID** — for personal weather stations
-6. Enable the weather apps you want (Outdoor Temp, Outdoor Humidity, Pressure, Air Quality)
-7. Click **Save Weather**
+1. Regístrate para una cuenta gratuita en [WeatherAPI.com](https://www.weatherapi.com)
+2. Copia tu API key desde el dashboard
+3. En la interfaz web, ve a **Configuración → Clima**
+4. Pega tu API key
+5. Elige tu método de ubicación:
+   - **Nombre de Ciudad** — ej. "Ciudad de México"
+   - **Coordenadas** — latitud y longitud
+   - **Auto (IP)** — detección automática basada en tu IP
+   - **ID de Estación** — para estaciones meteorológicas personales
+6. Habilita las apps de clima que quieras (Temp. Exterior, Humedad Exterior, Presión, Calidad del Aire)
+7. Haz clic en **Guardar Clima**
 
 ::: tip
-The free WeatherAPI.com plan allows 1 million calls per month — more than enough for a 10-minute update interval.
+El plan gratuito de WeatherAPI.com permite 1 millón de llamadas por mes — más que suficiente para un intervalo de actualización de 10 minutos.
 :::
 
-## Step 7. Set up MQTT (optional)
+## Paso 7. Configura MQTT (opcional)
 
-In the web interface, configure the connection to your MQTT broker. This enables control from HomeAssistant, IOBroker, NodeRed, and other smart home systems.
+En la interfaz web, configura la conexión a tu broker MQTT. Esto habilita el control desde HomeAssistant, IOBroker, NodeRed y otros sistemas de hogar inteligente.
 
-For details on available commands, see the [API](./api) section.
+Para detalles sobre los comandos disponibles, consulta la sección [API](./api).
 
-## Done!
+## ¡Listo!
 
-SVITRIX-XE1E is already running with pre-installed apps: time, date, temperature, humidity, battery, and weather. To create your own custom apps, check the [Apps](./apps) section.
+SVITRIX-XE1E ya está funcionando con apps preinstaladas: hora, fecha, temperatura, humedad, batería y clima. Para crear tus propias apps personalizadas, consulta la sección [Apps](./apps).

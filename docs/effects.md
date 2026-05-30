@@ -1,19 +1,19 @@
-# Effects
+# Efectos
 
-SVITRIX can show effects wherever you want
-- Notification and CustomApps. This will show the effect as the first layer, so you can still draw text over it.
-- Backgroundlayer. This will show the effect behind everything and in each app. You can add it via Hidden features.
+SVITRIX puede mostrar efectos donde quieras
+- Notificaciones y CustomApps. Esto mostrará el efecto como la primera capa, para que aún puedas dibujar texto sobre él.
+- Capa de fondo. Esto mostrará el efecto detrás de todo y en cada app. Puedes agregarlo vía Funciones ocultas.
 
-Just call the name for your favorite effect.
-SVITRIX sends all effect names once after start via MQTT to stats/effects. So you can create external selectors.
-Its also accessible via HTTP /api/effects
+Solo llama el nombre de tu efecto favorito.
+SVITRIX envía todos los nombres de efectos una vez después de iniciar vía MQTT a stats/effects. Así puedes crear selectores externos.
+También es accesible vía HTTP /api/effects
 
 <table>
   <tr>
-    <th>Name</th>
-    <th>Effect</th>
-    <th>Name</th>
-    <th>Effect</th>
+    <th>Nombre</th>
+    <th>Efecto</th>
+    <th>Nombre</th>
+    <th>Efecto</th>
   </tr>
   <tr>
     <td>BrickBreaker</td>
@@ -78,8 +78,8 @@ Its also accessible via HTTP /api/effects
 </table>
 
 
-# Effect settings
-example:
+# Configuración de Efectos
+ejemplo:
 ```json
 {
   "effect":"Plasma",
@@ -90,20 +90,20 @@ example:
   }
 }
 ```
-All settings keys are optional
+Todas las claves de configuración son opcionales
 
 **speed:**
-Mostly 3 as standard. Higher means faster.
+Generalmente 3 como estándar. Mayor significa más rápido.
 **palette:**
-A color palette is an array of 16 colors to create transitions between colors.
-Build-in palettes: `Cloud, Lava, Ocean, Forest, Stripe, Party, Heat, Rainbow`
+Una paleta de colores es un arreglo de 16 colores para crear transiciones entre colores.
+Paletas integradas: `Cloud, Lava, Ocean, Forest, Stripe, Party, Heat, Rainbow`
 **blend:**
-Interpolates between colors, creating a broad array of in-between hues for smooth color transitions.
+Interpola entre colores, creando un amplio conjunto de tonos intermedios para transiciones de color suaves.
 
-Standard values:
+Valores estándar:
 
-| Effect Name | Speed | Palette | Blend |
-|-------------|-------|---------|-----------|
+| Nombre del Efecto | Velocidad | Paleta | Blend |
+|-------------------|-----------|--------|-------|
 | Fade | 1 | Rainbow | true |
 | MovingLine | 1 | Rainbow | true |
 | BrickBreaker | - | - | - |
@@ -127,45 +127,45 @@ Standard values:
 
 
 
-# Custom Color Palette Creation Guide
+# Guía de Creación de Paletas de Color Personalizadas
 
-This guide will show you how to create a custom color palette for use with SVITRIX effects.
+Esta guía te mostrará cómo crear una paleta de colores personalizada para usar con los efectos de SVITRIX.
 
-A color palette in SVITRIX is an array of 16 colors. Each color is represented as a `RGB` object, which contains red, green, and blue components.
+Una paleta de colores en SVITRIX es un arreglo de 16 colores. Cada color se representa como un objeto `RGB`, que contiene componentes rojo, verde y azul.
 
-SVITRIX uses these palettes to create transitions between colors in effects. The 16 colors in the palette are not the only colors that will be displayed. Instead, SVITRIX interpolates between these colors to create a wide spectrum of in-between hues. This creates smooth, visually pleasing color transitions in your effects.
+SVITRIX usa estas paletas para crear transiciones entre colores en los efectos. Los 16 colores en la paleta no son los únicos colores que se mostrarán. En cambio, SVITRIX interpola entre estos colores para crear un amplio espectro de tonos intermedios. Esto crea transiciones de color suaves y visualmente agradables en tus efectos.
 
-1. Create a text file with the `.txt` extension (for example, `sunny.txt`) in the `/PALETTES/` directory..
-2. In the text file, define 16 colors in hexadecimal format. Each color should be on a new line. A color is defined in the format `#RRGGBB`, where `RR` is the red component, `GG` is the green component, and `BB` is the blue component. Each component is a two-digit hexadecimal number (00 to FF).
+1. Crea un archivo de texto con la extensión `.txt` (por ejemplo, `soleado.txt`) en el directorio `/PALETTES/`.
+2. En el archivo de texto, define 16 colores en formato hexadecimal. Cada color debe estar en una nueva línea. Un color se define en el formato `#RRGGBB`, donde `RR` es el componente rojo, `GG` es el componente verde, y `BB` es el componente azul. Cada componente es un número hexadecimal de dos dígitos (00 a FF).
 
-For example, a sunny palette might look like this:
-Note, dont use comments in your palettes file.
+Por ejemplo, una paleta soleada podría verse así:
+Nota, no uses comentarios en tu archivo de paletas.
 
 ```
-0000FF   // Deep blue sky at the horizon's edge
-0047AB   // Lighter sky
-0080FF   // Even lighter sky
-00BFFF   // Light blue sky
-87CEEB   // Slightly cloudy sky
-87CEFA   // Light blue sky
-F0E68C   // Light clouds
-FFD700   // Start of sun colors
-FFA500   // Darker sun colors
-FF4500   // Even darker sun colors
-FF6347   // Red-orange sun colors
-FF4500   // Dark sun colors
-FFA500   // Bright sun colors
-FFD700   // Bright yellow sun colors
-FFFFE0   // Very bright sun colors
-FFFFFF   // White sun colors, very bright light
+0000FF   // Azul profundo del cielo en el borde del horizonte
+0047AB   // Cielo más claro
+0080FF   // Cielo aún más claro
+00BFFF   // Cielo azul claro
+87CEEB   // Cielo ligeramente nublado
+87CEFA   // Cielo azul claro
+F0E68C   // Nubes ligeras
+FFD700   // Inicio de colores del sol
+FFA500   // Colores del sol más oscuros
+FF4500   // Colores del sol aún más oscuros
+FF6347   // Colores rojo-naranja del sol
+FF4500   // Colores oscuros del sol
+FFA500   // Colores brillantes del sol
+FFD700   // Colores amarillo brillante del sol
+FFFFE0   // Colores muy brillantes del sol
+FFFFFF   // Colores blancos del sol, luz muy brillante
 ```
 
-Remember, the colors you define in your palette serve as key points in the color transitions. SVITRIX interpolates between these colors, creating a broad array of in-between hues for smooth color transitions in your animations. Experiment with different color placements in your palette to achieve different visual effects. You can use blend=false to not use interpolate colors.
+Recuerda, los colores que defines en tu paleta sirven como puntos clave en las transiciones de color. SVITRIX interpola entre estos colores, creando un amplio conjunto de tonos intermedios para transiciones de color suaves en tus animaciones. Experimenta con diferentes ubicaciones de colores en tu paleta para lograr diferentes efectos visuales. Puedes usar blend=false para no usar colores interpolados.
 
 # Artnet (DMX)
 
-SVITRIX supports Artnet out of the box.
-For [Jinx!](http://www.live-leds.de/) you can <a href="svitrix_light.jnx" download>download this template</a>. Just change the IP of both universes to your svitrix IP and you're ready to go.
+SVITRIX soporta Artnet de forma nativa.
+Para [Jinx!](http://www.live-leds.de/) puedes <a href="../svitrix_light.jnx" download>descargar esta plantilla</a>. Solo cambia la IP de ambos universos a tu IP de SVITRIX y estarás listo.
 
-**For any Other Artnet controller:**
-Create 2 universes with 384 channels each. Also add a new matrix layout with 8 strings á 32 Strands and top left starting position. When you start to send data, SVITRIX will stop its normal operation and shows your data. 1s after you stop sending data, SVITRIX will return to normal operation.
+**Para cualquier otro controlador Artnet:**
+Crea 2 universos con 384 canales cada uno. También agrega un nuevo diseño de matriz con 8 cadenas de 32 LEDs y posición inicial superior izquierda. Cuando comiences a enviar datos, SVITRIX detendrá su operación normal y mostrará tus datos. 1 segundo después de que dejes de enviar datos, SVITRIX volverá a la operación normal.

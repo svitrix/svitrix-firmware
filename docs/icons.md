@@ -1,27 +1,27 @@
-# Icons
+# Iconos
 
-To personalize your custom app or notification with your favorite icon, you can use one of these simple methods:
+Para personalizar tu app personalizada o notificación con tu icono favorito, puedes usar uno de estos métodos simples:
 
-### Downloading an Icon
+### Descargar un Icono
 
-1. **Integrated downloader**: Open webinterface and go to the icon tab.
-2. **Enter the Icon ID**: Input the ID of a LaMetric icon in the provided field.
-3. **Preview**: Review the icon to ensure it's the one you want.
-4. **Download**: Click to download the icon and use it immediately without the need for any additional steps like restarting or converting.
+1. **Descargador integrado**: Abre la interfaz web y ve a la pestaña de iconos.
+2. **Ingresa el ID del Icono**: Introduce el ID de un icono LaMetric en el campo proporcionado.
+3. **Vista previa**: Revisa el icono para asegurarte de que es el que quieres.
+4. **Descargar**: Haz clic para descargar el icono y usarlo inmediatamente sin necesidad de pasos adicionales como reiniciar o convertir.
 
-You can explore and find LaMetric icons at [LaMetric Icon Gallery](https://developer.lametric.com/icons).
+Puedes explorar y encontrar iconos LaMetric en la [Galería de Iconos LaMetric](https://developer.lametric.com/icons).
 
-### SVITRIX App
+### App SVITRIX
 
-With the SVITRIX app, available for both Android and iOS, you gain exclusive access to the official SVITRIX database, featuring over 1800 icons and animations in 8x8 and 32x8 formats. The app also allows you to create your own icons and to upload them directly to your SVITRIX device or to the cloud database.
+Con la app SVITRIX, disponible tanto para Android como iOS, obtienes acceso exclusivo a la base de datos oficial de SVITRIX, con más de 1800 iconos y animaciones en formatos 8x8 y 32x8. La app también te permite crear tus propios iconos y subirlos directamente a tu dispositivo SVITRIX o a la base de datos en la nube.
 
-### Custom Icons
+### Iconos Personalizados
 
-You can create custom icons using any image editing tool and upload them via the web interface's file browser to the "ICONS" folder. Ensure that the icons adhere to the following specifications:
+Puedes crear iconos personalizados usando cualquier herramienta de edición de imágenes y subirlos vía el navegador de archivos de la interfaz web a la carpeta "ICONS". Asegúrate de que los iconos cumplan con las siguientes especificaciones:
 
-- **GIF**: Maximum size of 32x8 pixels.
-- **JPG**: Maximum size of 8x8 pixels.
+- **GIF**: Tamaño máximo de 32x8 píxeles.
+- **JPG**: Tamaño máximo de 8x8 píxeles.
 
-### Important Note
+### Nota Importante
 
-The SVITRIX GIF renderer currently supports only 8-bit GIFs without transparency. If you experience graphic glitches on the matrix, try replacing transparent pixels with solid black using an online tool such as [Online GIF Tools](https://onlinegiftools.com/add-gif-background).
+El renderizador de GIF de SVITRIX actualmente solo soporta GIFs de 8 bits sin transparencia. Si experimentas glitches gráficos en la matriz, intenta reemplazar los píxeles transparentes con negro sólido usando una herramienta online como [Online GIF Tools](https://onlinegiftools.com/add-gif-background).

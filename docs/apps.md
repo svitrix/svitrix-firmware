@@ -1,151 +1,151 @@
-# Native Apps
-## Time
-The native Time app offers extensive customization options. Almost everything can be configured via the API, and most settings can also be adjusted through the SVITRIX app.
-The time format can be customized to your preferences. By default, it is set to `HH:mm`.
-If the selected format doesn't fit on the screen, it will automatically revert to this default.
-You might notice some lines at the bottom of the screen. These lines represent the weekdays, with the current day highlighted brighter. It is also possible to deactive this weekday bar.
-You can also customize the colors for the calendar icon, the weekday bar and also the textcolor with the [SettingsAPI](./api#change-settings) or the mobile App.
+# Apps Nativas
+## Hora
+La app nativa de Hora ofrece amplias opciones de personalización. Casi todo puede configurarse vía la API, y la mayoría de las configuraciones también pueden ajustarse a través de la app SVITRIX.
+El formato de hora puede personalizarse según tus preferencias. Por defecto, está configurado a `HH:mm`.
+Si el formato seleccionado no cabe en la pantalla, automáticamente volverá a este valor por defecto.
+Podrás notar algunas líneas en la parte inferior de la pantalla. Estas líneas representan los días de la semana, con el día actual resaltado más brillante. También es posible desactivar esta barra de días de semana.
+También puedes personalizar los colores para el icono del calendario, la barra de días de semana y también el color del texto con la [API de Settings](./api#change-settings) o la app móvil.
 
-The `TMODE` setting determines the layout and style of the Time App.
+La configuración `TMODE` determina el diseño y estilo de la App de Hora.
 
  **TMODE=0**
 <img src="./assets/TMODE0.png" style="max-height:70px;">
-Displays the time along with a weekday bar at the bottom of the screen.
+Muestra la hora junto con una barra de días de semana en la parte inferior de la pantalla.
 
 **TMODE=1**
 <img src="./assets/TMODE1.png" style="max-height:70px;">
-Shows the time with the weekday bar on the bottom and a calendar box that highlights the current day of the month.
+Muestra la hora con la barra de días de semana en la parte inferior y un cuadro de calendario que resalta el día actual del mes.
 
 **TMODE=2**
 <img src="./assets/TMODE2.png" style="max-height:70px;">
-Similar to `TMODE=1`, but places the weekday bar at the top.
+Similar a `TMODE=1`, pero coloca la barra de días de semana en la parte superior.
 
 **TMODE=3**
 <img src="./assets/TMODE3.png" style="max-height:70px;">
-Displays the time with the weekday bar at the bottom and a different calendar icon.
+Muestra la hora con la barra de días de semana en la parte inferior y un icono de calendario diferente.
 
 **TMODE=4**
 <img src="./assets/TMODE4.png" style="max-height:70px;">
-Similar to `TMODE=3`, but places the weekday bar at the top.
+Similar a `TMODE=3`, pero coloca la barra de días de semana en la parte superior.
 
 **TMODE=5**
 <img src="./assets/TMODE5.png" style="max-height:70px;">
-Introduces a "big time" display, utilizing a large font for the time.
-If a 32x8 GIF named `bigtime.gif` exists in the root directory, it will be played in the background.
-Please note: Once the GIF is displayed in BigTime mode, it cannot be directly replaced because the file is in use.
-To replace the icon, switch the mode to TMODE first, and then you'll be able to update the GIF.
-If no GIF is found, the global textcolor is used.
+Introduce una visualización de "hora grande", utilizando una fuente grande para la hora.
+Si existe un GIF de 32x8 llamado `bigtime.gif` en el directorio raíz, se reproducirá en el fondo.
+Por favor nota: Una vez que el GIF se muestra en modo BigTime, no puede reemplazarse directamente porque el archivo está en uso.
+Para reemplazar el icono, cambia el modo a TMODE primero, y luego podrás actualizar el GIF.
+Si no se encuentra ningún GIF, se usa el color de texto global.
 
-[You can get some bigtime GIFs examples here](https://github.com/XE1E/svitrix-firmware-XE1E/tree/main/docs/assets/bigtime-gifs).
+[Puedes obtener algunos ejemplos de GIFs bigtime aquí](https://github.com/XE1E/svitrix-firmware-XE1E/tree/main/docs/assets/bigtime-gifs).
 
 **TMODE=6**
 <img src="./assets/TMODE6.png" style="max-height:70px;">
-Displays the time in **binary format**:
-The top row shows the hour, the middle row shows the minutes, and the bottom row shows the seconds.
-Each row has six dots, where lit dots represent binary "1" and white dots represent binary "0".
-To read the time, convert the lit dots in each row to a decimal number.
+Muestra la hora en **formato binario**:
+La fila superior muestra la hora, la fila del medio muestra los minutos, y la fila inferior muestra los segundos.
+Cada fila tiene seis puntos, donde los puntos encendidos representan "1" binario y los puntos blancos representan "0" binario.
+Para leer la hora, convierte los puntos encendidos en cada fila a un número decimal.
 
-#### **Available Time Formats:**
-| Format       | Example    | Description                                |
+#### **Formatos de Hora Disponibles:**
+| Formato      | Ejemplo    | Descripción                                |
 |--------------|------------|--------------------------------------------|
-| `%H:%M:%S`   | `13:30:45` | 24-hour time with seconds                 |
-| `%l:%M:%S`   | `1:30:45`  | 12-hour time with seconds                 |
-| `%H:%M`      | `13:30`    | 24-hour time                              |
-| `%H %M`      | `13.30`    | 24-hour time with blinking colon          |
-| `%l:%M`      | `1:30`     | 12-hour time                              |
-| `%l %M`      | `1:30`     | 12-hour time with blinking colon          |
-| `%l:%M %p`   | `1:30 PM`  | 12-hour time with AM/PM indicator         |
-| `%l %M %p`   | `1:30 PM`  | 12-hour time with blinking colon and AM/PM|
+| `%H:%M:%S`   | `13:30:45` | Hora 24h con segundos                      |
+| `%l:%M:%S`   | `1:30:45`  | Hora 12h con segundos                      |
+| `%H:%M`      | `13:30`    | Hora 24h                                   |
+| `%H %M`      | `13.30`    | Hora 24h con dos puntos parpadeantes       |
+| `%l:%M`      | `1:30`     | Hora 12h                                   |
+| `%l %M`      | `1:30`     | Hora 12h con dos puntos parpadeantes       |
+| `%l:%M %p`   | `1:30 PM`  | Hora 12h con indicador AM/PM               |
+| `%l %M %p`   | `1:30 PM`  | Hora 12h con dos puntos parpadeantes y AM/PM|
 
 ---
-## Date
+## Fecha
 <img src="./assets/DATE.png" style="max-height:100px;">
 
-The Dateapp shows the current date of course. There are several dateformats 'DFORMAT' you can choose from:
+La app de Fecha muestra la fecha actual por supuesto. Hay varios formatos de fecha 'DFORMAT' que puedes elegir:
 
-#### **Available Date Formats:**
-| Format       | Example    | Description            |
-|--------------|------------|------------------------|
-| `%d.%m.%y`   | `16.04.22` | Day.Month.Year (short) |
-| `%d.%m`      | `16.04`    | Day.Month             |
-| `%y-%m-%d`   | `22-04-16` | Year-Month-Day         |
-| `%m-%d`      | `04-16`    | Month-Day             |
-| `%m/%d/%y`   | `04/16/22` | Month/Day/Year         |
-| `%m/%d`      | `04/16`    | Month/Day             |
-| `%d/%m/%y`   | `16/04/22` | Day/Month/Year         |
-| `%d/%m`      | `16/04`    | Day/Month             |
-| `%m-%d-%y`   | `04-16-22` | Month-Day-Year         |
+#### **Formatos de Fecha Disponibles:**
+| Formato      | Ejemplo    | Descripción              |
+|--------------|------------|--------------------------|
+| `%d.%m.%y`   | `16.04.22` | Día.Mes.Año (corto)      |
+| `%d.%m`      | `16.04`    | Día.Mes                  |
+| `%y-%m-%d`   | `22-04-16` | Año-Mes-Día              |
+| `%m-%d`      | `04-16`    | Mes-Día                  |
+| `%m/%d/%y`   | `04/16/22` | Mes/Día/Año              |
+| `%m/%d`      | `04/16`    | Mes/Día                  |
+| `%d/%m/%y`   | `16/04/22` | Día/Mes/Año              |
+| `%d/%m`      | `16/04`    | Día/Mes                  |
+| `%m-%d-%y`   | `04-16-22` | Mes-Día-Año              |
 
 ---
-## Temperature
+## Temperatura
 
 <img src="./assets/TEMP.png" style="max-height:100px;">
 
-The Temperature App displays the current reading from the integrated temperature sensor.
-However, due to the sensor's placement inside the housing, the measurement may not be entirely accurate.
-Factors such as the power board, LED matrix, brightness, color, and the number of lit pixels can affect the temperature reading.
-For more precise messurement, you can utilize the [dev.json](./dev) to calibrate the temperature with the `temp_offset` key.
+La App de Temperatura muestra la lectura actual del sensor de temperatura integrado.
+Sin embargo, debido a la ubicación del sensor dentro de la carcasa, la medición puede no ser completamente precisa.
+Factores como la placa de alimentación, la matriz LED, el brillo, el color y el número de píxeles encendidos pueden afectar la lectura de temperatura.
+Para una medición más precisa, puedes utilizar el [dev.json](./dev) para calibrar la temperatura con la clave `temp_offset`.
 
 ---
-## Humidity
+## Humedad
 
 <img src="./assets/HUM.png" style="max-height:100px;">
 
-The humidity App displays the current reading from the integrated humidity sensor.
-However, due to the sensor's placement inside the housing, the measurement may not be entirely accurate.
-Factors such as the power board, LED matrix, brightness, color, and the number of lit pixels can affect the humidity reading.
-For more precise messurement, you can utilize the [dev.json](./dev) to calibrate the temperature with the `hum_offset` key.
+La app de Humedad muestra la lectura actual del sensor de humedad integrado.
+Sin embargo, debido a la ubicación del sensor dentro de la carcasa, la medición puede no ser completamente precisa.
+Factores como la placa de alimentación, la matriz LED, el brillo, el color y el número de píxeles encendidos pueden afectar la lectura de humedad.
+Para una medición más precisa, puedes utilizar el [dev.json](./dev) para calibrar la humedad con la clave `hum_offset`.
 
 ---
-## Battery
+## Batería
 
 <img src="./assets/BAT.png" style="max-height:100px;">
 
-The Battery App displays the current charge level of the integrated battery.
-Due to differences in battery batches and the degradation of the cheap battery over time, you may need to calibrate it manually.
+La App de Batería muestra el nivel de carga actual de la batería integrada.
+Debido a diferencias en lotes de baterías y la degradación de la batería barata con el tiempo, puede que necesites calibrarla manualmente.
 
-1. Use the [Status API](./api#status-retrieval) to retrieve the `bat_raw` readings.
-2. Open the [dev.json](./dev) file to configure the `min_battery` and `max_battery` values:
-   - **`min_battery`**: Enter the `bat_raw` value when the battery is empty.
-   - **`max_battery`**: Enter the `bat_raw` value when the battery is fully charged.
+1. Usa la [API de Estado](./api#status-retrieval) para obtener las lecturas de `bat_raw`.
+2. Abre el archivo [dev.json](./dev) para configurar los valores `min_battery` y `max_battery`:
+   - **`min_battery`**: Ingresa el valor `bat_raw` cuando la batería está vacía.
+   - **`max_battery`**: Ingresa el valor `bat_raw` cuando la batería está completamente cargada.
 
 
 ---
-# Custom Apps
+# Apps Personalizadas
 
-Besides the native apps, SVITRIX is designed to integrate seamlessly with your smart home ecosystem, additional applications can be created using MQTT or HTTP requests.
+Además de las apps nativas, SVITRIX está diseñado para integrarse perfectamente con tu ecosistema de hogar inteligente, se pueden crear aplicaciones adicionales usando peticiones MQTT o HTTP.
 
 ::: warning
-In SVITRIX, the term 'Custom Apps' does not refer to traditional smartphone apps that you download and install. Instead, in SVITRIX, CustomApps function more like dynamic pages that rotate within the Apploop rotation of the display. These pages do not store or execute their own logic; instead, they display content that is sent from an external system, such as a smarthome. This content must be transmitted using MQTT or HTTP protocols via the [CustomApp API](./api#custom-apps-and-notifications).
-It is important to note that all the logic for managing the content displayed in these CustomApps needs to be handled by your external system. SVITRIX only provides the platform for displaying the information. You have the flexibility to update the content shown on your CustomApps in real-time at any moment, making it a versatile tool for displaying personalized information in your smarthome setup.
+En SVITRIX, el término 'Apps Personalizadas' no se refiere a aplicaciones tradicionales de smartphone que descargas e instalas. En cambio, en SVITRIX, las CustomApps funcionan más como páginas dinámicas que rotan dentro del ciclo de rotación de apps de la pantalla. Estas páginas no almacenan ni ejecutan su propia lógica; en cambio, muestran contenido que se envía desde un sistema externo, como un hogar inteligente. Este contenido debe transmitirse usando protocolos MQTT o HTTP vía la [API de CustomApp](./api#custom-apps-and-notifications).
+Es importante notar que toda la lógica para gestionar el contenido mostrado en estas CustomApps necesita ser manejada por tu sistema externo. SVITRIX solo proporciona la plataforma para mostrar la información. Tienes la flexibilidad de actualizar el contenido mostrado en tus CustomApps en tiempo real en cualquier momento, convirtiéndolo en una herramienta versátil para mostrar información personalizada en tu configuración de hogar inteligente.
 :::
 
-There are numerous benefits to this approach:
+Hay numerosos beneficios de este enfoque:
 
-- **Personalization:** Customize each application to suit your preferences and needs.
-- **Flexibility:** Develop your own applications without the need to modify the firmware.
-- **Efficient resource management:** Save valuable flash memory space on the ESP module.
-- **Adaptability:** No need to rewrite the firmware if an API undergoes changes.
+- **Personalización:** Personaliza cada aplicación según tus preferencias y necesidades.
+- **Flexibilidad:** Desarrolla tus propias aplicaciones sin necesidad de modificar el firmware.
+- **Gestión eficiente de recursos:** Ahorra valioso espacio de memoria flash en el módulo ESP.
+- **Adaptabilidad:** No es necesario reescribir el firmware si una API sufre cambios.
 
-You can use any system you like which is able to build json strings and send them to a mqtt topic.
+Puedes usar cualquier sistema que te guste que sea capaz de construir cadenas JSON y enviarlas a un topic MQTT.
 
 ## SVITRIX FLOWS
-This is your go-to hub for sharing and discovering SVITRIX automations, also known as custom Apps for several services.
-Enhance your SVITRIX experience, exchange ideas, and get inspired. Lets bring our creative automations to life together!
-No login is necessary, neither for creating new flows. As a creator you will get a link with which you can always edit your flow. Keep it save!
-You can upload your icons to your flow, and user can copy them directly to their SVITRIX with one click!
-New flows are regularly moderated.
+Este es tu centro principal para compartir y descubrir automatizaciones de SVITRIX, también conocidas como Apps personalizadas para varios servicios.
+Mejora tu experiencia SVITRIX, intercambia ideas e inspírate. ¡Vamos a dar vida a nuestras automatizaciones creativas juntos!
+No es necesario iniciar sesión, ni siquiera para crear nuevos flows. Como creador obtendrás un enlace con el que siempre podrás editar tu flow. ¡Guárdalo bien!
+Puedes subir tus iconos a tu flow, y los usuarios pueden copiarlos directamente a su SVITRIX con un clic!
+Los nuevos flows son moderados regularmente.
 https://flows.svitrix.dev/
 
 
-## Flow example with Node-RED
-[Node-RED](https://nodered.org/) serves as an ideal software solution for creating these applications.
-It is available as a standalone program or as a plugin for Home Assistant and ioBroker, allowing you to further enhance the capabilities of your SVITRIX system.
+## Ejemplo de Flow con Node-RED
+[Node-RED](https://nodered.org/) sirve como una solución de software ideal para crear estas aplicaciones.
+Está disponible como un programa independiente o como un plugin para Home Assistant y ioBroker, permitiéndote mejorar aún más las capacidades de tu sistema SVITRIX.
 
-Here is a demo, please press the triangle to unfold.
+Aquí hay una demo, por favor presiona el triángulo para desplegar.
 
 <details>
-  <summary>Example for adding a Youtube App as NodeRED flow</summary>
+  <summary>Ejemplo para agregar una App de Youtube como flow de NodeRED</summary>
   <pre><code class="language-json">
 [
   {
@@ -320,15 +320,15 @@ Here is a demo, please press the triangle to unfold.
   </code></pre>
 </details>
 
-This Node-RED flow retrieves and displays the subscriber count of a specified YouTube channel on an SVITRIX device. The flow consists of the following nodes:
+Este flow de Node-RED obtiene y muestra el conteo de suscriptores de un canal de YouTube especificado en un dispositivo SVITRIX. El flow consiste en los siguientes nodos:
 
-1. **Inject**: This node triggers the flow periodically (every hour) or manually.
-2. **Data (Function)**: This node contains the YouTube channel ID and the YouTube API key. Replace "XXX" with your YouTube API key and Youtube ID. The node constructs a payload containing the channel ID, API key, and required statistics and sends it to the "HTTP request" node.
-3. **HTTP request**: This node sends a GET request to the YouTube API to retrieve the channel's statistics. The response is returned as a JavaScript object and passed to the "parser" node.
-4. **parser (Function)**: This node extracts the subscriber count from the received channel statistics and constructs a payload containing the count and an icon (Icon 5029). The payload is sent to the "MQTT out" node.
-5. **MQTT out**: This node publishes the payload to the MQTT topic "ulanzi/custom/youtube" on a local MQTT broker. You also have to change the topic in this node to fit your mqtt prefix.
-6. **Comment (Youtube Follower)**: This node contains additional information about the flow. It does not affect the flow's functionality.
+1. **Inject**: Este nodo dispara el flow periódicamente (cada hora) o manualmente.
+2. **Data (Function)**: Este nodo contiene el ID del canal de YouTube y la API key de YouTube. Reemplaza "XXX" con tu API key de YouTube e ID de Youtube. El nodo construye un payload que contiene el ID del canal, API key y estadísticas requeridas y lo envía al nodo "HTTP request".
+3. **HTTP request**: Este nodo envía una petición GET a la API de YouTube para obtener las estadísticas del canal. La respuesta se devuelve como un objeto JavaScript y se pasa al nodo "parser".
+4. **parser (Function)**: Este nodo extrae el conteo de suscriptores de las estadísticas del canal recibidas y construye un payload que contiene el conteo y un icono (Icono 5029). El payload se envía al nodo "MQTT out".
+5. **MQTT out**: Este nodo publica el payload en el topic MQTT "ulanzi/custom/youtube" en un broker MQTT local. También debes cambiar el topic en este nodo para que coincida con tu prefijo MQTT.
+6. **Comment (Youtube Follower)**: Este nodo contiene información adicional sobre el flow. No afecta la funcionalidad del flow.
 
-To use this flow, replace the "XXX" in the "Data" node with your YouTube API key and ensure that the MQTT broker settings in the "MQTT out" node are correct.
-The flow will then retrieve the subscriber count of the specified YouTube channel and display it on your SVITRIX device along with the icon.
-This Flow uses icon 5029 from LM (Just download it from the svitrix webinterface). You can change the icon in the flow to your favorite one.
+Para usar este flow, reemplaza "XXX" en el nodo "Data" con tu API key de YouTube y asegúrate de que la configuración del broker MQTT en el nodo "MQTT out" sea correcta.
+El flow entonces obtendrá el conteo de suscriptores del canal de YouTube especificado y lo mostrará en tu dispositivo SVITRIX junto con el icono.
+Este Flow usa el icono 5029 de LM (Solo descárgalo desde la interfaz web de SVITRIX). Puedes cambiar el icono en el flow por tu favorito.
