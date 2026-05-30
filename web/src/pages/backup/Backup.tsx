@@ -63,9 +63,9 @@ export function BackupPage(_props: { path?: string }) {
       a.download = "svitrix-backup.json";
       a.click();
       URL.revokeObjectURL(a.href);
-      toast("OK!");
+      toast(t.ok);
     } catch {
-      toast("Error");
+      toast(t.error);
     }
     setBusy("");
   }
@@ -94,10 +94,10 @@ export function BackupPage(_props: { path?: string }) {
         await importSettings(backup.settings);
       }
 
-      toast("OK!");
+      toast(t.ok);
       await reboot();
     } catch {
-      toast("Error");
+      toast(t.error);
     }
     setBusy("");
   }

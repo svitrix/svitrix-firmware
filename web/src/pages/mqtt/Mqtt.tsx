@@ -15,7 +15,7 @@ function MqttContent() {
 
   async function handleSave() {
     setSaving(true);
-    await saveInfraConfig();
+    await saveInfraConfig(t.mqtt.mqttSaved);
     setSaving(false);
   }
 

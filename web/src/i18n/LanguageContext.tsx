@@ -49,3 +49,9 @@ export function useTranslation() {
 export function useT() {
   return useTranslation().t;
 }
+
+export function getT() {
+  const stored = localStorage.getItem(STORAGE_KEY);
+  const lang = stored === "en" || stored === "es" ? stored : "es";
+  return translations[lang];
+}

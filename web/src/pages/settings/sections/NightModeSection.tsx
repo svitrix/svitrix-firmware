@@ -31,7 +31,7 @@ export function NightModeSection() {
       NBRI: s.NBRI,
       NCOL: s.NCOL,
       NBTRANS: s.NBTRANS,
-    });
+    }, t.display.nightModeSaved);
     setSaving(false);
   }
 

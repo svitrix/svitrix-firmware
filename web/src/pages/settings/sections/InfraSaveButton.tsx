@@ -11,7 +11,7 @@ export function InfraSaveButton() {
 
   async function handleSave() {
     setSaving(true);
-    await saveInfraConfig();
+    await saveInfraConfig(t.settings.networkSaved);
     setSaving(false);
   }
 

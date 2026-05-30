@@ -30,7 +30,7 @@ export function DisplaySection() {
       GAMMA: s.GAMMA, UPPERCASE: s.UPPERCASE,
       TCOL: s.TCOL, CCORRECTION: s.CCORRECTION, CTEMP: s.CTEMP,
       BEFF: s.BEFF,
-    });
+    }, t.display.displaySaved);
     setSaving(false);
   }
 

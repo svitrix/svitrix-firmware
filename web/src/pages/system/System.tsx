@@ -19,9 +19,9 @@ function SystemContent() {
     if (!settings) return;
     setSaving(true);
     await Promise.all([
-      saveDisplaySettings(settings),
-      saveInfraConfig(),
-      saveWeatherConfig(),
+      saveDisplaySettings(settings, ""),
+      saveInfraConfig(""),
+      saveWeatherConfig(""),
     ]);
     setSaving(false);
     toast(t.system.allSaved);

@@ -70,7 +70,7 @@ export function TimeDateSection() {
       TIME_COL: s.TIME_COL, DATE_COL: s.DATE_COL,
       WD: s.WD, WDCA: s.WDCA, WDCI: s.WDCI,
       CHCOL: s.CHCOL, CTCOL: s.CTCOL, CBCOL: s.CBCOL,
-    });
+    }, t.datetime.datetimeSaved);
     setSaving(false);
   }
 

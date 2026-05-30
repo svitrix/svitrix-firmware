@@ -11,6 +11,10 @@ export const translations = {
     confirm: "Confirmar",
     noFileSelected: "Ningún archivo seleccionado",
     chooseFile: "Seleccionar archivo",
+    ok: "¡Listo!",
+    error: "Error",
+    saved: "¡Guardado!",
+    errorSaving: "Error al guardar",
 
     // Nav
     nav: {
@@ -38,6 +42,7 @@ export const translations = {
       ntp: "NTP",
       weatherApi: "API del Clima",
       saveButton: "Guardar Red/NTP y Zona Horaria",
+      networkSaved: "¡Red guardada!",
       // WiFi
       wifiTitle: "Redes WiFi",
       wifiSubtitle: "Configura hasta 3 redes WiFi. El dispositivo intentará cada una en orden.",
@@ -81,7 +86,8 @@ export const translations = {
       longitude: "Longitud",
       updateInterval: "Intervalo de actualización",
       saveWeatherApi: "Guardar API del Clima",
-      fetchNow: "Obtener ahora",
+      weatherApiSaved: "¡API del clima guardada!",
+      fetchNow: "Obtener datos",
       currentWeatherData: "Datos del clima actual",
       temperature: "Temperatura",
       humidity: "Humedad",
@@ -107,6 +113,7 @@ export const translations = {
       authPass: "Contraseña web",
       authHint: "Dejar vacío para desactivar la autenticación HTTP.",
       saveButton: "Guardar MQTT/Auth",
+      mqttSaved: "¡MQTT guardado!",
     },
 
     // Display page
@@ -125,6 +132,7 @@ export const translations = {
       colorCorrection: "Corrección de color",
       colorTemperature: "Temperatura de color",
       saveDisplay: "Guardar Pantalla",
+      displaySaved: "¡Pantalla guardada!",
       nightMode: "Modo nocturno",
       nightModeEnabled: "Activar modo nocturno",
       nightStart: "Inicio",
@@ -133,6 +141,7 @@ export const translations = {
       nightColor: "Color nocturno",
       blockAutoTransition: "Bloquear transición automática",
       saveNightMode: "Guardar Modo Nocturno",
+      nightModeSaved: "¡Modo nocturno guardado!",
       notifications: "Notificaciones",
       sendNotification: "Enviar notificación",
       notifyText: "Texto",
@@ -169,6 +178,7 @@ export const translations = {
       celsius: "Celsius",
       offset: "Compensación",
       saveApps: "Guardar Apps",
+      appsSaved: "¡Apps guardadas!",
       weatherApps: "Apps del Clima",
       outdoorTemp: "Temp. exterior",
       outdoorHum: "Hum. exterior",
@@ -178,6 +188,7 @@ export const translations = {
       autoColor: "Auto",
       autoColorHint: "El color automático cambia según el nivel (verde a amarillo a naranja a rojo).",
       saveWeatherApps: "Guardar Apps del Clima",
+      weatherAppsSaved: "¡Apps del clima guardadas!",
       transitions: "Transiciones y Navegación",
       alarmsIndicator: "Indicador de alarmas",
       autoTransition: "Transición automática",
@@ -186,6 +197,7 @@ export const translations = {
       scrollSpeed: "Velocidad de desplazamiento",
       blockNavigation: "Bloquear navegación",
       saveTransitions: "Guardar Transiciones",
+      transitionsSaved: "¡Transiciones guardadas!",
     },
 
     // Time/Date page
@@ -200,10 +212,11 @@ export const translations = {
       dateColor: "Color de fecha",
       weekdayActive: "Día activo",
       weekdayInactive: "Día inactivo",
-      calHeader: "Encabezado cal.",
-      calText: "Texto cal.",
-      calBody: "Cuerpo cal.",
+      calHeader: "Calendario encabezado",
+      calText: "Calendario texto",
+      calBody: "Calendario cuerpo",
       saveButton: "Guardar Ajustes de Fecha y Hora",
+      datetimeSaved: "¡Fecha y hora guardados!",
     },
 
     // Sound page
@@ -212,6 +225,7 @@ export const translations = {
       enabled: "Sonido activado",
       volume: "Volumen",
       saveButton: "Guardar Ajustes de Sonido",
+      soundSaved: "¡Sonido guardado!",
     },
 
     // Screen page
@@ -401,6 +415,10 @@ export const translations = {
     confirm: "Confirm",
     noFileSelected: "No file selected",
     chooseFile: "Choose File",
+    ok: "OK!",
+    error: "Error",
+    saved: "Saved!",
+    errorSaving: "Error saving",
 
     // Nav
     nav: {
@@ -428,6 +446,7 @@ export const translations = {
       ntp: "NTP",
       weatherApi: "Weather API",
       saveButton: "Save Network/NTP & Time Zone",
+      networkSaved: "Network saved!",
       // WiFi
       wifiTitle: "WiFi Networks",
       wifiSubtitle: "Configure up to 3 WiFi networks. The device will try each in order.",
@@ -471,7 +490,8 @@ export const translations = {
       longitude: "Longitude",
       updateInterval: "Update Interval",
       saveWeatherApi: "Save Weather API",
-      fetchNow: "Fetch Now",
+      weatherApiSaved: "Weather API saved!",
+      fetchNow: "Fetch Data",
       currentWeatherData: "Current Weather Data",
       temperature: "Temperature",
       humidity: "Humidity",
@@ -497,6 +517,7 @@ export const translations = {
       authPass: "Web Password",
       authHint: "Leave empty to disable HTTP authentication.",
       saveButton: "Save MQTT/Auth",
+      mqttSaved: "MQTT saved!",
     },
 
     // Display page
@@ -515,6 +536,7 @@ export const translations = {
       colorCorrection: "Color Correction",
       colorTemperature: "Color Temperature",
       saveDisplay: "Save Display",
+      displaySaved: "Display saved!",
       nightMode: "Night Mode",
       nightModeEnabled: "Enable Night Mode",
       nightStart: "Start",
@@ -523,6 +545,7 @@ export const translations = {
       nightColor: "Night Color",
       blockAutoTransition: "Block Auto Transition",
       saveNightMode: "Save Night Mode",
+      nightModeSaved: "Night mode saved!",
       notifications: "Notifications",
       sendNotification: "Send Notification",
       notifyText: "Text",
@@ -559,6 +582,7 @@ export const translations = {
       celsius: "Celsius",
       offset: "Offset",
       saveApps: "Save Apps",
+      appsSaved: "Apps saved!",
       weatherApps: "Weather Apps",
       outdoorTemp: "Outdoor Temp",
       outdoorHum: "Outdoor Hum",
@@ -568,6 +592,7 @@ export const translations = {
       autoColor: "Auto",
       autoColorHint: "Auto color changes based on level (green to yellow to orange to red).",
       saveWeatherApps: "Save Weather Apps",
+      weatherAppsSaved: "Weather apps saved!",
       transitions: "Transitions & Navigation",
       alarmsIndicator: "Alarms Indicator",
       autoTransition: "Auto Transition",
@@ -576,6 +601,7 @@ export const translations = {
       scrollSpeed: "Scroll Speed",
       blockNavigation: "Block Navigation",
       saveTransitions: "Save Transitions",
+      transitionsSaved: "Transitions saved!",
     },
 
     // Time/Date page
@@ -590,10 +616,11 @@ export const translations = {
       dateColor: "Date Color",
       weekdayActive: "Weekday Active",
       weekdayInactive: "Weekday Inactive",
-      calHeader: "Cal Header",
-      calText: "Cal Text",
-      calBody: "Cal Body",
+      calHeader: "Calendar Header",
+      calText: "Calendar Text",
+      calBody: "Calendar Body",
       saveButton: "Save Time & Date Settings",
+      datetimeSaved: "Time & date saved!",
     },
 
     // Sound page
@@ -602,6 +629,7 @@ export const translations = {
       enabled: "Sound Enabled",
       volume: "Volume",
       saveButton: "Save Sound Settings",
+      soundSaved: "Sound saved!",
     },
 
     // Screen page

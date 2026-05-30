@@ -13,6 +13,7 @@ import {
   saveWeatherConfig as apiSaveWeatherConfig,
 } from "../api/client";
 import { toast } from "../components/Toast";
+import { getT } from "../i18n";
 import type { ComponentChildren } from "preact";
 
 const COLOR_KEYS = [
@@ -44,9 +45,9 @@ interface SettingsContextValue {
   updateSettings: (patch: Partial<Settings>) => void;
   updateConfig: <K extends keyof InfraConfig>(key: K, val: InfraConfig[K]) => void;
   updateWeatherConfig: (patch: Partial<WeatherConfig>) => void;
-  saveDisplaySettings: (fields: Partial<Settings>) => Promise<void>;
-  saveInfraConfig: () => Promise<void>;
-  saveWeatherConfig: () => Promise<void>;
+  saveDisplaySettings: (fields: Partial<Settings>, successMsg?: string) => Promise<void>;
+  saveInfraConfig: (successMsg?: string) => Promise<void>;
+  saveWeatherConfig: (successMsg?: string) => Promise<void>;
   reload: () => void;
   apiAvailable: boolean;
 }
@@ -89,32 +90,35 @@ export function SettingsProvider({ children }: { children: ComponentChildren }) 
     setWeatherConfig((prev) => (prev ? { ...prev, ...patch } : prev));
   }
 
-  async function saveDisplaySettings(fields: Partial<Settings>) {
+  async function saveDisplaySettings(fields: Partial<Settings>, successMsg?: string) {
+    const t = getT();
     try {
       await saveSettings(prepareSettingsForSave(fields) as Partial<Settings>);
-      toast("Display settings saved!");
+      if (successMsg !== "") toast(successMsg || t.ok);
     } catch {
-      toast("Error saving");
+      toast(t.errorSaving);
     }
   }
 
-  async function handleSaveInfraConfig() {
+  async function handleSaveInfraConfig(successMsg?: string) {
     if (!config) return;
+    const t = getT();
     try {
       await saveConfig(config as unknown as Record<string, unknown>);
-      toast("Config saved & applied!");
+      if (successMsg !== "") toast(successMsg || t.ok);
     } catch {
-      toast("Error saving config");
+      toast(t.errorSaving);
     }
   }
 
-  async function handleSaveWeatherConfig() {
+  async function handleSaveWeatherConfig(successMsg?: string) {
     if (!weatherConfig) return;
+    const t = getT();
     try {
       await apiSaveWeatherConfig(weatherConfig);
-      toast("Weather config saved!");
+      if (successMsg !== "") toast(successMsg || t.ok);
     } catch {
-      toast("Error saving weather config");
+      toast(t.errorSaving);
     }
   }
 

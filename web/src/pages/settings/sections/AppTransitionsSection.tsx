@@ -38,7 +38,7 @@ export function AppTransitionsSection() {
       TSPEED: s.TSPEED,
       SSPEED: s.SSPEED,
       BLOCKN: s.BLOCKN,
-    });
+    }, t.apps.transitionsSaved);
     setSaving(false);
   }
 

@@ -13,7 +13,7 @@ export function SoundSection() {
 
   async function handleSave() {
     setSaving(true);
-    await saveDisplaySettings({ SOUND: s.SOUND, VOL: s.VOL });
+    await saveDisplaySettings({ SOUND: s.SOUND, VOL: s.VOL }, t.sound.soundSaved);
     setSaving(false);
   }
 

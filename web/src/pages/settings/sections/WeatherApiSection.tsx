@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from "preact/hooks";
 import { useSettings } from "../../../context/SettingsContext";
 import { Select, Card, FormRow, Button } from "../../../components/ui";
 import { getWeatherData, forceWeatherFetch } from "../../../api/client";
+import { toast } from "../../../components/Toast";
 import { useT } from "../../../i18n";
 import type { WeatherData } from "../../../api/types";
 import styles from "./sections.module.css";
@@ -36,7 +37,7 @@ export function WeatherApiSection() {
 
   async function handleSave() {
     setSaving(true);
-    await saveWeatherConfig();
+    await saveWeatherConfig(t.settings.weatherApiSaved);
     setSaving(false);
   }
 
@@ -47,8 +48,13 @@ export function WeatherApiSection() {
       await new Promise((r) => setTimeout(r, 1500));
       const data = await getWeatherData();
       setWeatherData(data);
+      if (data?.valid) {
+        toast(t.ok);
+      } else {
+        toast(t.settings.noWeatherData);
+      }
     } catch {
-      // ignore
+      toast(t.error);
     }
     setFetching(false);
   }

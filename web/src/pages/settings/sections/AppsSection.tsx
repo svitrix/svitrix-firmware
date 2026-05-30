@@ -49,7 +49,7 @@ export function AppsSection() {
       BATDUR: s.BATDUR,
       CEL: s.CEL,
       TOFF: s.TOFF,
-    });
+    }, t.apps.appsSaved);
     setSaving(false);
   }
 

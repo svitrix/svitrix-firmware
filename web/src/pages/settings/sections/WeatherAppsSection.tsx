@@ -14,7 +14,7 @@ export function WeatherAppsSection() {
 
   async function handleSave() {
     setSaving(true);
-    await saveWeatherConfig();
+    await saveWeatherConfig(t.apps.weatherAppsSaved);
     setSaving(false);
   }
 

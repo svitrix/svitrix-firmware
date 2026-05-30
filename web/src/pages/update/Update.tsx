@@ -18,7 +18,7 @@ export function UpdatePage(_props: { path?: string }) {
       const res = await fetch("/update", { method: "POST", body: form });
       if (res.ok) {
         setProgress(t.update.uploadComplete);
-        toast("OK!");
+        toast(t.ok);
       } else {
         setProgress(t.update.uploadFailed);
         toast(t.update.uploadFailed);
