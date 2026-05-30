@@ -21,7 +21,7 @@ hero:
 
 features:
   - title: Ready Out of the Box
-    details: Pre-installed with time, date, temperature, and humidity apps. Just turn it on.
+    details: Pre-installed with time, date, indoor/outdoor temperature and humidity, pressure, AQI, and UV apps. Just turn it on.
   - title: Smart Home Companion
     details: Integrates with HomeAssistant, IOBroker, NodeRed and more via MQTT and HTTP APIs.
   - title: Custom Apps
@@ -37,7 +37,7 @@ This open-source software is not affiliated with or endorsed by the company Ulan
 SVITRIX is a custom firmware for the [Ulanzi Smart Pixel clock](https://www.ulanzi.com/products/ulanzi-pixel-smart-clock-2882?ref=28e02dxl) (Ref link).
 It meant to be a companion for your smarthome like HomeAssistant, IOBroker, NodeRed and so on.
 
-It is ready to use straight out of the box, with time, date, temperature, and humidity apps pre-installed. You don't need to do anything other than turning it on to start using these features.
+It is ready to use straight out of the box, with time, date, indoor/outdoor temperature and humidity, atmospheric pressure, air quality index (AQI), and UV apps pre-installed. You don't need to do anything other than turning it on to start using these features.
 However, for those with more advanced skills, the customization options available with custom apps allow you to take SVITRIX to its full potential.
 
 ::: warning
