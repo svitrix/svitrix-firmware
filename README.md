@@ -21,6 +21,10 @@
 
 </div>
 
+<div align="center">
+  <img src="docs/public/assets/svitrix-screen.png" alt="Svitrix Display" width="600">
+</div>
+
 ---
 
 SVITRIX-XE1E is a smart home companion designed for HomeAssistant, IOBroker, NodeRed, and other automation systems. It works out of the box with pre-installed apps for time, date, temperature, humidity, battery, and **weather** (outdoor temperature, humidity, pressure, and air quality via WeatherAPI.com). For advanced users, the powerful MQTT and HTTP API allows creating custom apps, sending notifications, and controlling every aspect of the display.
