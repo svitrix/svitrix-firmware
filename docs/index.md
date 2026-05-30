@@ -2,19 +2,19 @@
 layout: home
 
 hero:
-  name: "SVITRIX"
+  name: "Svitrix - XE1E"
   text: "Firmware para Reloj Pixel Inteligente"
   tagline: "Firmware personalizado para el reloj Ulanzi Smart Pixel y relojes matriciales caseros."
   image:
-    src: /assets/icon.png
-    alt: SVITRIX
+    src: /assets/svitrix-screen.png
+    alt: Svitrix Display
   actions:
     - theme: brand
       text: Inicio Rápido
-      link: /es/quickstart
+      link: /quickstart
     - theme: alt
       text: Flasher
-      link: /es/flasher
+      link: /flasher
     - theme: alt
       text: GitHub
       link: https://github.com/XE1E/svitrix-firmware-XE1E
