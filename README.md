@@ -9,15 +9,17 @@
 
 <div align="center">
 
+🌐 **Español** | [English](README_EN.md)
+
 ![SVITRIX-XE1E](/cover.png?raw=true "SVITRIX-XE1E")
 
-**Custom firmware for the [Ulanzi Smart Pixel Clock TC001](https://www.ulanzi.com/products/ulanzi-pixel-smart-clock-2882?ref=28e02dxl)**
+**Firmware personalizado para el [Reloj Pixel Inteligente Ulanzi TC001](https://www.ulanzi.com/products/ulanzi-pixel-smart-clock-2882?ref=28e02dxl)**
 
 [![GitHub releases](https://img.shields.io/github/downloads/XE1E/svitrix-firmware-XE1E/total?style=flat-square)](https://github.com/XE1E/svitrix-firmware-XE1E/releases)
 [![GitHub stars](https://img.shields.io/github/stars/XE1E/svitrix-firmware-XE1E?style=flat-square)](https://github.com/XE1E/svitrix-firmware-XE1E)
 [![AI-First](https://img.shields.io/badge/AI--First-Claude-blueviolet?style=flat-square)](https://claude.ai)
 
-[Quick Start](#quick-start) · [Features](#features) · [API](#api) · [Documentation](https://xe1e.github.io/svitrix-firmware-XE1E/) · [FAQ](#faq)
+[Inicio Rápido](#inicio-rápido) · [Características](#características) · [API](#api) · [Documentación](https://xe1e.github.io/svitrix-firmware-XE1E/) · [FAQ](#faq)
 
 </div>
 
@@ -27,159 +29,159 @@
 
 ---
 
-SVITRIX-XE1E is a smart home companion designed for HomeAssistant, IOBroker, NodeRed, and other automation systems. It works out of the box with pre-installed apps for time, date, temperature, humidity, battery, and **weather** (outdoor temperature, humidity, pressure, and air quality via WeatherAPI.com). For advanced users, the powerful MQTT and HTTP API allows creating custom apps, sending notifications, and controlling every aspect of the display.
+SVITRIX-XE1E es un compañero para hogar inteligente diseñado para HomeAssistant, IOBroker, NodeRed y otros sistemas de automatización. Funciona directamente con apps preinstaladas de hora, fecha, temperatura, humedad, batería y **clima** (temperatura exterior, humedad, presión y calidad del aire vía WeatherAPI.com). Para usuarios avanzados, la potente API MQTT y HTTP permite crear apps personalizadas, enviar notificaciones y controlar cada aspecto de la pantalla.
 
-SVITRIX-XE1E is a fork of [SVITRIX](https://github.com/svitrix/svitrix-firmware), which in turn is a community-driven fork of the original [AWTRIX 3](https://github.com/Blueforcer/awtrix3) project.
+SVITRIX-XE1E es un fork de [SVITRIX](https://github.com/svitrix/svitrix-firmware), que a su vez es un fork comunitario del proyecto original [AWTRIX 3](https://github.com/Blueforcer/awtrix3).
 
-> **Note:** In SVITRIX-XE1E, "Custom Apps" are not traditional apps you install. They are dynamic pages that rotate on the display, showing content sent from an external system via MQTT or HTTP. All logic is handled by your smart home — SVITRIX-XE1E provides the display.
+> **Nota:** En SVITRIX-XE1E, las "Apps Personalizadas" no son aplicaciones tradicionales que instalas. Son páginas dinámicas que rotan en la pantalla, mostrando contenido enviado desde un sistema externo vía MQTT o HTTP. Toda la lógica se maneja desde tu hogar inteligente — SVITRIX-XE1E proporciona la pantalla.
 
-## Features
+## Características
 
-### Native Apps
-- **Time** — multiple display modes including big-digit clock, binary clock, calendar box, weekday bar
-- **Date** — formatted date with weekday indicator
-- **Temperature & Humidity** — indoor readings from I2C sensors (SHT3x, BME280, etc.)
-- **Battery** — charge percentage with animated icon
-- **Weather Apps (NEW)** — outdoor temperature, humidity, pressure, and air quality via [WeatherAPI.com](https://weatherapi.com)
-  - Configurable location (city name, coordinates, auto-detect by IP, or station ID)
-  - Weather condition icons (sunny, cloudy, rainy)
-  - Per-app color and duration settings
-  - Animated LaMetric icons from `/ICONS/` folder
+### Apps Nativas
+- **Hora** — múltiples modos incluyendo reloj de dígitos grandes, reloj binario, caja de calendario, barra de día de semana
+- **Fecha** — fecha formateada con indicador de día de la semana
+- **Temperatura y Humedad** — lecturas internas de sensores I2C (SHT3x, BME280, etc.)
+- **Batería** — porcentaje de carga con icono animado
+- **Apps de Clima (NUEVO)** — temperatura exterior, humedad, presión y calidad del aire vía [WeatherAPI.com](https://weatherapi.com)
+  - Ubicación configurable (nombre de ciudad, coordenadas, auto-detectar por IP, o ID de estación)
+  - Iconos de condición climática (soleado, nublado, lluvioso)
+  - Configuración de color y duración por app
+  - Iconos animados de LaMetric desde la carpeta `/ICONS/`
 
-### Connectivity & Integration
-- **MQTT & HTTP API** — full control over apps, notifications, settings, and display
-- **Custom Apps** — create dynamic pages from your smart home without recompiling
-- **HomeAssistant discovery** — automatic integration with HA
-- **Multi-network WiFi** — configure up to 3 WiFi networks with automatic fallback
-- **Artnet (DMX)** — use SVITRIX-XE1E as an Artnet receiver
+### Conectividad e Integración
+- **API MQTT y HTTP** — control total sobre apps, notificaciones, configuración y pantalla
+- **Apps Personalizadas** — crea páginas dinámicas desde tu hogar inteligente sin recompilar
+- **Descubrimiento HomeAssistant** — integración automática con HA
+- **Multi-red WiFi** — configura hasta 3 redes WiFi con respaldo automático
+- **Artnet (DMX)** — usa SVITRIX-XE1E como receptor Artnet
 
-### Display & Effects
-- **19 visual effects** — Fireworks, Matrix, Plasma, Snake, and more as app backgrounds
-- **Weather overlays** — snow, rain, storm, thunder, frost effects
-- **Slide transitions** — smooth app transitions with multiple styles
-- **Animated & static icons** — download from LaMetric gallery or upload your own
-- **Drawing API** — pixels, lines, rectangles, circles, text, and bitmaps
-- **Bar & line charts** — display data graphs directly on the matrix
-- **Colored indicators** — small notification dots in screen corners
-- **Mood lighting** — turn the matrix into an ambient light
-- **Custom color palettes** — create your own 16-color palettes for effects
-- **Auto-brightness** — configurable min/max brightness with LDR sensor
+### Pantalla y Efectos
+- **19 efectos visuales** — Fuegos artificiales, Matrix, Plasma, Snake y más como fondos de apps
+- **Overlays de clima** — efectos de nieve, lluvia, tormenta, truenos, escarcha
+- **Transiciones deslizantes** — transiciones suaves entre apps con múltiples estilos
+- **Iconos animados y estáticos** — descarga desde la galería LaMetric o sube los tuyos
+- **API de dibujo** — píxeles, líneas, rectángulos, círculos, texto y bitmaps
+- **Gráficas de barras y líneas** — muestra gráficas de datos directamente en la matriz
+- **Indicadores de colores** — pequeños puntos de notificación en las esquinas de la pantalla
+- **Luz ambiental** — convierte la matriz en una luz de ambiente
+- **Paletas de colores personalizadas** — crea tus propias paletas de 16 colores para efectos
+- **Brillo automático** — brillo mín/máx configurable con sensor LDR
 
-### Notifications & Sound
-- **Notifications** — one-time messages with icons, sounds, and effects
-- **RTTTL melodies** — play monophonic sounds via the built-in buzzer
+### Notificaciones y Sonido
+- **Notificaciones** — mensajes únicos con iconos, sonidos y efectos
+- **Melodías RTTTL** — reproduce sonidos monofónicos vía el buzzer incorporado
 
-### Configuration & Management
-- **Modern web interface** — WiFi setup, MQTT config, weather settings, file manager, icon downloader, OTA updates, live view
-- **Onscreen menu** — change settings directly on the device with buttons
-- **Per-app duration** — configure display time for each native app
-- **Time format options** — 12/24 hour, custom formats, Celsius/Fahrenheit
-- **Night mode** — automatic brightness and color changes by time of day
-- **Online flasher** — flash directly from your browser via USB
-- **Backup & restore** — full flash backup as a zip file
-- **No cloud, no telemetry**
+### Configuración y Gestión
+- **Interfaz web moderna** — configuración WiFi, MQTT, clima, gestor de archivos, descargador de iconos, actualizaciones OTA, vista en vivo
+- **Menú en pantalla** — cambia configuraciones directamente en el dispositivo con los botones
+- **Duración por app** — configura el tiempo de visualización para cada app nativa
+- **Opciones de formato de hora** — 12/24 horas, formatos personalizados, Celsius/Fahrenheit
+- **Modo nocturno** — cambios automáticos de brillo y color por hora del día
+- **Flasher en línea** — flashea directamente desde tu navegador vía USB
+- **Respaldo y restauración** — respaldo completo del flash como archivo zip
+- **Sin nube, sin telemetría**
 
-## Quick Start
+## Inicio Rápido
 
-1. **Flash** — connect the Ulanzi TC001 via USB and use the [online flasher](https://xe1e.github.io/svitrix-firmware-XE1E/flasher)
-2. **Connect** — join the `svitrix_XXXXX` WiFi network (password: `12345678`)
-3. **Configure** — open `http://192.168.4.1` and enter your home WiFi credentials
-4. **Use** — the device shows version, then scrolls "SVITRIX XE1E" with IP and mDNS hostname; open the IP in a browser for the web interface
-5. **Weather (optional)** — get a free API key from [WeatherAPI.com](https://weatherapi.com) and configure it in Settings → Weather
+1. **Flashear** — conecta el Ulanzi TC001 vía USB y usa el [flasher en línea](https://xe1e.github.io/svitrix-firmware-XE1E/flasher)
+2. **Conectar** — únete a la red WiFi `svitrix_XXXXX` (contraseña: `12345678`)
+3. **Configurar** — abre `http://192.168.4.1` e ingresa las credenciales de tu WiFi
+4. **Usar** — el dispositivo muestra la versión, luego desplaza "SVITRIX XE1E" con IP y nombre mDNS; abre la IP en un navegador para la interfaz web
+5. **Clima (opcional)** — obtén una clave API gratuita de [WeatherAPI.com](https://weatherapi.com) y configúrala en Configuración → Clima
 
-For detailed instructions, see the [Quick Start Guide](https://xe1e.github.io/svitrix-firmware-XE1E/quickstart).
+Para instrucciones detalladas, consulta la [Guía de Inicio Rápido](https://xe1e.github.io/svitrix-firmware-XE1E/quickstart).
 
 ## API
 
-SVITRIX-XE1E provides a dual MQTT/HTTP API. A few examples:
+SVITRIX-XE1E proporciona una API dual MQTT/HTTP. Algunos ejemplos:
 
-**Send a notification:**
+**Enviar una notificación:**
 
 ```bash
 curl -X POST http://<ip>/api/notify \
-  -d '{"text": "Hello!", "icon": "1234", "duration": 10, "rainbow": true}'
+  -d '{"text": "¡Hola!", "icon": "1234", "duration": 10, "rainbow": true}'
 ```
 
-**Create a custom app:**
+**Crear una app personalizada:**
 
 ```bash
-curl -X POST "http://<ip>/api/custom?name=myapp" \
+curl -X POST "http://<ip>/api/custom?name=miapp" \
   -d '{"text": "23°C", "icon": "2056", "lifetime": 900}'
 ```
 
-**Change settings:**
+**Cambiar configuración:**
 
 ```bash
 curl -X POST http://<ip>/api/settings \
   -d '{"BRI": 120, "TMODE": 1, "ATIME": 5}'
 ```
 
-**Configure weather:**
+**Configurar clima:**
 
 ```bash
 curl -X POST http://<ip>/api/weather \
-  -d '{"apiKey": "your_key", "locationType": 0, "city": "Mexico City", "showOutdoorTemp": true}'
+  -d '{"apiKey": "tu_clave", "locationType": 0, "city": "Ciudad de México", "showOutdoorTemp": true}'
 ```
 
-**Get current weather data:**
+**Obtener datos del clima actual:**
 
 ```bash
 curl http://<ip>/api/weather/data
 ```
 
-Full API reference: [API Reference](https://xe1e.github.io/svitrix-firmware-XE1E/api)
+Referencia completa de API: [Referencia de API](https://xe1e.github.io/svitrix-firmware-XE1E/api)
 
-## DIY Hardware
+## Hardware DIY
 
-The Ulanzi TC001 uses an **ESP32-WROOM-32D** (8 MB flash, CH340 USB-Serial) with a 32x8 WS2812B-Mini matrix (256 LEDs).
+El Ulanzi TC001 usa un **ESP32-WROOM-32D** (8 MB flash, USB-Serial CH340) con una matriz de 32x8 WS2812B-Mini (256 LEDs).
 
-| GPIO | Function | Notes |
-|------|----------|-------|
-| 32 | LED Matrix (WS2812B-Mini) | 256 LEDs, serpentine wiring |
-| 15 | Buzzer (passive piezo) | PWM via LEDC, needs pull-down at init |
+| GPIO | Función | Notas |
+|------|---------|-------|
+| 32 | Matriz LED (WS2812B-Mini) | 256 LEDs, cableado serpentina |
+| 15 | Buzzer (piezo pasivo) | PWM vía LEDC, necesita pull-down al iniciar |
 | 21/22 | I2C SDA/SCL | SHT3x (0x44) + DS1307 RTC (0x68) |
-| 26/27/14 | Left/Middle/Right buttons | Active LOW, internal pull-up |
-| 13 | Reset button (hidden) | 5s hold → factory reset |
-| 34 | Battery voltage ADC | 4400 mAh, voltage divider |
-| 35 | LDR light sensor (GL5516) | Ambient light detection |
+| 26/27/14 | Botones Izq/Medio/Der | Active LOW, pull-up interno |
+| 13 | Botón reset (oculto) | Mantener 5s → reset de fábrica |
+| 34 | ADC voltaje batería | 4400 mAh, divisor de voltaje |
+| 35 | Sensor de luz LDR (GL5516) | Detección de luz ambiental |
 
-Supported I2C sensors: BME280, BMP280, HTU21DF, SHT31 (auto-detected at startup). Full hardware reference: [Hardware Guide](https://xe1e.github.io/svitrix-firmware-XE1E/hardware).
+Sensores I2C soportados: BME280, BMP280, HTU21DF, SHT31 (auto-detectados al iniciar). Referencia completa de hardware: [Guía de Hardware](https://xe1e.github.io/svitrix-firmware-XE1E/hardware).
 
 ## FAQ
 
-**Does SVITRIX-XE1E work without a smart home system?**
-Yes! Built-in apps (time, date, temperature, humidity, battery) work out of the box. Weather apps work standalone with just a WeatherAPI.com key. Custom apps and notifications require an external system communicating via MQTT or HTTP.
+**¿Funciona SVITRIX-XE1E sin un sistema de hogar inteligente?**
+¡Sí! Las apps integradas (hora, fecha, temperatura, humedad, batería) funcionan directamente. Las apps de clima funcionan de forma independiente solo con una clave de WeatherAPI.com. Las apps personalizadas y notificaciones requieren un sistema externo comunicándose vía MQTT o HTTP.
 
-**Can I use a different matrix size?**
-No. SVITRIX-XE1E is optimized for 32x8 (256 LEDs).
+**¿Puedo usar una matriz de diferente tamaño?**
+No. SVITRIX-XE1E está optimizado para 32x8 (256 LEDs).
 
-**The temperature reading seems too high.**
-The sensor is inside the case. Set an offset in `dev.json` via the file manager:
+**La lectura de temperatura parece muy alta.**
+El sensor está dentro de la carcasa. Configura un offset en `dev.json` vía el gestor de archivos:
 
 ```json
 {"temp_offset": -5, "hum_offset": -1}
 ```
 
-**How do I get weather data?**
-1. Sign up for a free account at [WeatherAPI.com](https://weatherapi.com)
-2. Copy your API key
-3. Go to Settings → Weather in the web interface
-4. Paste your API key and configure your location
-5. Enable the weather apps you want (Outdoor Temp, Humidity, Pressure, Air Quality)
+**¿Cómo obtengo datos del clima?**
+1. Regístrate para una cuenta gratuita en [WeatherAPI.com](https://weatherapi.com)
+2. Copia tu clave API
+3. Ve a Configuración → Clima en la interfaz web
+4. Pega tu clave API y configura tu ubicación
+5. Activa las apps de clima que quieras (Temp Exterior, Humedad, Presión, Calidad del Aire)
 
-**How do I update firmware without USB?**
-Use the OTA update section in the web interface, or download the latest `.bin` from [GitHub releases](https://github.com/XE1E/svitrix-firmware-XE1E/releases).
+**¿Cómo actualizo el firmware sin USB?**
+Usa la sección de actualización OTA en la interfaz web, o descarga el último `.bin` desde [GitHub releases](https://github.com/XE1E/svitrix-firmware-XE1E/releases).
 
-More answers: [FAQ](https://xe1e.github.io/svitrix-firmware-XE1E/faq)
+Más respuestas: [FAQ](https://xe1e.github.io/svitrix-firmware-XE1E/faq)
 
-## AI-First Development
+## Desarrollo con IA
 
-SVITRIX-XE1E is developed using an **AI-first** approach. [Claude](https://claude.ai) (Anthropic) is a core part of the development workflow — from architecture decisions and code generation to refactoring, testing, and CI pipeline management. The project uses [Claude Code](https://github.com/anthropics/claude-code) as the primary development tool, with custom hooks and skills tailored to the firmware workflow.
+SVITRIX-XE1E se desarrolla usando un enfoque **IA-first**. [Claude](https://claude.ai) (Anthropic) es una parte central del flujo de trabajo de desarrollo — desde decisiones de arquitectura y generación de código hasta refactorización, testing y gestión del pipeline de CI. El proyecto usa [Claude Code](https://github.com/anthropics/claude-code) como herramienta principal de desarrollo, con hooks y skills personalizados adaptados al flujo de trabajo de firmware.
 
-## Contributing
+## Contribuir
 
-Star the repo, open issues, and submit pull requests — contributions are welcome!
+Dale una estrella al repo, abre issues y envía pull requests — ¡las contribuciones son bienvenidas!
 
-## Disclaimer
+## Aviso Legal
 
-This open-source software is not affiliated with or endorsed by the company Ulanzi in any way. Use of the software is at your own risk and discretion, and I assume no liability for any potential damages or issues that may arise from using the software.
+Este software de código abierto no está afiliado ni respaldado por la empresa Ulanzi de ninguna manera. El uso del software es bajo tu propio riesgo y discreción, y no asumo responsabilidad por posibles daños o problemas que puedan surgir del uso del software.
