@@ -137,7 +137,7 @@ function sidebarUk() {
 }
 
 export default defineConfig({
-  title: 'SVITRIX',
+  title: 'Svitrix - XE1E',
   base: '/svitrix-firmware-XE1E/',
 
   head: [
