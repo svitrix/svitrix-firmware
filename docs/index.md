@@ -6,8 +6,8 @@ hero:
   text: "Firmware para Reloj Pixel Inteligente"
   tagline: "Firmware personalizado para el reloj Ulanzi Smart Pixel y relojes matriciales caseros."
   image:
-    src: /assets/svitrix-screen.png
-    alt: Svitrix Display
+    src: /assets/icon.png
+    alt: Svitrix
   actions:
     - theme: brand
       text: Inicio Rápido
@@ -29,6 +29,10 @@ features:
   - title: Desarrollo con IA
     details: Desarrollado con Claude (Anthropic) como herramienta principal — desde arquitectura hasta testing y CI.
 ---
+
+<div style="text-align: center; margin: 2rem 0;">
+  <img src="/assets/svitrix-screen.png" alt="Svitrix Display" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+</div>
 
 ::: info Aviso Legal
 Este software de código abierto no está afiliado ni respaldado por la empresa Ulanzi de ninguna manera. El uso del software es bajo tu propio riesgo y discreción, y no asumo responsabilidad por posibles daños o problemas que puedan surgir del uso del software. Es importante saber que usar este software de código abierto no incluye soporte directo ni garantías de la empresa Ulanzi.
