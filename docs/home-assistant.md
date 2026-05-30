@@ -461,7 +461,7 @@ data:
 | Problema | Solución |
 |----------|----------|
 | Calendario no muestra eventos | Verifica que `calendar.X` tenga estado `on` cuando hay evento |
-| Texto muy largo | Usa template para truncar: `{{ message[:25] }}...` |
+| Texto muy largo | Usa template para truncar: <code>&#123;&#123; message[:25] &#125;&#125;...</code> |
 | Caracteres extraños | SVITRIX soporta UTF-8, pero algunos emojis pueden no renderizar |
 | Evento no se actualiza | Aumenta frecuencia del trigger `time_pattern` |
 
