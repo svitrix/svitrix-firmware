@@ -407,6 +407,28 @@ static const HAEntityDescriptor weatherVisibilityDescs[] = {
     {SHOW_UV_ID,      SHOW_UV_NAME,      SHOW_UV_ICON,      nullptr, nullptr},
 };
 
+// ── Alarm entities (autonomous mode) ────────────────────────────────
+static const char ALARM_RING_ID[] = "%s_alarm_ring";
+static const char ALARM_RING_NAME[] = "Alarm ringing";
+static const char ALARM_RING_ICON[] = "mdi:alarm";
+static const char ALARM_SNOOZE_ID[] = "%s_alarm_snooze";
+static const char ALARM_SNOOZE_NAME[] = "Snooze alarm";
+static const char ALARM_SNOOZE_ICON[] = "mdi:alarm-snooze";
+static const char ALARM_DISMISS_ID[] = "%s_alarm_dismiss";
+static const char ALARM_DISMISS_NAME[] = "Dismiss alarm";
+static const char ALARM_DISMISS_ICON[] = "mdi:alarm-off";
+static const char ALARM_NEXT_ID[] = "%s_alarm_next";
+static const char ALARM_NEXT_NAME[] = "Next alarm";
+static const char ALARM_NEXT_ICON[] = "mdi:alarm-check";
+
+// Alarm array (4: binary_sensor ringing, snooze button, dismiss button, next-alarm sensor)
+static const HAEntityDescriptor alarmDescs[] = {
+    {ALARM_RING_ID,    ALARM_RING_NAME,    ALARM_RING_ICON,    nullptr, nullptr}, // 0 - binary_sensor
+    {ALARM_SNOOZE_ID,  ALARM_SNOOZE_NAME,  ALARM_SNOOZE_ICON,  nullptr, nullptr}, // 1 - button
+    {ALARM_DISMISS_ID, ALARM_DISMISS_NAME, ALARM_DISMISS_ICON, nullptr, nullptr}, // 2 - button
+    {ALARM_NEXT_ID,    ALARM_NEXT_NAME,    ALARM_NEXT_ICON,    nullptr, nullptr}, // 3 - sensor
+};
+
 // ── Function implementations ────────────────────────────────────────
 
 HAEntityDescriptor getMatrixLightDescriptor()
@@ -496,6 +518,12 @@ const HAEntityDescriptor *getWeatherVisibilityDescriptors(size_t &count)
     return weatherVisibilityDescs;
 }
 
+const HAEntityDescriptor *getAlarmDescriptors(size_t &count)
+{
+    count = 4;
+    return alarmDescs;
+}
+
 void buildEntityId(const char *idTemplate, const char *macStr,
                    char *outBuf, size_t bufSize)
 {
@@ -520,6 +548,6 @@ const char *getDeviceModel()
 size_t getTotalEntityCount(bool includeBattery)
 {
     // 1 matrix + 3 indicators + 3 selects + 6 buttons + 1 switch
-    // + sensors (10 or 11) + 3 binary + 6 weather + 4 night + 2 audio + 5 app vis + 4 timing + 5 colors + 5 weather vis
-    return 1 + 3 + 3 + 6 + 1 + (includeBattery ? 11 : 10) + 3 + 6 + 4 + 2 + 5 + 4 + 5 + 5;
+    // + sensors (10 or 11) + 3 binary + 6 weather + 4 night + 2 audio + 5 app vis + 4 timing + 5 colors + 5 weather vis + 4 alarm
+    return 1 + 3 + 3 + 6 + 1 + (includeBattery ? 11 : 10) + 3 + 6 + 4 + 2 + 5 + 4 + 5 + 5 + 4;
 }

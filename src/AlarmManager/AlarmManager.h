@@ -69,10 +69,9 @@ class AlarmManager_ : public IAlarmProvider
     bool ringing_ = false;
     uint8_t ringingAlarmId_ = 0;
     time_t snoozeUntil_ = 0;
-    time_t lastTriggerMinute_ = 0; // Prevent re-triggering same minute
+    time_t lastTriggerMinute_ = -1; // Absolute epoch-minute of last trigger (dedup); -1 = none
 
     uint8_t generateId();
-    bool shouldTrigger(const Alarm& alarm, const struct tm& t) const;
     void triggerAlarm(const Alarm& alarm);
     void stopAlarm();
 };

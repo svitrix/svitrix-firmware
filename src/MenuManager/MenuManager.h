@@ -8,6 +8,7 @@ class IDisplayControl;
 class IDisplayNavigation;
 class IPeripheryProvider;
 class IUpdater;
+class IAlarmProvider;
 
 class MenuManager_ : public IButtonHandler
 {
@@ -22,6 +23,7 @@ class MenuManager_ : public IButtonHandler
     IDisplayNavigation *nav_ = nullptr;
     IPeripheryProvider *periphery_ = nullptr;
     IUpdater *updater_ = nullptr;
+    IAlarmProvider *alarm_ = nullptr;
 
   public:
     static MenuManager_& getInstance();
@@ -34,6 +36,11 @@ class MenuManager_ : public IButtonHandler
     bool hasServices() const
     {
         return periphery_ && updater_;
+    }
+    void setAlarmProvider(IAlarmProvider *a);
+    bool hasAlarm() const
+    {
+        return alarm_;
     }
     bool inMenu = false;
     String menutext();

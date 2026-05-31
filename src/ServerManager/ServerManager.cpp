@@ -388,6 +388,8 @@ void addHandler()
                         obj["minute"] = alarm.minute;
                         obj["days"] = alarm.days;
                         obj["enabled"] = alarm.enabled;
+                        obj["oneTime"] = alarm.oneTime;
+                        obj["snoozeMinutes"] = alarm.snoozeMinutes;
                         obj["label"] = alarm.label;
                         obj["melody"] = alarm.melody;
                     }
@@ -398,7 +400,7 @@ void addHandler()
     mws.addHandlerWithBody("/api/alarms", HTTP_POST, [](AsyncWebServerRequest *request)
                            {
                             String body = getBody(request);
-                            StaticJsonDocument<256> doc;
+                            StaticJsonDocument<512> doc; // room for long RTTTL melodies
                             DeserializationError err = deserializeJson(doc, body);
                             if (err) {
                                 request->send(400, "text/plain", "InvalidJSON");
@@ -422,6 +424,8 @@ void addHandler()
                             alarm.minute = doc["minute"] | 0;
                             alarm.days = doc["days"] | 0x7F;
                             alarm.enabled = doc["enabled"] | true;
+                            alarm.oneTime = doc["oneTime"] | false;
+                            alarm.snoozeMinutes = doc["snoozeMinutes"] | 5;
                             alarm.label = doc["label"] | "";
                             alarm.melody = doc["melody"] | "";
                             if (AlarmManager.addAlarm(alarm)) {
@@ -432,7 +436,7 @@ void addHandler()
     mws.addHandlerWithBody("/api/alarms", HTTP_PUT, [](AsyncWebServerRequest *request)
                            {
                             String body = getBody(request);
-                            StaticJsonDocument<256> doc;
+                            StaticJsonDocument<512> doc; // room for long RTTTL melodies
                             DeserializationError err = deserializeJson(doc, body);
                             if (err) {
                                 request->send(400, "text/plain", "InvalidJSON");
@@ -444,6 +448,8 @@ void addHandler()
                             alarm.minute = doc["minute"] | 0;
                             alarm.days = doc["days"] | 0x7F;
                             alarm.enabled = doc["enabled"] | true;
+                            alarm.oneTime = doc["oneTime"] | false;
+                            alarm.snoozeMinutes = doc["snoozeMinutes"] | 5;
                             alarm.label = doc["label"] | "";
                             alarm.melody = doc["melody"] | "";
                             if (AlarmManager.updateAlarm(alarm)) {

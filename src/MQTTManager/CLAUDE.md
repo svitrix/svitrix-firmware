@@ -1,6 +1,6 @@
 # MQTTManager — AI Reference
 
-Central MQTT communication and Home Assistant integration singleton. Manages broker connection, message dispatch, HA auto-discovery (59 entities), and state synchronization.
+Central MQTT communication and Home Assistant integration singleton. Manages broker connection, message dispatch, HA auto-discovery (63 entities), and state synchronization.
 
 ## File Map
 
@@ -8,7 +8,7 @@ Central MQTT communication and Home Assistant integration singleton. Manages bro
 | ------------------------------ | --- | ----------------------------------------------------------------- |
 | `MQTTManager.h`                | 135 | Public API, singleton, INotifier + IButtonReporter                |
 | `MQTTManager.cpp`              | 289 | Instance, connection lifecycle, tick, publish methods             |
-| `MQTTManager_internal.h`       | 127 | Shared extern declarations for 59 HA entity pointers + ID buffers |
+| `MQTTManager_internal.h`       | 127 | Shared extern declarations for 63 HA entity pointers + ID buffers |
 | `MQTTManager_Messages.cpp`     | 188 | Incoming message reception + command dispatch                     |
 | `MQTTManager_Callbacks.cpp`    | 179 | 7 ArduinoHA callback handlers (HA → device)                       |
 | `MQTTManager_Discovery.cpp`    | 245 | HA entity creation + metadata                                     |
@@ -26,17 +26,17 @@ void setDisplay(IDisplayControl*, IDisplayNavigation*, IDisplayNotifier*);
 void setServices(ISound*, IPower*, IUpdater*, IPeripheryProvider*);
 ```
 
-## HA Entities (59 total)
+## HA Entities (63 total)
 
 | Type | Count | Entities |
 |------|-------|----------|
 | **HALight** | 10 | Matrix (brightness+RGB), Indicator 1/2/3 (RGB), nightColor, timeColor, dateColor, tempColor, humColor, batColor |
 | **HASelect** | 3 | BriMode (Manual/Auto), transEffect (14 transitions), bgEffect (21 effects) |
-| **HAButton** | 6 | dismiss, nextApp, prevApp, doUpdate, reboot, playSound |
+| **HAButton** | 8 | dismiss, nextApp, prevApp, doUpdate, reboot, playSound, alarmSnooze, alarmDismiss |
 | **HASwitch** | 14 | transition, nightMode, nightBlockTransition, soundEnabled, showTime, showDate, showTemp, showHum, showBat, showOutdoorTemp, showOutdoorHum, showPressure, showAirQuality, showUV |
 | **HANumber** | 6 | nightBrightness, soundVolume, timePerApp, scrollSpeed, timeDuration, dateDuration |
-| **HASensor** | 16-17 | curApp, myOwnID, temp, hum, lux, signal, version, ram, uptime, ipAddr, battery*, outdoorTemp, outdoorHum, pressure, aqi, weatherCond, uvIndex |
-| **HABinarySensor** | 3 | btnleft, btnmid, btnright |
+| **HASensor** | 17-18 | curApp, myOwnID, temp, hum, lux, signal, version, ram, uptime, ipAddr, battery*, outdoorTemp, outdoorHum, pressure, aqi, weatherCond, uvIndex, nextAlarm |
+| **HABinarySensor** | 4 | btnleft, btnmid, btnright, alarmRinging |
 
 *battery only on ULANZI build
 
@@ -64,6 +64,9 @@ All prefixed with `<mqttConfig.prefix>/`. **HTTP equivalent** column shows the m
 | `/doupdate`                 | `checkUpdate()` + `updateFirmware()`        | `POST /api/doupdate`                        |
 | `/sendscreen`               | Publish `ledsAsJson()`                      | `GET /api/screen`                           |
 | `/reboot`                   | `ESP.restart()`                             | `ANY /api/reboot`                           |
+| `/alarm/snooze`             | `AlarmManager.snooze()` (`{minutes}` opt.)  | `POST /api/alarms {action:snooze}`          |
+| `/alarm/dismiss`            | `AlarmManager.dismiss()`                    | `POST /api/alarms {action:dismiss}`         |
+| `/alarm/add`                | `AlarmManager.addAlarm(json)`               | `POST /api/alarms`                          |
 
 **HTTP-only (no MQTT binding):** `/api/erase` (factory reset), `/api/resetSettings`, `/api/reorder`, `/api/loop`, `/api/stats`, `/api/effects`, `/api/transitions`, `/api/datafetcher*`, `/version`, `/save`. If MQTT access is needed for these, add a new `CMD_*` enum in `MessageRouter` + handler in `onMqttMessage`.
 
@@ -109,7 +112,7 @@ All callbacks call `saveSettings()` after modifying config structs.
 ## Connection Lifecycle
 
 ```
-setup() → destroyHAEntities() + resetDevicesCount() → create 59 HA entities (if discovery enabled) → register callbacks
+setup() → destroyHAEntities() + resetDevicesCount() → create 63 HA entities (if discovery enabled) → register callbacks
   └→ connect() → mqtt.begin(host, port, user, pass)
        └→ onMqttConnected()
             ├─ Subscribe to ~20 command topics (30ms delay each)

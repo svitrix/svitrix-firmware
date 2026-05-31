@@ -302,6 +302,13 @@ export const translations = {
       labelPlaceholder: "Etiqueta (opcional)",
       alarm: "Alarma",
       add: "Agregar",
+      once: "Una vez",
+      snoozeMin: "Posponer (min)",
+      nextAlarm: "Próxima",
+      melodyPlaceholder: "RTTTL o archivo",
+      melodyNone: "Sin melodía",
+      dayLetters: ["D", "L", "M", "X", "J", "V", "S"],
+      preview: "Probar sonido",
     },
 
     // Files page
@@ -709,6 +716,13 @@ export const translations = {
       noAlarms: "No alarms configured",
       labelPlaceholder: "Label (optional)",
       alarm: "Alarm",
+      once: "Once",
+      snoozeMin: "Snooze (min)",
+      nextAlarm: "Next",
+      melodyPlaceholder: "RTTTL or file",
+      melodyNone: "No melody",
+      dayLetters: ["S", "M", "T", "W", "T", "F", "S"],
+      preview: "Test sound",
       add: "Add",
     },
 

@@ -195,6 +195,8 @@ export interface Alarm {
   minute: number;
   days: number;  // Bitmask: Sun=0x01, Mon=0x02, Tue=0x04, Wed=0x08, Thu=0x10, Fri=0x20, Sat=0x40
   enabled: boolean;
+  oneTime: boolean;       // Fire once then auto-disable (reminder). Ignores day mask.
+  snoozeMinutes: number;  // Per-alarm snooze duration
   label: string;
   melody: string;
 }

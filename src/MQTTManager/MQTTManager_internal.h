@@ -25,6 +25,7 @@
 #include "ServerManager.h"
 #include "MessageRouter.h"
 #include "HADiscovery.h"
+#include "AlarmManager/AlarmManager.h"
 
 // ── MQTT transport (defined in MQTTManager.cpp) ─────────────────────
 
@@ -109,6 +110,12 @@ extern HASwitch *showPressureSwitch;
 extern HASwitch *showAqiSwitch;
 extern HASwitch *showUvSwitch;
 
+// Alarm entities (autonomous mode)
+extern HABinarySensor *alarmRinging;  ///< true while an alarm is sounding
+extern HAButton *alarmSnoozeBtn;      ///< Snooze the ringing alarm
+extern HAButton *alarmDismissBtn;     ///< Dismiss the ringing alarm
+extern HASensor *nextAlarmSensor;     ///< "HH:MM" of the soonest enabled alarm, or "--:--"
+
 // ── HA entity ID buffers (defined in MQTTManager.cpp) ───────────────
 // Each buffer holds a unique HA entity ID built from MAC + suffix.
 
@@ -127,6 +134,7 @@ extern char bgEffectID[40];
 extern char timePerAppID[40], scrollSpeedID[40], timeDurID[40], dateDurID[40];
 extern char timeColID[40], dateColID[40], tempColID[40], humColID[40], batColID[40];
 extern char showOutTempID[40], showOutHumID[40], showPressID[40], showAqiID[40], showUvID[40];
+extern char alarmRingID[40], alarmSnoozeID[40], alarmDismissID[40], alarmNextID[40];
 
 // ── Other shared state (defined in MQTTManager.cpp) ─────────────────
 
@@ -178,6 +186,8 @@ void onDisplayTimingCommand(HANumeric number, HANumber *sender);
 void onNativeAppColorCommand(HALight::RGBColor color, HALight *sender);
 /// HA weather app visibility switch handler.
 void onWeatherVisibilitySwitchCommand(bool state, HASwitch *sender);
+/// HA alarm button handler (snooze / dismiss the ringing alarm).
+void onAlarmButtonCommand(HAButton *sender);
 
 // ── Display interfaces (defined in MQTTManager.cpp, set via setDisplay) ──
 

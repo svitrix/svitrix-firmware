@@ -93,6 +93,12 @@ HASwitch *showPressureSwitch = nullptr;
 HASwitch *showAqiSwitch = nullptr;
 HASwitch *showUvSwitch = nullptr;
 
+// Alarm entities (autonomous mode)
+HABinarySensor *alarmRinging = nullptr;
+HAButton *alarmSnoozeBtn = nullptr;
+HAButton *alarmDismissBtn = nullptr;
+HASensor *nextAlarmSensor = nullptr;
+
 // ── HA entity ID buffers ────────────────────────────────────────────
 // Each holds a unique HA entity ID built from MAC suffix (e.g. "abc123_mat").
 
@@ -113,6 +119,7 @@ char bgEffectID[40];
 char timePerAppID[40], scrollSpeedID[40], timeDurID[40], dateDurID[40];
 char timeColID[40], dateColID[40], tempColID[40], humColID[40], batColID[40];
 char showOutTempID[40], showOutHumID[40], showPressID[40], showAqiID[40], showUvID[40];
+char alarmRingID[40], alarmSnoozeID[40], alarmDismissID[40], alarmNextID[40];
 
 unsigned long previousMillis_Stats;    ///< Timestamp of last stats publish (millis)
 std::map<String, String> mqttValues;   ///< Cached values for subscribed external topics

@@ -46,6 +46,23 @@ void onButtonCommand(HAButton *sender)
     }
 }
 
+// ── Alarm button callback ───────────────────────────────────────────
+
+/// Snooze or dismiss the ringing alarm from Home Assistant.
+/// @param sender The HAButton entity that was pressed.
+void onAlarmButtonCommand(HAButton *sender)
+{
+    if (sender == alarmSnoozeBtn)
+    {
+        const Alarm *a = AlarmManager.getRingingAlarm();
+        AlarmManager.snooze(a ? a->snoozeMinutes : 5);
+    }
+    else if (sender == alarmDismissBtn)
+    {
+        AlarmManager.dismiss();
+    }
+}
+
 // ── Switch callback ─────────────────────────────────────────────────
 
 /// Handle auto-transition toggle from HA.

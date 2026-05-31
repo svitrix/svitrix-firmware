@@ -107,6 +107,8 @@ test/test_native/               native C++ unit tests
 | MenuManager_         | `IButtonHandler`     | PeripheryManager                                              |
 | NightModePolicy      | `IDisplayPolicy`     | DisplayManager (registered in `main.cpp`, order = priority)   |
 | RealTimeProvider     | `ITimeProvider`      | NightModePolicy                                               |
+| AlarmManager_        | `IAlarmProvider`     | ServerManager, MQTTManager, MenuManager                       |
+| DS1307Provider       | `IRtcProvider`       | RtcTimeProvider                                               |
 
 ## Main loop
 
@@ -116,6 +118,7 @@ void loop() {
     ServerManager.tick();      // HTTP requests
     DisplayManager.tick();     // Render app/notification/effect
     PeripheryManager.tick();   // Sensors, buttons, auto-brightness
+    AlarmManager.tick(time(nullptr)); // Alarms/reminders — works without WiFi (RTC)
     if (ServerManager.isConnected) {
         MQTTManager.tick();    // MQTT messages, stats publishing
         DataFetcher.tick();    // External HTTP data sources
@@ -162,6 +165,7 @@ Per-module docs auto-load when you Read files in their directory.
 | Apps | [src/Apps/README.md](src/Apps/README.md) | Native + custom app rendering |
 | MelodyPlayer | [src/MelodyPlayer/README.md](src/MelodyPlayer/README.md) | RTTTL parser, async PWM |
 | Effects | [src/effects/README.md](src/effects/README.md) | Visual effects, weather overlays, IPixelCanvas |
+| AlarmManager | [src/AlarmManager/CLAUDE.md](src/AlarmManager/CLAUDE.md) | Alarm clock + reminders (buttons, web, MQTT/HA; RTC fallback) |
 
 ## Common Change Patterns
 

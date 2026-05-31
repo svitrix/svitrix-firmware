@@ -1,4 +1,5 @@
 #include "AlarmManager.h"
+#include "AlarmLogic.h"
 #include "Globals.h"
 #include <ArduinoJson.h>
 #include <LittleFS.h>
@@ -51,49 +52,51 @@ void AlarmManager_::tick(time_t now)
     if (!timeProvider_->now(t))
         return;
 
-    // Check snooze expiry
-    if (ringing_ && snoozeUntil_ > 0 && now >= snoozeUntil_)
+    // Snooze expiry → re-ring. Checked independently of ringing_ (which is
+    // false while snoozed) so the alarm actually comes back.
+    if (snoozeUntil_ > 0 && now >= snoozeUntil_)
     {
         snoozeUntil_ = 0;
         const Alarm *alarm = getAlarm(ringingAlarmId_);
         if (alarm)
-        {
             triggerAlarm(*alarm);
-        }
+        return;
     }
 
     // Don't check for new triggers while ringing or snoozed
     if (ringing_ || snoozeUntil_ > 0)
         return;
 
-    // Create a minute identifier to prevent re-triggering
-    time_t currentMinute = (t.tm_hour * 60 + t.tm_min);
+    // Dedup by absolute epoch-minute so an alarm fires once per occurrence
+    // (and again the next day), not just once ever.
+    time_t currentMinute = now / 60;
     if (currentMinute == lastTriggerMinute_)
         return;
 
-    // Check all alarms
     for (const auto& alarm : alarms_)
     {
-        if (shouldTrigger(alarm, t))
+        if (alarmMatches(alarm.enabled, alarm.hour, alarm.minute,
+                         alarm.days, alarm.oneTime, t))
         {
             lastTriggerMinute_ = currentMinute;
             triggerAlarm(alarm);
+
+            // One-time alarms (reminders) auto-disable after firing.
+            if (alarm.oneTime)
+            {
+                for (auto& a : alarms_)
+                {
+                    if (a.id == alarm.id)
+                    {
+                        a.enabled = false;
+                        break;
+                    }
+                }
+                saveAlarms();
+            }
             break;
         }
     }
-}
-
-bool AlarmManager_::shouldTrigger(const Alarm& alarm, const struct tm& t) const
-{
-    if (!alarm.enabled)
-        return false;
-
-    if (alarm.hour != t.tm_hour || alarm.minute != t.tm_min)
-        return false;
-
-    // Check day of week (tm_wday: 0=Sun, 1=Mon, ..., 6=Sat)
-    uint8_t dayMask = 1 << t.tm_wday;
-    return (alarm.days & dayMask) != 0;
 }
 
 void AlarmManager_::triggerAlarm(const Alarm& alarm)
@@ -107,20 +110,21 @@ void AlarmManager_::triggerAlarm(const Alarm& alarm)
                      alarm.label.c_str(), alarm.hour, alarm.minute);
     }
 
-    // Play melody
-    if (sound_ && !alarm.melody.isEmpty())
-    {
-        sound_->playRTTTLString(alarm.melody);
-    }
-
-    // Show notification
+    // Show a held, red notification. The melody travels with the notification
+    // and loopSound makes the notification overlay re-play it whenever the
+    // buzzer goes idle, so it repeats until the alarm is dismissed or snoozed.
     if (notifier_)
     {
-        StaticJsonDocument<256> doc;
+        StaticJsonDocument<512> doc; // room for an RTTTL melody
         doc["text"] = alarm.label.isEmpty() ? "ALARM" : alarm.label;
         doc["color"] = "#FF0000";
-        doc["repeat"] = -1; // Repeat until dismissed
-        doc["hold"] = true;
+        doc["repeat"] = -1; // scroll the text until dismissed
+        doc["hold"] = true; // stay on screen until dismissed
+        if (!alarm.melody.isEmpty())
+        {
+            doc["rtttl"] = alarm.melody;
+            doc["loopSound"] = true; // repeat the melody until dismissed/snoozed
+        }
 
         String json;
         serializeJson(doc, json);
@@ -230,6 +234,8 @@ bool AlarmManager_::updateAlarm(const Alarm& alarm)
             a.minute = alarm.minute;
             a.days = alarm.days;
             a.enabled = alarm.enabled;
+            a.oneTime = alarm.oneTime;
+            a.snoozeMinutes = alarm.snoozeMinutes;
             a.label = alarm.label;
             a.melody = alarm.melody;
             saveAlarms();
@@ -264,7 +270,7 @@ uint8_t AlarmManager_::generateId()
 
 bool AlarmManager_::saveAlarms()
 {
-    DynamicJsonDocument doc(2048);
+    DynamicJsonDocument doc(4096); // room for up to 10 alarms with RTTTL melodies
     JsonArray arr = doc.createNestedArray("alarms");
 
     for (const auto& alarm : alarms_)
@@ -275,6 +281,8 @@ bool AlarmManager_::saveAlarms()
         obj["minute"] = alarm.minute;
         obj["days"] = alarm.days;
         obj["enabled"] = alarm.enabled;
+        obj["oneTime"] = alarm.oneTime;
+        obj["snooze"] = alarm.snoozeMinutes;
         obj["label"] = alarm.label;
         obj["melody"] = alarm.melody;
     }
@@ -315,7 +323,7 @@ bool AlarmManager_::loadAlarms()
         return false;
     }
 
-    DynamicJsonDocument doc(2048);
+    DynamicJsonDocument doc(4096); // room for up to 10 alarms with RTTTL melodies
     DeserializationError error = deserializeJson(doc, file);
     file.close();
 
@@ -338,6 +346,8 @@ bool AlarmManager_::loadAlarms()
         alarm.minute = obj["minute"] | 0;
         alarm.days = obj["days"] | 0x7F;
         alarm.enabled = obj["enabled"] | true;
+        alarm.oneTime = obj["oneTime"] | false;
+        alarm.snoozeMinutes = obj["snooze"] | 5;
         alarm.label = obj["label"] | "";
         alarm.melody = obj["melody"] | "";
 

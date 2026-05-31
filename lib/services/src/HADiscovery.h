@@ -135,6 +135,13 @@ const HAEntityDescriptor *getNativeAppColorDescriptors(size_t &count);
 /// @return Pointer to static array of switch descriptors.
 const HAEntityDescriptor *getWeatherVisibilityDescriptors(size_t &count);
 
+// --- Alarms (autonomous mode) ---
+
+/// Alarm entities: [0]=ringing binary_sensor, [1]=snooze button,
+/// [2]=dismiss button, [3]=next-alarm sensor.
+/// @param[out] count Set to number of descriptors (always 4).
+const HAEntityDescriptor *getAlarmDescriptors(size_t &count);
+
 // --- Utilities ---
 
 /// Build an entity ID by formatting idTemplate with macStr.
@@ -154,7 +161,7 @@ const char *getDeviceModel();
 
 /// Total number of HA entities the device registers.
 /// @param includeBattery true to count the battery sensor.
-/// @return 58 (without battery) or 59 (with battery).
+/// @return 62 (without battery) or 63 (with battery).
 size_t getTotalEntityCount(bool includeBattery);
 
 /// Capacity passed to the HAMqtt client (`HAMqtt mqtt(..., HA_MAX_ENTITIES)`).
@@ -162,5 +169,5 @@ size_t getTotalEntityCount(bool includeBattery);
 /// the usable slot count is HA_MAX_ENTITIES - 1. This MUST stay strictly above
 /// getTotalEntityCount(true) or the last-created entities silently fail to
 /// register with Home Assistant. Guarded by test/test_native/test_ha_memory.
-constexpr uint8_t HA_MAX_ENTITIES = 64;
+constexpr uint8_t HA_MAX_ENTITIES = 80;
 

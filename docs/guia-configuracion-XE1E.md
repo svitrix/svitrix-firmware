@@ -320,34 +320,47 @@ En la página de **Apps** hay una lista con **arrastrar y soltar** (drag-and-dro
 
 ## 9. Alarmas
 
-El dispositivo soporta hasta 10 alarmas programables. Incluye un RTC (DS1307) que mantiene la hora durante reinicios.
+El dispositivo funciona como **despertador y recordatorio**: hasta 10 alarmas programables, configurables por **botones físicos**, **web** y **MQTT/Home Assistant**. Incluye un RTC (DS1307) que mantiene la hora durante reinicios, así que **las alarmas suenan aunque no haya WiFi**.
 
-### 9.1 Acceder a la Configuración
+### 9.1 Configurar desde la web
 
 1. Ve a: `http://[IP]/autonomous`
-2. Verás la sección de Alarmas
-
-### 9.2 Configurar Alarmas
-
-Hasta 10 alarmas programables con días de la semana.
+2. Cada alarma tiene estos campos editables en línea:
 
 | Campo | Descripción |
 |-------|-------------|
-| **Hora** | Formato 24h (HH:MM) |
-| **Días** | Selector de días (S M T W T F S) |
-| **Label** | Etiqueta opcional |
-| **Toggle** | Activar/desactivar alarma |
+| **Hora** | Formato 24h (HH:MM), editable |
+| **Días** | Selector de días (S M T W T F S) — recurrente |
+| **Una vez** | Recordatorio puntual: suena una sola vez y se desactiva (ignora los días) |
+| **Posponer (min)** | Minutos de snooze para esa alarma |
+| **Label** | Etiqueta opcional (se muestra al sonar) |
+| **Melodía** | RTTTL o nombre de archivo (vacío = solo alerta) |
+| **Toggle** | Activar/desactivar |
 
-**Cuando suena una alarma:**
-- La pantalla muestra alerta roja pulsante
-- El buzzer reproduce la melodía
+Arriba se muestra la **próxima alarma**. Si suena una alarma, aparece una alerta con botones de Posponer/Descartar.
 
-**Botones cuando suena:**
-- Botón izquierdo: Snooze (posponer 5 min)
-- Botón central: Dismiss (apagar)
+### 9.2 Configurar desde los botones
 
-**Indicador LED:**
-Cuando hay alarmas activas, se muestra un LED en la esquina inferior derecha de la pantalla.
+Mantén pulsado el botón central para entrar al menú y navega hasta **ALARMS**:
+- Izquierda/Derecha: recorre las alarmas (`07:30 ON`).
+- Pulsación corta: entra a editar — la pulsación corta cicla entre **activado / hora / minuto**, e Izquierda/Derecha ajusta el valor.
+- Pulsación larga: **guarda** y vuelve a la lista.
+
+(Los días, la etiqueta y la melodía se configuran por web/MQTT.)
+
+### 9.3 Cuando suena una alarma
+
+- La pantalla muestra una alerta roja con la etiqueta y el buzzer reproduce la melodía hasta descartarla.
+- **Botones:** Izquierda/Derecha = **Posponer** (usa los minutos de esa alarma); Central (corto o largo) = **Apagar**.
+
+### 9.4 Control por MQTT / Home Assistant
+
+Con la discovery de HA activada aparecen estas entidades:
+- `binary_sensor` **Alarm ringing** (sonando)
+- `button` **Snooze alarm** y `button` **Dismiss alarm**
+- `sensor` **Next alarm** (próxima alarma, HH:MM)
+
+También por topics MQTT: `<prefijo>/alarm/snooze`, `<prefijo>/alarm/dismiss`, `<prefijo>/alarm/add` (JSON con hour, minute, days, oneTime, snoozeMinutes, label, melody).
 
 ### 9.3 RTC (Reloj de Tiempo Real)
 

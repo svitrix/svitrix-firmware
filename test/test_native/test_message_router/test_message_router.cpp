@@ -91,10 +91,13 @@ void test_route_all_commands(void)
         {"/moodlight",       CMD_MOODLIGHT},
         {"/reboot",          CMD_REBOOT},
         {"/sound",           CMD_SOUND},
+        {"/alarm/snooze",    CMD_ALARM_SNOOZE},
+        {"/alarm/dismiss",   CMD_ALARM_DISMISS},
+        {"/alarm/add",       CMD_ALARM_ADD},
         {"/custom/test",     CMD_CUSTOM},
     };
     String pfx = PREFIX;
-    for (int i = 0; i < 20; i++)
+    for (size_t i = 0; i < sizeof(cases) / sizeof(cases[0]); i++)
     {
         String topic = pfx + cases[i].suffix;
         MqttCommandType result = routeTopic(topic, pfx);
@@ -193,6 +196,9 @@ void test_subscription_topics_no_duplicates(void)
         seen.insert(s);
     }
 }
+
+void setUp(void) {}
+void tearDown(void) {}
 
 int main(int argc, char **argv)
 {

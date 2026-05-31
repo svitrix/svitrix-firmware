@@ -33,6 +33,9 @@ MqttCommandType routeTopic(const String& topic, const String& prefix)
     if (suffix == "/moodlight")       return CMD_MOODLIGHT;
     if (suffix == "/reboot")          return CMD_REBOOT;
     if (suffix == "/sound")           return CMD_SOUND;
+    if (suffix == "/alarm/snooze")    return CMD_ALARM_SNOOZE;
+    if (suffix == "/alarm/dismiss")   return CMD_ALARM_DISMISS;
+    if (suffix == "/alarm/add")       return CMD_ALARM_ADD;
 
     return CMD_UNKNOWN;
 }
@@ -80,5 +83,8 @@ std::vector<String> getSubscriptionTopics()
         "/rtttl",
         "/sendscreen",
         "/r2d2",
+        "/alarm/snooze",
+        "/alarm/dismiss",
+        "/alarm/add",
     };
 }

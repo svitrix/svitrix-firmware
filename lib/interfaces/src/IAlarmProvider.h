@@ -15,12 +15,15 @@ struct Alarm
     uint8_t id;
     uint8_t hour;
     uint8_t minute;
-    uint8_t days;       // Bitmask: Sun=0x01, Mon=0x02, Tue=0x04, Wed=0x08, Thu=0x10, Fri=0x20, Sat=0x40
+    uint8_t days;          // Bitmask: Sun=0x01, Mon=0x02, Tue=0x04, Wed=0x08, Thu=0x10, Fri=0x20, Sat=0x40
     bool enabled;
+    bool oneTime;          // Fire once, then auto-disable (reminder). Day mask ignored when set.
+    uint8_t snoozeMinutes; // Per-alarm snooze duration (minutes)
     String label;
-    String melody;      // RTTTL string or melody filename
+    String melody;         // RTTTL string or melody filename
 
-    Alarm() : id(0), hour(0), minute(0), days(0x7F), enabled(true), label(""), melody("") {}
+    Alarm() : id(0), hour(0), minute(0), days(0x7F), enabled(true),
+              oneTime(false), snoozeMinutes(5), label(""), melody("") {}
 };
 
 class IAlarmProvider

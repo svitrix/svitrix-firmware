@@ -159,6 +159,48 @@ void processMqttMessage(const String& strTopic, const String& payloadCopy)
         mqttSound_->parseSound(payloadCopy.c_str());
         return;
 
+    case CMD_ALARM_SNOOZE:
+    {
+        uint8_t minutes = 0;
+        if (isJsonPayload(payloadCopy))
+        {
+            StaticJsonDocument<128> doc;
+            if (!deserializeJson(doc, payloadCopy.c_str()))
+                minutes = doc["minutes"] | 0;
+        }
+        if (minutes == 0)
+        {
+            const Alarm *a = AlarmManager.getRingingAlarm();
+            minutes = a ? a->snoozeMinutes : 5;
+        }
+        AlarmManager.snooze(minutes);
+        return;
+    }
+
+    case CMD_ALARM_DISMISS:
+        AlarmManager.dismiss();
+        return;
+
+    case CMD_ALARM_ADD:
+    {
+        if (!isJsonPayload(payloadCopy))
+            return;
+        StaticJsonDocument<512> doc; // room for long RTTTL melodies
+        if (deserializeJson(doc, payloadCopy.c_str()))
+            return;
+        Alarm alarm;
+        alarm.hour = doc["hour"] | 0;
+        alarm.minute = doc["minute"] | 0;
+        alarm.days = doc["days"] | 0x7F;
+        alarm.enabled = doc["enabled"] | true;
+        alarm.oneTime = doc["oneTime"] | false;
+        alarm.snoozeMinutes = doc["snoozeMinutes"] | 5;
+        alarm.label = doc["label"] | "";
+        alarm.melody = doc["melody"] | "";
+        AlarmManager.addAlarm(alarm);
+        return;
+    }
+
     case CMD_CUSTOM:
     {
         String topicName = extractCustomTopicName(strTopic, mqttConfig.prefix);

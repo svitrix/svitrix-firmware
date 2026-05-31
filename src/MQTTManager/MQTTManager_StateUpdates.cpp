@@ -8,6 +8,8 @@
  * and setCurrentApp (current app name publishing).
  */
 #include "MQTTManager_internal.h"
+#include "AlarmLogic.h"
+#include "timer.h"
 
 // ── Stats publishing ────────────────────────────────────────────────
 
@@ -142,6 +144,30 @@ void MQTTManager_::sendStats()
         showPressureSwitch->setState(weatherConfig.showPressure, false);
         showAqiSwitch->setState(weatherConfig.showAirQuality, false);
         showUvSwitch->setState(weatherConfig.showUV, false);
+
+        // Alarm state sync: ringing flag + soonest enabled alarm time
+        alarmRinging->setState(AlarmManager.isRinging(), false);
+        const struct tm *nowTm = timer_localtime();
+        int best = -1, bh = 0, bm = 0;
+        if (nowTm)
+        {
+            for (const auto &a : AlarmManager.getAlarms())
+            {
+                int mu = minutesUntilNext(a.enabled, a.hour, a.minute, a.days, a.oneTime, *nowTm);
+                if (mu >= 0 && (best < 0 || mu < best))
+                {
+                    best = mu;
+                    bh = a.hour;
+                    bm = a.minute;
+                }
+            }
+        }
+        char nextBuf[8];
+        if (best >= 0)
+            snprintf(nextBuf, sizeof(nextBuf), "%02d:%02d", bh, bm);
+        else
+            snprintf(nextBuf, sizeof(nextBuf), "--:--");
+        nextAlarmSensor->setValue(nextBuf);
     }
     publish(StatsTopic, dmControl_->getStats().c_str());
 }

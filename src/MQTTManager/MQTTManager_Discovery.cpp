@@ -145,6 +145,16 @@ static void destroyHAEntities()
     delete showUvSwitch;
     showUvSwitch = nullptr;
 
+    // Alarm entities
+    delete alarmRinging;
+    alarmRinging = nullptr;
+    delete alarmSnoozeBtn;
+    alarmSnoozeBtn = nullptr;
+    delete alarmDismissBtn;
+    alarmDismissBtn = nullptr;
+    delete nextAlarmSensor;
+    nextAlarmSensor = nullptr;
+
     mqtt.resetDevicesCount();
 }
 
@@ -658,6 +668,33 @@ void MQTTManager_::setup()
         showUvSwitch->setName(weatherVisDescs[4].name);
         showUvSwitch->onCommand(onWeatherVisibilitySwitchCommand);
         showUvSwitch->setState(weatherConfig.showUV, true);
+
+        // Alarm entities (autonomous mode)
+        size_t alarmCount;
+        const auto *alarmDescs = getAlarmDescriptors(alarmCount);
+
+        buildEntityId(alarmDescs[0].idTemplate, macStr, alarmRingID, sizeof(alarmRingID));
+        alarmRinging = new HABinarySensor(alarmRingID);
+        alarmRinging->setIcon(alarmDescs[0].icon);
+        alarmRinging->setName(alarmDescs[0].name);
+        alarmRinging->setState(AlarmManager.isRinging(), true);
+
+        buildEntityId(alarmDescs[1].idTemplate, macStr, alarmSnoozeID, sizeof(alarmSnoozeID));
+        alarmSnoozeBtn = new HAButton(alarmSnoozeID);
+        alarmSnoozeBtn->setIcon(alarmDescs[1].icon);
+        alarmSnoozeBtn->setName(alarmDescs[1].name);
+        alarmSnoozeBtn->onCommand(onAlarmButtonCommand);
+
+        buildEntityId(alarmDescs[2].idTemplate, macStr, alarmDismissID, sizeof(alarmDismissID));
+        alarmDismissBtn = new HAButton(alarmDismissID);
+        alarmDismissBtn->setIcon(alarmDescs[2].icon);
+        alarmDismissBtn->setName(alarmDescs[2].name);
+        alarmDismissBtn->onCommand(onAlarmButtonCommand);
+
+        buildEntityId(alarmDescs[3].idTemplate, macStr, alarmNextID, sizeof(alarmNextID));
+        nextAlarmSensor = new HASensor(alarmNextID);
+        nextAlarmSensor->setIcon(alarmDescs[3].icon);
+        nextAlarmSensor->setName(alarmDescs[3].name);
     }
     else
     {

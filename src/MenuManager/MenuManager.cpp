@@ -8,6 +8,7 @@
 #include <cassert>
 #include "IPeripheryProvider.h"
 #include "IUpdater.h"
+#include "IAlarmProvider.h"
 #include "timer.h"
 #include <icons.h>
 #include <WiFi.h>
@@ -30,7 +31,9 @@ enum MenuState
     SoundMenu,
     VolumeMenu,
     UpdateMenu,
-    MaxMenu
+    AlarmsMenu,   // alarm list / select (mapped to "ALARMS" menu item)
+    MaxMenu,
+    AlarmEditMenu // edit a single alarm (sub-state, not a top-level item)
 };
 
 const char *menuItems[] PROGMEM = {
@@ -48,7 +51,8 @@ const char *menuItems[] PROGMEM = {
     "INFO",
     "SOUND",
     "VOLUME",
-    "UPDATE"};
+    "UPDATE",
+    "ALARMS"};
 
 int8_t menuIndex = 0;
 uint8_t menuItemCount = MaxMenu - 1;
@@ -85,6 +89,11 @@ static const uint8_t appsCount = 9;
 
 int8_t infoIndex = 0;
 static const uint8_t infoCount = 5; // IP, WIFI, VER, HOST, MEM
+
+// Alarm menu state
+int8_t alarmSel = 0;    // selected alarm index in AlarmsMenu
+uint8_t alarmField = 0; // 0=enabled, 1=hour, 2=minute (AlarmEditMenu)
+Alarm alarmEdit;        // working copy of the alarm being edited
 
 MenuState currentState = MainMenu;
 
@@ -138,6 +147,12 @@ void MenuManager_::setServices(IPeripheryProvider *pp, IUpdater *u)
     assert(pp && u);
     periphery_ = pp;
     updater_ = u;
+}
+
+void MenuManager_::setAlarmProvider(IAlarmProvider *a)
+{
+    assert(a);
+    alarm_ = a;
 }
 
 int convertBRIPercentTo8Bit(int brightness_percent)
@@ -290,6 +305,29 @@ String MenuManager_::menutext()
     case VolumeMenu:
         snprintf(buf, sizeof(buf), "%d", audioConfig.soundVolume);
         return buf;
+    case AlarmsMenu:
+    {
+        if (!alarm_)
+            return "NO ALARM";
+        auto alarms = alarm_->getAlarms();
+        if (alarms.empty())
+            return "NO ALARMS";
+        if (alarmSel >= (int)alarms.size())
+            alarmSel = 0;
+        renderer_->drawMenuIndicator(alarmSel, alarms.size(), 0xFBC000);
+        const Alarm& a = alarms[alarmSel];
+        snprintf(buf, sizeof(buf), "%02d:%02d %s", a.hour, a.minute, a.enabled ? "ON" : "OFF");
+        return buf;
+    }
+    case AlarmEditMenu:
+        renderer_->drawMenuIndicator(alarmField, 3, 0x00FF00);
+        if (alarmField == 0)
+            snprintf(buf, sizeof(buf), "EN %s", alarmEdit.enabled ? "ON" : "OFF");
+        else if (alarmField == 1)
+            snprintf(buf, sizeof(buf), "H %02d", alarmEdit.hour);
+        else
+            snprintf(buf, sizeof(buf), "M %02d", alarmEdit.minute);
+        return buf;
     default:
         break;
     }
@@ -351,6 +389,22 @@ void MenuManager_::rightButton()
             audioConfig.soundVolume = 0;
         else
             audioConfig.soundVolume++;
+        break;
+    case AlarmsMenu:
+        if (alarm_)
+        {
+            auto alarms = alarm_->getAlarms();
+            if (!alarms.empty())
+                alarmSel = (alarmSel + 1) % (int)alarms.size();
+        }
+        break;
+    case AlarmEditMenu:
+        if (alarmField == 0)
+            alarmEdit.enabled = !alarmEdit.enabled;
+        else if (alarmField == 1)
+            alarmEdit.hour = (alarmEdit.hour + 1) % 24;
+        else
+            alarmEdit.minute = (alarmEdit.minute + 1) % 60;
         break;
     default:
         break;
@@ -415,6 +469,22 @@ void MenuManager_::leftButton()
         else
             audioConfig.soundVolume--;
         break;
+    case AlarmsMenu:
+        if (alarm_)
+        {
+            auto alarms = alarm_->getAlarms();
+            if (!alarms.empty())
+                alarmSel = (alarmSel == 0) ? (int)alarms.size() - 1 : alarmSel - 1;
+        }
+        break;
+    case AlarmEditMenu:
+        if (alarmField == 0)
+            alarmEdit.enabled = !alarmEdit.enabled;
+        else if (alarmField == 1)
+            alarmEdit.hour = (alarmEdit.hour == 0) ? 23 : alarmEdit.hour - 1;
+        else
+            alarmEdit.minute = (alarmEdit.minute == 0) ? 59 : alarmEdit.minute - 1;
+        break;
     default:
         break;
     }
@@ -448,6 +518,9 @@ void MenuManager_::selectButton()
             {
                 updater_->updateFirmware();
             }
+            break;
+        case AlarmsMenu:
+            alarmSel = 0;
             break;
         }
         break;
@@ -496,6 +569,23 @@ void MenuManager_::selectButton()
     case NightMenu:
         appConfig.nightMode = !appConfig.nightMode;
         break;
+    case AlarmsMenu:
+        if (alarm_)
+        {
+            auto alarms = alarm_->getAlarms();
+            if (!alarms.empty())
+            {
+                if (alarmSel >= (int)alarms.size())
+                    alarmSel = 0;
+                alarmEdit = alarms[alarmSel];
+                alarmField = 0;
+                currentState = AlarmEditMenu;
+            }
+        }
+        break;
+    case AlarmEditMenu:
+        alarmField = (alarmField + 1) % 3; // cycle enabled → hour → minute
+        break;
     default:
         break;
     }
@@ -503,6 +593,14 @@ void MenuManager_::selectButton()
 
 void MenuManager_::selectButtonLong()
 {
+    // While an alarm is ringing, a long-press turns it off instead of
+    // opening the menu (Select = off, Left/Right = snooze).
+    if (!inMenu && alarm_ && alarm_->isRinging())
+    {
+        alarm_->dismiss();
+        return;
+    }
+
     if (inMenu)
     {
         switch (currentState)
@@ -549,6 +647,11 @@ void MenuManager_::selectButtonLong()
             periphery_->setVolume(audioConfig.soundVolume);
             saveSettings();
             break;
+        case AlarmEditMenu:
+            if (alarm_)
+                alarm_->updateAlarm(alarmEdit); // persists
+            currentState = AlarmsMenu;          // back to the list, not MainMenu
+            return;
         default:
             break;
         }

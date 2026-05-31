@@ -120,6 +120,7 @@
   padding: 0.75rem;
   background: var(--bg-dark, #0f0f1a);
   border-radius: 6px;
+  flex-wrap: wrap;
 }
 
 .alarmTime {
@@ -257,4 +258,68 @@
   text-align: center;
   padding: 2rem;
   color: var(--text-secondary, #888);
+}
+
+/* Next-alarm chip in the section title */
+.nextAlarm {
+  margin-left: auto;
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--accent, #4a9eff);
+}
+
+/* Per-alarm editable inputs */
+.alarmTimeInput {
+  font-size: 1.2rem;
+  font-family: monospace;
+  padding: 0.25rem;
+  border: 1px solid var(--border, #333);
+  border-radius: 4px;
+  background: var(--input-bg, #1a1a2e);
+  color: var(--text-primary, #fff);
+}
+
+.alarmLabelInput,
+.alarmMelodyInput {
+  flex: 1;
+  min-width: 90px;
+  padding: 0.35rem;
+  border: 1px solid var(--border, #333);
+  border-radius: 4px;
+  background: var(--input-bg, #1a1a2e);
+  color: var(--text-primary, #fff);
+  font-size: 0.85rem;
+}
+
+.onceToggle,
+.snoozeField {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+  color: var(--text-secondary, #888);
+}
+
+.snoozeField input {
+  width: 48px;
+  padding: 0.25rem;
+  border: 1px solid var(--border, #333);
+  border-radius: 4px;
+  background: var(--input-bg, #1a1a2e);
+  color: var(--text-primary, #fff);
+}
+
+.previewBtn {
+  border: 1px solid var(--border, #333);
+  border-radius: 4px;
+  background: var(--input-bg, #1a1a2e);
+  color: var(--accent, #4a9eff);
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.9rem;
+}
+
+.previewBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }

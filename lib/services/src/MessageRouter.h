@@ -55,6 +55,9 @@ enum MqttCommandType
     CMD_MOODLIGHT,
     CMD_REBOOT,
     CMD_SOUND,
+    CMD_ALARM_SNOOZE,
+    CMD_ALARM_DISMISS,
+    CMD_ALARM_ADD,
     CMD_CUSTOM,
 };
 

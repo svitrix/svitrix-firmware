@@ -1,6 +1,6 @@
 # Interfaces — AI Reference
 
-15 pure virtual interfaces that decouple all module-to-module communication. This is the architectural backbone of Svitrix.
+17 pure virtual interfaces that decouple all module-to-module communication. This is the architectural backbone of Svitrix.
 
 ## Interface Map
 
@@ -19,8 +19,10 @@
 | **IPixelCanvas** | 6 | NeoMatrixCanvas | Effect system |
 | **ISound** | 3 | PeripheryManager_ | ServerManager, MQTTManager |
 | **IPower** | 2 | PowerManager_ | ServerManager, MQTTManager |
-| **ITimeProvider** | 1 | RealTimeProvider | NightModePolicy |
+| **ITimeProvider** | 1 | RealTimeProvider, RtcTimeProvider | NightModePolicy, AlarmManager |
 | **IUpdater** | 2 | UpdateManager_ | ServerManager, MQTTManager, MenuManager |
+| **IAlarmProvider** | 10 | AlarmManager_ | ServerManager, MQTTManager, MenuManager |
+| **IRtcProvider** | 4 | DS1307Provider | RtcTimeProvider |
 
 ## Injection Pattern
 

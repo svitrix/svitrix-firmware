@@ -136,6 +136,7 @@ void setup()
     AlarmManager.setSound(&PeripheryManager, &PeripheryManager);
     AlarmManager.setNotifier(&DisplayManager.getNotifier());
     AlarmManager.setTimeProvider(&rtcTimeProvider);
+    MenuManager.setAlarmProvider(&AlarmManager); // on-device alarm menu
 
     // Verify all interface wiring is complete (Phase 10)
     assert(UpdateManager.hasDisplay());
@@ -147,6 +148,7 @@ void setup()
     assert(MQTTManager.hasServices());
     assert(MenuManager.hasServices());
     assert(AlarmManager.hasServices());
+    assert(MenuManager.hasAlarm());
 
     ServerManager.loadSettings();
     DisplayManager.setup();

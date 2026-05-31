@@ -427,7 +427,8 @@ void DisplayManager_::leftButton()
     // Global: Snooze ringing alarm from any app
     if (AlarmManager.isRinging())
     {
-        AlarmManager.snooze();
+        const Alarm *ringing = AlarmManager.getRingingAlarm();
+        AlarmManager.snooze(ringing ? ringing->snoozeMinutes : 5);
         return;
     }
 
@@ -442,7 +443,8 @@ void DisplayManager_::rightButton()
     // Global: Snooze ringing alarm from any app
     if (AlarmManager.isRinging())
     {
-        AlarmManager.snooze();
+        const Alarm *ringing = AlarmManager.getRingingAlarm();
+        AlarmManager.snooze(ringing ? ringing->snoozeMinutes : 5);
         return;
     }
 

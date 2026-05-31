@@ -35,6 +35,9 @@ On-device settings menu rendered on the LED matrix. Adjusts display, time, audio
 | SOUND | `soundActive` (ON/OFF) |
 | VOLUME | `soundVolume` (0-30) |
 | UPDATE | Triggers OTA update |
+| ALARMS | List alarms → Select edits one (Select cycles enabled/hour/minute, Left/Right adjust, Select-long saves). Days/label/melody via web/MQTT. Needs `IAlarmProvider` injection. |
+
+When an alarm is **ringing** (handled in `DisplayManager`, not the menu): Left/Right = snooze (per-alarm `snoozeMinutes`), Select / Select-long = dismiss. A long-press while ringing dismisses instead of opening the menu.
 
 ## Navigation
 
