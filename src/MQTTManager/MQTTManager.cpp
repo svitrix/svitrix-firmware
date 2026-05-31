@@ -12,8 +12,8 @@
 
 // ── MQTT transport ──────────────────────────────────────────────────
 
-WiFiClient espClient;               ///< TCP socket for the MQTT broker connection
-HADevice device;                    ///< ArduinoHA device descriptor (MAC, name, version)
+WiFiClient espClient;                            ///< TCP socket for the MQTT broker connection
+HADevice device;                                 ///< ArduinoHA device descriptor (MAC, name, version)
 HAMqtt mqtt(espClient, device, HA_MAX_ENTITIES); ///< ArduinoHA MQTT client; capacity must exceed getTotalEntityCount()
 
 // ── HA entity pointers ──────────────────────────────────────────────
