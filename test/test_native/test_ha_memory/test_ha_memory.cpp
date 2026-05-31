@@ -48,7 +48,10 @@ struct DeviceRegistry
     void resetCount() { count = 0; }
 };
 
-// ── 25 global pointers (mirrors MQTTManager_internal.h extern ptrs) ─
+// ── Representative sample of global entity pointers ─────────────────
+// 25 is a sample size for exercising the delete/null/resetCount pattern of
+// destroyHAEntities() — not the real entity count (see getTotalEntityCount()
+// and the consistency tests below for that).
 
 static MockEntity *e[25];
 
@@ -223,11 +226,21 @@ void test_destroy_nullptr_pointers_is_safe(void)
 
 // ── Tests: entity count consistency ─────────────────────────────────
 
-void test_entity_count_matches_destroy_count(void)
+void test_entity_count_is_expected(void)
 {
-    // destroyHAEntities() deletes exactly 25 pointers.
-    // getTotalEntityCount(true) must return the same number.
-    TEST_ASSERT_EQUAL(25, getTotalEntityCount(true));
+    // Pin the current entity count. If you add/remove HA entities, update this
+    // number AND verify HA_MAX_ENTITIES still has room (see test below).
+    // Keep in sync with destroyHAEntities() in MQTTManager_Discovery.cpp.
+    TEST_ASSERT_EQUAL(59, getTotalEntityCount(true));
+}
+
+void test_entity_count_fits_client_capacity(void)
+{
+    // Regression guard for the HAMqtt overflow bug: ArduinoHA's addDeviceType()
+    // drops an entity when count + 1 >= HA_MAX_ENTITIES, so the usable slots are
+    // HA_MAX_ENTITIES - 1. Every entity must fit or it silently won't register.
+    // includeBattery=true is the worst case (ULANZI build).
+    TEST_ASSERT_LESS_OR_EQUAL(HA_MAX_ENTITIES - 1, getTotalEntityCount(true));
 }
 
 // ── Runner ──────────────────────────────────────────────────────────
@@ -254,7 +267,8 @@ int main(void)
     RUN_TEST(test_destroy_nullptr_pointers_is_safe);
 
     // consistency
-    RUN_TEST(test_entity_count_matches_destroy_count);
+    RUN_TEST(test_entity_count_is_expected);
+    RUN_TEST(test_entity_count_fits_client_capacity);
 
     return UNITY_END();
 }

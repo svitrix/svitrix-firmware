@@ -154,6 +154,13 @@ const char *getDeviceModel();
 
 /// Total number of HA entities the device registers.
 /// @param includeBattery true to count the battery sensor.
-/// @return 24 (without battery) or 25 (with battery).
+/// @return 58 (without battery) or 59 (with battery).
 size_t getTotalEntityCount(bool includeBattery);
+
+/// Capacity passed to the HAMqtt client (`HAMqtt mqtt(..., HA_MAX_ENTITIES)`).
+/// ArduinoHA's addDeviceType() drops entities once `count + 1 >= capacity`, so
+/// the usable slot count is HA_MAX_ENTITIES - 1. This MUST stay strictly above
+/// getTotalEntityCount(true) or the last-created entities silently fail to
+/// register with Home Assistant. Guarded by test/test_native/test_ha_memory.
+constexpr uint8_t HA_MAX_ENTITIES = 64;
 

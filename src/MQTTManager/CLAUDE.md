@@ -1,6 +1,6 @@
 # MQTTManager — AI Reference
 
-Central MQTT communication and Home Assistant integration singleton. Manages broker connection, message dispatch, HA auto-discovery (54 entities), and state synchronization.
+Central MQTT communication and Home Assistant integration singleton. Manages broker connection, message dispatch, HA auto-discovery (59 entities), and state synchronization.
 
 ## File Map
 
@@ -8,7 +8,7 @@ Central MQTT communication and Home Assistant integration singleton. Manages bro
 | ------------------------------ | --- | ----------------------------------------------------------------- |
 | `MQTTManager.h`                | 135 | Public API, singleton, INotifier + IButtonReporter                |
 | `MQTTManager.cpp`              | 289 | Instance, connection lifecycle, tick, publish methods             |
-| `MQTTManager_internal.h`       | 127 | Shared extern declarations for 25 HA entity pointers + ID buffers |
+| `MQTTManager_internal.h`       | 127 | Shared extern declarations for 59 HA entity pointers + ID buffers |
 | `MQTTManager_Messages.cpp`     | 188 | Incoming message reception + command dispatch                     |
 | `MQTTManager_Callbacks.cpp`    | 179 | 7 ArduinoHA callback handlers (HA → device)                       |
 | `MQTTManager_Discovery.cpp`    | 245 | HA entity creation + metadata                                     |
@@ -109,7 +109,7 @@ All callbacks call `saveSettings()` after modifying config structs.
 ## Connection Lifecycle
 
 ```
-setup() → destroyHAEntities() + resetDevicesCount() → create 36 HA entities (if discovery enabled) → register callbacks
+setup() → destroyHAEntities() + resetDevicesCount() → create 59 HA entities (if discovery enabled) → register callbacks
   └→ connect() → mqtt.begin(host, port, user, pass)
        └→ onMqttConnected()
             ├─ Subscribe to ~20 command topics (30ms delay each)
@@ -138,7 +138,7 @@ Reconnection handled internally by ArduinoHA. `onMqttConnected()` re-runs on eac
 
 - **Singleton** with setter injection + assert guards
 - **Split implementation** across 7 files by domain
-- **Extern globals** for 25+ HA entity pointers (MQTTManager_internal.h)
+- **Extern globals** for 59 HA entity pointers (MQTTManager_internal.h)
 - **Debounced button reporting** via static state tracking
 - **Deferred subscriptions** — topics queued before connect, applied in onMqttConnected()
 - **Config persistence** — all callback handlers call `saveSettings()` immediately
@@ -156,7 +156,7 @@ if (mqttConfig.host != "") { MQTTManager.setup(); MQTTManager.tick(); }
 
 ## Important Constraints
 
-- Max 26 entities (hardcoded in `HAMqtt` constructor)
+- Max `HA_MAX_ENTITIES` entities (64, set in `HADiscovery.h`, passed to the `HAMqtt` constructor). ArduinoHA drops entities once `count + 1 >= capacity`, so usable slots = 63. Must stay above `getTotalEntityCount(true)` (59) — guarded by `test_ha_memory`
 - `MQTT_MAX_PACKET_SIZE=8192` (platformio.ini build flag)
 - Firmware runs fully functional without MQTT if `mqttConfig.host == ""`
 - Entity pointers remain `nullptr` if HA discovery disabled

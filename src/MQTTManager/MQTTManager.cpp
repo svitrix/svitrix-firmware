@@ -14,7 +14,7 @@
 
 WiFiClient espClient;               ///< TCP socket for the MQTT broker connection
 HADevice device;                    ///< ArduinoHA device descriptor (MAC, name, version)
-HAMqtt mqtt(espClient, device, 32); ///< ArduinoHA MQTT client (max 32 HA entities)
+HAMqtt mqtt(espClient, device, HA_MAX_ENTITIES); ///< ArduinoHA MQTT client; capacity must exceed getTotalEntityCount()
 
 // ── HA entity pointers ──────────────────────────────────────────────
 // Allocated in setup() when HA discovery is enabled; remain nullptr otherwise.
