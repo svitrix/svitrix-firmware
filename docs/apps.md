@@ -111,6 +111,21 @@ Debido a diferencias en lotes de baterías y la degradación de la batería bara
 
 
 ---
+## Apps del Clima
+
+Las apps del clima también son **nativas** (integradas en el firmware), pero requieren configurar la **API del Clima** (una clave de [weatherapi.com](https://www.weatherapi.com/) + ubicación) en **Settings → API del Clima**. Una vez activas, comparten el mismo ciclo de rotación que las demás apps y se pueden reordenar libremente (ver *Orden de Apps* en el manual de la interfaz web).
+
+| App | Descripción |
+|-----|-------------|
+| **Temp. Exterior** | Temperatura exterior. Color configurable; respeta la escala Celsius/Fahrenheit. |
+| **Humedad Exterior** | Humedad relativa exterior (%). Color configurable. |
+| **Presión** | Presión atmosférica (mb/hPa). Color configurable. |
+| **Calidad del Aire (AQI)** | Índice de calidad del aire (US EPA, 1–6). Color automático según el nivel (verde → amarillo → naranja → rojo) o color fijo. |
+| **Índice UV** | Índice ultravioleta (0–11+). Color automático según el nivel o color fijo. |
+
+Cada app del clima tiene su propia **duración** configurable y se activa/desactiva de forma individual. El intervalo de actualización de los datos se ajusta en la sección de API del Clima.
+
+---
 # Apps Personalizadas
 
 Además de las apps nativas, SVITRIX está diseñado para integrarse perfectamente con tu ecosistema de hogar inteligente, se pueden crear aplicaciones adicionales usando peticiones MQTT o HTTP.

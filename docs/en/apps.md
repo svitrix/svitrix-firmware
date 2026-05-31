@@ -111,6 +111,21 @@ Due to differences in battery batches and the degradation of the cheap battery o
 
 
 ---
+## Weather Apps
+
+Weather apps are also **native** (built into the firmware), but require the **Weather API** to be configured (a [weatherapi.com](https://www.weatherapi.com/) key + location) under **Settings → Weather API**. Once enabled, they share the same rotation loop as the other apps and can be reordered freely (see *App Order* in the web interface manual).
+
+| App | Description |
+|-----|-------------|
+| **Outdoor Temp** | Outdoor temperature. Configurable color; respects the Celsius/Fahrenheit scale. |
+| **Outdoor Humidity** | Outdoor relative humidity (%). Configurable color. |
+| **Pressure** | Atmospheric pressure (mb/hPa). Configurable color. |
+| **Air Quality (AQI)** | Air quality index (US EPA, 1–6). Auto color by level (green → yellow → orange → red) or a fixed color. |
+| **UV Index** | Ultraviolet index (0–11+). Auto color by level or a fixed color. |
+
+Each weather app has its own configurable **duration** and can be toggled individually. The data refresh interval is set in the Weather API section.
+
+---
 # Custom Apps
 
 Besides the native apps, SVITRIX is designed to integrate seamlessly with your smart home ecosystem, additional applications can be created using MQTT or HTTP requests.
