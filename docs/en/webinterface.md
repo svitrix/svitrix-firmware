@@ -114,6 +114,8 @@ Do not lose your auth credentials — otherwise you will need to factory reset t
 
 ### Apps
 
+**App Order** — A drag-and-drop list at the top of the Apps page controls the order in which **all** apps in the loop are shown: the **native** ones (the originals — Time, Date, Temperature, Humidity, Battery — plus the **weather** apps) and your **custom** apps. Drag any row to reorder; the change is saved instantly and **persists across reboots**.
+
 **Native Apps** — Toggle and configure:
 - **Time** — digital clock
 - **Date** — date display

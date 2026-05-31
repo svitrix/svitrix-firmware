@@ -310,6 +310,12 @@ En **Settings > Apps** puedes configurar colores para cada app nativa:
 
 - **Time, Date, Temperature, Humidity, Battery:** Selector de color directo
 
+### Orden de Apps
+
+Las apps **nativas** son las **originales** (Hora, Fecha, Temperatura, Humedad, Batería) **más las del clima** (Temp. exterior, Humedad exterior, Presión, Calidad del aire, Índice UV). Todas comparten el mismo ciclo de rotación junto con las apps **personalizadas** (MQTT/HTTP).
+
+En la página de **Apps** hay una lista con **arrastrar y soltar** (drag-and-drop) que controla el orden en que se muestran **todas** las apps del ciclo. Arrastra cualquier app para reordenarla; el orden se guarda al instante y **se mantiene tras reiniciar** el dispositivo.
+
 ---
 
 ## 9. Alarmas

@@ -100,6 +100,8 @@ Durante el tiempo programado, la pantalla reduce su brillo a la configuración e
 
 ### Apps
 
+**Orden de Apps** — En la parte superior de la página de Apps hay una lista con arrastrar y soltar (drag-and-drop) que controla el orden en que se muestran **todas** las apps del ciclo: las **nativas** (las originales —Hora, Fecha, Temperatura, Humedad, Batería— más las del **clima**) y las **personalizadas**. Arrastra cualquier fila para reordenarla; el cambio se guarda al instante y **se mantiene tras reiniciar** el dispositivo.
+
 Activa/desactiva apps integradas. Cada app tiene opciones de personalización:
 
 **Apps básicas:**
