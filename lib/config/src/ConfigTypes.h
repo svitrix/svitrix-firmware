@@ -138,6 +138,7 @@ struct AppConfig {
     uint8_t nightBrightness;
     uint32_t nightColor;      // default: red (0xFF0000)
     bool nightBlockTransition; // disable auto-transition in night mode
+    String appOrder;          // persisted JSON array of app names (unified app loop order)
 };
 
 struct AudioConfig {

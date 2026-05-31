@@ -50,6 +50,9 @@ interface SettingsContextValue {
   saveWeatherConfig: (successMsg?: string) => Promise<void>;
   reload: () => void;
   apiAvailable: boolean;
+  // Bumped after a display/weather save so the unified app-order list can re-fetch
+  // the live loop (the device runs loadNativeApps() before responding to the save).
+  appsVersion: number;
 }
 
 const SettingsContext = createContext<SettingsContextValue>(null!);
@@ -63,6 +66,7 @@ export function SettingsProvider({ children }: { children: ComponentChildren }) 
   const [effects, setEffects] = useState<EffectInfo[]>([]);
   const [apiAvailable, setApiAvailable] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [appsVersion, setAppsVersion] = useState(0);
 
   const load = useCallback(() => {
     setLoading(true);
@@ -94,6 +98,7 @@ export function SettingsProvider({ children }: { children: ComponentChildren }) 
     const t = getT();
     try {
       await saveSettings(prepareSettingsForSave(fields) as Partial<Settings>);
+      setAppsVersion((v) => v + 1);
       if (successMsg !== "") toast(successMsg || t.ok);
     } catch {
       toast(t.errorSaving);
@@ -116,6 +121,7 @@ export function SettingsProvider({ children }: { children: ComponentChildren }) 
     const t = getT();
     try {
       await apiSaveWeatherConfig(weatherConfig);
+      setAppsVersion((v) => v + 1);
       if (successMsg !== "") toast(successMsg || t.ok);
     } catch {
       toast(t.errorSaving);
@@ -140,6 +146,7 @@ export function SettingsProvider({ children }: { children: ComponentChildren }) 
         saveWeatherConfig: handleSaveWeatherConfig,
         reload: load,
         apiAvailable,
+        appsVersion,
       }}
     >
       {children}

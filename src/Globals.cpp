@@ -304,6 +304,7 @@ void loadSettings()
     appConfig.nightBrightness = Settings.getUChar("NBRI", 5);
     appConfig.nightColor = Settings.getUInt("NCOL", 0xFF0000);
     appConfig.nightBlockTransition = Settings.getBool("NBTRANS", true);
+    appConfig.appOrder = Settings.getString("APPORDER", "");
 #ifdef ULANZI
     appConfig.showBat = Settings.getBool("BAT", true);
 #endif
@@ -401,6 +402,7 @@ void saveSettings()
     Settings.putUChar("NBRI", appConfig.nightBrightness);
     Settings.putUInt("NCOL", appConfig.nightColor);
     Settings.putBool("NBTRANS", appConfig.nightBlockTransition);
+    Settings.putString("APPORDER", appConfig.appOrder);
 #ifdef ULANZI
     Settings.putBool("BAT", appConfig.showBat);
 #endif
@@ -452,7 +454,7 @@ DisplayConfig displayConfig = {0, 42, false, false, false, true, -1};
 BrightnessConfig brightnessConfig = {120, 0, true, 2, 160, 3.0, 1.0, false};
 ColorConfig colorConfig = {0xFFFFFF, 0, 0, 0, 0, 0, 0xFFFFFF, 0x666666, 0xFF0000, 0x000000, 0xFFFFFF};
 TimeConfig timeConfig = {"%H:%M:%S", "%d.%m.%y", 1, false, "time.cloudflare.com", "CST6", false, 0};
-AppConfig appConfig = {true, true, true, true, true, true, false, false, 1, 400, 7000, 100, 7, 7, 7, 7, 7, IconLayout::Left, false, false, 1260, 360, 5, 0xFF0000, true};
+AppConfig appConfig = {true, true, true, true, true, true, false, false, 1, 400, 7000, 100, 7, 7, 7, 7, 7, IconLayout::Left, false, false, 1260, 360, 5, 0xFF0000, true, ""};
 AudioConfig audioConfig = {false, 30, ""};
 SystemConfig systemConfig = {true, 15, 80, "", false, 10000, false, false, "", "", false, false, "", ""};
 WeatherConfig weatherConfig = {"", WEATHER_LOC_CITY, "", 0.0, 0.0, "", 30, true, false, false, false, false, false, 0, 0, 0, 0, 7, 7, 7, 7};
@@ -512,6 +514,7 @@ String exportSettings()
     doc["NBRI"] = appConfig.nightBrightness;
     doc["NCOL"] = appConfig.nightColor;
     doc["NBTRANS"] = appConfig.nightBlockTransition;
+    doc["APPORDER"] = appConfig.appOrder;
 
     // Time config
     doc["TMODE"] = timeConfig.timeMode;
@@ -669,6 +672,8 @@ bool importSettings(const char *json)
         appConfig.nightColor = doc["NCOL"].as<uint32_t>();
     if (doc.containsKey("NBTRANS"))
         appConfig.nightBlockTransition = doc["NBTRANS"];
+    if (doc.containsKey("APPORDER"))
+        appConfig.appOrder = doc["APPORDER"].as<String>();
 
     // Time config
     if (doc.containsKey("TMODE"))

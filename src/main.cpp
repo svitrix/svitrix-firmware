@@ -157,8 +157,10 @@ void setup()
     if (ServerManager.isConnected)
     {
         // timer_init();
-        DisplayManager.loadNativeApps();
+        // Custom apps first so loadNativeApps() can merge them into the
+        // saved appOrder (single source of truth for the unified app loop).
         DisplayManager.loadCustomApps();
+        DisplayManager.loadNativeApps();
         UpdateManager.setup();
         DisplayManager.startArtnet();
         stopBootAnimation();

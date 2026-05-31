@@ -1,6 +1,7 @@
 export { StatsBar } from "./StatsBar";
 export { DisplaySection } from "./DisplaySection";
 export { AppsSection } from "./AppsSection";
+export { AppOrderSection } from "./AppOrderSection";
 export { TimeDateSection } from "./TimeDateSection";
 export { SoundSection } from "./SoundSection";
 export { WifiSection } from "./WifiSection";

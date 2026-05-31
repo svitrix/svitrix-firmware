@@ -198,6 +198,10 @@ export const translations = {
       blockNavigation: "Bloquear navegación",
       saveTransitions: "Guardar Transiciones",
       transitionsSaved: "¡Transiciones guardadas!",
+      appOrder: "Orden de apps",
+      appOrderHint: "Arrastra para reordenar cómo se muestran las apps en el reloj.",
+      appOrderSaved: "¡Orden guardado!",
+      appOrderEmpty: "No hay apps activas. Activa alguna en las secciones de abajo.",
     },
 
     // Time/Date page
@@ -602,6 +606,10 @@ export const translations = {
       blockNavigation: "Block Navigation",
       saveTransitions: "Save Transitions",
       transitionsSaved: "Transitions saved!",
+      appOrder: "App Order",
+      appOrderHint: "Drag to reorder how apps are shown on the clock.",
+      appOrderSaved: "Order saved!",
+      appOrderEmpty: "No active apps. Enable some in the sections below.",
     },
 
     // Time/Date page

@@ -144,6 +144,7 @@ Shared configuration structs consumed by all modules. Single header, no logic, n
 | `nightBrightness` | uint8_t | `5` | Brightness during night mode |
 | `nightColor` | uint32_t | `0xFF0000` | Text color during night mode (red) |
 | `nightBlockTransition` | bool | `true` | Disable auto-transition in night mode |
+| `appOrder` | String | `""` | Persisted JSON array of app names (unified app loop order). NVS key `APPORDER` |
 
 ### AudioConfig
 | Field | Type | Default | Notes |

@@ -21,6 +21,24 @@
 #include "Functions.h"
 #include "base64.hpp"
 #include "AppRegistry.h"
+#include "AppOrderUtils.h"
+
+/// Parses appConfig.appOrder (a JSON array of app names) into a vector.
+/// Returns an empty vector for empty/invalid input.
+static std::vector<String> parseAppOrder(const String& json)
+{
+    std::vector<String> out;
+    if (json.isEmpty())
+        return out;
+
+    StaticJsonDocument<1024> doc;
+    if (deserializeJson(doc, json))
+        return out;
+
+    for (JsonVariant v : doc.as<JsonArray>())
+        out.push_back(v.as<String>());
+    return out;
+}
 
 /// Creates a lambda callback for a new custom app and inserts it into the Apps vector.
 /// @param name  Unique app identifier (used as key in customApps map).
@@ -122,6 +140,7 @@ void removeCustomAppFromApps(const String& name, bool setApps)
     DisplayManager.setAutoTransition(true);
     deleteCustomAppFile(name);
     DisplayManager.setAppTime(appConfig.timePerApp);
+    DisplayManager.persistAppOrder();
 }
 
 /// Parses a JSON array of text fragments [{t:"hello", c:"#FF0000"}, ...] into parallel
@@ -330,6 +349,9 @@ bool DisplayManager_::generateCustomPage(const String& name, JsonObject doc, boo
 {
     // pushCustomApp must be called BEFORE customApps[name] — it checks
     // customApps.count(name)==0 to decide whether to allocate a callback slot.
+    // Detect a brand-new app here (same condition) so we only persist the app
+    // order when the loop actually changes, not on every content update.
+    bool isNewApp = (customApps.count(name) == 0);
     int pos = doc.containsKey("pos") ? doc["pos"].as<uint8_t>() : -1;
     pushCustomApp(name, pos - 1);
 
@@ -446,6 +468,11 @@ bool DisplayManager_::generateCustomPage(const String& name, JsonObject doc, boo
     customApp.lastUpdate = millis();
     customApp.lifeTimeEnd = false;
 
+    // A new custom app changed the loop — remember its place. preventSave is
+    // true during boot (loadCustomApps), where loadNativeApps() merges instead.
+    if (isNewApp && !preventSave)
+        persistAppOrder();
+
     return true;
 }
 
@@ -490,57 +517,69 @@ void DisplayManager_::loadCustomApps()
     root.close();
 }
 
-/// Registers or removes built-in apps (Time, Date, Temperature, Humidity, Battery)
-/// based on current appConfig show flags. Called after settings change.
+/// Rebuilds the unified app loop (native + weather + custom) from the saved
+/// order in appConfig.appOrder. The enabled native/weather apps plus every
+/// loaded custom app form the "desired" set; orderApps() positions them to
+/// follow the saved order and appends any not-yet-ordered apps at the end.
+/// This is the single source of truth for app order — it replaces the old
+/// fixed-position insertion. Called at boot (after loadCustomApps) and after
+/// any settings change that toggles an app.
 void DisplayManager_::loadNativeApps()
 {
-    // Define a helper function to check and update an app
-    auto updateApp = [&](const String& name, AppCallback callback, bool show, size_t position)
+    // 1. Build the desired set in default order: enabled native/weather apps,
+    //    then every loaded custom app (callbacks taken from the live vector).
+    std::vector<std::pair<String, AppCallback>> desired;
+
+    auto addNative = [&](const String& name, AppCallback callback, bool show)
     {
-        auto it = std::find_if(Apps.begin(), Apps.end(), [&](const std::pair<String, AppCallback>& app)
-                               { return app.first == name; });
-        if (it != Apps.end())
-        {
-            if (!show)
-            {
-                Apps.erase(it);
-            }
-        }
-        else
-        {
-            if (show)
-            {
-                if (position >= Apps.size())
-                {
-                    Apps.push_back(std::make_pair(name, callback));
-                }
-                else
-                {
-                    Apps.insert(Apps.begin() + position, std::make_pair(name, callback));
-                }
-            }
-        }
+        if (show)
+            desired.push_back(std::make_pair(name, callback));
     };
 
-    updateApp("Time", TimeApp, appConfig.showTime, 0);
-    updateApp("Date", DateApp, appConfig.showDate, 1);
-
+    addNative("Time", TimeApp, appConfig.showTime);
+    addNative("Date", DateApp, appConfig.showDate);
     if (sensorConfig.sensorReading)
     {
-        updateApp("Temperature", TempApp, appConfig.showTemp, 2);
-        updateApp("Humidity", HumApp, appConfig.showHum, 3);
+        addNative("Temperature", TempApp, appConfig.showTemp);
+        addNative("Humidity", HumApp, appConfig.showHum);
     }
 #ifdef ULANZI
-    updateApp("Battery", BatApp, appConfig.showBat, 4);
+    addNative("Battery", BatApp, appConfig.showBat);
 #endif
+    addNative("OutdoorTemp", OutdoorTempApp, weatherConfig.showOutdoorTemp);
+    addNative("OutdoorHum", OutdoorHumApp, weatherConfig.showOutdoorHumidity);
+    addNative("Pressure", PressureApp, weatherConfig.showPressure);
+    addNative("AirQuality", AirQualityApp, weatherConfig.showAirQuality);
+    addNative("UV", UVApp, weatherConfig.showUV);
 
-    // Weather apps (from WeatherAPI)
-    updateApp("OutdoorTemp", OutdoorTempApp, weatherConfig.showOutdoorTemp, 5);
-    updateApp("OutdoorHum", OutdoorHumApp, weatherConfig.showOutdoorHumidity, 6);
-    updateApp("Pressure", PressureApp, weatherConfig.showPressure, 7);
-    updateApp("AirQuality", AirQualityApp, weatherConfig.showAirQuality, 8);
-    updateApp("UV", UVApp, weatherConfig.showUV, 9);
+    // Custom apps keep their existing lambda callbacks from the live vector.
+    for (const auto& app : Apps)
+    {
+        if (customApps.count(app.first) > 0)
+            desired.push_back(app);
+    }
 
+    // 2. Order the desired names to follow the persisted appOrder.
+    std::vector<String> desiredNames;
+    desiredNames.reserve(desired.size());
+    for (const auto& app : desired)
+        desiredNames.push_back(app.first);
+
+    std::vector<String> ordered = orderApps(parseAppOrder(appConfig.appOrder), desiredNames);
+
+    // 3. Rebuild the live vector in that order, mapping each name back to its callback.
+    std::vector<std::pair<String, AppCallback>> newApps;
+    newApps.reserve(ordered.size());
+    for (const String& name : ordered)
+    {
+        auto it = std::find_if(desired.begin(), desired.end(),
+                               [&name](const std::pair<String, AppCallback>& app)
+                               { return app.first == name; });
+        if (it != desired.end())
+            newApps.push_back(*it);
+    }
+
+    Apps = newApps;
     ui->setApps(Apps);
     setAutoTransition(true);
 }
@@ -658,9 +697,9 @@ void DisplayManager_::updateAppVector(const char *json)
         }
     }
 
-    // Set the updated apps vector in the UI and save settings
+    // Set the updated apps vector in the UI and persist the new order
     ui->setApps(Apps);
-    saveSettings();
+    persistAppOrder(); // serializes Apps order into appConfig.appOrder + saveSettings()
     sendAppLoop();
     setAutoTransition(appConfig.autoTransition);
     doc.clear();
@@ -681,6 +720,22 @@ void DisplayManager_::sendAppLoop()
 {
     if (notifier_)
         notifier_->publish("stats/loop", getAppsAsJson().c_str());
+}
+
+/// Serializes the current app loop order into appConfig.appOrder (a JSON array
+/// of names) and persists it to NVS. The single writer of appOrder — called
+/// after a reorder, an app-vector update, or a custom-app add/remove. Uses
+/// ArduinoJson so user-supplied custom app names are correctly escaped.
+void DisplayManager_::persistAppOrder()
+{
+    DynamicJsonDocument doc(2048);
+    JsonArray arr = doc.to<JsonArray>();
+    for (const auto& app : Apps)
+        arr.add(app.first);
+    String out;
+    serializeJson(doc, out);
+    appConfig.appOrder = out;
+    saveSettings();
 }
 
 /// Updates the text color for all custom apps that don't have a custom color set.
@@ -718,7 +773,9 @@ String DisplayManager_::getAppsWithIcon()
 }
 
 /// Reorders the app vector to match the given JSON array of app names.
-/// Apps not in the array are dropped. UI state is force-reset after reorder.
+/// Apps present in the live vector but missing from the array are appended at
+/// the end (defensive — never silently dropped). The new order is persisted to
+/// appConfig.appOrder and UI state is force-reset.
 void DisplayManager_::reorderApps(const String& jsonString)
 {
     StaticJsonDocument<2048> jsonDocument;
@@ -730,8 +787,19 @@ void DisplayManager_::reorderApps(const String& jsonString)
 
     JsonArray jsonArray = jsonDocument.as<JsonArray>();
     std::vector<std::pair<String, AppCallback>> reorderedApps;
+
+    auto alreadyAdded = [&reorderedApps](const String& name)
+    {
+        return std::find_if(reorderedApps.begin(), reorderedApps.end(),
+                            [&name](const std::pair<String, AppCallback>& app)
+                            { return app.first == name; }) != reorderedApps.end();
+    };
+
+    // Apps named in the request, in requested order.
     for (const String& appName : jsonArray)
     {
+        if (alreadyAdded(appName))
+            continue;
         auto it = std::find_if(Apps.begin(), Apps.end(),
                                [&appName](const std::pair<String, AppCallback>& app)
                                { return app.first == appName; });
@@ -740,7 +808,16 @@ void DisplayManager_::reorderApps(const String& jsonString)
             reorderedApps.push_back(*it);
         }
     }
+
+    // Any live apps not mentioned in the request keep their slot at the end.
+    for (const auto& app : Apps)
+    {
+        if (!alreadyAdded(app.first))
+            reorderedApps.push_back(app);
+    }
+
     Apps = reorderedApps;
     ui->setApps(Apps);
     ui->forceResetState();
+    persistAppOrder();
 }

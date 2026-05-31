@@ -184,3 +184,60 @@
   gap: 4px 12px;
   font-size: 13px;
 }
+
+/* Unified app-order drag-and-drop list */
+.orderList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.orderItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: grab;
+  user-select: none;
+}
+
+.orderItem:active {
+  cursor: grabbing;
+}
+
+.orderItemDragging {
+  opacity: 0.4;
+}
+
+.orderItemOver {
+  border-color: var(--accent);
+}
+
+.dragHandle {
+  color: var(--text-dim);
+  font-size: 16px;
+  line-height: 1;
+}
+
+.orderIndex {
+  color: var(--text-dim);
+  font-size: 12px;
+  min-width: 18px;
+  text-align: right;
+}
+
+.orderName {
+  flex: 1;
+  font-size: 14px;
+}
+
+.orderCustomBadge {
+  font-size: 11px;
+  color: var(--accent);
+  background: rgba(240, 184, 0, 0.15);
+  padding: 2px 6px;
+  border-radius: 4px;
+}

@@ -1,6 +1,6 @@
 # Services Library — AI Reference
 
-15 pure-logic utility libraries extracted from managers for testability. All stateless (except TextUtils), no hardware dependencies, 100% test coverage.
+16 pure-logic utility libraries extracted from managers for testability. All stateless (except TextUtils), no hardware dependencies, 100% test coverage.
 
 ## Service Map
 
@@ -15,6 +15,7 @@
 | **SensorCalc** | Battery %, brightness, LDR inversion, calibration | Yes | `calculateBatteryPercent()`, `calculateBrightness()`, `applySensorOffset()` |
 | **StatsBuilder** | Device telemetry → JSON string (no ArduinoJson) | Yes | `buildStatsJson(StatsData&)` |
 | **AppRegistry** | Native app names, app list serialization | Yes | `getNativeAppNames()`, `isNativeApp()`, `serializeAppList()` |
+| **AppOrderUtils** | Merge persisted app order with available apps (unified app loop) | Yes | `orderApps(savedOrder, desired)` |
 | **MessageRouter** | MQTT topic → command enum routing | Yes | `routeTopic()`, `extractCustomTopicName()`, `isJsonPayload()` |
 | **HADiscovery** | HA entity descriptors and ID generation | Yes | `get*Descriptors()`, `buildEntityId()`, `getTotalEntityCount()` |
 | **OverlayMapping** | Weather overlay enum ↔ string | Yes | `overlayToString()`, `overlayFromString()` |
@@ -34,6 +35,7 @@ ColorUtils (standalone, depends only on FastLED CRGB)
 TimeEffects (standalone, uses cmath sin)
 StatsBuilder (standalone, manual String building)
 AppRegistry (standalone)
+AppOrderUtils (standalone)
 MessageRouter (standalone)
 HADiscovery (standalone)
 OverlayMapping (standalone)
@@ -72,6 +74,7 @@ Every service has dedicated tests in `test/test_native/`:
 | SensorCalc | `test_sensor_calc/` |
 | StatsBuilder | `test_stats_builder/` |
 | AppRegistry | `test_app_registry/` |
+| AppOrderUtils | `test_apporder/` |
 | MessageRouter | `test_message_router/` |
 | HADiscovery | `test_ha_discovery/` |
 | OverlayMapping | `test_overlay/` |

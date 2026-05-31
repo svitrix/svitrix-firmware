@@ -105,6 +105,7 @@ class DisplayManager_ : public IButtonHandler, public IMatrixHost, public IDispl
     bool generateCustomPage(const String& name, JsonObject doc, bool preventSave);
     void loadCustomApps();
     void loadNativeApps() override;
+    void persistAppOrder(); // serialize current Apps order into appConfig.appOrder + save NVS
     bool switchToApp(const char *json) override;
     void updateAppVector(const char *json) override;
     void reorderApps(const String& jsonString) override;

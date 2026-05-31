@@ -76,11 +76,14 @@ Current implementors: `NightModePolicy` (src/policies/).
 
 ### Custom Apps
 - `parseCustomPage(name, json, preventSave)` — create/update/delete custom app
-- `loadCustomApps()` — load from `/CUSTOMAPPS/*.json` at boot
-- `loadNativeApps()` — register Time/Date/Temp/Hum/Bat based on config
-- `updateAppVector(json)` — add/remove/reorder apps
-- `reorderApps(json)` — reorder app vector
+- `loadCustomApps()` — load from `/CUSTOMAPPS/*.json` at boot (runs **before** `loadNativeApps()` in `main.cpp` so the merge can position custom apps)
+- `loadNativeApps()` — rebuild the **unified app loop** (native + weather + custom) following the persisted order. Builds the enabled/available set, then `orderApps(parseAppOrder(appConfig.appOrder), desired)` (from `lib/services/AppOrderUtils`) positions them and appends new apps at the end. Replaces the old fixed-position insertion.
+- `persistAppOrder()` — the single writer of `appConfig.appOrder`: serializes the live `Apps` order to a JSON array and `saveSettings()`. Called from `reorderApps`, `updateAppVector`, and custom-app add/remove (skipped during boot via `preventSave`).
+- `updateAppVector(json)` — add/remove/reposition apps; persists order
+- `reorderApps(json)` — reorder to match a JSON name array; unlisted live apps are appended (not dropped), then persisted
 - `switchToApp(json)` — switch to app by name
+
+> **App order = single source of truth.** `appConfig.appOrder` (NVS key `APPORDER`) holds the canonical order as a JSON array of names. Disabling an app removes it from the live loop but its name lingers in `appOrder` until the next persist, so re-enabling often restores its slot.
 
 ### Settings (DisplayManager_Settings.cpp)
 - `getSettings()` → JSON with 50+ config fields
