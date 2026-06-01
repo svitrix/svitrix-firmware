@@ -595,110 +595,110 @@ void MQTTManager_::setup()
         timeDurationNum->onCommand(onDisplayTimingCommand);
         timeDurationNum->setState(static_cast<float>(appConfig.timeDuration));
 
-        // Date duration (1-60 seconds)
+        // Date duration (1-300 seconds)
         buildEntityId(timingDescs[3].idTemplate, macStr, dateDurID, sizeof(dateDurID));
         dateDurationNum = new HANumber(dateDurID);
         dateDurationNum->setIcon(timingDescs[3].icon);
         dateDurationNum->setName(timingDescs[3].name);
         dateDurationNum->setUnitOfMeasurement(timingDescs[3].unit);
         dateDurationNum->setMin(1);
-        dateDurationNum->setMax(60);
+        dateDurationNum->setMax(300);
         dateDurationNum->setStep(1);
         dateDurationNum->onCommand(onDisplayTimingCommand);
         dateDurationNum->setState(static_cast<float>(appConfig.dateDuration));
 
-        // Temperature duration (1-60 seconds)
+        // Temperature duration (1-300 seconds)
         buildEntityId(timingDescs[4].idTemplate, macStr, tempDurID, sizeof(tempDurID));
         tempDurationNum = new HANumber(tempDurID);
         tempDurationNum->setIcon(timingDescs[4].icon);
         tempDurationNum->setName(timingDescs[4].name);
         tempDurationNum->setUnitOfMeasurement(timingDescs[4].unit);
         tempDurationNum->setMin(1);
-        tempDurationNum->setMax(60);
+        tempDurationNum->setMax(300);
         tempDurationNum->setStep(1);
         tempDurationNum->onCommand(onDisplayTimingCommand);
         tempDurationNum->setState(static_cast<float>(appConfig.tempDuration));
 
-        // Humidity duration (1-60 seconds)
+        // Humidity duration (1-300 seconds)
         buildEntityId(timingDescs[5].idTemplate, macStr, humDurID, sizeof(humDurID));
         humDurationNum = new HANumber(humDurID);
         humDurationNum->setIcon(timingDescs[5].icon);
         humDurationNum->setName(timingDescs[5].name);
         humDurationNum->setUnitOfMeasurement(timingDescs[5].unit);
         humDurationNum->setMin(1);
-        humDurationNum->setMax(60);
+        humDurationNum->setMax(300);
         humDurationNum->setStep(1);
         humDurationNum->onCommand(onDisplayTimingCommand);
         humDurationNum->setState(static_cast<float>(appConfig.humDuration));
 
-        // Battery duration (1-60 seconds)
+        // Battery duration (1-300 seconds)
         buildEntityId(timingDescs[6].idTemplate, macStr, batDurID, sizeof(batDurID));
         batDurationNum = new HANumber(batDurID);
         batDurationNum->setIcon(timingDescs[6].icon);
         batDurationNum->setName(timingDescs[6].name);
         batDurationNum->setUnitOfMeasurement(timingDescs[6].unit);
         batDurationNum->setMin(1);
-        batDurationNum->setMax(60);
+        batDurationNum->setMax(300);
         batDurationNum->setStep(1);
         batDurationNum->onCommand(onDisplayTimingCommand);
         batDurationNum->setState(static_cast<float>(appConfig.batDuration));
 
-        // Outdoor temp duration (1-60 seconds)
+        // Outdoor temp duration (1-300 seconds)
         buildEntityId(timingDescs[7].idTemplate, macStr, outTempDurID, sizeof(outTempDurID));
         outTempDurationNum = new HANumber(outTempDurID);
         outTempDurationNum->setIcon(timingDescs[7].icon);
         outTempDurationNum->setName(timingDescs[7].name);
         outTempDurationNum->setUnitOfMeasurement(timingDescs[7].unit);
         outTempDurationNum->setMin(1);
-        outTempDurationNum->setMax(60);
+        outTempDurationNum->setMax(300);
         outTempDurationNum->setStep(1);
         outTempDurationNum->onCommand(onDisplayTimingCommand);
         outTempDurationNum->setState(static_cast<float>(weatherConfig.outdoorTempDuration));
 
-        // Outdoor humidity duration (1-60 seconds)
+        // Outdoor humidity duration (1-300 seconds)
         buildEntityId(timingDescs[8].idTemplate, macStr, outHumDurID, sizeof(outHumDurID));
         outHumDurationNum = new HANumber(outHumDurID);
         outHumDurationNum->setIcon(timingDescs[8].icon);
         outHumDurationNum->setName(timingDescs[8].name);
         outHumDurationNum->setUnitOfMeasurement(timingDescs[8].unit);
         outHumDurationNum->setMin(1);
-        outHumDurationNum->setMax(60);
+        outHumDurationNum->setMax(300);
         outHumDurationNum->setStep(1);
         outHumDurationNum->onCommand(onDisplayTimingCommand);
         outHumDurationNum->setState(static_cast<float>(weatherConfig.outdoorHumDuration));
 
-        // Pressure duration (1-60 seconds)
+        // Pressure duration (1-300 seconds)
         buildEntityId(timingDescs[9].idTemplate, macStr, pressDurID, sizeof(pressDurID));
         pressureDurationNum = new HANumber(pressDurID);
         pressureDurationNum->setIcon(timingDescs[9].icon);
         pressureDurationNum->setName(timingDescs[9].name);
         pressureDurationNum->setUnitOfMeasurement(timingDescs[9].unit);
         pressureDurationNum->setMin(1);
-        pressureDurationNum->setMax(60);
+        pressureDurationNum->setMax(300);
         pressureDurationNum->setStep(1);
         pressureDurationNum->onCommand(onDisplayTimingCommand);
         pressureDurationNum->setState(static_cast<float>(weatherConfig.pressureDuration));
 
-        // Air quality duration (1-60 seconds)
+        // Air quality duration (1-300 seconds)
         buildEntityId(timingDescs[10].idTemplate, macStr, aqiDurID, sizeof(aqiDurID));
         aqiDurationNum = new HANumber(aqiDurID);
         aqiDurationNum->setIcon(timingDescs[10].icon);
         aqiDurationNum->setName(timingDescs[10].name);
         aqiDurationNum->setUnitOfMeasurement(timingDescs[10].unit);
         aqiDurationNum->setMin(1);
-        aqiDurationNum->setMax(60);
+        aqiDurationNum->setMax(300);
         aqiDurationNum->setStep(1);
         aqiDurationNum->onCommand(onDisplayTimingCommand);
         aqiDurationNum->setState(static_cast<float>(weatherConfig.aqiDuration));
 
-        // UV index duration (1-60 seconds)
+        // UV index duration (1-300 seconds)
         buildEntityId(timingDescs[11].idTemplate, macStr, uvDurID, sizeof(uvDurID));
         uvDurationNum = new HANumber(uvDurID);
         uvDurationNum->setIcon(timingDescs[11].icon);
         uvDurationNum->setName(timingDescs[11].name);
         uvDurationNum->setUnitOfMeasurement(timingDescs[11].unit);
         uvDurationNum->setMin(1);
-        uvDurationNum->setMax(60);
+        uvDurationNum->setMax(300);
         uvDurationNum->setStep(1);
         uvDurationNum->onCommand(onDisplayTimingCommand);
         uvDurationNum->setState(static_cast<float>(weatherConfig.uvDuration));
