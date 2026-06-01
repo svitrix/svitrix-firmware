@@ -134,27 +134,45 @@ static const char DATEDUR_ICON[] = "mdi:calendar";
 static const char DATEDUR_NAME[] = "Date duration";
 static const char DATEDUR_UNIT[] = "s";
 
-// ── Native app colors ──────────────────────────────────────────────
+static const char TEMPDUR_ID[] = "%s_temp_duration";
+static const char TEMPDUR_ICON[] = "mdi:thermometer";
+static const char TEMPDUR_NAME[] = "Temperature duration";
+static const char TEMPDUR_UNIT[] = "s";
 
-static const char TIMECOL_ID[] = "%s_time_color";
-static const char TIMECOL_ICON[] = "mdi:clock";
-static const char TIMECOL_NAME[] = "Clock color";
+static const char HUMDUR_ID[] = "%s_hum_duration";
+static const char HUMDUR_ICON[] = "mdi:water-percent";
+static const char HUMDUR_NAME[] = "Humidity duration";
+static const char HUMDUR_UNIT[] = "s";
 
-static const char DATECOL_ID[] = "%s_date_color";
-static const char DATECOL_ICON[] = "mdi:calendar";
-static const char DATECOL_NAME[] = "Date color";
+static const char BATDUR_ID[] = "%s_bat_duration";
+static const char BATDUR_ICON[] = "mdi:battery";
+static const char BATDUR_NAME[] = "Battery duration";
+static const char BATDUR_UNIT[] = "s";
 
-static const char TEMPCOL_ID[] = "%s_temp_color";
-static const char TEMPCOL_ICON[] = "mdi:thermometer";
-static const char TEMPCOL_NAME[] = "Temperature color";
+static const char OUTTEMPDUR_ID[] = "%s_out_temp_duration";
+static const char OUTTEMPDUR_ICON[] = "mdi:thermometer";
+static const char OUTTEMPDUR_NAME[] = "Outdoor temp duration";
+static const char OUTTEMPDUR_UNIT[] = "s";
 
-static const char HUMCOL_ID[] = "%s_hum_color";
-static const char HUMCOL_ICON[] = "mdi:water-percent";
-static const char HUMCOL_NAME[] = "Humidity color";
+static const char OUTHUMDUR_ID[] = "%s_out_hum_duration";
+static const char OUTHUMDUR_ICON[] = "mdi:water-percent";
+static const char OUTHUMDUR_NAME[] = "Outdoor humidity duration";
+static const char OUTHUMDUR_UNIT[] = "s";
 
-static const char BATCOL_ID[] = "%s_bat_color";
-static const char BATCOL_ICON[] = "mdi:battery";
-static const char BATCOL_NAME[] = "Battery color";
+static const char PRESSDUR_ID[] = "%s_pressure_duration";
+static const char PRESSDUR_ICON[] = "mdi:gauge";
+static const char PRESSDUR_NAME[] = "Pressure duration";
+static const char PRESSDUR_UNIT[] = "s";
+
+static const char AQIDUR_ID[] = "%s_aqi_duration";
+static const char AQIDUR_ICON[] = "mdi:air-filter";
+static const char AQIDUR_NAME[] = "Air quality duration";
+static const char AQIDUR_UNIT[] = "s";
+
+static const char UVDUR_ID[] = "%s_uv_duration";
+static const char UVDUR_ICON[] = "mdi:weather-sunny-alert";
+static const char UVDUR_NAME[] = "UV index duration";
+static const char UVDUR_UNIT[] = "s";
 
 // ── Weather app visibility ─────────────────────────────────────────
 
@@ -381,21 +399,20 @@ static const HAEntityDescriptor appVisibilityDescs[] = {
     {SHOW_BAT_ID,  SHOW_BAT_NAME,  SHOW_BAT_ICON,  nullptr, nullptr},
 };
 
-// Display timing array (4 numbers)
+// Display timing array (12 numbers)
 static const HAEntityDescriptor displayTimingDescs[] = {
     {TIMEPERAPP_ID,  TIMEPERAPP_NAME,  TIMEPERAPP_ICON,  nullptr, TIMEPERAPP_UNIT},
     {SCROLLSPEED_ID, SCROLLSPEED_NAME, SCROLLSPEED_ICON, nullptr, SCROLLSPEED_UNIT},
     {TIMEDUR_ID,     TIMEDUR_NAME,     TIMEDUR_ICON,     nullptr, TIMEDUR_UNIT},
     {DATEDUR_ID,     DATEDUR_NAME,     DATEDUR_ICON,     nullptr, DATEDUR_UNIT},
-};
-
-// Native app colors array (5 lights)
-static const HAEntityDescriptor nativeAppColorDescs[] = {
-    {TIMECOL_ID, TIMECOL_NAME, TIMECOL_ICON, nullptr, nullptr},
-    {DATECOL_ID, DATECOL_NAME, DATECOL_ICON, nullptr, nullptr},
-    {TEMPCOL_ID, TEMPCOL_NAME, TEMPCOL_ICON, nullptr, nullptr},
-    {HUMCOL_ID,  HUMCOL_NAME,  HUMCOL_ICON,  nullptr, nullptr},
-    {BATCOL_ID,  BATCOL_NAME,  BATCOL_ICON,  nullptr, nullptr},
+    {TEMPDUR_ID,     TEMPDUR_NAME,     TEMPDUR_ICON,     nullptr, TEMPDUR_UNIT},
+    {HUMDUR_ID,      HUMDUR_NAME,      HUMDUR_ICON,      nullptr, HUMDUR_UNIT},
+    {BATDUR_ID,      BATDUR_NAME,      BATDUR_ICON,      nullptr, BATDUR_UNIT},
+    {OUTTEMPDUR_ID,  OUTTEMPDUR_NAME,  OUTTEMPDUR_ICON,  nullptr, OUTTEMPDUR_UNIT},
+    {OUTHUMDUR_ID,   OUTHUMDUR_NAME,   OUTHUMDUR_ICON,   nullptr, OUTHUMDUR_UNIT},
+    {PRESSDUR_ID,    PRESSDUR_NAME,    PRESSDUR_ICON,    nullptr, PRESSDUR_UNIT},
+    {AQIDUR_ID,      AQIDUR_NAME,      AQIDUR_ICON,      nullptr, AQIDUR_UNIT},
+    {UVDUR_ID,       UVDUR_NAME,       UVDUR_ICON,       nullptr, UVDUR_UNIT},
 };
 
 // Weather app visibility array (5 switches)
@@ -502,14 +519,8 @@ HASelectDescriptor getBackgroundEffectDescriptor()
 
 const HAEntityDescriptor *getDisplayTimingDescriptors(size_t &count)
 {
-    count = 4;
+    count = 12;
     return displayTimingDescs;
-}
-
-const HAEntityDescriptor *getNativeAppColorDescriptors(size_t &count)
-{
-    count = 5;
-    return nativeAppColorDescs;
 }
 
 const HAEntityDescriptor *getWeatherVisibilityDescriptors(size_t &count)
@@ -548,6 +559,6 @@ const char *getDeviceModel()
 size_t getTotalEntityCount(bool includeBattery)
 {
     // 1 matrix + 3 indicators + 3 selects + 6 buttons + 1 switch
-    // + sensors (10 or 11) + 3 binary + 6 weather + 4 night + 2 audio + 5 app vis + 4 timing + 5 colors + 5 weather vis + 4 alarm
-    return 1 + 3 + 3 + 6 + 1 + (includeBattery ? 11 : 10) + 3 + 6 + 4 + 2 + 5 + 4 + 5 + 5 + 4;
+    // + sensors (10 or 11) + 3 binary + 6 weather + 4 night + 2 audio + 5 app vis + 12 timing + 5 weather vis + 4 alarm
+    return 1 + 3 + 3 + 6 + 1 + (includeBattery ? 11 : 10) + 3 + 6 + 4 + 2 + 5 + 12 + 5 + 4;
 }

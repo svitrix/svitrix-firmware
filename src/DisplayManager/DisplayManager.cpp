@@ -79,6 +79,8 @@ static long getDurationForApp(const String& appName)
         return weatherConfig.pressureDuration * 1000L;
     if (appName == "AirQuality")
         return weatherConfig.aqiDuration * 1000L;
+    if (appName == "UV")
+        return weatherConfig.uvDuration * 1000L;
     return appConfig.timePerApp;
 }
 

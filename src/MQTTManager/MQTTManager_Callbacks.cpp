@@ -343,42 +343,40 @@ void onDisplayTimingCommand(HANumeric number, HANumber *sender)
     {
         appConfig.dateDuration = number.toUInt16();
     }
+    else if (sender == tempDurationNum)
+    {
+        appConfig.tempDuration = number.toUInt16();
+    }
+    else if (sender == humDurationNum)
+    {
+        appConfig.humDuration = number.toUInt16();
+    }
+    else if (sender == batDurationNum)
+    {
+        appConfig.batDuration = number.toUInt16();
+    }
+    else if (sender == outTempDurationNum)
+    {
+        weatherConfig.outdoorTempDuration = static_cast<uint8_t>(number.toUInt8());
+    }
+    else if (sender == outHumDurationNum)
+    {
+        weatherConfig.outdoorHumDuration = static_cast<uint8_t>(number.toUInt8());
+    }
+    else if (sender == pressureDurationNum)
+    {
+        weatherConfig.pressureDuration = static_cast<uint8_t>(number.toUInt8());
+    }
+    else if (sender == aqiDurationNum)
+    {
+        weatherConfig.aqiDuration = static_cast<uint8_t>(number.toUInt8());
+    }
+    else if (sender == uvDurationNum)
+    {
+        weatherConfig.uvDuration = static_cast<uint8_t>(number.toUInt8());
+    }
     saveSettings();
     sender->setState(number);
-}
-
-// ── Native app color callbacks ──────────────────────────────────────
-
-/// Handle native app color RGB changes from HA.
-/// Routes to the appropriate colorConfig field based on which light was changed.
-/// @param color RGB color struct from ArduinoHA.
-/// @param sender The HALight entity whose color changed.
-void onNativeAppColorCommand(HALight::RGBColor color, HALight *sender)
-{
-    uint32_t packed = (color.red << 16) | (color.green << 8) | color.blue;
-
-    if (sender == timeColorLight)
-    {
-        colorConfig.timeColor = packed;
-    }
-    else if (sender == dateColorLight)
-    {
-        colorConfig.dateColor = packed;
-    }
-    else if (sender == tempColorLight)
-    {
-        colorConfig.tempColor = packed;
-    }
-    else if (sender == humColorLight)
-    {
-        colorConfig.humColor = packed;
-    }
-    else if (sender == batColorLight)
-    {
-        colorConfig.batColor = packed;
-    }
-    saveSettings();
-    sender->setRGBColor(color);
 }
 
 // ── Weather app visibility callbacks ────────────────────────────────

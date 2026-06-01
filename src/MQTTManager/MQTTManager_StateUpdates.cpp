@@ -121,22 +121,14 @@ void MQTTManager_::sendStats()
         scrollSpeedNum->setState(static_cast<float>(appConfig.scrollSpeed));
         timeDurationNum->setState(static_cast<float>(appConfig.timeDuration));
         dateDurationNum->setState(static_cast<float>(appConfig.dateDuration));
-
-        // Native app colors sync
-        auto syncColorLight = [](HALight *light, uint32_t color)
-        {
-            HALight::RGBColor c;
-            c.isSet = true;
-            c.red = (color >> 16) & 0xFF;
-            c.green = (color >> 8) & 0xFF;
-            c.blue = color & 0xFF;
-            light->setRGBColor(c);
-        };
-        syncColorLight(timeColorLight, colorConfig.timeColor);
-        syncColorLight(dateColorLight, colorConfig.dateColor);
-        syncColorLight(tempColorLight, colorConfig.tempColor);
-        syncColorLight(humColorLight, colorConfig.humColor);
-        syncColorLight(batColorLight, colorConfig.batColor);
+        tempDurationNum->setState(static_cast<float>(appConfig.tempDuration));
+        humDurationNum->setState(static_cast<float>(appConfig.humDuration));
+        batDurationNum->setState(static_cast<float>(appConfig.batDuration));
+        outTempDurationNum->setState(static_cast<float>(weatherConfig.outdoorTempDuration));
+        outHumDurationNum->setState(static_cast<float>(weatherConfig.outdoorHumDuration));
+        pressureDurationNum->setState(static_cast<float>(weatherConfig.pressureDuration));
+        aqiDurationNum->setState(static_cast<float>(weatherConfig.aqiDuration));
+        uvDurationNum->setState(static_cast<float>(weatherConfig.uvDuration));
 
         // Weather app visibility sync
         showOutTempSwitch->setState(weatherConfig.showOutdoorTemp, false);

@@ -121,13 +121,6 @@ HASelectDescriptor getBackgroundEffectDescriptor();
 /// @return Pointer to static array of number descriptors.
 const HAEntityDescriptor *getDisplayTimingDescriptors(size_t &count);
 
-// --- Native app colors ---
-
-/// Native app color lights: timeColor, dateColor, tempColor, humColor, batColor.
-/// @param[out] count Set to number of descriptors (always 5).
-/// @return Pointer to static array of light descriptors (RGB only).
-const HAEntityDescriptor *getNativeAppColorDescriptors(size_t &count);
-
 // --- Weather app visibility ---
 
 /// Weather app visibility switches: showOutdoorTemp, showOutdoorHum, showPressure, showAirQuality, showUV.

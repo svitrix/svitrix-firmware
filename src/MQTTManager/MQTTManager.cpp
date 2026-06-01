@@ -78,13 +78,14 @@ HANumber *timePerAppNum = nullptr;
 HANumber *scrollSpeedNum = nullptr;
 HANumber *timeDurationNum = nullptr;
 HANumber *dateDurationNum = nullptr;
-
-// Native app color lights
-HALight *timeColorLight = nullptr;
-HALight *dateColorLight = nullptr;
-HALight *tempColorLight = nullptr;
-HALight *humColorLight = nullptr;
-HALight *batColorLight = nullptr;
+HANumber *tempDurationNum = nullptr;
+HANumber *humDurationNum = nullptr;
+HANumber *batDurationNum = nullptr;
+HANumber *outTempDurationNum = nullptr;
+HANumber *outHumDurationNum = nullptr;
+HANumber *pressureDurationNum = nullptr;
+HANumber *aqiDurationNum = nullptr;
+HANumber *uvDurationNum = nullptr;
 
 // Weather app visibility switches
 HASwitch *showOutTempSwitch = nullptr;
@@ -117,7 +118,8 @@ char nightModeID[40], nightBriID[40], nightColID[40], nightBlockID[40];
 char showTimeID[40], showDateID[40], showTempID[40], showHumID[40], showBatID[40];
 char bgEffectID[40];
 char timePerAppID[40], scrollSpeedID[40], timeDurID[40], dateDurID[40];
-char timeColID[40], dateColID[40], tempColID[40], humColID[40], batColID[40];
+char tempDurID[40], humDurID[40], batDurID[40];
+char outTempDurID[40], outHumDurID[40], pressDurID[40], aqiDurID[40], uvDurID[40];
 char showOutTempID[40], showOutHumID[40], showPressID[40], showAqiID[40], showUvID[40];
 char alarmRingID[40], alarmSnoozeID[40], alarmDismissID[40], alarmNextID[40];
 
@@ -249,23 +251,14 @@ void onMqttConnected()
         scrollSpeedNum->setState(static_cast<float>(appConfig.scrollSpeed));
         timeDurationNum->setState(static_cast<float>(appConfig.timeDuration));
         dateDurationNum->setState(static_cast<float>(appConfig.dateDuration));
-
-        // Native app colors initial state
-        auto setColorLight = [](HALight *light, uint32_t color)
-        {
-            HALight::RGBColor c;
-            c.isSet = true;
-            c.red = (color >> 16) & 0xFF;
-            c.green = (color >> 8) & 0xFF;
-            c.blue = color & 0xFF;
-            light->setCurrentRGBColor(c);
-            light->setCurrentState(true);
-        };
-        setColorLight(timeColorLight, colorConfig.timeColor);
-        setColorLight(dateColorLight, colorConfig.dateColor);
-        setColorLight(tempColorLight, colorConfig.tempColor);
-        setColorLight(humColorLight, colorConfig.humColor);
-        setColorLight(batColorLight, colorConfig.batColor);
+        tempDurationNum->setState(static_cast<float>(appConfig.tempDuration));
+        humDurationNum->setState(static_cast<float>(appConfig.humDuration));
+        batDurationNum->setState(static_cast<float>(appConfig.batDuration));
+        outTempDurationNum->setState(static_cast<float>(weatherConfig.outdoorTempDuration));
+        outHumDurationNum->setState(static_cast<float>(weatherConfig.outdoorHumDuration));
+        pressureDurationNum->setState(static_cast<float>(weatherConfig.pressureDuration));
+        aqiDurationNum->setState(static_cast<float>(weatherConfig.aqiDuration));
+        uvDurationNum->setState(static_cast<float>(weatherConfig.uvDuration));
 
         // Weather app visibility initial state
         showOutTempSwitch->setState(weatherConfig.showOutdoorTemp, true);

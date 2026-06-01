@@ -26,15 +26,15 @@ void setDisplay(IDisplayControl*, IDisplayNavigation*, IDisplayNotifier*);
 void setServices(ISound*, IPower*, IUpdater*, IPeripheryProvider*);
 ```
 
-## HA Entities (63 total)
+## HA Entities (66 total)
 
 | Type | Count | Entities |
 |------|-------|----------|
-| **HALight** | 10 | Matrix (brightness+RGB), Indicator 1/2/3 (RGB), nightColor, timeColor, dateColor, tempColor, humColor, batColor |
+| **HALight** | 5 | Matrix (brightness+RGB), Indicator 1/2/3 (RGB), nightColor |
 | **HASelect** | 3 | BriMode (Manual/Auto), transEffect (14 transitions), bgEffect (21 effects) |
 | **HAButton** | 8 | dismiss, nextApp, prevApp, doUpdate, reboot, playSound, alarmSnooze, alarmDismiss |
 | **HASwitch** | 14 | transition, nightMode, nightBlockTransition, soundEnabled, showTime, showDate, showTemp, showHum, showBat, showOutdoorTemp, showOutdoorHum, showPressure, showAirQuality, showUV |
-| **HANumber** | 6 | nightBrightness, soundVolume, timePerApp, scrollSpeed, timeDuration, dateDuration |
+| **HANumber** | 14 | nightBrightness, soundVolume, timePerApp, scrollSpeed, timeDuration, dateDuration, tempDuration, humDuration, batDuration, outTempDuration, outHumDuration, pressureDuration, aqiDuration, uvDuration |
 | **HASensor** | 17-18 | curApp, myOwnID, temp, hum, lux, signal, version, ram, uptime, ipAddr, battery*, outdoorTemp, outdoorHum, pressure, aqi, weatherCond, uvIndex, nextAlarm |
 | **HABinarySensor** | 4 | btnleft, btnmid, btnright, alarmRinging |
 
@@ -86,7 +86,7 @@ Routing via `MessageRouter::routeTopic()` → `MqttCommandType` enum → switch 
 - `getValueForTopic(topic)` → cached value or "N/A"
 - Used by custom apps: `{{topic}}` placeholders resolved via PlaceholderUtils
 
-## 16 Callback Handlers (MQTTManager_Callbacks.cpp)
+## 15 Callback Handlers (MQTTManager_Callbacks.cpp)
 
 | Callback | Entities | Action |
 |----------|----------|--------|
@@ -104,7 +104,6 @@ Routing via `MessageRouter::routeTopic()` → `MqttCommandType` enum → switch 
 | `onSoundVolumeCommand` | soundVolume | Set volume + apply to periphery + save |
 | `onAppVisibilitySwitchCommand` | showTime/Date/Temp/Hum/Bat | Toggle app visibility + reload native apps + save |
 | `onDisplayTimingCommand` | timePerApp/scrollSpeed/timeDuration/dateDuration | Set timing value + save |
-| `onNativeAppColorCommand` | time/date/temp/hum/batColor | Set native app color + save |
 | `onWeatherVisibilitySwitchCommand` | showOutdoorTemp/OutdoorHum/Pressure/AirQuality/UV | Toggle weather app visibility + reload native apps + save |
 
 All callbacks call `saveSettings()` after modifying config structs.
@@ -159,7 +158,7 @@ if (mqttConfig.host != "") { MQTTManager.setup(); MQTTManager.tick(); }
 
 ## Important Constraints
 
-- Max `HA_MAX_ENTITIES` entities (64, set in `HADiscovery.h`, passed to the `HAMqtt` constructor). ArduinoHA drops entities once `count + 1 >= capacity`, so usable slots = 63. Must stay above `getTotalEntityCount(true)` (59) — guarded by `test_ha_memory`
+- Max `HA_MAX_ENTITIES` entities (80, set in `HADiscovery.h`, passed to the `HAMqtt` constructor). ArduinoHA drops entities once `count + 1 >= capacity`, so usable slots = 79. Must stay above `getTotalEntityCount(true)` (66) — guarded by `test_ha_memory`
 - `MQTT_MAX_PACKET_SIZE=8192` (platformio.ini build flag)
 - Firmware runs fully functional without MQTT if `mqttConfig.host == ""`
 - Entity pointers remain `nullptr` if HA discovery disabled

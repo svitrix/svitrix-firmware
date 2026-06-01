@@ -120,18 +120,22 @@ static void destroyHAEntities()
     timeDurationNum = nullptr;
     delete dateDurationNum;
     dateDurationNum = nullptr;
-
-    // Native app colors
-    delete timeColorLight;
-    timeColorLight = nullptr;
-    delete dateColorLight;
-    dateColorLight = nullptr;
-    delete tempColorLight;
-    tempColorLight = nullptr;
-    delete humColorLight;
-    humColorLight = nullptr;
-    delete batColorLight;
-    batColorLight = nullptr;
+    delete tempDurationNum;
+    tempDurationNum = nullptr;
+    delete humDurationNum;
+    humDurationNum = nullptr;
+    delete batDurationNum;
+    batDurationNum = nullptr;
+    delete outTempDurationNum;
+    outTempDurationNum = nullptr;
+    delete outHumDurationNum;
+    outHumDurationNum = nullptr;
+    delete pressureDurationNum;
+    pressureDurationNum = nullptr;
+    delete aqiDurationNum;
+    aqiDurationNum = nullptr;
+    delete uvDurationNum;
+    uvDurationNum = nullptr;
 
     // Weather app visibility
     delete showOutTempSwitch;
@@ -603,32 +607,101 @@ void MQTTManager_::setup()
         dateDurationNum->onCommand(onDisplayTimingCommand);
         dateDurationNum->setState(static_cast<float>(appConfig.dateDuration));
 
-        // Native app color lights (RGB only)
-        size_t colorCount;
-        const auto *colorDescs = getNativeAppColorDescriptors(colorCount);
+        // Temperature duration (1-60 seconds)
+        buildEntityId(timingDescs[4].idTemplate, macStr, tempDurID, sizeof(tempDurID));
+        tempDurationNum = new HANumber(tempDurID);
+        tempDurationNum->setIcon(timingDescs[4].icon);
+        tempDurationNum->setName(timingDescs[4].name);
+        tempDurationNum->setUnitOfMeasurement(timingDescs[4].unit);
+        tempDurationNum->setMin(1);
+        tempDurationNum->setMax(60);
+        tempDurationNum->setStep(1);
+        tempDurationNum->onCommand(onDisplayTimingCommand);
+        tempDurationNum->setState(static_cast<float>(appConfig.tempDuration));
 
-        auto createColorLight = [&](HALight *& light, const HAEntityDescriptor& desc,
-                                    char *idBuf, size_t idBufSize, uint32_t color)
-        {
-            buildEntityId(desc.idTemplate, macStr, idBuf, idBufSize);
-            light = new HALight(idBuf, HALight::RGBFeature);
-            light->setIcon(desc.icon);
-            light->setName(desc.name);
-            light->onRGBColorCommand(onNativeAppColorCommand);
-            HALight::RGBColor c;
-            c.isSet = true;
-            c.red = (color >> 16) & 0xFF;
-            c.green = (color >> 8) & 0xFF;
-            c.blue = color & 0xFF;
-            light->setCurrentRGBColor(c);
-            light->setCurrentState(true);
-        };
+        // Humidity duration (1-60 seconds)
+        buildEntityId(timingDescs[5].idTemplate, macStr, humDurID, sizeof(humDurID));
+        humDurationNum = new HANumber(humDurID);
+        humDurationNum->setIcon(timingDescs[5].icon);
+        humDurationNum->setName(timingDescs[5].name);
+        humDurationNum->setUnitOfMeasurement(timingDescs[5].unit);
+        humDurationNum->setMin(1);
+        humDurationNum->setMax(60);
+        humDurationNum->setStep(1);
+        humDurationNum->onCommand(onDisplayTimingCommand);
+        humDurationNum->setState(static_cast<float>(appConfig.humDuration));
 
-        createColorLight(timeColorLight, colorDescs[0], timeColID, sizeof(timeColID), colorConfig.timeColor);
-        createColorLight(dateColorLight, colorDescs[1], dateColID, sizeof(dateColID), colorConfig.dateColor);
-        createColorLight(tempColorLight, colorDescs[2], tempColID, sizeof(tempColID), colorConfig.tempColor);
-        createColorLight(humColorLight, colorDescs[3], humColID, sizeof(humColID), colorConfig.humColor);
-        createColorLight(batColorLight, colorDescs[4], batColID, sizeof(batColID), colorConfig.batColor);
+        // Battery duration (1-60 seconds)
+        buildEntityId(timingDescs[6].idTemplate, macStr, batDurID, sizeof(batDurID));
+        batDurationNum = new HANumber(batDurID);
+        batDurationNum->setIcon(timingDescs[6].icon);
+        batDurationNum->setName(timingDescs[6].name);
+        batDurationNum->setUnitOfMeasurement(timingDescs[6].unit);
+        batDurationNum->setMin(1);
+        batDurationNum->setMax(60);
+        batDurationNum->setStep(1);
+        batDurationNum->onCommand(onDisplayTimingCommand);
+        batDurationNum->setState(static_cast<float>(appConfig.batDuration));
+
+        // Outdoor temp duration (1-60 seconds)
+        buildEntityId(timingDescs[7].idTemplate, macStr, outTempDurID, sizeof(outTempDurID));
+        outTempDurationNum = new HANumber(outTempDurID);
+        outTempDurationNum->setIcon(timingDescs[7].icon);
+        outTempDurationNum->setName(timingDescs[7].name);
+        outTempDurationNum->setUnitOfMeasurement(timingDescs[7].unit);
+        outTempDurationNum->setMin(1);
+        outTempDurationNum->setMax(60);
+        outTempDurationNum->setStep(1);
+        outTempDurationNum->onCommand(onDisplayTimingCommand);
+        outTempDurationNum->setState(static_cast<float>(weatherConfig.outdoorTempDuration));
+
+        // Outdoor humidity duration (1-60 seconds)
+        buildEntityId(timingDescs[8].idTemplate, macStr, outHumDurID, sizeof(outHumDurID));
+        outHumDurationNum = new HANumber(outHumDurID);
+        outHumDurationNum->setIcon(timingDescs[8].icon);
+        outHumDurationNum->setName(timingDescs[8].name);
+        outHumDurationNum->setUnitOfMeasurement(timingDescs[8].unit);
+        outHumDurationNum->setMin(1);
+        outHumDurationNum->setMax(60);
+        outHumDurationNum->setStep(1);
+        outHumDurationNum->onCommand(onDisplayTimingCommand);
+        outHumDurationNum->setState(static_cast<float>(weatherConfig.outdoorHumDuration));
+
+        // Pressure duration (1-60 seconds)
+        buildEntityId(timingDescs[9].idTemplate, macStr, pressDurID, sizeof(pressDurID));
+        pressureDurationNum = new HANumber(pressDurID);
+        pressureDurationNum->setIcon(timingDescs[9].icon);
+        pressureDurationNum->setName(timingDescs[9].name);
+        pressureDurationNum->setUnitOfMeasurement(timingDescs[9].unit);
+        pressureDurationNum->setMin(1);
+        pressureDurationNum->setMax(60);
+        pressureDurationNum->setStep(1);
+        pressureDurationNum->onCommand(onDisplayTimingCommand);
+        pressureDurationNum->setState(static_cast<float>(weatherConfig.pressureDuration));
+
+        // Air quality duration (1-60 seconds)
+        buildEntityId(timingDescs[10].idTemplate, macStr, aqiDurID, sizeof(aqiDurID));
+        aqiDurationNum = new HANumber(aqiDurID);
+        aqiDurationNum->setIcon(timingDescs[10].icon);
+        aqiDurationNum->setName(timingDescs[10].name);
+        aqiDurationNum->setUnitOfMeasurement(timingDescs[10].unit);
+        aqiDurationNum->setMin(1);
+        aqiDurationNum->setMax(60);
+        aqiDurationNum->setStep(1);
+        aqiDurationNum->onCommand(onDisplayTimingCommand);
+        aqiDurationNum->setState(static_cast<float>(weatherConfig.aqiDuration));
+
+        // UV index duration (1-60 seconds)
+        buildEntityId(timingDescs[11].idTemplate, macStr, uvDurID, sizeof(uvDurID));
+        uvDurationNum = new HANumber(uvDurID);
+        uvDurationNum->setIcon(timingDescs[11].icon);
+        uvDurationNum->setName(timingDescs[11].name);
+        uvDurationNum->setUnitOfMeasurement(timingDescs[11].unit);
+        uvDurationNum->setMin(1);
+        uvDurationNum->setMax(60);
+        uvDurationNum->setStep(1);
+        uvDurationNum->onCommand(onDisplayTimingCommand);
+        uvDurationNum->setState(static_cast<float>(weatherConfig.uvDuration));
 
         // Weather app visibility switches
         size_t weatherVisCount;

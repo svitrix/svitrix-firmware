@@ -95,13 +95,14 @@ extern HANumber *timePerAppNum;
 extern HANumber *scrollSpeedNum;
 extern HANumber *timeDurationNum;
 extern HANumber *dateDurationNum;
-
-// Native app color lights
-extern HALight *timeColorLight;
-extern HALight *dateColorLight;
-extern HALight *tempColorLight;
-extern HALight *humColorLight;
-extern HALight *batColorLight;
+extern HANumber *tempDurationNum;
+extern HANumber *humDurationNum;
+extern HANumber *batDurationNum;
+extern HANumber *outTempDurationNum;
+extern HANumber *outHumDurationNum;
+extern HANumber *pressureDurationNum;
+extern HANumber *aqiDurationNum;
+extern HANumber *uvDurationNum;
 
 // Weather app visibility switches
 extern HASwitch *showOutTempSwitch;
@@ -132,7 +133,8 @@ extern char nightModeID[40], nightBriID[40], nightColID[40], nightBlockID[40];
 extern char showTimeID[40], showDateID[40], showTempID[40], showHumID[40], showBatID[40];
 extern char bgEffectID[40];
 extern char timePerAppID[40], scrollSpeedID[40], timeDurID[40], dateDurID[40];
-extern char timeColID[40], dateColID[40], tempColID[40], humColID[40], batColID[40];
+extern char tempDurID[40], humDurID[40], batDurID[40];
+extern char outTempDurID[40], outHumDurID[40], pressDurID[40], aqiDurID[40], uvDurID[40];
 extern char showOutTempID[40], showOutHumID[40], showPressID[40], showAqiID[40], showUvID[40];
 extern char alarmRingID[40], alarmSnoozeID[40], alarmDismissID[40], alarmNextID[40];
 
@@ -182,8 +184,6 @@ void onSoundVolumeCommand(HANumeric number, HANumber *sender);
 void onAppVisibilitySwitchCommand(bool state, HASwitch *sender);
 /// HA display timing number handler.
 void onDisplayTimingCommand(HANumeric number, HANumber *sender);
-/// HA native app color RGB handler.
-void onNativeAppColorCommand(HALight::RGBColor color, HALight *sender);
 /// HA weather app visibility switch handler.
 void onWeatherVisibilitySwitchCommand(bool state, HASwitch *sender);
 /// HA alarm button handler (snooze / dismiss the ringing alarm).
