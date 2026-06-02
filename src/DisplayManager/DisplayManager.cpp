@@ -310,7 +310,12 @@ void DisplayManager_::tick()
                 if (activePolicy_->overridesTextColor(col))
                     setTextColor(col);
                 if (activePolicy_->blocksAutoTransition())
+                {
                     setAutoTransition(false);
+                    int timeIdx = findAppIndexByName("Time");
+                    if (timeIdx >= 0)
+                        ui->switchToApp(timeIdx);
+                }
             }
             else
             {
