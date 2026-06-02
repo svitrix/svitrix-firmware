@@ -69,7 +69,7 @@ cd web && npm run upload
 
 ### NTP та часовий пояс
 
-- **NTP Server** — сервер часу (за замовчуванням: `pool.ntp.org`)
+- **NTP Server** — сервер часу (за замовчуванням: `time.cloudflare.com`)
 - **Timezone** — POSIX-рядок часового поясу (знайдіть свій на [posix_tz_db](https://github.com/nayarsystems/posix_tz_db/blob/master/zones.csv))
 
 ### Автентифікація

@@ -69,7 +69,7 @@ Conéctate a un broker MQTT para integración con Home Assistant y control remot
 
 ### NTP y Zona Horaria
 
-- **Servidor NTP** — servidor de tiempo (por defecto: `pool.ntp.org`)
+- **Servidor NTP** — servidor de tiempo (por defecto: `time.cloudflare.com`)
 - **Zona horaria** — cadena de zona horaria POSIX (encuentra la tuya en [posix_tz_db](https://github.com/nayarsystems/posix_tz_db/blob/master/zones.csv))
 
 ### Autenticación

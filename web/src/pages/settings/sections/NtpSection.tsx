@@ -16,7 +16,7 @@ export function NtpSection() {
   const t = useT();
   if (!config) return null;
 
-  const currentServer = config["NTP Server"] || "pool.ntp.org";
+  const currentServer = config["NTP Server"] || "time.cloudflare.com";
   const isCustom = !NTP_SERVERS.some((s) => s.value === currentServer);
 
   return (

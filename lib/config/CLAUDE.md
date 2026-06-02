@@ -117,7 +117,7 @@ Shared configuration structs consumed by all modules. Single header, no logic, n
 | `dateFormat` | String | `"%d.%m.%y"` | strftime format for date |
 | `timeMode` | uint8_t | `1` | 0 = 12h, 1 = 24h |
 | `startOnMonday` | bool | `false` | Week starts on Monday |
-| `ntpServer` | String | `"de.pool.ntp.org"` | NTP server |
+| `ntpServer` | String | `"time.cloudflare.com"` | NTP server |
 | `ntpTz` | String | `"CET-1CEST,M3.5.0,M10.5.0/3"` | POSIX timezone |
 | `isCelsius` | bool | `false` | Temperature unit |
 | `tempDecimalPlaces` | int | `0` | Decimal places for temp display |

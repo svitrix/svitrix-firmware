@@ -163,12 +163,12 @@ void test_color_config_defaults()
 
 void test_time_config_defaults()
 {
-    TimeConfig cfg = {"%H:%M:%S", "%d.%m.%y", 1, false, "de.pool.ntp.org", "CET-1CEST,M3.5.0,M10.5.0/3", false, 0};
+    TimeConfig cfg = {"%H:%M:%S", "%d.%m.%y", 1, false, "time.cloudflare.com", "CET-1CEST,M3.5.0,M10.5.0/3", false, 0};
     TEST_ASSERT_EQUAL_STRING("%H:%M:%S", cfg.timeFormat.c_str());
     TEST_ASSERT_EQUAL_STRING("%d.%m.%y", cfg.dateFormat.c_str());
     TEST_ASSERT_EQUAL(1, cfg.timeMode);
     TEST_ASSERT_FALSE(cfg.startOnMonday);
-    TEST_ASSERT_EQUAL_STRING("de.pool.ntp.org", cfg.ntpServer.c_str());
+    TEST_ASSERT_EQUAL_STRING("time.cloudflare.com", cfg.ntpServer.c_str());
     TEST_ASSERT_FALSE(cfg.isCelsius);
     TEST_ASSERT_EQUAL(0, cfg.tempDecimalPlaces);
 }
