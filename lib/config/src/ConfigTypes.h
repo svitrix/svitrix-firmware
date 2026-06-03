@@ -210,3 +210,19 @@ struct WeatherData {
     unsigned long lastUpdate; // millis() of last update
     bool valid;               // data available
 };
+
+enum PlaylistItemType : uint8_t {
+    PLAYLIST_ITEM_APP = 0,
+    PLAYLIST_ITEM_EFFECT = 1,
+};
+
+struct PlaylistItem {
+    PlaylistItemType type;    // app or effect
+    String name;              // app name or effect name
+    uint16_t duration;        // seconds (0 = use app's default duration)
+};
+
+struct PlaylistConfig {
+    bool enabled;             // false = use simple appOrder mode
+    String items;             // JSON array of playlist items
+};

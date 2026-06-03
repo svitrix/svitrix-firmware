@@ -12,6 +12,7 @@
 #include "NeoMatrixCanvas.h"
 #include "MQTTManager.h"
 #include "LayoutEngine.h"
+#include "DisplayManager_internal.h"
 #include <LittleFS.h>
 
 // ── Custom app renderer ────────────────────────────────────────────
@@ -27,6 +28,10 @@
 void ShowCustomApp(const String& name, FastLED_NeoMatrix *matrix, const MatrixDisplayUiState *state, int16_t x, int16_t y, GifPlayer *gifPlayer)
 {
     if (notifyFlag)
+        return;
+
+    // Playlist effect-only mode: only render background effect, skip app content
+    if (playlistEffectOnly)
         return;
 
     CustomApp *ca = getCustomAppByName(name);

@@ -1,5 +1,5 @@
 import { SettingsProvider, useSettings } from "../../context/SettingsContext";
-import { AppOrderSection, AppsSection, WeatherAppsSection, AppTransitionsSection } from "../settings/sections";
+import { AppOrderSection, AppsSection, WeatherAppsSection, AppTransitionsSection, PlaylistSection } from "../settings/sections";
 import { useT } from "../../i18n";
 import styles from "../settings/Settings.module.css";
 
@@ -12,6 +12,7 @@ function AppsContent() {
 
   return (
     <div class={styles.page}>
+      <PlaylistSection />
       <AppOrderSection />
       <AppsSection />
       <WeatherAppsSection />

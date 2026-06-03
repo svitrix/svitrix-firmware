@@ -205,3 +205,15 @@ export interface AlarmsState {
   alarms: Alarm[];
   ringing: boolean;
 }
+
+// Playlist Types
+export interface PlaylistItem {
+  type: "app" | "effect";
+  name: string;
+  duration: number;  // seconds (0 = use default)
+}
+
+export interface PlaylistConfig {
+  enabled: boolean;
+  items: PlaylistItem[];
+}

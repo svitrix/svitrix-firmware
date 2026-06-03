@@ -47,6 +47,16 @@ extern CRGB colorTemperature; ///< LED color temperature (0 = disabled)
 // ── App tracking (defined in DisplayManager.cpp) ────────────────────
 extern String currentApp; ///< Name of the currently displayed app
 
+// ── Playlist runtime state (defined in DisplayManager.cpp) ──────────
+struct PlaylistItemRuntime {
+    uint8_t type;       // 0 = app, 1 = effect
+    String name;
+    uint16_t duration;  // seconds
+};
+extern std::vector<PlaylistItemRuntime> playlistItems; ///< Parsed playlist
+extern int playlistIndex;                               ///< Current position in playlist (-1 if not using playlist)
+extern bool playlistEffectOnly;                         ///< True when showing standalone effect (apps should not render)
+
 // ── Free functions from other modules ──────────────────────────────
 void ResetCustomApps();                                                          ///< Resets scroll state on non-active custom apps (DisplayManager_CustomApps.cpp)
 void checkLifetime(uint8_t pos);                                                 ///< Checks and removes expired custom apps (DisplayManager_CustomApps.cpp)

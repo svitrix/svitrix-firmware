@@ -192,3 +192,9 @@ export const deleteAlarm = (id: number) => del(`/api/alarms?id=${id}`);
 export const snoozeAlarm = (minutes = 5) =>
   post("/api/alarms", { action: "snooze", minutes });
 export const dismissAlarm = () => post("/api/alarms", { action: "dismiss" });
+
+// Playlist
+import type { PlaylistConfig, PlaylistItem } from "./types";
+export const getPlaylist = () => get<PlaylistConfig>("/api/playlist");
+export const savePlaylist = (config: { enabled?: boolean; items?: PlaylistItem[] }) =>
+  post("/api/playlist", config);

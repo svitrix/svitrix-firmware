@@ -57,6 +57,108 @@ CRGB colorTemperature;
 // Current app name (declared extern in DisplayManager_internal.h)
 String currentApp;
 
+// Playlist runtime state (declared extern in DisplayManager_internal.h)
+std::vector<PlaylistItemRuntime> playlistItems;
+int playlistIndex = -1;
+bool playlistEffectOnly = false;
+
+// Forward declaration for getDurationForApp (defined below)
+static long getDurationForApp(const String& appName);
+
+/// Parses the playlist JSON from playlistConfig.items into playlistItems vector.
+/// Called when playlist mode is enabled or playlist config changes.
+static void parsePlaylistConfig()
+{
+    playlistItems.clear();
+    playlistIndex = -1;
+
+    if (!playlistConfig.enabled || playlistConfig.items.length() == 0)
+        return;
+
+    StaticJsonDocument<2048> doc;
+    DeserializationError err = deserializeJson(doc, playlistConfig.items);
+    if (err)
+    {
+        DEBUG_PRINTLN(F("parsePlaylistConfig: JSON error"));
+        return;
+    }
+
+    JsonArray arr = doc.as<JsonArray>();
+    for (JsonObject item : arr)
+    {
+        PlaylistItemRuntime pir;
+        const char* typeStr = item["type"] | "app";
+        pir.type = (strcmp(typeStr, "effect") == 0) ? 1 : 0;
+        pir.name = item["name"].as<String>();
+        pir.duration = item["duration"] | 0;
+        if (!pir.name.isEmpty())
+            playlistItems.push_back(pir);
+    }
+
+    if (!playlistItems.empty())
+        playlistIndex = 0;
+
+    DEBUG_PRINTF("Playlist loaded: %d items\n", playlistItems.size());
+}
+
+/// Advances display to the current playlist item (app or effect).
+/// For apps: transitions to that app. For effects: sets background effect only (no app content).
+static void advanceToPlaylistItem()
+{
+    if (playlistIndex < 0 || playlistIndex >= (int)playlistItems.size())
+        return;
+
+    auto& item = playlistItems[playlistIndex];
+
+    if (item.type == 0) // app
+    {
+        playlistEffectOnly = false;
+        // Restore normal background (no effect override)
+        ui->setBackgroundEffect(displayConfig.backgroundEffect);
+
+        int idx = findAppIndexByName(item.name);
+        if (idx >= 0)
+        {
+            ui->transitionToApp(idx);
+        }
+        else
+        {
+            DEBUG_PRINTF("Playlist: app '%s' not found\n", item.name.c_str());
+            // Skip to next item
+            playlistIndex = (playlistIndex + 1) % playlistItems.size();
+            advanceToPlaylistItem();
+            return;
+        }
+    }
+    else // effect (standalone)
+    {
+        playlistEffectOnly = true;
+        // Find effect index by name
+        int effectIdx = getEffectIndex(item.name.c_str());
+        if (effectIdx >= 0)
+        {
+            // Set as background effect - apps will check playlistEffectOnly and skip rendering
+            ui->setBackgroundEffect(effectIdx);
+            DEBUG_PRINTF("Playlist: showing effect '%s' (%d)\n", item.name.c_str(), effectIdx);
+        }
+        else
+        {
+            DEBUG_PRINTF("Playlist: effect '%s' not found\n", item.name.c_str());
+            playlistEffectOnly = false;
+            // Skip to next item
+            playlistIndex = (playlistIndex + 1) % playlistItems.size();
+            advanceToPlaylistItem();
+            return;
+        }
+    }
+
+    // Set duration for this item
+    long dur = item.duration > 0 ? item.duration * 1000L : 7000L; // 7s default for effects
+    if (item.type == 0 && item.duration == 0)
+        dur = getDurationForApp(item.name);
+    ui->setTimePerApp(dur);
+}
+
 /// Maps native app names to their configured per-app duration (in milliseconds).
 /// Custom apps and unknown names fall back to the global timePerApp setting.
 static long getDurationForApp(const String& appName)
@@ -215,6 +317,13 @@ void DisplayManager_::applyAllSettings()
         setBrightness(brightnessConfig.brightness);
     setTextColor(colorConfig.textColor);
     setAutoTransition(appConfig.autoTransition);
+
+    // Parse playlist config if enabled
+    parsePlaylistConfig();
+    if (playlistConfig.enabled && !playlistItems.empty())
+    {
+        advanceToPlaylistItem();
+    }
 }
 
 void DisplayManager_::setAppTime(long duration)
@@ -337,7 +446,17 @@ void DisplayManager_::tick()
             resetAllEffectState();
             if (notifier_)
                 notifier_->setCurrentApp(currentApp);
-            setAppTime(getDurationForApp(currentApp));
+            // Use playlist duration if enabled and valid
+            if (playlistConfig.enabled && playlistIndex >= 0 && playlistIndex < (int)playlistItems.size())
+            {
+                auto& item = playlistItems[playlistIndex];
+                long dur = item.duration > 0 ? item.duration * 1000L : getDurationForApp(currentApp);
+                setAppTime(dur);
+            }
+            else
+            {
+                setAppTime(getDurationForApp(currentApp));
+            }
             checkLifetime(ui->getnextAppNumber());
             ResetCustomApps();
         }
@@ -460,10 +579,20 @@ void DisplayManager_::rightButton()
 
 void DisplayManager_::nextApp()
 {
-    if (!(isMenuActive_ && isMenuActive_()))
+    if (isMenuActive_ && isMenuActive_())
+        return;
+
+    if (systemConfig.debugMode)
+        DEBUG_PRINTLN(F("Switching to next app"));
+
+    // Playlist mode: advance in playlist sequence
+    if (playlistConfig.enabled && !playlistItems.empty())
     {
-        if (systemConfig.debugMode)
-            DEBUG_PRINTLN(F("Switching to next app"));
+        playlistIndex = (playlistIndex + 1) % playlistItems.size();
+        advanceToPlaylistItem();
+    }
+    else
+    {
         ui->nextApp();
     }
 }
@@ -481,10 +610,20 @@ void DisplayManager_::forceNextApp()
 
 void DisplayManager_::previousApp()
 {
-    if (!(isMenuActive_ && isMenuActive_()))
+    if (isMenuActive_ && isMenuActive_())
+        return;
+
+    if (systemConfig.debugMode)
+        DEBUG_PRINTLN(F("Switching to previous app"));
+
+    // Playlist mode: go back in playlist sequence
+    if (playlistConfig.enabled && !playlistItems.empty())
     {
-        if (systemConfig.debugMode)
-            DEBUG_PRINTLN(F("Switching to previous app"));
+        playlistIndex = (playlistIndex - 1 + playlistItems.size()) % playlistItems.size();
+        advanceToPlaylistItem();
+    }
+    else
+    {
         ui->previousApp();
     }
 }

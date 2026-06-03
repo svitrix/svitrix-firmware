@@ -16,3 +16,4 @@ export { NightModeSection } from "./NightModeSection";
 export { WeatherApiSection } from "./WeatherApiSection";
 export { WeatherAppsSection } from "./WeatherAppsSection";
 export { AppTransitionsSection } from "./AppTransitionsSection";
+export { PlaylistSection } from "./PlaylistSection";

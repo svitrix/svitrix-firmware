@@ -11,16 +11,21 @@
 #include "Apps_internal.h"
 #include "MQTTManager.h"
 #include "PlaceholderUtils.h"
+#include "DisplayManager_internal.h"
 
 // ── Native app preamble ────────────────────────────────────────────
 
 /// Common guard for all native apps. Checks the notification flag,
-/// sets the current app name, and clears the custom app tracker.
+/// playlist effect-only mode, sets the current app name, and clears
+/// the custom app tracker.
 /// @param appName Display name of the native app (e.g. "Time").
-/// @return true if the app should return immediately (notification active).
+/// @return true if the app should return immediately (skip rendering).
 bool nativeAppGuard(const char *appName)
 {
     if (notifyFlag)
+        return true;
+    // Playlist effect-only mode: only render background effect, skip app content
+    if (playlistEffectOnly)
         return true;
     DisplayManager.setCurrentApp(appName);
     currentCustomApp = "";

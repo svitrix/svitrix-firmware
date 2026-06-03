@@ -341,6 +341,9 @@ void loadSettings()
     weatherConfig.showUV = Settings.getBool("WAPI_UV", false);
     weatherConfig.uvColor = Settings.getUInt("WAPI_UVCOL", 0x9C27B0);
     weatherConfig.uvDuration = Settings.getUChar("WAPI_UVDUR", 7);
+    // Playlist config
+    playlistConfig.enabled = Settings.getBool("PL_EN", false);
+    playlistConfig.items = Settings.getString("PL_ITEMS", "");
     Settings.end();
     systemConfig.deviceId = getID();
     mqttConfig.prefix = systemConfig.deviceId;
@@ -439,6 +442,9 @@ void saveSettings()
     Settings.putBool("WAPI_UV", weatherConfig.showUV);
     Settings.putUInt("WAPI_UVCOL", weatherConfig.uvColor);
     Settings.putUChar("WAPI_UVDUR", weatherConfig.uvDuration);
+    // Playlist config
+    Settings.putBool("PL_EN", playlistConfig.enabled);
+    Settings.putString("PL_ITEMS", playlistConfig.items);
     Settings.end();
 }
 
@@ -459,6 +465,7 @@ AudioConfig audioConfig = {false, 30, ""};
 SystemConfig systemConfig = {true, 15, 80, "", false, 10000, false, false, "", "", false, false, "", ""};
 WeatherConfig weatherConfig = {"", WEATHER_LOC_CITY, "", 0.0, 0.0, "", 30, true, false, false, false, false, false, 0, 0, 0, 0, 7, 7, 7, 7};
 WeatherData weatherData = {0, 0, 0, 0, 0, "", 0, 0, false};
+PlaylistConfig playlistConfig = {false, ""};
 
 String exportSettings()
 {
@@ -563,6 +570,10 @@ String exportSettings()
     doc["WAPI_UV"] = weatherConfig.showUV;
     doc["WAPI_UVCOL"] = weatherConfig.uvColor;
     doc["WAPI_UVDUR"] = weatherConfig.uvDuration;
+
+    // Playlist
+    doc["PL_EN"] = playlistConfig.enabled;
+    doc["PL_ITEMS"] = playlistConfig.items;
 
     String output;
     serializeJson(doc, output);
@@ -760,6 +771,12 @@ bool importSettings(const char *json)
         weatherConfig.uvColor = doc["WAPI_UVCOL"].as<uint32_t>();
     if (doc.containsKey("WAPI_UVDUR"))
         weatherConfig.uvDuration = doc["WAPI_UVDUR"];
+
+    // Playlist
+    if (doc.containsKey("PL_EN"))
+        playlistConfig.enabled = doc["PL_EN"];
+    if (doc.containsKey("PL_ITEMS"))
+        playlistConfig.items = doc["PL_ITEMS"].as<String>();
 
     // Save to NVS
     saveSettings();

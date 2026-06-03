@@ -198,6 +198,39 @@ void addHandler()
                    { formatSettings(); request->send(200, "text/plain", "OK"); delay(200); ESP.restart(); });
     mws.addHandlerWithBody("/api/reorder", HTTP_POST, [](AsyncWebServerRequest *request)
                            { String body = getBody(request); smNav_->reorderApps(body.c_str()); request->send(200, "text/plain", "OK"); });
+    mws.addHandler("/api/playlist", HTTP_GET, [](AsyncWebServerRequest *request)
+                   {
+                    StaticJsonDocument<2048> doc;
+                    doc["enabled"] = playlistConfig.enabled;
+                    if (playlistConfig.items.length() > 0) {
+                        StaticJsonDocument<1536> itemsDoc;
+                        deserializeJson(itemsDoc, playlistConfig.items);
+                        doc["items"] = itemsDoc.as<JsonArray>();
+                    } else {
+                        doc["items"] = serialized("[]");
+                    }
+                    String json;
+                    serializeJson(doc, json);
+                    request->send(200, "application/json", json); });
+    mws.addHandlerWithBody("/api/playlist", HTTP_POST, [](AsyncWebServerRequest *request)
+                           {
+                            String body = getBody(request);
+                            StaticJsonDocument<2048> doc;
+                            DeserializationError err = deserializeJson(doc, body);
+                            if (err) {
+                                request->send(400, "text/plain", "Invalid JSON");
+                                return;
+                            }
+                            if (doc.containsKey("enabled")) {
+                                playlistConfig.enabled = doc["enabled"].as<bool>();
+                            }
+                            if (doc.containsKey("items")) {
+                                String items;
+                                serializeJson(doc["items"], items);
+                                playlistConfig.items = items;
+                            }
+                            saveSettings();
+                            request->send(200, "text/plain", "OK"); });
     mws.addHandler("/api/settings", HTTP_GET, [](AsyncWebServerRequest *request)
                    { request->send(200, "application/json", smControl_->getSettings()); });
     mws.addHandler("/api/settings/export", HTTP_GET, [](AsyncWebServerRequest *request)
