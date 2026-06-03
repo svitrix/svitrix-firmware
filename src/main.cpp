@@ -163,6 +163,8 @@ void setup()
         // saved appOrder (single source of truth for the unified app loop).
         DisplayManager.loadCustomApps();
         DisplayManager.loadNativeApps();
+        // Re-apply settings now that apps are loaded (playlist needs app list)
+        DisplayManager.applyAllSettings();
         UpdateManager.setup();
         DisplayManager.startArtnet();
         stopBootAnimation();
@@ -180,19 +182,27 @@ void setup()
         while (x >= -textLength)
         {
             DisplayManager.HSVtext(x, 6, textForDisplay.c_str(), true, 0);
-            x -= 0.18;
+            x -= 0.4;  // Balanced scroll speed (~4 seconds)
         }
-        delay(2000);
+        delay(300);
 
-
+        DEBUG_PRINTLN("Starting MQTT check...");
         if (mqttConfig.host != "")
         {
+            DEBUG_PRINTF("MQTT host: %s\n", mqttConfig.host.c_str());
             DisplayManager.HSVtext(4, 6, "MQTT...", true, 0);
             MQTTManager.setup();
             MQTTManager.tick();
         }
+        else
+        {
+            DEBUG_PRINTLN("MQTT not configured, skipping");
+        }
+        DEBUG_PRINTLN("Starting DataFetcher...");
         DataFetcher.setup();
+        DEBUG_PRINTLN("Starting AlarmManager...");
         AlarmManager.setup();
+        DEBUG_PRINTLN("Setup complete, entering loop");
     }
     else
     {

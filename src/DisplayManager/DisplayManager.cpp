@@ -73,7 +73,13 @@ static void parsePlaylistConfig()
     playlistIndex = -1;
 
     if (!playlistConfig.enabled || playlistConfig.items.length() == 0)
+    {
+        // Reset effect-only mode and restore default background when playlist disabled/empty
+        playlistEffectOnly = false;
+        if (ui)
+            ui->setBackgroundEffect(displayConfig.backgroundEffect);
         return;
+    }
 
     StaticJsonDocument<2048> doc;
     DeserializationError err = deserializeJson(doc, playlistConfig.items);
@@ -95,8 +101,8 @@ static void parsePlaylistConfig()
             playlistItems.push_back(pir);
     }
 
-    if (!playlistItems.empty())
-        playlistIndex = 0;
+    // Keep playlistIndex at -1 so first resolveNextApp() advances to 0
+    // (don't set to 0 here, or item 0 gets skipped)
 
     DEBUG_PRINTF("Playlist loaded: %d items\n", playlistItems.size());
 }
@@ -318,12 +324,9 @@ void DisplayManager_::applyAllSettings()
     setTextColor(colorConfig.textColor);
     setAutoTransition(appConfig.autoTransition);
 
-    // Parse playlist config if enabled
+    // Parse playlist config - actual playlist rotation happens via resolveNextApp()
+    // during auto-transitions, not here
     parsePlaylistConfig();
-    if (playlistConfig.enabled && !playlistItems.empty())
-    {
-        advanceToPlaylistItem();
-    }
 }
 
 void DisplayManager_::setAppTime(long duration)
@@ -370,6 +373,11 @@ void DisplayManager_::setup()
         }
     }
     setAutoTransition(policyBlocks ? false : appConfig.autoTransition);
+
+    // Ensure clean playlist state on startup
+    playlistEffectOnly = false;
+    playlistIndex = -1;
+
     ui->init();
 }
 

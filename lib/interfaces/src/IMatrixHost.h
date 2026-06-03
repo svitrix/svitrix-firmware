@@ -17,4 +17,7 @@ public:
     virtual void gammaCorrection() = 0;
     virtual void sendAppLoop() = 0;
     virtual bool setAutoTransition(bool active) = 0;
+    /// Called when auto-transition timer expires. Returns the next app index
+    /// for playlist mode, or -1 to use default sequential behavior.
+    virtual int8_t resolveNextApp(int8_t currentApp, int8_t direction) = 0;
 };

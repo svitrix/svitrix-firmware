@@ -15,6 +15,8 @@
 #include <ArduinoJson.h>
 #include "ColorUtils.h"
 #include "Functions.h"
+#include "Apps.h"
+#include "EffectRegistry.h"
 
 // Artnet-related globals (extern declarations in DisplayManager_internal.h)
 unsigned long lastArtnetStatusTime = 0;
@@ -135,4 +137,60 @@ bool DisplayManager_::moodlight(const char *json)
 CRGB *DisplayManager_::getLeds()
 {
     return leds;
+}
+
+int8_t DisplayManager_::resolveNextApp(int8_t currentApp, int8_t direction)
+{
+    if (!playlistConfig.enabled || playlistItems.empty() || !ui || Apps.empty())
+        return -1; // Use default sequential behavior
+
+    // Try to find a valid item, but limit attempts to prevent infinite loop
+    for (size_t attempts = 0; attempts < playlistItems.size(); attempts++)
+    {
+        // Advance playlist index
+        if (direction >= 0)
+            playlistIndex = (playlistIndex + 1) % playlistItems.size();
+        else
+            playlistIndex = (playlistIndex - 1 + playlistItems.size()) % playlistItems.size();
+
+        auto& item = playlistItems[playlistIndex];
+
+        if (item.type == 0) // App
+        {
+            playlistEffectOnly = false;
+            ui->setBackgroundEffect(displayConfig.backgroundEffect);
+
+            // Find app index
+            for (size_t i = 0; i < Apps.size(); i++)
+            {
+                if (Apps[i].first == item.name)
+                {
+                    // Set duration for this playlist item
+                    long dur = item.duration > 0 ? item.duration * 1000L : appConfig.timePerApp;
+                    ui->setTimePerApp(dur);
+                    return (int8_t)i;
+                }
+            }
+            // App not found, continue to next item
+        }
+        else // Effect (standalone)
+        {
+            int effectIdx = getEffectIndex(item.name.c_str());
+            if (effectIdx >= 0)
+            {
+                playlistEffectOnly = true;
+                ui->setBackgroundEffect(effectIdx);
+                // Set duration for effect display
+                long dur = item.duration > 0 ? item.duration * 1000L : appConfig.timePerApp;
+                ui->setTimePerApp(dur);
+                // Return -2 to signal "don't change app, just reset timer"
+                return -2;
+            }
+            // Effect not found, continue to next item
+            playlistEffectOnly = false;
+        }
+    }
+
+    // No valid items found, fall back to default behavior
+    return -1;
 }

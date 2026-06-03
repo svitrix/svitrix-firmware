@@ -153,6 +153,26 @@ Shared configuration structs consumed by all modules. Single header, no logic, n
 | `soundVolume` | uint8_t | `30` | Volume level |
 | `bootSound` | String | `""` | RTTTL melody on boot |
 
+### PlaylistItemType (enum)
+
+| Value | Constant |
+|-------|----------|
+| 0 | `PLAYLIST_ITEM_APP` |
+| 1 | `PLAYLIST_ITEM_EFFECT` |
+
+### PlaylistItem
+| Field | Type | Default | Notes |
+|-------|------|---------|-------|
+| `type` | PlaylistItemType | — | App or standalone effect |
+| `name` | String | — | App name or effect name |
+| `duration` | uint16_t | `0` | Seconds (0 = use app's default) |
+
+### PlaylistConfig
+| Field | Type | Default | Notes |
+|-------|------|---------|-------|
+| `enabled` | bool | `false` | false = use simple appOrder mode |
+| `items` | String | `""` | JSON array of PlaylistItem objects |
+
 ### SystemConfig
 | Field | Type | Default | Notes |
 |-------|------|---------|-------|
@@ -196,6 +216,7 @@ Config values come from **three layers** (later overrides earlier):
 | `haConfig` | MQTTManager |
 | `networkConfig` | main.cpp (WiFi setup) |
 | `authConfig` | ServerManager |
+| `playlistConfig` | DisplayManager, ServerManager |
 
 ## Design Notes
 

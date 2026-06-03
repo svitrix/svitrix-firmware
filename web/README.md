@@ -104,7 +104,8 @@ src/
     apps/                     # App loop: unified drag-drop order + per-app settings
     settings/                 # Device configuration
       sections/               # Independent settings sections (incl. NightModeSection,
-                              #   AppOrderSection — drag-drop unified app order)
+                              #   AppOrderSection — drag-drop unified app order,
+                              #   PlaylistSection — custom app/effect rotation sequences)
     data-fetcher/             # External API data sources
     files/                    # LittleFS file manager
     backup/                   # Config backup/restore

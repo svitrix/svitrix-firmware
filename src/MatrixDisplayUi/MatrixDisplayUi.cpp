@@ -275,7 +275,24 @@ void MatrixDisplayUi::tick()
             {
                 if (this->setAutoTransition)
                 {
-                    this->state.appState = IN_TRANSITION;
+                    // Ask host for next app (playlist mode may override)
+                    int8_t resolved = host_->resolveNextApp(this->state.currentApp, this->state.appTransitionDirection);
+                    if (resolved == -2)
+                    {
+                        // Stay on current app (e.g., standalone effect in playlist)
+                        // Just reset timer, no transition
+                    }
+                    else if (resolved >= 0)
+                    {
+                        // Playlist provided specific app index
+                        this->nextAppNumber = resolved;
+                        this->state.appState = IN_TRANSITION;
+                    }
+                    else
+                    {
+                        // Default sequential behavior
+                        this->state.appState = IN_TRANSITION;
+                    }
                 }
                 this->state.ticksSinceLastStateSwitch = 0;
             }

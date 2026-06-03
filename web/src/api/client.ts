@@ -79,7 +79,10 @@ export const fetchDataSource = (name: string) =>
   post(`/api/datafetcher/fetch?name=${encodeURIComponent(name)}`);
 
 // Effects & Transitions
-export const getEffects = () => get<EffectInfo[]>("/api/effects");
+export const getEffects = async (): Promise<EffectInfo[]> => {
+  const names = await get<string[]>("/api/effects");
+  return names.map((name) => ({ name }));
+};
 export const getTransitions = () => get<TransitionInfo[]>("/api/transitions");
 
 // Power & System

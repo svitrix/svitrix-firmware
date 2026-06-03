@@ -158,8 +158,8 @@ Per-module docs auto-load when you Read files in their directory.
 | MenuManager | [src/MenuManager/CLAUDE.md](src/MenuManager/CLAUDE.md) | On-device settings menu |
 | UpdateManager | [src/UpdateManager/CLAUDE.md](src/UpdateManager/CLAUDE.md) | OTA firmware updates (HTTPS, pinned CA) |
 | PowerManager | [src/PowerManager/CLAUDE.md](src/PowerManager/CLAUDE.md) | Deep sleep, timer + GPIO wake |
-| DisplayManager | [src/DisplayManager/CLAUDE.md](src/DisplayManager/CLAUDE.md) | 3 classes, rendering, custom apps |
-| MQTTManager | [src/MQTTManager/CLAUDE.md](src/MQTTManager/CLAUDE.md) | MQTT + HA auto-discovery |
+| DisplayManager | [src/DisplayManager/CLAUDE.md](src/DisplayManager/CLAUDE.md) | 3 classes, rendering, custom apps, playlist mode |
+| MQTTManager | [src/MQTTManager/CLAUDE.md](src/MQTTManager/CLAUDE.md) | MQTT + HA auto-discovery, hot reconnect |
 | MatrixDisplayUi | [src/MatrixDisplayUi/CLAUDE.md](src/MatrixDisplayUi/CLAUDE.md) | App framework, state machine, transitions |
 | DataFetcher | [src/DataFetcher/CLAUDE.md](src/DataFetcher/CLAUDE.md) | External HTTP sources, round-robin polling |
 | Apps | [src/Apps/README.md](src/Apps/README.md) | Native + custom app rendering |

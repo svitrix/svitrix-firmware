@@ -85,6 +85,23 @@ Current implementors: `NightModePolicy` (src/policies/).
 
 > **App order = single source of truth.** `appConfig.appOrder` (NVS key `APPORDER`) holds the canonical order as a JSON array of names. Disabling an app removes it from the live loop but its name lingers in `appOrder` until the next persist, so re-enabling often restores its slot.
 
+### Playlist Mode (DisplayManager_Artnet.cpp)
+When `playlistConfig.enabled == true`, the display follows a custom sequence of apps and standalone effects instead of the simple app rotation.
+
+**Key components:**
+- `playlistItems` — parsed vector of `{type, name, duration}` from `playlistConfig.items`
+- `playlistIndex` — current position in the playlist (-1 initially)
+- `playlistEffectOnly` — true when displaying a standalone effect (skips app rendering)
+- `resolveNextApp(currentApp, direction)` — called by MatrixDisplayUi on each transition:
+  - Returns app index for apps
+  - Returns `-2` for effects (signals "stay on current app, just show effect")
+  - Returns `-1` for default sequential behavior (playlist disabled or empty)
+- `parsePlaylistConfig()` — parses JSON items, validates apps/effects exist, resets state
+
+**Persistence:** `playlistConfig` stored in NVS; survives reboots.
+
+**Limitation:** HA does not currently receive notifications when standalone effects are displayed (pending feature).
+
 ### Settings (DisplayManager_Settings.cpp)
 - `getSettings()` → JSON with 50+ config fields
 - `setNewSettings(json)` — partial update, applies + persists

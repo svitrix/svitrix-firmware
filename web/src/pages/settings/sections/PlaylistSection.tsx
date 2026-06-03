@@ -210,13 +210,13 @@ export function PlaylistSection() {
                     </button>
                   ))
                 ) : (
-                  effects.map((effect) => (
+                  effects.map((effect, index) => (
                     <button
                       key={effect.name}
                       class={styles.itemOption}
                       onClick={() => addItem("effect", effect.name)}
                     >
-                      ✨ {effect.name}
+                      {index + 1}. ✨ {effect.name}
                     </button>
                   ))
                 )}

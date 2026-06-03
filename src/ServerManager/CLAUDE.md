@@ -58,6 +58,8 @@ HTTP REST API server, WiFi connectivity, mDNS discovery, UDP device discovery, a
 | `POST` | `/api/reorder` | Reorder app vector |
 | `POST` | `/api/custom?name=X` | Create/update/delete custom app |
 | `POST` | `/api/moodlight` | Set moodlight mode |
+| `GET` | `/api/playlist` | Get playlist config (enabled, items) |
+| `POST` | `/api/playlist` | Save playlist config; supports apps and standalone effects with per-item duration |
 
 ### Notifications & Indicators
 | Method | Path | Description |

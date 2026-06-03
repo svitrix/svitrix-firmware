@@ -122,6 +122,7 @@ class DisplayManager_ : public IButtonHandler, public IMatrixHost, public IDispl
     String getEffectNames() override;
     String getTransitionNames() override;
     CRGB *getLeds() override;
+    int8_t resolveNextApp(int8_t currentApp, int8_t direction) override;
 
     // ── Artnet & Moodlight (DisplayManager_Artnet.cpp) ─────────────
     void startArtnet();

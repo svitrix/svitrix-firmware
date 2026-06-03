@@ -179,6 +179,50 @@ bool MQTTManager_::hasServices() const
 
 // ── Connection lifecycle ────────────────────────────────────────────
 
+/// Reconnect to MQTT broker with current configuration.
+/// Handles transitions: unconfigured→configured, configured→new config, configured→unconfigured.
+void MQTTManager_::reconnect()
+{
+    DEBUG_PRINTLN("MQTT reconnect requested");
+
+    // Disconnect if currently connected
+    if (mqtt.isConnected())
+    {
+        DEBUG_PRINTLN("Disconnecting from MQTT...");
+        mqtt.disconnect();
+        delay(300);
+    }
+    connected = false;
+
+    // If MQTT is now unconfigured, we're done
+    if (mqttConfig.host == "")
+    {
+        DEBUG_PRINTLN("MQTT host empty, staying disconnected");
+        return;
+    }
+
+    // Check if HA entities were never created (MQTT wasn't configured at boot)
+    // Matrix is one of the first entities created in setup()
+    if (Matrix == nullptr && haConfig.discovery)
+    {
+        DEBUG_PRINTLN("First time MQTT config, running full setup...");
+        setup();
+        return;
+    }
+
+    // Just reconnect with new credentials - don't recreate HA entities
+    DEBUG_PRINTF("Reconnecting to MQTT: %s:%d\n", mqttConfig.host.c_str(), mqttConfig.port);
+
+    if (mqttConfig.user == "" || mqttConfig.pass == "")
+    {
+        mqtt.begin(mqttConfig.host.c_str(), mqttConfig.port, nullptr, nullptr, systemConfig.hostname.c_str());
+    }
+    else
+    {
+        mqtt.begin(mqttConfig.host.c_str(), mqttConfig.port, mqttConfig.user.c_str(), mqttConfig.pass.c_str(), systemConfig.hostname.c_str());
+    }
+}
+
 /// Called by ArduinoHA when the MQTT broker connection is established.
 /// Subscribes to all device topics, deferred external topics, and
 /// publishes initial device state (version, effects, transitions).

@@ -122,6 +122,16 @@ setup() → destroyHAEntities() + resetDevicesCount() → create 63 HA entities 
 
 Reconnection handled internally by ArduinoHA. `onMqttConnected()` re-runs on each reconnect.
 
+### Hot Reconnect (no reboot required)
+
+`reconnect()` allows changing MQTT broker settings without restarting the device:
+- Called from `/save` HTTP handler when MQTT config changes
+- If entities exist → disconnect + `mqtt.begin()` with new credentials
+- If entities don't exist (first-time config) → full `setup()`
+- If host is empty → disconnect only (MQTT disabled)
+
+The display freezes briefly (~1-2 seconds) during reconnection due to subscription delays.
+
 ## Services Used (from lib/services/)
 
 - `MessageRouter` — topic → command type routing

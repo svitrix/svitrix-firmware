@@ -63,6 +63,11 @@ class MQTTManager_ : public IButtonReporter, public INotifier
     /// Initialize HA discovery entities (if enabled) and connect to broker.
     void setup();
 
+    /// Reconnect to MQTT broker with current configuration.
+    /// Call after changing mqttConfig fields (host, port, user, pass).
+    /// Disconnects if connected, destroys HA entities, and re-runs setup().
+    void reconnect();
+
     /// Main loop: process MQTT messages and periodically send stats.
     void tick();
 

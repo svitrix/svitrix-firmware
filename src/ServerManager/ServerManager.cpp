@@ -17,6 +17,7 @@
 #include "DataFetcher/DataFetcher.h"
 #include "Apps/Apps.h"
 #include "AlarmManager/AlarmManager.h"
+#include "MQTTManager/MQTTManager.h"
 #include <WiFiUdp.h>
 #include <HTTPClient.h>
 #include <EEPROM.h>
@@ -104,6 +105,7 @@ void ServerManager_::erase()
 void saveHandler(AsyncWebServerRequest *request)
 {
     ServerManager.loadSettings();
+    MQTTManager.reconnect();  // Reconnect MQTT with new config (only on web save, not boot)
     request->send(200);
 }
 
@@ -230,6 +232,7 @@ void addHandler()
                                 playlistConfig.items = items;
                             }
                             saveSettings();
+                            smControl_->applyAllSettings();
                             request->send(200, "text/plain", "OK"); });
     mws.addHandler("/api/settings", HTTP_GET, [](AsyncWebServerRequest *request)
                    { request->send(200, "application/json", smControl_->getSettings()); });
