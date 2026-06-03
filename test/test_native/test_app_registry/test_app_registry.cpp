@@ -87,6 +87,9 @@ void test_serialize_preserves_order(void)
     TEST_ASSERT_EQUAL_STRING("{\"B\":0,\"A\":1,\"C\":2}", result.c_str());
 }
 
+void setUp(void) {}
+void tearDown(void) {}
+
 int main(int argc, char **argv)
 {
     UNITY_BEGIN();

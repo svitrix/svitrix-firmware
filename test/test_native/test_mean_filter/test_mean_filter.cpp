@@ -125,6 +125,9 @@ void test_step_response(void)
     TEST_ASSERT_EQUAL_UINT16(100, f.AddValue(100));  // (100+100+100)/3 = 100
 }
 
+void setUp(void) {}
+void tearDown(void) {}
+
 int main(int argc, char **argv)
 {
     UNITY_BEGIN();

@@ -154,7 +154,7 @@ const char *getDeviceModel();
 
 /// Total number of HA entities the device registers.
 /// @param includeBattery true to count the battery sensor.
-/// @return 62 (without battery) or 63 (with battery).
+/// @return 65 (without battery) or 66 (with battery).
 size_t getTotalEntityCount(bool includeBattery);
 
 /// Capacity passed to the HAMqtt client (`HAMqtt mqtt(..., HA_MAX_ENTITIES)`).

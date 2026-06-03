@@ -231,7 +231,7 @@ void test_entity_count_is_expected(void)
     // Pin the current entity count. If you add/remove HA entities, update this
     // number AND verify HA_MAX_ENTITIES still has room (see test below).
     // Keep in sync with destroyHAEntities() in MQTTManager_Discovery.cpp.
-    TEST_ASSERT_EQUAL(63, getTotalEntityCount(true));
+    TEST_ASSERT_EQUAL(66, getTotalEntityCount(true));
 }
 
 void test_entity_count_fits_client_capacity(void)

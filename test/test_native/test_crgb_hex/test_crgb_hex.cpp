@@ -43,6 +43,9 @@ void test_crgb_hex_arbitrary(void)
     TEST_ASSERT_EQUAL_STRING("#1A2B3C", result.c_str());
 }
 
+void setUp(void) {}
+void tearDown(void) {}
+
 int main(int argc, char **argv)
 {
     UNITY_BEGIN();

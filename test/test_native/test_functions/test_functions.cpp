@@ -76,6 +76,9 @@ void test_round_zero_value(void)
     TEST_ASSERT_EQUAL_FLOAT(0.0, roundToDecimalPlaces(0.0, 3));
 }
 
+void setUp(void) {}
+void tearDown(void) {}
+
 int main(int argc, char **argv)
 {
     UNITY_BEGIN();

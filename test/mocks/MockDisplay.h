@@ -141,6 +141,7 @@ struct MockDisplayControl : public IDisplayControl
     String getStats() override { getStatsCalls++; return statsReturn; }
     bool moodlight(const char *json) override { moodlightCalls++; (void)json; return moodlightReturn; }
     String ledsAsJson() override { ledsAsJsonCalls++; return ledsReturn; }
+    void markPolicyConfigDirty() override {}
 };
 
 // ---------------------------------------------------------------------------

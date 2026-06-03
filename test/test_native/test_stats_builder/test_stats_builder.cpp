@@ -168,6 +168,9 @@ void test_json_large_ram_value(void)
     TEST_ASSERT_TRUE(jsonContains(json, "\"ram\":4000000"));
 }
 
+void setUp(void) {}
+void tearDown(void) {}
+
 int main(int argc, char **argv)
 {
     UNITY_BEGIN();

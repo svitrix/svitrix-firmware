@@ -200,6 +200,9 @@ void test_interpolate_high_to_low_quarter(void)
     TEST_ASSERT_INT_WITHIN(2, 191, r);
 }
 
+void setUp(void) {}
+void tearDown(void) {}
+
 int main(int argc, char **argv)
 {
     UNITY_BEGIN();

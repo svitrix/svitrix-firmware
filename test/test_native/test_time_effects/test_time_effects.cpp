@@ -121,6 +121,9 @@ void test_effect_blink_two_toggles(void)
     TEST_ASSERT_EQUAL_HEX32(0x000000, boundary);
 }
 
+void setUp(void) {}
+void tearDown(void) {}
+
 int main(int argc, char **argv)
 {
     UNITY_BEGIN();

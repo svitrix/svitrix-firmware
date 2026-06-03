@@ -230,6 +230,9 @@ void test_notifier_indicator_color(void)
 // Test runner
 // ═══════════════════════════════════════════════════════════════════════════
 
+void setUp(void) {}
+void tearDown(void) {}
+
 int main(int argc, char **argv)
 {
     UNITY_BEGIN();

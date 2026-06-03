@@ -120,6 +120,9 @@ void test_overlay_to_string_invalid_enum(void)
     TEST_ASSERT_EQUAL_STRING("invalid", overlayToString((OverlayEffect)99).c_str());
 }
 
+void setUp(void) {}
+void tearDown(void) {}
+
 int main(int argc, char **argv)
 {
     UNITY_BEGIN();

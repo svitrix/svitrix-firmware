@@ -94,6 +94,9 @@ void test_logmap_inverted_range_no_crash(void)
     TEST_ASSERT_FLOAT_WITHIN(0.001f, 0.0f, result);
 }
 
+void setUp(void) {}
+void tearDown(void) {}
+
 int main(int argc, char **argv)
 {
     UNITY_BEGIN();

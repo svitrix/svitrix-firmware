@@ -48,6 +48,9 @@ void test_round_very_small(void)
     TEST_ASSERT_EQUAL_FLOAT(0.001, roundToDecimalPlaces(0.0009999, 3));
 }
 
+void setUp(void) {}
+void tearDown(void) {}
+
 int main(int argc, char **argv)
 {
     UNITY_BEGIN();

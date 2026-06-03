@@ -192,6 +192,9 @@ void test_volume_input_max_zero_no_crash(void)
     TEST_ASSERT_EQUAL_UINT8(0, scaleVolume(15, 0, 255));
 }
 
+void setUp(void) {}
+void tearDown(void) {}
+
 int main(int argc, char **argv)
 {
     UNITY_BEGIN();

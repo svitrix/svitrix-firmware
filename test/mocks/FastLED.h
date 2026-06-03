@@ -70,9 +70,9 @@ struct CRGB {
     static const CRGB White;
 };
 
-// Static member definitions — weak linkage for safe multi-TU inclusion
-__attribute__((weak)) const CRGB CRGB::Black(0, 0, 0);
-__attribute__((weak)) const CRGB CRGB::White(255, 255, 255);
+// Static member definitions — inline for safe multi-TU inclusion (C++17)
+inline const CRGB CRGB::Black(0, 0, 0);
+inline const CRGB CRGB::White(255, 255, 255);
 
 // ---------------------------------------------------------------------------
 // CHSV
