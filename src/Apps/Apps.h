@@ -5,6 +5,8 @@
 #include "MatrixDisplayUi.h"
 #include "AppContent.h"
 
+class INotifier;
+
 struct CustomApp : AppContentBase
 {
     // CustomApp-only fields
@@ -27,6 +29,8 @@ struct CustomApp : AppContentBase
 extern std::vector<std::pair<String, AppCallback>> Apps;
 extern String currentCustomApp;
 extern std::map<String, CustomApp> customApps;
+
+void setAppsNotifier(INotifier *notifier);
 
 CustomApp *getCustomAppByName(const String& name);
 

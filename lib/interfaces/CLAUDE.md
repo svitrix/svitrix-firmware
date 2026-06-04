@@ -14,7 +14,7 @@
 | **IMatrixHost** | 4 | DisplayManager_ | MatrixDisplayUi |
 | **IButtonHandler** | 4 | DisplayManager_, MenuManager_ | PeripheryManager |
 | **IButtonReporter** | 1 | MQTTManager_, ServerManager_ | PeripheryManager |
-| **INotifier** | 6 | MQTTManager_ | DisplayManager, NotificationManager |
+| **INotifier** | 7 | MQTTManager_ | DisplayManager, NotificationManager, Apps |
 | **IPeripheryProvider** | 3 | PeripheryManager_ | DisplayManager, NotificationManager, MenuManager, ServerManager, MQTTManager |
 | **IPixelCanvas** | 6 | NeoMatrixCanvas | Effect system |
 | **ISound** | 3 | PeripheryManager_ | ServerManager, MQTTManager |
@@ -106,7 +106,7 @@ void leftButton(), rightButton(), selectButton(), selectButtonLong();
 void sendButton(byte btn, bool state);  // btn: 0=left, 1=select, 2=right
 ```
 
-### INotifier (6 methods)
+### INotifier (7 methods)
 ```cpp
 void publish(const char* topic, const char* payload);
 void rawPublish(const char* prefix, const char* topic, const char* payload);
@@ -114,6 +114,7 @@ void setCurrentApp(String app);
 void setIndicatorState(uint8_t indicator, bool state, uint32_t color);
 bool subscribe(const char* topic);
 long getReceivedMessages() const;
+String getValueForTopic(const String& topic) const;  // Placeholder substitution
 ```
 
 ### IPeripheryProvider (3 methods)
@@ -169,7 +170,7 @@ Abstraction over `timer_localtime()` for policies that schedule by time-of-day.
 Production impl: `RealTimeProvider` (src/), enforces `tm_year >= 120` (year ≥ 2020)
 to reject the pre-NTP epoch window.
 
-## Known Violations (16 files bypass interfaces)
+## Known Violations (4 files bypass interfaces)
 
 These files use direct `#include` instead of interfaces (see issue #11):
 
@@ -177,17 +178,16 @@ These files use direct `#include` instead of interfaces (see issue #11):
 |------|----------|------------|
 | Overlays.cpp | DisplayManager, MenuManager, PeripheryManager, MQTTManager | Interfaces via injection |
 | Apps_internal.h | DisplayManager | IDisplayRenderer |
-| Apps_CustomApp.cpp | MQTTManager | INotifier |
-| Apps_Helpers.cpp | MQTTManager | INotifier |
-| AppContentRenderer.cpp | DisplayManager | IDisplayRenderer |
-| MenuManager.cpp | ServerManager | New interface or callback |
-| Globals.cpp | DisplayManager | Remove dependency |
+| Apps_CustomApp.cpp | DisplayManager | IDisplayRenderer |
+| Globals.cpp | DisplayManager | Remove dependency (color correction only) |
 
-## Missing Interfaces (Suggested)
+### Resolved Violations
 
-| Interface | Why Needed |
-|-----------|-----------|
-| IServerConnectivity | MenuManager needs `isConnected()` — currently bypasses via direct include |
+| File | Was | Fix |
+|------|-----|-----|
+| Apps_Helpers.cpp | MQTTManager | Now uses INotifier via `setAppsNotifier()` |
+| MenuManager.cpp | ServerManager | Dead code removed |
+| ServerManager.cpp | MQTTManager | Now uses callback `setMqttReconnectCallback()` |
 
 ## Rules for Adding New Interfaces
 

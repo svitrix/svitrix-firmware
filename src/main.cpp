@@ -36,6 +36,7 @@
 #include "PeripheryManager/DS1307Provider.h"
 #include "AlarmManager/AlarmManager.h"
 #include "policies/NightModePolicy.h"
+#include "Apps/Apps.h"
 #include <cassert>
 
 TaskHandle_t taskHandle = nullptr;
@@ -125,10 +126,12 @@ void setup()
     MenuManager.setDisplay(&DisplayManager.getRenderer(), &DisplayManager, &DisplayManager);
     ServerManager.setDisplay(&DisplayManager.getRenderer(), &DisplayManager, &DisplayManager, &DisplayManager.getNotifier());
     MQTTManager.setDisplay(&DisplayManager, &DisplayManager, &DisplayManager.getNotifier());
+    setAppsNotifier(&MQTTManager);
     DataFetcher.setNavigation(&DisplayManager);
 
     // Wire up ISound, IPower, IUpdater interfaces (Phase 9.3)
     ServerManager.setServices(&PeripheryManager, &PowerManager, &UpdateManager);
+    ServerManager.setMqttReconnectCallback([]() { MQTTManager.reconnect(); });
     MQTTManager.setServices(&PeripheryManager, &PowerManager, &UpdateManager, &PeripheryManager);
     MenuManager.setServices(&PeripheryManager, &UpdateManager);
 

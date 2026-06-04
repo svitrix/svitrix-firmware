@@ -17,7 +17,6 @@
 #include "DataFetcher/DataFetcher.h"
 #include "Apps/Apps.h"
 #include "AlarmManager/AlarmManager.h"
-#include "MQTTManager/MQTTManager.h"
 #include <WiFiUdp.h>
 #include <HTTPClient.h>
 #include <EEPROM.h>
@@ -105,7 +104,7 @@ void ServerManager_::erase()
 void saveHandler(AsyncWebServerRequest *request)
 {
     ServerManager.loadSettings();
-    MQTTManager.reconnect();  // Reconnect MQTT with new config (only on web save, not boot)
+    ServerManager.triggerMqttReconnect();
     request->send(200);
 }
 

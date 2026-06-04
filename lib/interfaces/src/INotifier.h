@@ -19,5 +19,6 @@ public:
     virtual void setIndicatorState(uint8_t indicator, bool state, uint32_t color) = 0;
     virtual bool subscribe(const char *topic) = 0;
     virtual long getReceivedMessages() const = 0;
+    virtual String getValueForTopic(const String &topic) const = 0;
 };
 

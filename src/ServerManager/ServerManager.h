@@ -20,12 +20,16 @@ class ServerManager_ : public IButtonReporter
     ServerManager_(ServerManager_&&) = delete;
     ServerManager_& operator=(ServerManager_&&) = delete;
 
+    void (*onMqttConfigChanged_)() = nullptr;
+
   public:
     static ServerManager_& getInstance();
     void setDisplay(IDisplayRenderer *r, IDisplayControl *c, IDisplayNavigation *n, IDisplayNotifier *nt);
     bool hasDisplay() const;
     void setServices(ISound *s, IPower *p, IUpdater *u);
     bool hasServices() const;
+    void setMqttReconnectCallback(void (*cb)()) { onMqttConfigChanged_ = cb; }
+    void triggerMqttReconnect() { if (onMqttConfigChanged_) onMqttConfigChanged_(); }
     void setup();
     void tick();
     void initConfigDefaults();

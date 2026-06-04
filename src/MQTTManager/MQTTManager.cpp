@@ -382,16 +382,14 @@ bool MQTTManager_::isConnected()
 
 /// Look up the cached value for a subscribed topic.
 /// @return The last received value, or "N/A" if unknown.
-String MQTTManager_::getValueForTopic(const String& topic)
+String MQTTManager_::getValueForTopic(const String& topic) const
 {
-    if (mqttValues.find(topic) != mqttValues.end())
+    auto it = mqttValues.find(topic);
+    if (it != mqttValues.end())
     {
-        return mqttValues[topic];
+        return it->second;
     }
-    else
-    {
-        return "N/A";
-    }
+    return "N/A";
 }
 
 // ── Main loop ───────────────────────────────────────────────────────

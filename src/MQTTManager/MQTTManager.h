@@ -132,7 +132,7 @@ class MQTTManager_ : public IButtonReporter, public INotifier
     /// Retrieve the last known value for a subscribed topic.
     /// @param topic The full MQTT topic to look up.
     /// @return The stored value, or "N/A" if the topic is unknown.
-    String getValueForTopic(const String& topic);
+    String getValueForTopic(const String& topic) const override;
 };
 
 /// Global singleton reference. Use as: MQTTManager.publish(...).

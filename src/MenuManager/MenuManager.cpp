@@ -1,7 +1,6 @@
 #include <MenuManager.h>
 #include <Arduino.h>
 #include <Globals.h>
-#include <ServerManager.h>
 #include "IDisplayRenderer.h"
 #include "IDisplayControl.h"
 #include "IDisplayNavigation.h"

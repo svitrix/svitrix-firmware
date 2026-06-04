@@ -9,9 +9,16 @@
  *   - replacePlaceholders: {{topic}} → MQTT value substitution
  */
 #include "Apps_internal.h"
-#include "MQTTManager.h"
+#include "INotifier.h"
 #include "PlaceholderUtils.h"
 #include "DisplayManager_internal.h"
+
+static INotifier *appsNotifier_ = nullptr;
+
+void setAppsNotifier(INotifier *notifier)
+{
+    appsNotifier_ = notifier;
+}
 
 // ── Native app preamble ────────────────────────────────────────────
 
@@ -74,9 +81,11 @@ void drawWeekdayBar(int16_t x, int16_t y, uint8_t lineWidth,
 /// Replace all {{topic}} placeholders in text with live MQTT values.
 /// Delegates to the hardware-free replacePlaceholdersWith() utility.
 /// @param input Input string containing zero or more {{topic}} patterns.
-/// @return String with all placeholders resolved via MQTTManager.
+/// @return String with all placeholders resolved via injected INotifier.
 String replacePlaceholders(const String& input)
 {
+    if (!appsNotifier_)
+        return input;
     return replacePlaceholdersWith(input, [](const String& key) -> String
-                                   { return MQTTManager.getValueForTopic(key); });
+                                   { return appsNotifier_->getValueForTopic(key); });
 }
