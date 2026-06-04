@@ -1,155 +1,155 @@
 # Home Assistant Integration
 
-SVITRIX soporta auto-discovery de Home Assistant a través de MQTT. Al habilitarlo, el dispositivo se registra automáticamente en HA con 39 entidades controlables.
+SVITRIX supports Home Assistant auto-discovery via MQTT. When enabled, the device automatically registers in HA with 66 controllable entities.
 
-## Requisitos
+## Requirements
 
-- MQTT broker configurado (Mosquitto, EMQX, etc.)
-- Home Assistant con integración MQTT habilitada
-- SVITRIX conectado al mismo broker MQTT
+- Configured MQTT broker (Mosquitto, EMQX, etc.)
+- Home Assistant with MQTT integration enabled
+- SVITRIX connected to the same MQTT broker
 
-## Configuración
+## Configuration
 
-### 1. En SVITRIX
+### 1. In SVITRIX
 
-Ve a **Settings > MQTT** en la interfaz web:
+Go to **Settings > MQTT** in the web interface:
 
-| Campo | Descripción |
+| Field | Description |
 |-------|-------------|
-| Host | IP o hostname del broker MQTT |
-| Port | Puerto (default: 1883) |
-| User / Password | Credenciales del broker |
-| Prefix | Prefijo para topics (default: `svitrix`) |
-| **HA Discovery** | Habilitar para auto-discovery |
+| Host | IP or hostname of the MQTT broker |
+| Port | Port (default: 1883) |
+| User / Password | Broker credentials |
+| Prefix | MQTT topic prefix (default: `svitrix`) |
+| **HA Discovery** | Enable for auto-discovery |
 
-### 2. En Home Assistant
+### 2. In Home Assistant
 
-La integración MQTT debe estar configurada. Si usas el add-on Mosquitto de HA, ya está listo. Si usas broker externo:
+The MQTT integration must be configured. If using HA's Mosquitto add-on, it's ready. For external brokers:
 
 ```yaml
 # configuration.yaml
 mqtt:
   broker: 192.168.1.100
   port: 1883
-  username: tu_usuario
-  password: tu_password
+  username: your_user
+  password: your_password
 ```
 
-Una vez habilitado HA Discovery en SVITRIX y reiniciado, las entidades aparecerán automáticamente en **Settings > Devices & Services > MQTT**.
+Once HA Discovery is enabled in SVITRIX and restarted, entities will appear automatically in **Settings > Devices & Services > MQTT**.
 
 ---
 
-## Entidades Disponibles (66 total)
+## Available Entities (66 total)
 
-### Luces (5)
+### Lights (5)
 
-| Entidad | Descripción | Controles |
-|---------|-------------|-----------|
-| **Matrix** | Pantalla LED principal | On/Off, Brillo (0-255), Color RGB |
-| **Indicator 1** | LED indicador superior derecho | On/Off, Color RGB |
-| **Indicator 2** | LED indicador medio derecho | On/Off, Color RGB |
-| **Indicator 3** | LED indicador inferior derecho | On/Off, Color RGB |
-| **Night color** | Color del texto en modo nocturno | Color RGB |
+| Entity | Description | Controls |
+|--------|-------------|----------|
+| **Matrix** | Main LED display | On/Off, Brightness (0-255), RGB Color |
+| **Indicator 1** | Top-right indicator LED | On/Off, RGB Color |
+| **Indicator 2** | Middle-right indicator LED | On/Off, RGB Color |
+| **Indicator 3** | Bottom-right indicator LED | On/Off, RGB Color |
+| **Night color** | Text color in night mode | RGB Color |
 
 ### Switches (14)
 
-| Entidad | Descripción |
-|---------|-------------|
-| **Transition** | Habilita/deshabilita transición automática entre apps |
-| **Night mode** | Activa/desactiva el modo nocturno |
-| **Night block transition** | Bloquea transiciones durante modo nocturno |
-| **Sound enabled** | Habilita/deshabilita sonidos del buzzer |
-| **Show time app** | Muestra/oculta la app de hora |
-| **Show date app** | Muestra/oculta la app de fecha |
-| **Show temperature app** | Muestra/oculta la app de temperatura |
-| **Show humidity app** | Muestra/oculta la app de humedad |
-| **Show battery app** | Muestra/oculta la app de batería |
-| **Show outdoor temp** | Muestra/oculta temperatura exterior (weather) |
-| **Show outdoor humidity** | Muestra/oculta humedad exterior (weather) |
-| **Show pressure** | Muestra/oculta presión atmosférica (weather) |
-| **Show air quality** | Muestra/oculta índice de calidad de aire (weather) |
-| **Show UV index** | Muestra/oculta índice UV (weather) |
+| Entity | Description |
+|--------|-------------|
+| **Transition** | Enable/disable automatic app transition |
+| **Night mode** | Activate/deactivate night mode |
+| **Night block transition** | Block transitions during night mode |
+| **Sound enabled** | Enable/disable buzzer sounds |
+| **Show time app** | Show/hide time app |
+| **Show date app** | Show/hide date app |
+| **Show temperature app** | Show/hide temperature app |
+| **Show humidity app** | Show/hide humidity app |
+| **Show battery app** | Show/hide battery app |
+| **Show outdoor temp** | Show/hide outdoor temperature (weather) |
+| **Show outdoor humidity** | Show/hide outdoor humidity (weather) |
+| **Show pressure** | Show/hide atmospheric pressure (weather) |
+| **Show air quality** | Show/hide air quality index (weather) |
+| **Show UV index** | Show/hide UV index (weather) |
 
-### Números (14)
+### Numbers (14)
 
-| Entidad | Rango | Descripción |
-|---------|-------|-------------|
-| **Night brightness** | 1-50 | Brillo durante modo nocturno |
-| **Sound volume** | 0-30 | Volumen del buzzer |
-| **Time per app** | 1-60s | Duración de cada app en rotación |
-| **Scroll speed** | 20-200ms | Velocidad de scroll del texto |
-| **Clock duration** | 1-300s | Duración de la app de hora |
-| **Date duration** | 1-60s | Duración de la app de fecha |
-| **Temperature duration** | 1-60s | Duración de la app de temperatura |
-| **Humidity duration** | 1-60s | Duración de la app de humedad |
-| **Battery duration** | 1-60s | Duración de la app de batería |
-| **Outdoor temp duration** | 1-60s | Duración de temperatura exterior |
-| **Outdoor humidity duration** | 1-60s | Duración de humedad exterior |
-| **Pressure duration** | 1-60s | Duración de presión atmosférica |
-| **Air quality duration** | 1-60s | Duración de calidad del aire |
-| **UV index duration** | 1-60s | Duración de índice UV |
+| Entity | Range | Description |
+|--------|-------|-------------|
+| **Night brightness** | 1-50 | Brightness during night mode |
+| **Sound volume** | 0-30 | Buzzer volume |
+| **Time per app** | 1-60s | Duration of each app in rotation |
+| **Scroll speed** | 20-200ms | Text scroll speed |
+| **Clock duration** | 1-300s | Time app duration |
+| **Date duration** | 1-60s | Date app duration |
+| **Temperature duration** | 1-60s | Temperature app duration |
+| **Humidity duration** | 1-60s | Humidity app duration |
+| **Battery duration** | 1-60s | Battery app duration |
+| **Outdoor temp duration** | 1-60s | Outdoor temperature duration |
+| **Outdoor humidity duration** | 1-60s | Outdoor humidity duration |
+| **Pressure duration** | 1-60s | Atmospheric pressure duration |
+| **Air quality duration** | 1-60s | Air quality duration |
+| **UV index duration** | 1-60s | UV index duration |
 
-### Selectores (3)
+### Selects (3)
 
-| Entidad | Opciones | Descripción |
-|---------|----------|-------------|
-| **Brightness mode** | Manual, Auto | Modo de brillo (manual o según sensor de luz) |
-| **Transition effect** | 14 efectos | Efecto de transición entre apps |
-| **Background effect** | 21 opciones | Efecto de fondo (None, Fade, Matrix, Plasma, Fire, etc.) |
+| Entity | Options | Description |
+|--------|---------|-------------|
+| **Brightness mode** | Manual, Auto | Brightness mode (manual or light sensor based) |
+| **Transition effect** | 14 effects | Transition effect between apps |
+| **Background effect** | 21 options | Background effect (None, Fade, Matrix, Plasma, Fire, etc.) |
 
-### Botones (8)
+### Buttons (8)
 
-| Entidad | Acción |
-|---------|--------|
-| **Dismiss notification** | Cierra la notificación actual |
-| **Start Update** | Inicia actualización de firmware OTA |
-| **Next app** | Cambia a la siguiente app |
-| **Previous app** | Cambia a la app anterior |
-| **Reboot** | Reinicia el dispositivo |
-| **Play test sound** | Reproduce un beep de prueba |
-| **Snooze alarm** | Pospone la alarma activa |
-| **Dismiss alarm** | Cancela la alarma activa |
+| Entity | Action |
+|--------|--------|
+| **Dismiss notification** | Close current notification |
+| **Start Update** | Start OTA firmware update |
+| **Next app** | Switch to next app |
+| **Previous app** | Switch to previous app |
+| **Reboot** | Restart device |
+| **Play test sound** | Play a test beep |
+| **Snooze alarm** | Snooze the active alarm |
+| **Dismiss alarm** | Cancel the active alarm |
 
-### Sensores (17-18)
+### Sensors (17-18)
 
-| Entidad | Unidad | Descripción |
-|---------|--------|-------------|
-| **Current app** | — | Nombre de la app activa |
-| **Device topic** | — | Prefijo MQTT del dispositivo |
-| **Temperature** | °C | Temperatura ambiente (sensor interno) |
-| **Humidity** | % | Humedad relativa (sensor interno) |
-| **Illuminance** | lx | Luz ambiente (sensor LDR) |
-| **WiFi signal** | dB | Intensidad de señal WiFi |
-| **Firmware version** | — | Versión del firmware |
-| **Free RAM** | bytes | Memoria heap disponible |
-| **Uptime** | s | Tiempo desde el último reinicio |
-| **IP address** | — | Dirección IP del dispositivo |
-| **Battery** | % | Nivel de batería (solo Ulanzi TC001) |
-| **Outdoor temperature** | °C | Temperatura exterior (WeatherAPI) |
-| **Outdoor humidity** | % | Humedad exterior (WeatherAPI) |
-| **Pressure** | hPa | Presión atmosférica (WeatherAPI) |
-| **Air quality** | AQI | Índice de calidad del aire (WeatherAPI) |
-| **Weather condition** | — | Condición climática actual (WeatherAPI) |
-| **UV index** | — | Índice UV (WeatherAPI) |
-| **Next alarm** | — | Próxima alarma programada (HH:MM o "None") |
+| Entity | Unit | Description |
+|--------|------|-------------|
+| **Current app** | — | Active app name |
+| **Device topic** | — | Device MQTT prefix |
+| **Temperature** | °C | Ambient temperature (internal sensor) |
+| **Humidity** | % | Relative humidity (internal sensor) |
+| **Illuminance** | lx | Ambient light (LDR sensor) |
+| **WiFi signal** | dB | WiFi signal strength |
+| **Firmware version** | — | Firmware version |
+| **Free RAM** | bytes | Available heap memory |
+| **Uptime** | s | Time since last restart |
+| **IP address** | — | Device IP address |
+| **Battery** | % | Battery level (Ulanzi TC001 only) |
+| **Outdoor temperature** | °C | Outdoor temperature (WeatherAPI) |
+| **Outdoor humidity** | % | Outdoor humidity (WeatherAPI) |
+| **Pressure** | hPa | Atmospheric pressure (WeatherAPI) |
+| **Air quality** | AQI | Air quality index (WeatherAPI) |
+| **Weather condition** | — | Current weather condition (WeatherAPI) |
+| **UV index** | — | UV index (WeatherAPI) |
+| **Next alarm** | — | Next scheduled alarm (HH:MM or "None") |
 
-### Sensores Binarios (4)
+### Binary Sensors (4)
 
-| Entidad | Descripción |
-|---------|-------------|
-| **Button left** | Estado del botón izquierdo |
-| **Button middle** | Estado del botón central |
-| **Button right** | Estado del botón derecho |
-| **Alarm ringing** | Indica si hay una alarma sonando |
+| Entity | Description |
+|--------|-------------|
+| **Button left** | Left button state |
+| **Button middle** | Middle button state |
+| **Button right** | Right button state |
+| **Alarm ringing** | Indicates if an alarm is ringing |
 
 ---
 
-## Ejemplos de Automatizaciones
+## Automation Examples
 
-### Silenciar cuando TV está encendida
+### Mute when TV is on
 
 ```yaml
-alias: "SVITRIX - Silenciar con TV"
+alias: "SVITRIX - Mute with TV"
 trigger:
   - platform: state
     entity_id: media_player.living_room_tv
@@ -160,10 +160,10 @@ action:
       entity_id: switch.svitrix_sound_enabled
 ```
 
-### Activar modo nocturno con escena
+### Activate night mode with scene
 
 ```yaml
-alias: "SVITRIX - Modo cine"
+alias: "SVITRIX - Movie mode"
 trigger:
   - platform: state
     entity_id: input_boolean.movie_mode
@@ -184,10 +184,10 @@ action:
       rgb_color: [255, 50, 0]
 ```
 
-### Notificación al presionar botón
+### Notification on button press
 
 ```yaml
-alias: "SVITRIX - Botón central presionado"
+alias: "SVITRIX - Middle button pressed"
 trigger:
   - platform: state
     entity_id: binary_sensor.svitrix_button_middle
@@ -195,13 +195,13 @@ trigger:
 action:
   - service: notify.mobile_app
     data:
-      message: "Botón central presionado en SVITRIX"
+      message: "Middle button pressed on SVITRIX"
 ```
 
-### Brillo automático según hora
+### Automatic brightness by time
 
 ```yaml
-alias: "SVITRIX - Brillo por horario"
+alias: "SVITRIX - Brightness by schedule"
 trigger:
   - platform: time
     at: "22:00:00"
@@ -218,10 +218,10 @@ action:
       brightness: 30
 ```
 
-### Indicador de estado de alarma
+### Alarm status indicator
 
 ```yaml
-alias: "SVITRIX - Indicador alarma"
+alias: "SVITRIX - Alarm indicator"
 trigger:
   - platform: state
     entity_id: alarm_control_panel.home
@@ -249,12 +249,12 @@ action:
               rgb_color: [0, 255, 0]
 ```
 
-### Enviar notificación via MQTT
+### Send notification via MQTT
 
-Para notificaciones más avanzadas, usa el topic MQTT directamente:
+For more advanced notifications, use the MQTT topic directly:
 
 ```yaml
-alias: "SVITRIX - Notificación de timbre"
+alias: "SVITRIX - Doorbell notification"
 trigger:
   - platform: state
     entity_id: binary_sensor.doorbell
@@ -265,7 +265,7 @@ action:
       topic: "svitrix/notify"
       payload: >
         {
-          "text": "Alguien en la puerta",
+          "text": "Someone at the door",
           "icon": "door",
           "color": "#FFAA00",
           "duration": 10,
@@ -275,30 +275,30 @@ action:
 
 ---
 
-## Integración con Google Calendar
+## Google Calendar Integration
 
-Muestra eventos, aniversarios y tareas de Google Calendar en SVITRIX usando Home Assistant como puente.
+Display events, anniversaries, and tasks from Google Calendar on SVITRIX using Home Assistant as a bridge.
 
-### Requisitos
+### Requirements
 
-- Home Assistant con integración MQTT funcionando
-- Cuenta de Google con acceso a Google Calendar
+- Home Assistant with working MQTT integration
+- Google account with access to Google Calendar
 
-### 1. Configurar Google Calendar en Home Assistant
+### 1. Configure Google Calendar in Home Assistant
 
-1. Ve a **Settings > Devices & Services > Add Integration**
-2. Busca **Google Calendar**
-3. Sigue el flujo de autenticación OAuth con tu cuenta Google
-4. Selecciona los calendarios que quieres importar
+1. Go to **Settings > Devices & Services > Add Integration**
+2. Search for **Google Calendar**
+3. Follow the OAuth authentication flow with your Google account
+4. Select the calendars you want to import
 
-Una vez configurado, tendrás entidades como:
-- `calendar.mi_calendario_personal`
-- `calendar.cumpleanos`
-- `calendar.trabajo`
+Once configured, you'll have entities like:
+- `calendar.my_personal_calendar`
+- `calendar.birthdays`
+- `calendar.work`
 
-### 2. Probar manualmente
+### 2. Test manually
 
-Antes de automatizar, prueba enviando un evento manualmente desde **Developer Tools > Services**:
+Before automating, test by sending an event manually from **Developer Tools > Services**:
 
 ```yaml
 service: mqtt.publish
@@ -306,55 +306,55 @@ data:
   topic: "svitrix/notify"
   payload: |
     {
-      "text": "Prueba de calendario",
+      "text": "Calendar test",
       "icon": "6741",
       "duration": 10,
       "color": "#00BFFF"
     }
 ```
 
-Si aparece en SVITRIX, la conexión MQTT funciona correctamente.
+If it appears on SVITRIX, the MQTT connection works correctly.
 
-### 3. Automatizaciones
+### 3. Automations
 
-#### Mostrar próximo evento como app permanente
+#### Show next event as permanent app
 
 ```yaml
 automation:
-  - alias: "SVITRIX - Próximo evento del calendario"
+  - alias: "SVITRIX - Next calendar event"
     trigger:
       - platform: time_pattern
-        minutes: "/15"  # actualizar cada 15 min
+        minutes: "/15"  # update every 15 min
       - platform: state
-        entity_id: calendar.mi_calendario
+        entity_id: calendar.my_calendar
     condition:
       - condition: state
-        entity_id: calendar.mi_calendario
-        state: "on"  # hay evento activo o próximo
+        entity_id: calendar.my_calendar
+        state: "on"  # there's an active or upcoming event
     action:
       - service: mqtt.publish
         data:
           topic: "svitrix/custom/calendar"
           payload: >
             {
-              "text": "{{ state_attr('calendar.mi_calendario', 'message') }}",
+              "text": "{{ state_attr('calendar.my_calendar', 'message') }}",
               "icon": "6741",
               "duration": 10,
               "color": "#00BFFF"
             }
 ```
 
-#### Notificación de cumpleaños/aniversario
+#### Birthday/anniversary notification
 
 ```yaml
 automation:
-  - alias: "SVITRIX - Aniversarios del día"
+  - alias: "SVITRIX - Daily anniversaries"
     trigger:
       - platform: time
         at: "08:00:00"
     condition:
       - condition: state
-        entity_id: calendar.cumpleanos
+        entity_id: calendar.birthdays
         state: "on"
     action:
       - service: mqtt.publish
@@ -362,7 +362,7 @@ automation:
           topic: "svitrix/notify"
           payload: >
             {
-              "text": "{{ state_attr('calendar.cumpleanos', 'message') }}",
+              "text": "{{ state_attr('calendar.birthdays', 'message') }}",
               "icon": "955",
               "duration": 30,
               "color": "#FF69B4",
@@ -370,15 +370,15 @@ automation:
             }
 ```
 
-#### Recordatorio de reuniones (15 min antes)
+#### Meeting reminder (15 min before)
 
 ```yaml
 automation:
-  - alias: "SVITRIX - Recordatorio reunión"
+  - alias: "SVITRIX - Meeting reminder"
     trigger:
       - platform: calendar
         event: start
-        entity_id: calendar.trabajo
+        entity_id: calendar.work
         offset: "-0:15:00"
     action:
       - service: mqtt.publish
@@ -386,7 +386,7 @@ automation:
           topic: "svitrix/notify"
           payload: >
             {
-              "text": "En 15 min: {{ trigger.calendar_event.summary }}",
+              "text": "In 15 min: {{ trigger.calendar_event.summary }}",
               "icon": "7956",
               "duration": 60,
               "color": "#FFA500",
@@ -394,67 +394,22 @@ automation:
             }
 ```
 
-#### Mostrar tareas pendientes (desde Google Tasks via calendario)
+### 4. Recommended icons
 
-```yaml
-automation:
-  - alias: "SVITRIX - Tareas del día"
-    trigger:
-      - platform: time
-        at: "09:00:00"
-    action:
-      - service: mqtt.publish
-        data:
-          topic: "svitrix/custom/tasks"
-          payload: >
-            {
-              "text": "{{ states('sensor.google_tasks_count') }} tareas pendientes",
-              "icon": "51167",
-              "color": "#9966FF"
-            }
-```
+| Icon | ID | Use |
+|------|-----|-----|
+| Calendar | 6741 | General events |
+| Cake | 955 | Birthdays |
+| Gift | 52 | Anniversaries |
+| Meeting | 7956 | Work/meetings |
+| Check | 51167 | Tasks |
+| Alarm | 5765 | Reminders |
 
-### 4. Iconos recomendados
+You can find more icons at [LaMetric Icon Gallery](https://developer.lametric.com/icons).
 
-| Icono | ID | Uso |
-|-------|-----|-----|
-| Calendario | 6741 | Eventos generales |
-| Pastel | 955 | Cumpleaños |
-| Regalo | 52 | Aniversarios |
-| Reunión | 7956 | Trabajo/reuniones |
-| Check | 51167 | Tareas |
-| Alarma | 5765 | Recordatorios |
+### 5. Remove calendar app
 
-Puedes buscar más iconos en [LaMetric Icon Gallery](https://developer.lametric.com/icons).
-
-### 5. Template Sensors (opcional)
-
-Para más control, crea template sensors que formateen los eventos:
-
-```yaml
-# configuration.yaml
-template:
-  - sensor:
-      - name: "Próximo Evento Hoy"
-        state: >
-          {% set cal = state_attr('calendar.mi_calendario', 'message') %}
-          {% if cal %}
-            {{ cal[:30] }}{% if cal|length > 30 %}...{% endif %}
-          {% else %}
-            Sin eventos
-          {% endif %}
-        attributes:
-          full_message: "{{ state_attr('calendar.mi_calendario', 'message') }}"
-          start_time: "{{ state_attr('calendar.mi_calendario', 'start_time') }}"
-          
-      - name: "Eventos Hoy Count"
-        state: >
-          {% if is_state('calendar.mi_calendario', 'on') %}1{% else %}0{% endif %}
-```
-
-### 6. Eliminar app de calendario
-
-Para quitar la app de calendario de la rotación:
+To remove the calendar app from rotation:
 
 ```yaml
 service: mqtt.publish
@@ -463,47 +418,23 @@ data:
   payload: "{}"
 ```
 
-### Solución de problemas
-
-| Problema | Solución |
-|----------|----------|
-| Calendario no muestra eventos | Verifica que `calendar.X` tenga estado `on` cuando hay evento |
-| Texto muy largo | Usa template para truncar: <code>&#123;&#123; message[:25] &#125;&#125;...</code> |
-| Caracteres extraños | SVITRIX soporta UTF-8, pero algunos emojis pueden no renderizar |
-| Evento no se actualiza | Aumenta frecuencia del trigger `time_pattern` |
-
-### Blueprints
-
-Importa estos blueprints para configurar rápidamente las automatizaciones:
-
-| Blueprint | Descripción | Importar |
-|-----------|-------------|----------|
-| **Evento de calendario** | Muestra próximo evento como app | [![Import](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https://xe1e.github.io/svitrix-firmware-XE1E/blueprints/svitrix_calendar_event.yaml) |
-| **Cumpleaños/Aniversario** | Notificación diaria de cumpleaños | [![Import](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https://xe1e.github.io/svitrix-firmware-XE1E/blueprints/svitrix_birthday_notification.yaml) |
-| **Recordatorio reunión** | Notificación X minutos antes | [![Import](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https://xe1e.github.io/svitrix-firmware-XE1E/blueprints/svitrix_meeting_reminder.yaml) |
-
-**Importación manual:**
-1. Ve a **Settings > Automations & Scenes > Blueprints**
-2. Click **Import Blueprint**
-3. Pega la URL del blueprint
-
 ---
 
-## Integración con Alexa y Google Home
+## Alexa and Google Home Integration
 
-Usa SVITRIX con comandos de voz a través de Home Assistant.
+Use SVITRIX with voice commands through Home Assistant.
 
-### Requisitos
+### Requirements
 
-- Home Assistant con integración MQTT funcionando
-- **Para Alexa:** [Alexa Media Player](https://github.com/custom-components/alexa_media_player) (HACS) o Home Assistant Cloud
-- **Para Google:** Integración nativa de Google Assistant o Home Assistant Cloud
+- Home Assistant with working MQTT integration
+- **For Alexa:** [Alexa Media Player](https://github.com/custom-components/alexa_media_player) (HACS) or Home Assistant Cloud
+- **For Google:** Native Google Assistant integration or Home Assistant Cloud
 
-### Configuración inicial
+### Initial Configuration
 
-#### 1. Exponer entidades a los asistentes
+#### 1. Expose entities to assistants
 
-Para controlar SVITRIX por voz, expón estas entidades:
+To control SVITRIX by voice, expose these entities:
 
 ```yaml
 # configuration.yaml
@@ -522,171 +453,81 @@ cloud:
         - switch.svitrix_sound_enabled
 ```
 
-#### 2. Crear input_boolean para rutinas
+#### 2. Create input_boolean for routines
 
-Para activar automatizaciones por voz:
+To activate automations by voice:
 
 ```yaml
 # configuration.yaml
 input_boolean:
-  buenos_dias:
-    name: Buenos días
+  good_morning:
+    name: Good morning
     icon: mdi:weather-sunny
-  mostrar_mensaje:
-    name: Mostrar mensaje
+  show_message:
+    name: Show message
     icon: mdi:message
 ```
 
-Expón estos `input_boolean` a Alexa/Google. Luego crea rutinas:
-- **Alexa:** "Cuando diga 'Buenos días'" → Activar `input_boolean.buenos_dias`
-- **Google:** "Cuando diga 'Buenos días'" → Activar `input_boolean.buenos_dias`
+Expose these `input_boolean` to Alexa/Google. Then create routines:
+- **Alexa:** "When I say 'Good morning'" → Activate `input_boolean.good_morning`
+- **Google:** "When I say 'Good morning'" → Activate `input_boolean.good_morning`
 
-### Comandos de voz disponibles
+### Available voice commands
 
-Una vez configurado, puedes usar:
+Once configured, you can use:
 
-| Comando | Acción |
+| Command | Action |
 |---------|--------|
-| "Alexa, enciende el reloj" | Enciende la matriz |
-| "Hey Google, apaga el reloj" | Apaga la matriz |
-| "Alexa, pon el brillo del reloj al 50%" | Ajusta brillo |
-| "Hey Google, activa modo noche" | Activa night mode |
-| "Alexa, Buenos días" | Ejecuta rutina matutina |
+| "Alexa, turn on the clock" | Turn on the matrix |
+| "Hey Google, turn off the clock" | Turn off the matrix |
+| "Alexa, set clock brightness to 50%" | Adjust brightness |
+| "Hey Google, activate night mode" | Activate night mode |
+| "Alexa, Good morning" | Execute morning routine |
 
-### Blueprints para asistentes de voz
+### Blueprints for voice assistants
 
-| Blueprint | Descripción | Importar |
-|-----------|-------------|----------|
-| **Botón a anuncio** | Botón físico → Alexa/Google anuncia | [![Import](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https://xe1e.github.io/svitrix-firmware-XE1E/blueprints/svitrix_button_announcement.yaml) |
-| **Notificación por voz** | Script para enviar texto a SVITRIX | [![Import](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https://xe1e.github.io/svitrix-firmware-XE1E/blueprints/svitrix_voice_notification.yaml) |
-| **Rutina matutina** | "Buenos días" → clima + calendario | [![Import](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https://xe1e.github.io/svitrix-firmware-XE1E/blueprints/svitrix_morning_routine.yaml) |
-
-### Usar: Botón a anuncio de voz
-
-**Qué hace:** Al presionar un botón físico de SVITRIX, Alexa o Google anuncia la hora, clima, próximo evento, o un mensaje personalizado.
-
-**Configuración:**
-1. Importa el blueprint
-2. Crea una automatización desde él
-3. Selecciona:
-   - Botón de SVITRIX (ej. `binary_sensor.svitrix_button_middle`)
-   - Dispositivo Alexa/Google (ej. `media_player.echo_dot`)
-   - Tipo de mensaje (hora, clima, calendario, personalizado)
-
-**Probar:**
-1. Presiona el botón configurado en SVITRIX
-2. Alexa/Google debería anunciar el mensaje
-
-### Usar: Notificación por voz
-
-**Qué hace:** Crea un script que puedes invocar desde Alexa/Google para mostrar texto en SVITRIX.
-
-**Configuración:**
-1. Importa el blueprint como **script** (no automatización)
-2. El script se llamará `script.svitrix_voice_notification` (o el nombre que elijas)
-3. Expón el script a Alexa/Google
-
-**Probar desde Developer Tools:**
-```yaml
-service: script.svitrix_voice_notification
-data:
-  text: "Hola desde HA"
-  color: "#FF5500"
-  duration: 15
-```
-
-**Invocar desde Alexa:**
-1. Crea una rutina en la app Alexa
-2. Trigger: "Alexa, muestra mensaje en el reloj"
-3. Acción: Smart Home → Escena → `script.svitrix_voice_notification`
-
-### Usar: Rutina matutina
-
-**Qué hace:** Al decir "Buenos días", muestra clima y calendario en SVITRIX, y opcionalmente anuncia un resumen por voz.
-
-**Configuración:**
-1. Crea `input_boolean.buenos_dias` (ver arriba)
-2. Expón el input_boolean a Alexa/Google
-3. Crea rutina de voz: "Buenos días" → activar `input_boolean.buenos_dias`
-4. Importa el blueprint
-5. Configura:
-   - Trigger: `input_boolean.buenos_dias`
-   - Entidad weather (ej. `weather.home`)
-   - Calendario (opcional)
-   - Asistente para anuncio de voz (opcional)
-
-**Probar:**
-1. Di "Alexa, Buenos días" o "Hey Google, Buenos días"
-2. SVITRIX muestra clima → luego calendario
-3. (Opcional) Alexa/Google anuncia el resumen
-
-### Ejemplo completo: Mensaje bidireccional
-
-```yaml
-# Alexa → SVITRIX: Mostrar mensaje
-automation:
-  - alias: "Alexa a SVITRIX"
-    trigger:
-      - platform: state
-        entity_id: input_boolean.mostrar_mensaje
-        to: "on"
-    action:
-      - service: mqtt.publish
-        data:
-          topic: "svitrix/notify"
-          payload: '{"text": "Mensaje de Alexa", "icon": "6919", "duration": 10}'
-      - service: input_boolean.turn_off
-        target:
-          entity_id: input_boolean.mostrar_mensaje
-
-# SVITRIX → Alexa: Anunciar al presionar botón
-  - alias: "SVITRIX a Alexa"
-    trigger:
-      - platform: state
-        entity_id: binary_sensor.svitrix_button_right
-        to: "on"
-    action:
-      - service: notify.alexa_media
-        data:
-          target: media_player.echo_dot
-          message: "Botón presionado en SVITRIX"
-          data:
-            type: tts
-```
-
-### Solución de problemas
-
-| Problema | Solución |
-|----------|----------|
-| Alexa no encuentra el dispositivo | Pide a Alexa "descubrir dispositivos" |
-| Google no responde | Verifica sincronización en la app Google Home |
-| Script no aparece en Alexa | Solo se exponen scripts con campos definidos |
-| TTS no funciona | Verifica que Alexa Media Player esté configurado |
+| Blueprint | Description | Import |
+|-----------|-------------|--------|
+| **Button to announcement** | Physical button → Alexa/Google announces | [![Import](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https://xe1e.github.io/svitrix-firmware-XE1E/blueprints/svitrix_button_announcement.yaml) |
+| **Voice notification** | Script to send text to SVITRIX | [![Import](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https://xe1e.github.io/svitrix-firmware-XE1E/blueprints/svitrix_voice_notification.yaml) |
+| **Morning routine** | "Good morning" → weather + calendar | [![Import](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https://xe1e.github.io/svitrix-firmware-XE1E/blueprints/svitrix_morning_routine.yaml) |
 
 ---
 
-## Solución de Problemas
+## Troubleshooting
 
-### Las entidades no aparecen en HA
+### Entities don't appear in HA
 
-1. Verifica que MQTT esté conectado (icono WiFi+MQTT en SVITRIX)
-2. Confirma que "HA Discovery" está habilitado en Settings > MQTT
-3. Reinicia SVITRIX después de habilitar discovery
-4. Revisa los logs de HA en **Settings > System > Logs**
+1. Verify MQTT is connected (WiFi+MQTT icon on SVITRIX)
+2. Confirm "HA Discovery" is enabled in Settings > MQTT
+3. Restart SVITRIX after enabling discovery
+4. Check HA logs in **Settings > System > Logs**
 
-### Entidades aparecen como "unavailable"
+### Entities appear as "unavailable"
 
-- El dispositivo puede estar desconectado o reiniciándose
-- Verifica la conexión MQTT en ambos lados
+- The device may be disconnected or restarting
+- Verify MQTT connection on both sides
 
-### Los cambios no se reflejan
+### Changes aren't reflected
 
-- Algunos cambios requieren que SVITRIX publique su estado (cada 5 segundos por defecto)
-- Para forzar actualización inmediata, reinicia el dispositivo
+- Some changes require SVITRIX to publish its state (every 5 seconds by default)
+- To force immediate update, restart the device
+
+### Orphan entities (from previous versions)
+
+If you see entities like "Clock Color", "Time Color" that don't respond:
+1. Go to **HA > Settings > Devices & Services > MQTT**
+2. Find your SVITRIX device
+3. Delete the non-responsive entities manually
+
+Or force full re-discovery:
+1. In SVITRIX web: disable "HA Discovery", save
+2. In HA: delete the entire SVITRIX device
+3. In SVITRIX web: re-enable "HA Discovery", save
 
 ---
 
-## Ver también
+## See also
 
-- [API MQTT/HTTP](api.md) — Comandos avanzados via MQTT
-- [Configuración MQTT con Docker](mqtt-docker-setup.md) — Instalación de Mosquitto
+- [MQTT/HTTP API](api.md) — Advanced commands via MQTT
+- [MQTT Setup with Docker](mqtt-docker-setup.md) — Mosquitto installation
