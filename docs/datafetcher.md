@@ -25,6 +25,85 @@ Cada fuente de datos tiene las siguientes configuraciones:
 | **Icono** | Nombre de icono opcional de la carpeta ICONS |
 | **Color** | Color de texto opcional como hex `#RRGGBB` |
 | **Intervalo** | Intervalo de polling en segundos (mínimo 60, por defecto 900) |
+| **Duración** | Tiempo de visualización en segundos (0 = usar valor global de timePerApp) |
+
+## Ruta JSON
+
+La **Ruta JSON** indica dónde está el valor que quieres extraer dentro de la respuesta de la API. Usa notación de punto para navegar por la estructura.
+
+### Cómo encontrar la ruta
+
+1. Abre la URL de la API en tu navegador
+2. Observa la estructura del JSON
+3. Escribe la ruta usando puntos para separar niveles
+
+### Ejemplos de rutas
+
+Si la API devuelve:
+```json
+{
+  "rates": {
+    "MXN": 17.45,
+    "EUR": 0.92
+  }
+}
+```
+→ Ruta: `rates.MXN` → Resultado: `17.45`
+
+Para arrays, usa el índice numérico:
+```json
+{
+  "data": [
+    { "price": 67000 },
+    { "price": 3400 }
+  ]
+}
+```
+→ Ruta: `data.0.price` → Resultado: `67000` (primer elemento)
+
+---
+
+## Formato de Visualización
+
+El **Formato de Visualización** usa sintaxis printf para dar estilo al valor extraído.
+
+### Referencia rápida
+
+| Formato | Ejemplo de salida | Descripción |
+|---------|-------------------|-------------|
+| `$%.2f` | $17.45 | Moneda con 2 decimales |
+| `$%.0f` | $67432 | Moneda sin decimales |
+| `%.1f°C` | 23.5°C | Un decimal con unidad |
+| `%d%%` | 85% | Entero con símbolo % |
+| `%s` | texto | Texto sin modificar |
+| *(vacío)* | 17.45 | Valor crudo |
+
+### Especificadores permitidos
+
+- **Números**: `%d` `%i` (enteros), `%f` `%g` `%e` (decimales)
+- **Texto**: `%s` (cadena)
+- **Literal %**: `%%` (muestra un solo %)
+
+### Modificadores opcionales
+
+- **Ancho mínimo**: `%8d` → `"      42"` (8 caracteres)
+- **Precisión decimal**: `%.2f` → `"3.14"` (2 decimales)
+- **Combinado**: `%8.2f` → `"    3.14"`
+
+---
+
+## Icono
+
+El campo **Icono** acepta:
+
+- **Nombre de archivo**: nombre de un icono en la carpeta `/ICONS/` (sin extensión)
+- **Número LaMetric**: ID numérico de [LaMetric Icon Gallery](https://developer.lametric.com/icons) — el sistema busca `[número].gif` en `/ICONS/`
+
+Ejemplos: `bitcoin`, `16437`, `weather`
+
+> **Tip**: Descarga iconos desde la sección de Iconos en la interfaz web antes de usarlos.
+
+---
 
 ## Ejemplos
 

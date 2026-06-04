@@ -98,6 +98,7 @@ export interface DataSource {
   icon: string;
   color: string;
   interval: number;
+  duration: number;
 }
 
 export interface FileEntry {

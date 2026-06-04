@@ -11,8 +11,10 @@ struct DataSourceConfig
     String icon;          // Icon name from LittleFS (empty = no icon)
     String textColor;     // Hex color "#RRGGBB" or empty for default
     uint32_t interval;    // Polling interval in seconds (minimum 60, default 900 = 15 min)
+    uint32_t duration;    // Display duration in seconds (0 = use global timePerApp)
 
-    static constexpr uint32_t MIN_INTERVAL = 60;
-    static constexpr uint32_t DEFAULT_INTERVAL = 900;
-    static constexpr size_t MAX_SOURCES = 8;
+    static inline constexpr uint32_t MIN_INTERVAL = 60;
+    static inline constexpr uint32_t DEFAULT_INTERVAL = 900;
+    static inline constexpr uint32_t DEFAULT_DURATION = 0;
+    static inline constexpr size_t MAX_SOURCES = 8;
 };

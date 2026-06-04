@@ -25,6 +25,85 @@ Each data source has the following settings:
 | **Icon** | Optional icon name from the ICONS folder |
 | **Color** | Optional text color as hex `#RRGGBB` |
 | **Interval** | Polling interval in seconds (minimum 60, default 900) |
+| **Duration** | Display duration in seconds (0 = use global timePerApp setting) |
+
+## JSON Path
+
+The **JSON Path** indicates where to find the value you want to extract from the API response. Use dot notation to navigate through the structure.
+
+### How to find the path
+
+1. Open the API URL in your browser
+2. Observe the JSON structure
+3. Write the path using dots to separate levels
+
+### Path examples
+
+If the API returns:
+```json
+{
+  "rates": {
+    "MXN": 17.45,
+    "EUR": 0.92
+  }
+}
+```
+→ Path: `rates.MXN` → Result: `17.45`
+
+For arrays, use the numeric index:
+```json
+{
+  "data": [
+    { "price": 67000 },
+    { "price": 3400 }
+  ]
+}
+```
+→ Path: `data.0.price` → Result: `67000` (first element)
+
+---
+
+## Display Format
+
+The **Display Format** uses printf syntax to style the extracted value.
+
+### Quick reference
+
+| Format | Example output | Description |
+|--------|----------------|-------------|
+| `$%.2f` | $17.45 | Currency with 2 decimals |
+| `$%.0f` | $67432 | Currency without decimals |
+| `%.1f°C` | 23.5°C | One decimal with unit |
+| `%d%%` | 85% | Integer with % symbol |
+| `%s` | text | Unmodified text |
+| *(empty)* | 17.45 | Raw value |
+
+### Allowed specifiers
+
+- **Numbers**: `%d` `%i` (integers), `%f` `%g` `%e` (decimals)
+- **Text**: `%s` (string)
+- **Literal %**: `%%` (displays a single %)
+
+### Optional modifiers
+
+- **Minimum width**: `%8d` → `"      42"` (8 characters)
+- **Decimal precision**: `%.2f` → `"3.14"` (2 decimals)
+- **Combined**: `%8.2f` → `"    3.14"`
+
+---
+
+## Icon
+
+The **Icon** field accepts:
+
+- **File name**: name of an icon in the `/ICONS/` folder (without extension)
+- **LaMetric number**: numeric ID from [LaMetric Icon Gallery](https://developer.lametric.com/icons) — the system looks for `[number].gif` in `/ICONS/`
+
+Examples: `bitcoin`, `16437`, `weather`
+
+> **Tip**: Download icons from the Icons section in the web interface before using them.
+
+---
 
 ## Examples
 

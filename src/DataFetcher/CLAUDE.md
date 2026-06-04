@@ -32,6 +32,7 @@ Uses `IDisplayNavigation::parseCustomPage(name, json, show)` to feed fetched dat
 | `icon` | String | Icon name from LittleFS, or empty |
 | `textColor` | String | Hex color `"#RRGGBB"` or empty for default |
 | `interval` | uint32_t | Polling interval in seconds |
+| `duration` | uint32_t | Display duration in seconds (0 = use global timePerApp) |
 
 **Constraints:**
 - `MIN_INTERVAL` = 60 seconds

@@ -13,9 +13,9 @@ extern const char *rootCACertificate;
 static const char *TAG = "DataFetcher";
 static const char *SOURCES_PATH = "/DATAFETCHER/sources.json";
 static constexpr size_t MAX_RESPONSE_SIZE = 4096;
-static constexpr uint32_t HTTP_CONNECT_TIMEOUT = 5000;
-static constexpr uint32_t HTTP_READ_TIMEOUT = 10000;
-static constexpr uint32_t MIN_FREE_HEAP = 40000;
+static constexpr uint32_t HTTP_CONNECT_TIMEOUT = 10000;  // 10s for SSL handshake
+static constexpr uint32_t HTTP_READ_TIMEOUT = 15000;    // 15s for slow APIs
+static constexpr uint32_t MIN_FREE_HEAP = 60000;  // Increased for SSL overhead
 
 DataFetcher_& DataFetcher_::getInstance()
 {
@@ -95,6 +95,13 @@ bool DataFetcher_::fetchAndPush(size_t index)
     const DataSourceConfig& src = sources_[index];
     bool isHttps = src.url.startsWith("https");
 
+    // Extra heap check before SSL allocation
+    if (isHttps && ESP.getFreeHeap() < MIN_FREE_HEAP + 20000)
+    {
+        DEBUG_PRINTF("DataFetcher: insufficient heap for HTTPS (%d bytes)", ESP.getFreeHeap());
+        return false;
+    }
+
     HTTPClient http;
     WiFiClientSecure secClient;
     WiFiClient plainClient;
@@ -104,6 +111,7 @@ bool DataFetcher_::fetchAndPush(size_t index)
         // Don't validate cert — DataFetcher hits arbitrary third-party APIs
         // whose CAs we can't pin in advance.
         secClient.setInsecure();
+        secClient.setTimeout(HTTP_CONNECT_TIMEOUT / 1000);  // WiFiClientSecure uses seconds
         http.begin(secClient, src.url);
     }
     else
@@ -131,7 +139,29 @@ bool DataFetcher_::fetchAndPush(size_t index)
         return false;
     }
 
-    String body = http.getString();
+    // For chunked encoding (contentLength == -1), read with a limit
+    String body;
+    if (contentLength < 0)
+    {
+        // Chunked transfer - read up to MAX_RESPONSE_SIZE
+        WiFiClient *stream = http.getStreamPtr();
+        body.reserve(MAX_RESPONSE_SIZE);
+        size_t bytesRead = 0;
+        while (stream->available() && bytesRead < MAX_RESPONSE_SIZE)
+        {
+            char c = stream->read();
+            body += c;
+            bytesRead++;
+        }
+        if (bytesRead >= MAX_RESPONSE_SIZE)
+        {
+            DEBUG_PRINTLN(F("DataFetcher: chunked response truncated at max size"));
+        }
+    }
+    else
+    {
+        body = http.getString();
+    }
     http.end();
 
     String value = extractJsonValue(body, src.jsonPath);
@@ -144,8 +174,8 @@ bool DataFetcher_::fetchAndPush(size_t index)
     String formatted = formatValue(src, value);
     String appJson = buildCustomAppJson(src, formatted);
 
-    // Feed into the existing custom app pipeline
-    nav_->parseCustomPage(src.name, appJson.c_str(), true);
+    // Feed into the existing custom app pipeline (preventSave=false so app appears in order list)
+    nav_->parseCustomPage(src.name, appJson.c_str(), false);
 
     DEBUG_PRINTF("DataFetcher: %s = %s", src.name.c_str(), formatted.c_str());
     return true;
@@ -251,6 +281,8 @@ String DataFetcher_::buildCustomAppJson(const DataSourceConfig& src, const Strin
         doc["icon"] = src.icon;
     if (!src.textColor.isEmpty())
         doc["color"] = src.textColor;
+    if (src.duration > 0)
+        doc["duration"] = src.duration;
 
     String result;
     serializeJson(doc, result);
@@ -276,6 +308,7 @@ bool DataFetcher_::addSource(const char *json)
     cfg.icon = doc["icon"] | "";
     cfg.textColor = doc["color"] | "";
     cfg.interval = doc["interval"] | DataSourceConfig::DEFAULT_INTERVAL;
+    cfg.duration = doc["duration"] | DataSourceConfig::DEFAULT_DURATION;
 
     if (cfg.interval < DataSourceConfig::MIN_INTERVAL)
         cfg.interval = DataSourceConfig::MIN_INTERVAL;
@@ -346,6 +379,7 @@ String DataFetcher_::getSourcesAsJson()
         obj["icon"] = src.icon;
         obj["color"] = src.textColor;
         obj["interval"] = src.interval;
+        obj["duration"] = src.duration;
     }
 
     String result;
@@ -396,6 +430,7 @@ void DataFetcher_::loadSources()
         cfg.icon = obj["icon"] | "";
         cfg.textColor = obj["color"] | "";
         cfg.interval = obj["interval"] | 300;
+        cfg.duration = obj["duration"] | 0;
 
         if (cfg.interval < DataSourceConfig::MIN_INTERVAL)
             cfg.interval = DataSourceConfig::MIN_INTERVAL;
@@ -429,6 +464,7 @@ void DataFetcher_::saveSources()
         obj["icon"] = src.icon;
         obj["color"] = src.textColor;
         obj["interval"] = src.interval;
+        obj["duration"] = src.duration;
     }
 
     File file = LittleFS.open(SOURCES_PATH, "w");

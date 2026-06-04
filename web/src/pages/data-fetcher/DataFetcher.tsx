@@ -18,6 +18,7 @@ const empty: DataSource = {
   icon: "",
   color: "#f0b800",
   interval: 900,
+  duration: 0,
 };
 
 export function DataFetcherPage(_props: { path?: string }) {
@@ -136,14 +137,24 @@ export function DataFetcherPage(_props: { path?: string }) {
                 />
               </div>
             </div>
-            <div class="form-row">
+            <div class="form-row-3">
+              <div class="form-group">
+                <label>{t.dataFetcher.duration}</label>
+                <input
+                  type="number"
+                  min={0}
+                  value={form.duration}
+                  onInput={(e) => upd({ duration: +(e.target as HTMLInputElement).value })}
+                  placeholder="0"
+                />
+              </div>
               <div class="form-group">
                 <label>{t.dataFetcher.iconName}</label>
                 <input
                   type="text"
                   value={form.icon}
                   onInput={(e) => upd({ icon: (e.target as HTMLInputElement).value })}
-                  placeholder="bitcoin"
+                  placeholder="16437"
                 />
               </div>
               <div class="form-group">
@@ -195,6 +206,7 @@ export function DataFetcherPage(_props: { path?: string }) {
             <div>URL: {src.url}</div>
             <div>
               Path: {src.jsonPath} | Format: {src.displayFormat || "—"} | Every {src.interval}s
+              {src.duration > 0 && ` | Display: ${src.duration}s`}
             </div>
             {src.icon && <div>Icon: {src.icon}</div>}
           </div>
