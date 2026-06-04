@@ -26,17 +26,87 @@ Each data source has the following settings:
 | **Color** | Optional text color as hex `#RRGGBB` |
 | **Interval** | Polling interval in seconds (minimum 60, default 900) |
 
-## Example: Bitcoin Price
+## Examples
 
-To display the current Bitcoin price:
+### Bitcoin Price
 
 - **Name**: `btc`
 - **URL**: `https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd`
 - **JSON Path**: `bitcoin.usd`
-- **Display Format**: `$%.0f`
-- **Icon**: `btc`
+- **Format**: `$%.0f`
 - **Color**: `#F7931A`
-- **Interval**: `300` (every 5 minutes)
+- **Interval**: `300`
+
+### USD/MXN Exchange Rate
+
+- **Name**: `USDMXN`
+- **URL**: `https://api.exchangerate-api.com/v4/latest/USD`
+- **JSON Path**: `rates.MXN`
+- **Format**: `$%.2f`
+- **Color**: `#00AA00`
+- **Interval**: `3600`
+
+### Ethereum Price
+
+- **Name**: `eth`
+- **URL**: `https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd`
+- **JSON Path**: `ethereum.usd`
+- **Format**: `$%.0f`
+- **Color**: `#627EEA`
+- **Interval**: `300`
+
+### GitHub Stars for a Repository
+
+- **Name**: `stars`
+- **URL**: `https://api.github.com/repos/USER/REPO`
+- **JSON Path**: `stargazers_count`
+- **Format**: `%d ★`
+- **Color**: `#FFD700`
+- **Interval**: `3600`
+
+### Your Public IP
+
+- **Name**: `myip`
+- **URL**: `https://api.ipify.org?format=json`
+- **JSON Path**: `ip`
+- **Format**: `%s`
+- **Interval**: `86400`
+
+---
+
+## Public API Sources
+
+These collections contain hundreds of free APIs compatible with SVITRIX:
+
+| Resource | URL | Description |
+|----------|-----|-------------|
+| **Public APIs** | https://github.com/public-apis/public-apis | 1400+ APIs in 50 categories, filterable by auth |
+| **API List** | https://apilist.fun | Search by topic and popularity |
+| **Free APIs** | https://free-apis.github.io | Curated list of free APIs |
+| **No Auth APIs** | https://mixedanalytics.com/blog/list-actually-free-open-no-auth-needed-apis/ | APIs without authentication |
+| **RapidAPI Free** | https://rapidapi.com/collection/list-of-free-apis | With examples and documentation |
+
+### Compatibility Requirements
+
+For an API to work with SVITRIX:
+
+- ✅ **No authentication** or API key in the URL (no custom headers)
+- ✅ **JSON response** under 4 KB
+- ✅ **Extractable value** with dot notation (`data.value`, `items.0.price`)
+- ✅ **Public endpoint** accessible from your network
+
+### Ideas by Category
+
+| Category | Suggested APIs |
+|----------|----------------|
+| **Finance** | CoinGecko, ExchangeRate-API, Alpha Vantage |
+| **Weather** | Open-Meteo, WeatherAPI (already integrated) |
+| **Monitoring** | UptimeRobot, Pi-hole, Home Assistant |
+| **Development** | GitHub API, GitLab API |
+| **Entertainment** | Spotify (with token), Twitch |
+| **Utilities** | ipify, WorldTimeAPI |
+
+---
 
 ## Limitations
 

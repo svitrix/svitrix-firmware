@@ -26,17 +26,87 @@ Cada fuente de datos tiene las siguientes configuraciones:
 | **Color** | Color de texto opcional como hex `#RRGGBB` |
 | **Intervalo** | Intervalo de polling en segundos (mínimo 60, por defecto 900) |
 
-## Ejemplo: Precio de Bitcoin
+## Ejemplos
 
-Para mostrar el precio actual de Bitcoin:
+### Precio de Bitcoin
 
 - **Nombre**: `btc`
 - **URL**: `https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd`
 - **Ruta JSON**: `bitcoin.usd`
-- **Formato de Visualización**: `$%.0f`
-- **Icono**: `btc`
+- **Formato**: `$%.0f`
 - **Color**: `#F7931A`
-- **Intervalo**: `300` (cada 5 minutos)
+- **Intervalo**: `300`
+
+### Tipo de cambio USD/MXN
+
+- **Nombre**: `USDMXN`
+- **URL**: `https://api.exchangerate-api.com/v4/latest/USD`
+- **Ruta JSON**: `rates.MXN`
+- **Formato**: `$%.2f`
+- **Color**: `#00AA00`
+- **Intervalo**: `3600`
+
+### Precio de Ethereum
+
+- **Nombre**: `eth`
+- **URL**: `https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd`
+- **Ruta JSON**: `ethereum.usd`
+- **Formato**: `$%.0f`
+- **Color**: `#627EEA`
+- **Intervalo**: `300`
+
+### GitHub Stars de un repositorio
+
+- **Nombre**: `stars`
+- **URL**: `https://api.github.com/repos/USUARIO/REPO`
+- **Ruta JSON**: `stargazers_count`
+- **Formato**: `%d ★`
+- **Color**: `#FFD700`
+- **Intervalo**: `3600`
+
+### Tu IP pública
+
+- **Nombre**: `myip`
+- **URL**: `https://api.ipify.org?format=json`
+- **Ruta JSON**: `ip`
+- **Formato**: `%s`
+- **Intervalo**: `86400`
+
+---
+
+## Fuentes de APIs Públicas
+
+Estas colecciones contienen cientos de APIs gratuitas compatibles con SVITRIX:
+
+| Recurso | URL | Descripción |
+|---------|-----|-------------|
+| **Public APIs** | https://github.com/public-apis/public-apis | 1400+ APIs en 50 categorías, filtrable por autenticación |
+| **API List** | https://apilist.fun | Búsqueda por tema y popularidad |
+| **Free APIs** | https://free-apis.github.io | Listado curado de APIs gratuitas |
+| **No Auth APIs** | https://mixedanalytics.com/blog/list-actually-free-open-no-auth-needed-apis/ | APIs sin autenticación |
+| **RapidAPI Free** | https://rapidapi.com/collection/list-of-free-apis | Con ejemplos y documentación |
+
+### Requisitos de compatibilidad
+
+Para que una API funcione con SVITRIX:
+
+- ✅ **Sin autenticación** o API key en la URL (no headers personalizados)
+- ✅ **Respuesta JSON** menor a 4 KB
+- ✅ **Valor extraíble** con notación de punto (`data.value`, `items.0.price`)
+- ✅ **Endpoint público** accesible desde tu red
+
+### Ideas por categoría
+
+| Categoría | APIs sugeridas |
+|-----------|----------------|
+| **Finanzas** | CoinGecko, ExchangeRate-API, Alpha Vantage |
+| **Clima** | Open-Meteo, WeatherAPI (ya integrado) |
+| **Monitoreo** | UptimeRobot, Pi-hole, Home Assistant |
+| **Desarrollo** | GitHub API, GitLab API |
+| **Entretenimiento** | Spotify (con token), Twitch |
+| **Utilidades** | ipify, WorldTimeAPI |
+
+---
 
 ## Limitaciones
 
