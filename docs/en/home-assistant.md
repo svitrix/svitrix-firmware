@@ -39,9 +39,9 @@ Una vez habilitado HA Discovery en SVITRIX y reiniciado, las entidades aparecer�
 
 ---
 
-## Entidades Disponibles (59 total)
+## Entidades Disponibles (66 total)
 
-### Luces (10)
+### Luces (5)
 
 | Entidad | Descripción | Controles |
 |---------|-------------|-----------|
@@ -50,11 +50,6 @@ Una vez habilitado HA Discovery en SVITRIX y reiniciado, las entidades aparecer�
 | **Indicator 2** | LED indicador medio derecho | On/Off, Color RGB |
 | **Indicator 3** | LED indicador inferior derecho | On/Off, Color RGB |
 | **Night color** | Color del texto en modo nocturno | Color RGB |
-| **Clock color** | Color de la app de hora | Color RGB |
-| **Date color** | Color de la app de fecha | Color RGB |
-| **Temperature color** | Color de la app de temperatura | Color RGB |
-| **Humidity color** | Color de la app de humedad | Color RGB |
-| **Battery color** | Color de la app de batería | Color RGB |
 
 ### Switches (14)
 
@@ -75,7 +70,7 @@ Una vez habilitado HA Discovery en SVITRIX y reiniciado, las entidades aparecer�
 | **Show air quality** | Muestra/oculta índice de calidad de aire (weather) |
 | **Show UV index** | Muestra/oculta índice UV (weather) |
 
-### Números (6)
+### Números (14)
 
 | Entidad | Rango | Descripción |
 |---------|-------|-------------|
@@ -85,6 +80,14 @@ Una vez habilitado HA Discovery en SVITRIX y reiniciado, las entidades aparecer�
 | **Scroll speed** | 20-200ms | Velocidad de scroll del texto |
 | **Clock duration** | 1-300s | Duración de la app de hora |
 | **Date duration** | 1-60s | Duración de la app de fecha |
+| **Temperature duration** | 1-60s | Duración de la app de temperatura |
+| **Humidity duration** | 1-60s | Duración de la app de humedad |
+| **Battery duration** | 1-60s | Duración de la app de batería |
+| **Outdoor temp duration** | 1-60s | Duración de temperatura exterior |
+| **Outdoor humidity duration** | 1-60s | Duración de humedad exterior |
+| **Pressure duration** | 1-60s | Duración de presión atmosférica |
+| **Air quality duration** | 1-60s | Duración de calidad del aire |
+| **UV index duration** | 1-60s | Duración de índice UV |
 
 ### Selectores (3)
 
@@ -94,7 +97,7 @@ Una vez habilitado HA Discovery en SVITRIX y reiniciado, las entidades aparecer�
 | **Transition effect** | 14 efectos | Efecto de transición entre apps |
 | **Background effect** | 21 opciones | Efecto de fondo (None, Fade, Matrix, Plasma, Fire, etc.) |
 
-### Botones (6)
+### Botones (8)
 
 | Entidad | Acción |
 |---------|--------|
@@ -104,8 +107,10 @@ Una vez habilitado HA Discovery en SVITRIX y reiniciado, las entidades aparecer�
 | **Previous app** | Cambia a la app anterior |
 | **Reboot** | Reinicia el dispositivo |
 | **Play test sound** | Reproduce un beep de prueba |
+| **Snooze alarm** | Pospone la alarma activa |
+| **Dismiss alarm** | Cancela la alarma activa |
 
-### Sensores (16-17)
+### Sensores (17-18)
 
 | Entidad | Unidad | Descripción |
 |---------|--------|-------------|
@@ -126,14 +131,16 @@ Una vez habilitado HA Discovery en SVITRIX y reiniciado, las entidades aparecer�
 | **Air quality** | AQI | Índice de calidad del aire (WeatherAPI) |
 | **Weather condition** | — | Condición climática actual (WeatherAPI) |
 | **UV index** | — | Índice UV (WeatherAPI) |
+| **Next alarm** | — | Próxima alarma programada (HH:MM o "None") |
 
-### Sensores Binarios (3)
+### Sensores Binarios (4)
 
 | Entidad | Descripción |
 |---------|-------------|
 | **Button left** | Estado del botón izquierdo |
 | **Button middle** | Estado del botón central |
 | **Button right** | Estado del botón derecho |
+| **Alarm ringing** | Indica si hay una alarma sonando |
 
 ---
 
