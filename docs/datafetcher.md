@@ -40,7 +40,7 @@ Cada fuente de datos tiene las siguientes configuraciones:
 ### Tipo de cambio USD/MXN
 
 - **Nombre**: `USDMXN`
-- **URL**: `https://api.exchangerate-api.com/v4/latest/USD`
+- **URL**: `https://open.er-api.com/v6/latest/USD`
 - **Ruta JSON**: `rates.MXN`
 - **Formato**: `$%.2f`
 - **Color**: `#00AA00`

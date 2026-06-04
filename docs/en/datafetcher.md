@@ -40,7 +40,7 @@ Each data source has the following settings:
 ### USD/MXN Exchange Rate
 
 - **Name**: `USDMXN`
-- **URL**: `https://api.exchangerate-api.com/v4/latest/USD`
+- **URL**: `https://open.er-api.com/v6/latest/USD`
 - **JSON Path**: `rates.MXN`
 - **Format**: `$%.2f`
 - **Color**: `#00AA00`
