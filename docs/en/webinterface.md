@@ -10,7 +10,9 @@ The interface supports **Spanish** (default) and **English**. Use the **ES/EN** 
 
 ## Tabs
 
-The interface is organized into focused tabs, each with its own **Save** button that only saves settings for that section.
+The interface is organized into focused tabs. Most settings **auto-save** when changed — toggles and selects apply instantly, while sliders and colors wait 500ms after the last change before saving.
+
+**Sections with manual save** (require Save button): WiFi, Network, MQTT, NTP, Authentication, and Weather API — these handle sensitive credentials where accidental saves could cause connection issues.
 
 | Tab | Description |
 |-----|-------------|

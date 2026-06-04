@@ -42,7 +42,9 @@ Una vez subida, la SPA persiste entre actualizaciones de firmware. Solo necesita
 
 ## Guía de Configuración
 
-La página de Configuración está organizada en secciones independientes. Cada sección tiene su propio botón **Guardar** — solo guardas lo que cambiaste.
+La página de Configuración está organizada en secciones independientes. La mayoría de opciones se **guardan automáticamente** al cambiarlas — toggles y selectores aplican al instante, mientras que sliders y colores esperan 500ms después del último cambio para guardar.
+
+**Secciones con guardado manual** (requieren botón Guardar): WiFi, Red, MQTT, NTP, Autenticación y API del clima — estas manejan credenciales sensibles donde un guardado accidental podría causar problemas de conexión.
 
 Un **alternador de tema oscuro/claro** (☀/☽) está disponible en la esquina superior derecha de la barra de navegación. Tu preferencia se guarda en el navegador.
 
@@ -168,7 +170,7 @@ Descarga iconos de la [biblioteca de iconos LaMetric](https://developer.lametric
 
 ### Acciones
 
-- **Guardar Configuración de Pantalla** — guarda todas las configuraciones relacionadas con la pantalla de una vez (alternativa si se omitieron los botones individuales de Guardar)
+- **Guardar Toda la Configuración** — guarda todas las configuraciones de pantalla, MQTT y clima de una vez (útil como respaldo manual o si el auto-guardado falló)
 - **Restablecer Valores** — restaura todas las configuraciones a valores de fábrica (requiere confirmación)
 - **Reiniciar** — reinicia el dispositivo (requiere confirmación)
 
