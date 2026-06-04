@@ -1,6 +1,5 @@
-import { useState } from "preact/hooks";
 import { useSettings } from "../../../context/SettingsContext";
-import { Toggle, Slider, ColorField, Card, FormRow, Button } from "../../../components/ui";
+import { Toggle, Slider, ColorField, Card, FormRow } from "../../../components/ui";
 import { useT } from "../../../i18n";
 import styles from "./sections.module.css";
 
@@ -16,24 +15,10 @@ function timeToMinutes(time: string): number {
 }
 
 export function NightModeSection() {
-  const { settings, updateSettings, saveDisplaySettings } = useSettings();
-  const [saving, setSaving] = useState(false);
+  const { settings, autoSave, instantSave } = useSettings();
   const t = useT();
   if (!settings) return null;
   const s = settings;
-
-  async function handleSave() {
-    setSaving(true);
-    await saveDisplaySettings({
-      NMODE: s.NMODE,
-      NSTART: s.NSTART,
-      NEND: s.NEND,
-      NBRI: s.NBRI,
-      NCOL: s.NCOL,
-      NBTRANS: s.NBTRANS,
-    }, t.display.nightModeSaved);
-    setSaving(false);
-  }
 
   return (
     <Card title={t.display.nightMode}>
@@ -41,7 +26,7 @@ export function NightModeSection() {
         <Toggle
           label={t.display.nightModeEnabled}
           checked={s.NMODE}
-          onChange={(v) => updateSettings({ NMODE: v })}
+          onChange={(v) => instantSave({ NMODE: v })}
         />
         {s.NMODE && (
           <>
@@ -53,7 +38,7 @@ export function NightModeSection() {
                   type="time"
                   value={minutesToTime(s.NSTART)}
                   onInput={(e) =>
-                    updateSettings({ NSTART: timeToMinutes((e.target as HTMLInputElement).value) })
+                    autoSave({ NSTART: timeToMinutes((e.target as HTMLInputElement).value) })
                   }
                 />
               </div>
@@ -64,7 +49,7 @@ export function NightModeSection() {
                   type="time"
                   value={minutesToTime(s.NEND)}
                   onInput={(e) =>
-                    updateSettings({ NEND: timeToMinutes((e.target as HTMLInputElement).value) })
+                    autoSave({ NEND: timeToMinutes((e.target as HTMLInputElement).value) })
                   }
                 />
               </div>
@@ -74,23 +59,20 @@ export function NightModeSection() {
               min={1}
               max={50}
               value={s.NBRI}
-              onChange={(v) => updateSettings({ NBRI: v })}
+              onChange={(v) => autoSave({ NBRI: v })}
             />
             <ColorField
               label={t.display.nightColor}
               value={s.NCOL}
-              onChange={(v) => updateSettings({ NCOL: v })}
+              onChange={(v) => autoSave({ NCOL: v })}
             />
             <Toggle
               label={t.display.blockAutoTransition}
               checked={s.NBTRANS}
-              onChange={(v) => updateSettings({ NBTRANS: v })}
+              onChange={(v) => instantSave({ NBTRANS: v })}
             />
           </>
         )}
-        <Button variant="primary" onClick={handleSave} loading={saving}>
-          {t.display.saveNightMode}
-        </Button>
       </div>
     </Card>
   );

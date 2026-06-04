@@ -146,6 +146,12 @@ extern unsigned long previousMillis_Stats;    ///< Timestamp of last stats publi
 extern std::map<String, String> mqttValues;   ///< Cached values for subscribed external topics
 extern std::vector<String> topicsToSubscribe; ///< Topics queued for subscription on next connect
 
+// ── Deferred subscription state (non-blocking connect) ──────────────
+extern std::vector<String> pendingSubscriptions_;  ///< Topics waiting to be subscribed
+extern size_t pendingSubIndex_;                    ///< Current position in pendingSubscriptions_
+extern unsigned long lastSubTime_;                 ///< Timestamp of last subscription
+extern bool pendingInitialState_;                  ///< True if initial HA state needs to be published
+
 // ── Free functions (defined in MQTTManager_Messages.cpp) ────────────
 
 /// Route an incoming MQTT message to the appropriate manager.

@@ -405,7 +405,7 @@ void DisplayRenderer_::drawLineChart(int16_t x, int16_t y, const int data[], byt
 /// dc (circle), dfc (filled circle), dt (text), db (bitmap).
 void DisplayRenderer_::processDrawInstructions(int16_t xOffset, int16_t yOffset, String& drawInstructions)
 {
-    static DynamicJsonDocument doc(8192);
+    static StaticJsonDocument<8192> doc;
     doc.clear();
     DeserializationError error = deserializeJson(doc, drawInstructions);
 

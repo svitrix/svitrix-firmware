@@ -58,31 +58,47 @@ int8_t menuIndex = 0;
 uint8_t menuItemCount = MaxMenu - 1;
 
 const char *timeFormat[] PROGMEM = {
-    "%H:%M:%S",
-    "%l:%M:%S",
-    "%H:%M",
-    "%H %M",
-    "%l:%M",
-    "%l %M",
-    "%l:%M %p",
-    "%l %M %p"};
+    "%H %M",      // 24H blink (default)
+    "%H:%M",      // 24H colon
+    "%H-%M",      // 24H dash
+    "%I %M",      // 12H blink
+    "%I:%M",      // 12H colon
+    "%I-%M",      // 12H dash
+    "%H %M %S",   // 24H blink + seconds
+    "%H:%M:%S",   // 24H colon + seconds
+    "%H-%M-%S",   // 24H dash + seconds
+    "%I %M %S",   // 12H blink + seconds
+    "%I:%M:%S",   // 12H colon + seconds
+    "%I-%M-%S",   // 12H dash + seconds
+};
 int8_t timeFormatIndex = 0;
-uint8_t timeFormatCount = 8;
+uint8_t timeFormatCount = 12;
 
 const char *dateFormat[] PROGMEM = {
-    "%d.%m.%y", // 01.04.22
-    "%d.%m.",   // 01.04.
-    "%y-%m-%d", // 22-04-01
-    "%m-%d",    // 04-01
-    "%m/%d/%y", // 04/01/22
-    "%m/%d",    // 04/01
-    "%d/%m/%y", // 01/04/22
-    "%d/%m",    // 01/04
-    "%m-%d-%y", // 04-01-22
+    "%d.%m.%y",   // DD.MM.YY (EU)
+    "%d-%m-%y",   // DD-MM-YY
+    "%d.%m.",     // DD.MM.
+    "%d %b",      // DD Mon
+    "%m.%d.%y",   // MM.DD.YY (US)
+    "%m-%d-%y",   // MM-DD-YY
+    "%m/%d/%y",   // MM/DD/YY
+    "%b %d",      // Mon DD
+    "%y-%m-%d",   // YY-MM-DD (ISO)
 };
 
 int8_t dateFormatIndex = 0;
 uint8_t dateFormatCount = 9;
+
+/// Find index of format string in array, returns 0 if not found.
+static int8_t findFormatIndex(const char *current, const char *formats[], uint8_t count)
+{
+    for (uint8_t i = 0; i < count; i++)
+    {
+        if (strcmp(current, formats[i]) == 0)
+            return i;
+    }
+    return 0;
+}
 
 int8_t appsIndex = 0;
 static const uint8_t appsCount = 9;
@@ -521,6 +537,14 @@ void MenuManager_::selectButton()
             break;
         case AlarmsMenu:
             alarmSel = 0;
+            break;
+        case TimeFormatMenu:
+            timeFormatIndex = findFormatIndex(timeConfig.timeFormat.c_str(), timeFormat, timeFormatCount);
+            break;
+        case DateFormatMenu:
+            dateFormatIndex = findFormatIndex(timeConfig.dateFormat.c_str(), dateFormat, dateFormatCount);
+            break;
+        default:
             break;
         }
         break;

@@ -5,27 +5,30 @@ import { useT } from "../../../i18n";
 import styles from "./sections.module.css";
 
 const TIME_FORMATS = [
-  { value: "%H %M", label: "24H HH:MM (blink)" },
-  { value: "%H:%M", label: "24H HH:MM (:)" },
-  { value: "%H-%M", label: "24H HH:MM (-)" },
-  { value: "%I %M", label: "12H HH:MM (blink)" },
-  { value: "%I:%M", label: "12H HH:MM (:)" },
-  { value: "%I-%M", label: "12H HH:MM (-)" },
-  { value: "%H %M %S", label: "24H HH:MM:SS (blink)" },
-  { value: "%H:%M:%S", label: "24H HH:MM:SS (:)" },
-  { value: "%H-%M-%S", label: "24H HH:MM:SS (-)" },
-  { value: "%I %M %S", label: "12H HH:MM:SS (blink)" },
-  { value: "%I:%M:%S", label: "12H HH:MM:SS (:)" },
-  { value: "%I-%M-%S", label: "12H HH:MM:SS (-)" },
+  { value: "%H %M", label: "24H HH MM (blink)" },
+  { value: "%H:%M", label: "24H HH:MM" },
+  { value: "%H-%M", label: "24H HH-MM" },
+  { value: "%I %M", label: "12H HH MM (blink)" },
+  { value: "%I:%M", label: "12H HH:MM" },
+  { value: "%I-%M", label: "12H HH-MM" },
+  { value: "%H %M %S", label: "24H HH MM SS (blink)" },
+  { value: "%H:%M:%S", label: "24H HH:MM:SS" },
+  { value: "%H-%M-%S", label: "24H HH-MM-SS" },
+  { value: "%I %M %S", label: "12H HH MM SS (blink)" },
+  { value: "%I:%M:%S", label: "12H HH:MM:SS" },
+  { value: "%I-%M-%S", label: "12H HH-MM-SS" },
 ];
 
 const DATE_FORMATS = [
   { value: "%d.%m.%y", label: "DD.MM.YY" },
   { value: "%d-%m-%y", label: "DD-MM-YY" },
+  { value: "%d.%m.", label: "DD.MM." },
   { value: "%d %b", label: "DD Mon" },
   { value: "%m.%d.%y", label: "MM.DD.YY" },
   { value: "%m-%d-%y", label: "MM-DD-YY" },
+  { value: "%m/%d/%y", label: "MM/DD/YY" },
   { value: "%b %d", label: "Mon DD" },
+  { value: "%y-%m-%d", label: "YY-MM-DD (ISO)" },
 ];
 
 export function TimeDateSection() {

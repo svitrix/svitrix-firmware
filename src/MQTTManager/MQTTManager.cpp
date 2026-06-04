@@ -127,6 +127,12 @@ unsigned long previousMillis_Stats;    ///< Timestamp of last stats publish (mil
 std::map<String, String> mqttValues;   ///< Cached values for subscribed external topics
 std::vector<String> topicsToSubscribe; ///< Topics queued for subscription on next connect
 
+// ── Deferred subscription state (non-blocking connect) ───────────────
+std::vector<String> pendingSubscriptions_;  ///< Topics waiting to be subscribed
+size_t pendingSubIndex_ = 0;                ///< Current position in pendingSubscriptions_
+unsigned long lastSubTime_ = 0;             ///< Timestamp of last subscription
+bool pendingInitialState_ = false;          ///< True if initial HA state needs to be published
+
 // ── Display interfaces (set via setDisplay) ──────────────────────────
 
 IDisplayControl *dmControl_ = nullptr;
@@ -223,36 +229,15 @@ void MQTTManager_::reconnect()
     }
 }
 
-/// Called by ArduinoHA when the MQTT broker connection is established.
-/// Subscribes to all device topics, deferred external topics, and
-/// publishes initial device state (version, effects, transitions).
-void onMqttConnected()
+/// Publish initial HA entity states after subscriptions complete.
+/// Called from tick() when pendingInitialState_ is true.
+static void publishInitialHAState()
 {
-    if (systemConfig.debugMode)
-        DEBUG_PRINTLN(F("MQTT Connected"));
-    std::vector<String> topics = getSubscriptionTopics();
-    for (size_t i = 0; i < topics.size(); i++)
-    {
-        if (systemConfig.debugMode)
-            DEBUG_PRINTF("Subscribe to topic %s", topics[i].c_str());
-        mqtt.subscribe((mqttConfig.prefix + topics[i]).c_str());
-        delay(30);
-    }
-
-    for (const auto& topic : topicsToSubscribe)
-    {
-        mqtt.subscribe(topic.c_str());
-        if (systemConfig.debugMode)
-            Serial.printf("Subscribed to topic %s\n", topic.c_str());
-    }
-
-    delay(200);
     if (haConfig.discovery)
     {
         myOwnID->setValue(mqttConfig.prefix.c_str());
         version->setValue(VERSION);
 
-        // Publish initial state for interactive entities on (re)connect
         transition->setState(appConfig.autoTransition, true);
         BriMode->setState(brightnessConfig.autoBrightness, true);
         transEffect->setState(appConfig.transEffect, true);
@@ -265,7 +250,6 @@ void onMqttConnected()
         color.blue = colorConfig.textColor & 0xFF;
         Matrix->setRGBColor(color);
 
-        // Night mode initial state
         nightModeSwitch->setState(appConfig.nightMode, true);
         nightBrightnessNum->setState(appConfig.nightBrightness);
         HALight::RGBColor nightCol;
@@ -276,21 +260,17 @@ void onMqttConnected()
         nightColorLight->setRGBColor(nightCol);
         nightBlockSwitch->setState(appConfig.nightBlockTransition, true);
 
-        // Audio initial state
         soundEnabled->setState(audioConfig.soundActive, true);
         soundVolume->setState(audioConfig.soundVolume);
 
-        // App visibility initial state
         showTimeSwitch->setState(appConfig.showTime, true);
         showDateSwitch->setState(appConfig.showDate, true);
         showTempSwitch->setState(appConfig.showTemp, true);
         showHumSwitch->setState(appConfig.showHum, true);
         showBatSwitch->setState(appConfig.showBat, true);
 
-        // Background effect initial state (0 = None, 1-20 = effect index + 1)
         bgEffect->setState(displayConfig.backgroundEffect, true);
 
-        // Display timing initial state
         timePerAppNum->setState(static_cast<float>(appConfig.timePerApp));
         scrollSpeedNum->setState(static_cast<float>(appConfig.scrollSpeed));
         timeDurationNum->setState(static_cast<float>(appConfig.timeDuration));
@@ -304,7 +284,6 @@ void onMqttConnected()
         aqiDurationNum->setState(static_cast<float>(weatherConfig.aqiDuration));
         uvDurationNum->setState(static_cast<float>(weatherConfig.uvDuration));
 
-        // Weather app visibility initial state
         showOutTempSwitch->setState(weatherConfig.showOutdoorTemp, true);
         showOutHumSwitch->setState(weatherConfig.showOutdoorHumidity, true);
         showPressureSwitch->setState(weatherConfig.showPressure, true);
@@ -319,6 +298,29 @@ void onMqttConnected()
         MQTTManager.publish("stats/device", "online");
     }
     connected = true;
+}
+
+/// Called by ArduinoHA when the MQTT broker connection is established.
+/// Queues subscriptions for non-blocking processing in tick().
+void onMqttConnected()
+{
+    if (systemConfig.debugMode)
+        DEBUG_PRINTLN(F("MQTT Connected — queueing subscriptions"));
+
+    pendingSubscriptions_.clear();
+    pendingSubIndex_ = 0;
+    lastSubTime_ = 0;
+    pendingInitialState_ = false;
+
+    std::vector<String> topics = getSubscriptionTopics();
+    for (const auto& t : topics)
+    {
+        pendingSubscriptions_.push_back(mqttConfig.prefix + t);
+    }
+    for (const auto& t : topicsToSubscribe)
+    {
+        pendingSubscriptions_.push_back(t);
+    }
 }
 
 /// Register MQTT callbacks (message, connected), configure last-will,
@@ -394,7 +396,7 @@ String MQTTManager_::getValueForTopic(const String& topic)
 
 // ── Main loop ───────────────────────────────────────────────────────
 
-/// Process MQTT messages and send stats at the configured interval.
+/// Process MQTT messages, deferred subscriptions, and send stats at the configured interval.
 /// Called from the main Arduino loop every frame.
 void MQTTManager_::tick()
 {
@@ -402,6 +404,36 @@ void MQTTManager_::tick()
     {
         mqtt.loop();
     }
+
+    // Process pending subscriptions (non-blocking, 10ms spacing)
+    if (pendingSubIndex_ < pendingSubscriptions_.size())
+    {
+        unsigned long now = millis();
+        if (now - lastSubTime_ >= 10)
+        {
+            const String& topic = pendingSubscriptions_[pendingSubIndex_];
+            mqtt.subscribe(topic.c_str());
+            if (systemConfig.debugMode)
+                DEBUG_PRINTF("Subscribe [%zu/%zu]: %s", pendingSubIndex_ + 1, pendingSubscriptions_.size(), topic.c_str());
+            lastSubTime_ = now;
+            pendingSubIndex_++;
+
+            if (pendingSubIndex_ >= pendingSubscriptions_.size())
+            {
+                pendingInitialState_ = true;
+                pendingSubscriptions_.clear();
+            }
+        }
+        return;
+    }
+
+    // Publish initial HA state once all subscriptions complete
+    if (pendingInitialState_)
+    {
+        pendingInitialState_ = false;
+        publishInitialHAState();
+    }
+
     unsigned long currentMillis_Stats = millis();
     if ((currentMillis_Stats - previousMillis_Stats >= systemConfig.statsInterval) && (sensorConfig.sensorsStable))
     {

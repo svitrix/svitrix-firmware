@@ -248,6 +248,90 @@ void formatSettings()
     Settings.end();
 }
 
+/// Clamp a value to [minVal, maxVal] range.
+template <typename T>
+static T clampValue(T value, T minVal, T maxVal)
+{
+    if (value < minVal) return minVal;
+    if (value > maxVal) return maxVal;
+    return value;
+}
+
+/// Validate and fix out-of-range config values loaded from NVS.
+/// Prevents crashes or undefined behavior from corrupted/invalid stored values.
+void validateSettings()
+{
+    // Brightness: 0-255, ensure min <= max
+    brightnessConfig.brightness = clampValue(brightnessConfig.brightness, 0, 255);
+    brightnessConfig.minBrightness = clampValue(brightnessConfig.minBrightness, (uint8_t)0, (uint8_t)255);
+    brightnessConfig.maxBrightness = clampValue(brightnessConfig.maxBrightness, (uint8_t)0, (uint8_t)255);
+    if (brightnessConfig.minBrightness > brightnessConfig.maxBrightness)
+    {
+        uint8_t tmp = brightnessConfig.minBrightness;
+        brightnessConfig.minBrightness = brightnessConfig.maxBrightness;
+        brightnessConfig.maxBrightness = tmp;
+    }
+    brightnessConfig.ldrGamma = clampValue(brightnessConfig.ldrGamma, 0.5f, 5.0f);
+    brightnessConfig.ldrFactor = clampValue(brightnessConfig.ldrFactor, 0.1f, 10.0f);
+
+    // Night mode: time in minutes from midnight (0-1439)
+    appConfig.nightStart = clampValue(appConfig.nightStart, (uint16_t)0, (uint16_t)1439);
+    appConfig.nightEnd = clampValue(appConfig.nightEnd, (uint16_t)0, (uint16_t)1439);
+    appConfig.nightBrightness = clampValue(appConfig.nightBrightness, (uint8_t)1, (uint8_t)255);
+
+    // Transition effect: valid indices (0 = none, 1-13 = effects)
+    appConfig.transEffect = clampValue(appConfig.transEffect, (int8_t)0, (int8_t)13);
+
+    // Scroll speed: 10-500ms per pixel
+    appConfig.scrollSpeed = clampValue(appConfig.scrollSpeed, (uint8_t)10, (uint8_t)250);
+
+    // Time per app: 1000-60000ms (1s-60s)
+    appConfig.timePerApp = clampValue(appConfig.timePerApp, 1000L, 60000L);
+
+    // Transition duration: 100-2000ms
+    appConfig.timePerTransition = clampValue(appConfig.timePerTransition, 100, 2000);
+
+    // App durations: 1-300 seconds
+    appConfig.timeDuration = clampValue(appConfig.timeDuration, (uint16_t)1, (uint16_t)300);
+    appConfig.dateDuration = clampValue(appConfig.dateDuration, (uint16_t)1, (uint16_t)60);
+    appConfig.tempDuration = clampValue(appConfig.tempDuration, (uint16_t)1, (uint16_t)60);
+    appConfig.humDuration = clampValue(appConfig.humDuration, (uint16_t)1, (uint16_t)60);
+    appConfig.batDuration = clampValue(appConfig.batDuration, (uint16_t)1, (uint16_t)60);
+
+    // Weather durations: 1-60 seconds
+    weatherConfig.outdoorTempDuration = clampValue(weatherConfig.outdoorTempDuration, (uint8_t)1, (uint8_t)60);
+    weatherConfig.outdoorHumDuration = clampValue(weatherConfig.outdoorHumDuration, (uint8_t)1, (uint8_t)60);
+    weatherConfig.pressureDuration = clampValue(weatherConfig.pressureDuration, (uint8_t)1, (uint8_t)60);
+    weatherConfig.aqiDuration = clampValue(weatherConfig.aqiDuration, (uint8_t)1, (uint8_t)60);
+    weatherConfig.uvDuration = clampValue(weatherConfig.uvDuration, (uint8_t)1, (uint8_t)60);
+
+    // Weather update interval: 10-120 minutes
+    weatherConfig.updateInterval = clampValue(weatherConfig.updateInterval, (uint16_t)10, (uint16_t)120);
+
+    // Audio volume: 0-100
+    audioConfig.soundVolume = clampValue(audioConfig.soundVolume, (uint8_t)0, (uint8_t)100);
+
+    // Display FPS: 10-60
+    displayConfig.matrixFps = clampValue(displayConfig.matrixFps, (uint8_t)10, (uint8_t)60);
+
+    // Background effect: -1 (none) to kNumEffects-1
+    displayConfig.backgroundEffect = clampValue(displayConfig.backgroundEffect, -1, static_cast<int>(kNumEffects) - 1);
+
+    // Time mode: 0-2 (valid TMODE values)
+    timeConfig.timeMode = clampValue(timeConfig.timeMode, (uint8_t)0, (uint8_t)5);
+
+    // Temperature decimal places: 0-2
+    timeConfig.tempDecimalPlaces = clampValue(timeConfig.tempDecimalPlaces, 0, 2);
+
+    // Icon layout: 0-2 (Left, Right, None)
+    if (static_cast<int>(appConfig.nativeIconLayout) > 2)
+        appConfig.nativeIconLayout = IconLayout::Left;
+
+    // Weather location type: 0-3
+    if (static_cast<int>(weatherConfig.locationType) > 3)
+        weatherConfig.locationType = WEATHER_LOC_CITY;
+}
+
 void loadSettings()
 {
     startLittleFS();
@@ -349,6 +433,7 @@ void loadSettings()
     mqttConfig.prefix = systemConfig.deviceId;
     systemConfig.hostname = "svitrix";
     loadDevSettings();
+    validateSettings();
 }
 
 void saveSettings()
@@ -778,7 +863,8 @@ bool importSettings(const char *json)
     if (doc.containsKey("PL_ITEMS"))
         playlistConfig.items = doc["PL_ITEMS"].as<String>();
 
-    // Save to NVS
+    // Validate and save to NVS
+    validateSettings();
     saveSettings();
     return true;
 }

@@ -1,5 +1,5 @@
 import { createContext } from "preact";
-import { useContext, useState, useEffect, useCallback } from "preact/hooks";
+import { useContext, useState, useEffect, useCallback, useRef } from "preact/hooks";
 import type { Settings, Stats, TransitionInfo, EffectInfo, InfraConfig, WeatherConfig } from "../api/types";
 import {
   getSettings,
@@ -14,25 +14,8 @@ import {
 } from "../api/client";
 import { toast } from "../components/Toast";
 import { getT } from "../i18n";
+import { prepareForSave, useDebounce } from "../hooks/useAutoSave";
 import type { ComponentChildren } from "preact";
-
-const COLOR_KEYS = [
-  "TCOL", "CHCOL", "CTCOL", "CBCOL", "WDCA", "WDCI",
-  "TIME_COL", "DATE_COL", "TEMP_COL", "HUM_COL", "BAT_COL", "NCOL",
-];
-
-function prepareSettingsForSave(fields: Partial<Settings>): Record<string, unknown> {
-  const out: Record<string, unknown> = { ...fields } as unknown as Record<string, unknown>;
-  for (const key of COLOR_KEYS) {
-    if (key in out) {
-      const v = out[key];
-      if (typeof v === "number") {
-        out[key] = "#" + (v & 0xffffff).toString(16).padStart(6, "0");
-      }
-    }
-  }
-  return out;
-}
 
 interface SettingsContextValue {
   settings: Settings | null;
@@ -48,10 +31,10 @@ interface SettingsContextValue {
   saveDisplaySettings: (fields: Partial<Settings>, successMsg?: string) => Promise<void>;
   saveInfraConfig: (successMsg?: string) => Promise<void>;
   saveWeatherConfig: (successMsg?: string) => Promise<void>;
+  autoSave: (fields: Partial<Settings>) => void;
+  instantSave: (fields: Partial<Settings>) => Promise<void>;
   reload: () => void;
   apiAvailable: boolean;
-  // Bumped after a display/weather save so the unified app-order list can re-fetch
-  // the live loop (the device runs loadNativeApps() before responding to the save).
   appsVersion: number;
 }
 
@@ -68,15 +51,17 @@ export function SettingsProvider({ children }: { children: ComponentChildren }) 
   const [loading, setLoading] = useState(true);
   const [appsVersion, setAppsVersion] = useState(0);
 
+  const pendingAutoSave = useRef<Partial<Settings>>({});
+
   const load = useCallback(() => {
     setLoading(true);
     Promise.allSettled([
-      getSettings().then(setSettings).catch(() => setApiAvailable(false)),
-      getStats().then(setStats).catch(() => {}),
-      getTransitions().then(setTransitions).catch(() => {}),
-      getEffects().then(setEffects).catch(() => {}),
-      getConfig().then((c) => setConfig(c as unknown as InfraConfig)).catch(() => {}),
-      getWeatherConfig().then(setWeatherConfig).catch(() => {}),
+      getSettings().then(setSettings).catch((e) => { console.error("Failed to load settings:", e); setApiAvailable(false); }),
+      getStats().then(setStats).catch((e) => console.error("Failed to load stats:", e)),
+      getTransitions().then(setTransitions).catch((e) => console.error("Failed to load transitions:", e)),
+      getEffects().then(setEffects).catch((e) => console.error("Failed to load effects:", e)),
+      getConfig().then((c) => setConfig(c as unknown as InfraConfig)).catch((e) => console.error("Failed to load config:", e)),
+      getWeatherConfig().then(setWeatherConfig).catch((e) => console.error("Failed to load weather config:", e)),
     ]).finally(() => setLoading(false));
   }, []);
 
@@ -94,13 +79,46 @@ export function SettingsProvider({ children }: { children: ComponentChildren }) 
     setWeatherConfig((prev) => (prev ? { ...prev, ...patch } : prev));
   }
 
+  const flushAutoSave = useCallback(async () => {
+    if (Object.keys(pendingAutoSave.current).length === 0) return;
+    const toSave = { ...pendingAutoSave.current };
+    pendingAutoSave.current = {};
+    try {
+      await saveSettings(prepareForSave(toSave) as Partial<Settings>);
+    } catch (e) {
+      console.error("Auto-save failed:", e);
+      const t = getT();
+      toast(t.errorSaving);
+    }
+  }, []);
+
+  const debouncedFlush = useDebounce(flushAutoSave, 500);
+
+  const autoSave = useCallback((fields: Partial<Settings>) => {
+    setSettings((prev) => (prev ? { ...prev, ...fields } : prev));
+    pendingAutoSave.current = { ...pendingAutoSave.current, ...fields };
+    debouncedFlush();
+  }, [debouncedFlush]);
+
+  const instantSave = useCallback(async (fields: Partial<Settings>) => {
+    setSettings((prev) => (prev ? { ...prev, ...fields } : prev));
+    try {
+      await saveSettings(prepareForSave(fields) as Partial<Settings>);
+    } catch (e) {
+      console.error("Instant save failed:", e);
+      const t = getT();
+      toast(t.errorSaving);
+    }
+  }, []);
+
   async function saveDisplaySettings(fields: Partial<Settings>, successMsg?: string) {
     const t = getT();
     try {
-      await saveSettings(prepareSettingsForSave(fields) as Partial<Settings>);
+      await saveSettings(prepareForSave(fields) as Partial<Settings>);
       setAppsVersion((v) => v + 1);
       if (successMsg !== "") toast(successMsg || t.ok);
-    } catch {
+    } catch (e) {
+      console.error("Save display settings failed:", e);
       toast(t.errorSaving);
     }
   }
@@ -111,7 +129,8 @@ export function SettingsProvider({ children }: { children: ComponentChildren }) 
     try {
       await saveConfig(config as unknown as Record<string, unknown>);
       if (successMsg !== "") toast(successMsg || t.ok);
-    } catch {
+    } catch (e) {
+      console.error("Save infra config failed:", e);
       toast(t.errorSaving);
     }
   }
@@ -123,7 +142,8 @@ export function SettingsProvider({ children }: { children: ComponentChildren }) 
       await apiSaveWeatherConfig(weatherConfig);
       setAppsVersion((v) => v + 1);
       if (successMsg !== "") toast(successMsg || t.ok);
-    } catch {
+    } catch (e) {
+      console.error("Save weather config failed:", e);
       toast(t.errorSaving);
     }
   }
@@ -144,6 +164,8 @@ export function SettingsProvider({ children }: { children: ComponentChildren }) 
         saveDisplaySettings,
         saveInfraConfig: handleSaveInfraConfig,
         saveWeatherConfig: handleSaveWeatherConfig,
+        autoSave,
+        instantSave,
         reload: load,
         apiAvailable,
         appsVersion,

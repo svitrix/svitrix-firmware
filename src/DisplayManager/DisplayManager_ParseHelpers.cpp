@@ -50,9 +50,16 @@ void readColorField(JsonObject doc, const char *key, uint32_t& target, uint32_t 
 }
 
 /// Decode a base64-encoded icon string into a JPEG data buffer.
+/// Icons are 8x8 pixels; cap decoded size at 16KB to prevent OOM from malicious payloads.
 void decodeBase64Icon(const String& data, std::vector<uint8_t>& buffer)
 {
+    constexpr unsigned int MAX_ICON_SIZE = 16384;
     unsigned int estimatedSize = (data.length() * 3) / 4;
+    if (estimatedSize > MAX_ICON_SIZE)
+    {
+        buffer.clear();
+        return;
+    }
     buffer.resize(estimatedSize);
     unsigned int decoded = decode_base64(reinterpret_cast<const unsigned char *>(data.c_str()), buffer.data());
     buffer.resize(decoded);
