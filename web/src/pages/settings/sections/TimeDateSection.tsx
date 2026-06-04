@@ -1,8 +1,9 @@
-import { useState, useMemo } from "preact/hooks";
+import { useMemo } from "preact/hooks";
 import { useSettings } from "../../../context/SettingsContext";
-import { Toggle, ColorField, Select, Card, FormRow, Button } from "../../../components/ui";
+import { Toggle, ColorField, Select, Card, FormRow } from "../../../components/ui";
 import { useT } from "../../../i18n";
 import styles from "./sections.module.css";
+import type { Settings } from "../../../api/types";
 
 const TIME_FORMATS = [
   { value: "%H %M", label: "24H HH MM (blink)" },
@@ -32,8 +33,7 @@ const DATE_FORMATS = [
 ];
 
 export function TimeDateSection() {
-  const { settings, updateSettings, saveDisplaySettings } = useSettings();
-  const [saving, setSaving] = useState(false);
+  const { settings, autoSave, instantSave } = useSettings();
   const t = useT();
   if (!settings) return null;
   const s = settings;
@@ -58,23 +58,11 @@ export function TimeDateSection() {
 
   function handleTimeFormatChange(format: string) {
     const newHasSeconds = format.includes("%S");
-    const updates: Record<string, unknown> = { TFORMAT: format };
+    const updates: Partial<Settings> = { TFORMAT: format };
     if (newHasSeconds && s.TMODE >= 1 && s.TMODE <= 5) {
       updates.TMODE = 0;
     }
-    updateSettings(updates);
-  }
-
-  async function handleSave() {
-    setSaving(true);
-    await saveDisplaySettings({
-      TFORMAT: s.TFORMAT, DFORMAT: s.DFORMAT, TMODE: s.TMODE,
-      SOM: s.SOM,
-      TIME_COL: s.TIME_COL, DATE_COL: s.DATE_COL,
-      WD: s.WD, WDCA: s.WDCA, WDCI: s.WDCI,
-      CHCOL: s.CHCOL, CTCOL: s.CTCOL, CBCOL: s.CBCOL,
-    }, t.datetime.datetimeSaved);
-    setSaving(false);
+    instantSave(updates);
   }
 
   return (
@@ -91,31 +79,30 @@ export function TimeDateSection() {
             label={t.datetime.dateFormat}
             value={s.DFORMAT}
             options={DATE_FORMATS}
-            onChange={(v) => updateSettings({ DFORMAT: v as string })}
+            onChange={(v) => instantSave({ DFORMAT: v as string })}
           />
         </FormRow>
         <Select
           label={t.datetime.timeMode}
           value={s.TMODE}
           options={filteredTimeModes}
-          onChange={(v) => updateSettings({ TMODE: v as number })}
+          onChange={(v) => instantSave({ TMODE: v as number })}
         />
-        <Toggle label={t.datetime.startOnMonday} checked={s.SOM} onChange={(v) => updateSettings({ SOM: v })} />
-        <Toggle label={t.datetime.showWeekday} checked={s.WD} onChange={(v) => updateSettings({ WD: v })} />
+        <Toggle label={t.datetime.startOnMonday} checked={s.SOM} onChange={(v) => instantSave({ SOM: v })} />
+        <Toggle label={t.datetime.showWeekday} checked={s.WD} onChange={(v) => instantSave({ WD: v })} />
         <FormRow>
-          <ColorField label={t.datetime.timeColor} value={s.TIME_COL} onChange={(v) => updateSettings({ TIME_COL: v })} />
-          <ColorField label={t.datetime.dateColor} value={s.DATE_COL} onChange={(v) => updateSettings({ DATE_COL: v })} />
+          <ColorField label={t.datetime.timeColor} value={s.TIME_COL} onChange={(v) => autoSave({ TIME_COL: v })} />
+          <ColorField label={t.datetime.dateColor} value={s.DATE_COL} onChange={(v) => autoSave({ DATE_COL: v })} />
         </FormRow>
         <FormRow>
-          <ColorField label={t.datetime.weekdayActive} value={s.WDCA} onChange={(v) => updateSettings({ WDCA: v })} />
-          <ColorField label={t.datetime.weekdayInactive} value={s.WDCI} onChange={(v) => updateSettings({ WDCI: v })} />
+          <ColorField label={t.datetime.weekdayActive} value={s.WDCA} onChange={(v) => autoSave({ WDCA: v })} />
+          <ColorField label={t.datetime.weekdayInactive} value={s.WDCI} onChange={(v) => autoSave({ WDCI: v })} />
         </FormRow>
         <FormRow>
-          <ColorField label={t.datetime.calHeader} value={s.CHCOL} onChange={(v) => updateSettings({ CHCOL: v })} />
-          <ColorField label={t.datetime.calText} value={s.CTCOL} onChange={(v) => updateSettings({ CTCOL: v })} />
+          <ColorField label={t.datetime.calHeader} value={s.CHCOL} onChange={(v) => autoSave({ CHCOL: v })} />
+          <ColorField label={t.datetime.calText} value={s.CTCOL} onChange={(v) => autoSave({ CTCOL: v })} />
         </FormRow>
-        <ColorField label={t.datetime.calBody} value={s.CBCOL} onChange={(v) => updateSettings({ CBCOL: v })} />
-        <Button variant="primary" onClick={handleSave} loading={saving}>{t.datetime.saveButton}</Button>
+        <ColorField label={t.datetime.calBody} value={s.CBCOL} onChange={(v) => autoSave({ CBCOL: v })} />
       </div>
     </Card>
   );

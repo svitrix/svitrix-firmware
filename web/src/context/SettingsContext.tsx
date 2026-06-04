@@ -33,6 +33,8 @@ interface SettingsContextValue {
   saveWeatherConfig: (successMsg?: string) => Promise<void>;
   autoSave: (fields: Partial<Settings>) => void;
   instantSave: (fields: Partial<Settings>) => Promise<void>;
+  autoSaveWeather: (fields: Partial<WeatherConfig>) => void;
+  instantSaveWeather: (fields: Partial<WeatherConfig>) => Promise<void>;
   reload: () => void;
   apiAvailable: boolean;
   appsVersion: number;
@@ -111,6 +113,45 @@ export function SettingsProvider({ children }: { children: ComponentChildren }) 
     }
   }, []);
 
+  const pendingWeatherSave = useRef<Partial<WeatherConfig>>({});
+
+  const flushWeatherSave = useCallback(async () => {
+    if (Object.keys(pendingWeatherSave.current).length === 0) return;
+    const toSave = { ...pendingWeatherSave.current };
+    pendingWeatherSave.current = {};
+    setWeatherConfig((prev) => {
+      if (!prev) return prev;
+      const merged = { ...prev, ...toSave };
+      apiSaveWeatherConfig(merged).catch((e) => {
+        console.error("Weather auto-save failed:", e);
+        const t = getT();
+        toast(t.errorSaving);
+      });
+      return merged;
+    });
+  }, []);
+
+  const debouncedWeatherFlush = useDebounce(flushWeatherSave, 500);
+
+  const autoSaveWeather = useCallback((fields: Partial<WeatherConfig>) => {
+    setWeatherConfig((prev) => (prev ? { ...prev, ...fields } : prev));
+    pendingWeatherSave.current = { ...pendingWeatherSave.current, ...fields };
+    debouncedWeatherFlush();
+  }, [debouncedWeatherFlush]);
+
+  const instantSaveWeather = useCallback(async (fields: Partial<WeatherConfig>) => {
+    setWeatherConfig((prev) => {
+      if (!prev) return prev;
+      const merged = { ...prev, ...fields };
+      apiSaveWeatherConfig(merged).catch((e) => {
+        console.error("Weather instant save failed:", e);
+        const t = getT();
+        toast(t.errorSaving);
+      });
+      return merged;
+    });
+  }, []);
+
   async function saveDisplaySettings(fields: Partial<Settings>, successMsg?: string) {
     const t = getT();
     try {
@@ -166,6 +207,8 @@ export function SettingsProvider({ children }: { children: ComponentChildren }) 
         saveWeatherConfig: handleSaveWeatherConfig,
         autoSave,
         instantSave,
+        autoSaveWeather,
+        instantSaveWeather,
         reload: load,
         apiAvailable,
         appsVersion,
