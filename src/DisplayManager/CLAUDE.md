@@ -100,7 +100,7 @@ When `playlistConfig.enabled == true`, the display follows a custom sequence of 
 
 **Persistence:** `playlistConfig` stored in NVS; survives reboots.
 
-**Limitation:** HA does not currently receive notifications when standalone effects are displayed (pending feature).
+**HA Integration:** When a standalone effect is displayed, HA receives `Effect: EffectName` via `setCurrentApp()`.
 
 ### Settings (DisplayManager_Settings.cpp)
 - `getSettings()` → JSON with 50+ config fields

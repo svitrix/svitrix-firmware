@@ -11,6 +11,7 @@
 #include "DisplayManager.h"
 #include "DisplayManager_internal.h"
 #include "Globals.h"
+#include "INotifier.h"
 #include <ArtnetWifi.h>
 #include <ArduinoJson.h>
 #include "ColorUtils.h"
@@ -183,6 +184,10 @@ int8_t DisplayManager_::resolveNextApp(int8_t currentApp, int8_t direction)
                 // Set duration for effect display
                 long dur = item.duration > 0 ? item.duration * 1000L : appConfig.timePerApp;
                 ui->setTimePerApp(dur);
+                // Report effect to HA (prefixed to distinguish from apps)
+                setCurrentApp(String("Effect: ") + item.name);
+                if (notifier_)
+                    notifier_->setCurrentApp(getCurrentApp());
                 // Return -2 to signal "don't change app, just reset timer"
                 return -2;
             }
