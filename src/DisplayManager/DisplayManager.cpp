@@ -484,15 +484,15 @@ void DisplayManager_::tick()
             resetAllEffectState();
             if (notifier_)
                 notifier_->setCurrentApp(currentApp);
-            // Use playlist duration if enabled and valid
-            if (playlistConfig.enabled && playlistIndex >= 0 && playlistIndex < (int)playlistItems.size())
+            // Duration is set by resolveNextApp() when using rotation config.
+            // Only set per-app default when NOT using rotation, or when rotation item has duration=0.
+            if (!rotationItems.empty() && currentRotationItem && currentRotationItem->duration > 0)
             {
-                auto& item = playlistItems[playlistIndex];
-                long dur = item.duration > 0 ? item.duration * 1000L : getDurationForApp(currentApp);
-                setAppTime(dur);
+                // Duration already set by resolveNextApp(), don't override
             }
             else
             {
+                // No rotation or duration=0: use per-app default
                 setAppTime(getDurationForApp(currentApp));
             }
             checkLifetime(ui->getnextAppNumber());
