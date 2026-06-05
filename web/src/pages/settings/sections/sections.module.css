@@ -469,6 +469,13 @@
   width: 100%;
 }
 
+.sliderHint {
+  display: block;
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-top: 2px;
+}
+
 .itemSeparator {
   padding: 8px 12px;
   font-size: 12px;

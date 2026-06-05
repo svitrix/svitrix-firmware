@@ -207,14 +207,18 @@ export function UnifiedRotationSection() {
                   {expandedId === item.id && (
                     <div class={styles.rotationExpanded}>
                       <div class={styles.rotationSlider}>
-                        <label>{t.apps.playlistDuration}: {item.duration || 7}s</label>
+                        <label>
+                          {t.apps.playlistDuration}: {item.duration === 0 ? `${t.apps.default || "Default"} (7s)` : `${item.duration}s`}
+                        </label>
                         <input
                           type="range"
                           min={0}
                           max={300}
+                          step={1}
                           value={item.duration}
                           onInput={(e) => updateItem(item.id, { duration: parseInt((e.target as HTMLInputElement).value) })}
                         />
+                        <span class={styles.sliderHint}>0 = {t.apps.default || "default"}</span>
                       </div>
                       <div class={styles.rotationRow}>
                         <div class={styles.rotationField}>
@@ -236,28 +240,28 @@ export function UnifiedRotationSection() {
                             placeholder="default"
                           />
                         </div>
+                        {(item.name === "Temperature" || item.name === "OutdoorTemp") && settings && (
+                          <div class={styles.rotationField}>
+                            <Toggle
+                              label={t.apps.celsius}
+                              checked={settings.CEL}
+                              onChange={toggleCelsius}
+                            />
+                          </div>
+                        )}
                         {item.name === "Temperature" && settings && (
-                          <>
-                            <div class={styles.rotationField}>
-                              <Toggle
-                                label={t.apps.celsius}
-                                checked={settings.CEL}
-                                onChange={toggleCelsius}
-                              />
-                            </div>
-                            <div class={styles.rotationField}>
-                              <label>{t.apps.offset}:</label>
-                              <input
-                                type="number"
-                                class={styles.offsetInput}
-                                value={settings.TOFF ?? -9}
-                                min={-15}
-                                max={5}
-                                onChange={(e) => updateSettings({ TOFF: parseInt((e.target as HTMLInputElement).value) || 0 })}
-                              />
-                              <span class={styles.hint}>°</span>
-                            </div>
-                          </>
+                          <div class={styles.rotationField}>
+                            <label>{t.apps.offset}:</label>
+                            <input
+                              type="number"
+                              class={styles.offsetInput}
+                              value={settings.TOFF ?? -9}
+                              min={-15}
+                              max={5}
+                              onChange={(e) => updateSettings({ TOFF: parseInt((e.target as HTMLInputElement).value) || 0 })}
+                            />
+                            <span class={styles.hint}>°</span>
+                          </div>
                         )}
                       </div>
                     </div>
