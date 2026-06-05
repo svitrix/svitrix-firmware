@@ -33,6 +33,7 @@ Uses `IDisplayNavigation::parseCustomPage(name, json, show)` to feed fetched dat
 | `textColor` | String | Hex color `"#RRGGBB"` or empty for default |
 | `interval` | uint32_t | Polling interval in seconds |
 | `duration` | uint32_t | Display duration in seconds (0 = use global timePerApp) |
+| `enabled` | bool | When `false`, source is saved but not fetched/displayed (default: `true`) |
 
 **Constraints:**
 - `MIN_INTERVAL` = 60 seconds
@@ -61,7 +62,8 @@ Display shows as custom app
 
 - **Round-robin**: checks one source per `tick()` call to avoid blocking the main loop
 - **Heap guard**: skips fetch if free heap < 40 KB (`MIN_FREE_HEAP`)
-- **Staggered start**: all `lastFetch_` initialized to 0, so sources fetch on first eligible tick
+- **Auto-fetch on boot**: sources with `lastFetch_==0` fetch immediately on first eligible tick
+- **Disabled sources skipped**: sources with `enabled=false` are not fetched
 - Only runs when `nav_` is set and `sources_` is non-empty
 
 ## Key Methods
@@ -105,11 +107,13 @@ Display shows as custom app
   "displayFormat": "$%.0f",
   "icon": "btc",
   "color": "#F7931A",
-  "interval": 300
+  "interval": 300,
+  "duration": 1,
+  "enabled": true
 }
 ```
 
-Required fields: `name`, `url`, `jsonPath`. All others optional.
+Required fields: `name`, `url`, `jsonPath`. All others optional (defaults: `enabled=true`, `interval=900`, `duration=0`).
 
 ### `displayFormat` whitelist
 
@@ -135,6 +139,8 @@ Validation runs in three places: `addSource()` (HTTP 400),
 - HTTPS requests use `WiFiClientSecure` with `setInsecure()` (no cert validation)
 - Rationale: DataFetcher hits arbitrary third-party APIs whose CAs cannot be pinned in advance
 - HTTP requests use plain `WiFiClient`
+- **Important**: Do NOT call `secClient.setTimeout()` — it causes hangs on some hosts; HTTPClient's `setConnectTimeout()`/`setTimeout()` handle timeouts correctly
+- Response body is released before `parseCustomPage()` to prevent heap fragmentation on large responses
 
 ## Persistence
 
@@ -160,10 +166,11 @@ if (ServerManager.isConnected) {
 
 ## Important Constraints
 
-- Max response body: 4 KB (`MAX_RESPONSE_SIZE`) — larger responses rejected
-- JSON parsing buffer: 2 KB `DynamicJsonDocument` for response extraction
-- Connect timeout: 5 s, read timeout: 10 s
+- Max response body: 4 KB (`MAX_RESPONSE_SIZE`) — larger responses truncated
+- JSON parsing buffer: 4 KB `DynamicJsonDocument` for response extraction (handles large exchange rate APIs)
+- Connect timeout: 10 s, read timeout: 15 s
 - One HTTP request per tick (round-robin) to avoid blocking
 - Custom apps created with `lifetime: 0` — DataFetcher manages their lifecycle, they never auto-expire
 - On `removeSource()`, the custom app is cleared from display via `parseCustomPage(name, "{}", false)`
+- On disabling a source (`enabled=false`), its custom app is removed from display
 - No authentication support — only public APIs (no API key headers)

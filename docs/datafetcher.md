@@ -26,6 +26,7 @@ Cada fuente de datos tiene las siguientes configuraciones:
 | **Color** | Color de texto opcional como hex `#RRGGBB` |
 | **Intervalo** | Intervalo de polling en segundos (mínimo 60, por defecto 900) |
 | **Duración** | Tiempo de visualización en segundos (0 = usar valor global de timePerApp) |
+| **Activo** | Cuando está desactivado, la fuente se guarda pero no se muestra en rotación |
 
 ## Ruta JSON
 
@@ -184,6 +185,17 @@ Para que una API funcione con SVITRIX:
 | **Desarrollo** | GitHub API, GitLab API |
 | **Entretenimiento** | Spotify (con token), Twitch |
 | **Utilidades** | ipify, WorldTimeAPI |
+
+---
+
+## Activar / Desactivar Fuentes
+
+Puedes **desactivar temporalmente** una fuente sin eliminarla:
+
+- En la interfaz web, cada fuente tiene un botón **Activar/Desactivar**
+- Las fuentes desactivadas permanecen guardadas pero no se obtienen ni se muestran
+- Al **reactivar** una fuente, se obtiene inmediatamente y vuelve a la rotación
+- Útil para pausar fuentes durante mantenimiento de APIs o para reducir tráfico
 
 ---
 

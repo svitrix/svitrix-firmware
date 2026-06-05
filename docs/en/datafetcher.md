@@ -26,6 +26,7 @@ Each data source has the following settings:
 | **Color** | Optional text color as hex `#RRGGBB` |
 | **Interval** | Polling interval in seconds (minimum 60, default 900) |
 | **Duration** | Display duration in seconds (0 = use global timePerApp setting) |
+| **Enabled** | When disabled, the source is saved but not displayed in rotation |
 
 ## JSON Path
 
@@ -184,6 +185,17 @@ For an API to work with SVITRIX:
 | **Development** | GitHub API, GitLab API |
 | **Entertainment** | Spotify (with token), Twitch |
 | **Utilities** | ipify, WorldTimeAPI |
+
+---
+
+## Enable / Disable Sources
+
+You can **temporarily disable** a source without deleting it:
+
+- In the web interface, each source has an **Enable/Disable** button
+- Disabled sources remain saved but are not fetched or displayed
+- When **re-enabling** a source, it fetches immediately and returns to rotation
+- Useful for pausing sources during API maintenance or to reduce traffic
 
 ---
 
