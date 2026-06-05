@@ -219,3 +219,18 @@ export interface PlaylistConfig {
   enabled: boolean;
   items: PlaylistItem[];
 }
+
+// Unified Rotation Types (replaces PlaylistConfig + appOrder)
+export interface RotationItem {
+  id: string;              // UUID for identifying duplicates
+  type: "app" | "effect";  // Item type
+  name: string;            // App/effect name
+  enabled: boolean;        // Per-item toggle
+  duration: number;        // Seconds (0 = use default)
+  color: number;           // Color override (0 = use default)
+  icon: string;            // Icon override (empty = use default)
+}
+
+export interface RotationConfig {
+  items: RotationItem[];
+}

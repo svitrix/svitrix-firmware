@@ -417,3 +417,107 @@
   outline: none;
   border-color: var(--accent);
 }
+
+/* Unified Rotation Section */
+.orderItemDisabled {
+  opacity: 0.6;
+}
+
+.expandBtn {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+.expandBtn:hover {
+  color: var(--accent);
+}
+
+.rotationExpanded {
+  padding: 12px 16px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 var(--radius) var(--radius);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.rotationRow {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.rotationSlider {
+  width: 100%;
+}
+
+.rotationSlider label {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.rotationSlider input[type="range"] {
+  width: 100%;
+}
+
+.itemSeparator {
+  padding: 8px 12px;
+  font-size: 12px;
+  color: var(--text-dim);
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+  font-weight: 500;
+}
+
+.rotationField {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.rotationField label {
+  min-width: 70px;
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+.iconInput {
+  width: 120px;
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg-input);
+  color: var(--text);
+  font-size: 13px;
+}
+
+.iconInput:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.offsetInput {
+  width: 60px;
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg-input);
+  color: var(--text);
+  font-size: 13px;
+  text-align: center;
+}
+
+.offsetInput:focus {
+  outline: none;
+  border-color: var(--accent);
+}

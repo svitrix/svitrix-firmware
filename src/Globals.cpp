@@ -332,6 +332,127 @@ void validateSettings()
         weatherConfig.locationType = WEATHER_LOC_CITY;
 }
 
+// Generate a simple 8-char ID for rotation items
+static String generateItemId()
+{
+    static const char chars[] = "0123456789abcdef";
+    char id[9];
+    for (int i = 0; i < 8; i++)
+        id[i] = chars[random(16)];
+    id[8] = '\0';
+    return String(id);
+}
+
+// Default native apps for rotation
+static const char* DEFAULT_NATIVE_APPS[] = {
+    "Time", "Date", "Temperature", "Humidity", "Battery"
+};
+static const int NUM_DEFAULT_APPS = 5;
+
+// Migrate from legacy appOrder + playlistConfig to unified rotationConfig
+static void migrateToRotationConfig()
+{
+    // Check if ROT_ITEMS has valid content
+    if (!rotationConfig.items.isEmpty())
+    {
+        // Validate it's proper JSON array
+        DynamicJsonDocument testDoc(512);
+        if (deserializeJson(testDoc, rotationConfig.items) == DeserializationError::Ok)
+        {
+            if (testDoc.is<JsonArray>() && testDoc.as<JsonArray>().size() > 0)
+                return; // Already has valid rotation config
+        }
+        // Invalid data, clear it
+        rotationConfig.items = "";
+    }
+
+    if (systemConfig.debugMode)
+        DEBUG_PRINTLN(F("Migrating to unified rotation config"));
+
+    DynamicJsonDocument doc(4096);
+    JsonArray items = doc.to<JsonArray>();
+
+    bool migrated = false;
+
+    if (playlistConfig.enabled && !playlistConfig.items.isEmpty())
+    {
+        // Migrate from playlist mode
+        DynamicJsonDocument playlistDoc(2048);
+        if (deserializeJson(playlistDoc, playlistConfig.items) == DeserializationError::Ok)
+        {
+            JsonArray playlistItems = playlistDoc.as<JsonArray>();
+            for (JsonObject item : playlistItems)
+            {
+                String name = item["name"].as<String>();
+                if (name.length() > 0 && name.length() < 64)
+                {
+                    JsonObject newItem = items.createNestedObject();
+                    newItem["id"] = generateItemId();
+                    newItem["type"] = item["type"].as<String>();
+                    newItem["name"] = name;
+                    newItem["enabled"] = true;
+                    newItem["duration"] = item["duration"] | 0;
+                    newItem["color"] = 0;
+                    newItem["icon"] = "";
+                    migrated = true;
+                }
+            }
+        }
+    }
+
+    if (!migrated && !appConfig.appOrder.isEmpty())
+    {
+        // Migrate from simple appOrder mode
+        DynamicJsonDocument orderDoc(1024);
+        if (deserializeJson(orderDoc, appConfig.appOrder) == DeserializationError::Ok)
+        {
+            JsonArray orderArray = orderDoc.as<JsonArray>();
+            for (JsonVariant v : orderArray)
+            {
+                String appName = v.as<String>();
+                if (appName.length() > 0 && appName.length() < 64)
+                {
+                    JsonObject newItem = items.createNestedObject();
+                    newItem["id"] = generateItemId();
+                    newItem["type"] = "app";
+                    newItem["name"] = appName;
+                    newItem["enabled"] = true;
+                    newItem["duration"] = 0;
+                    newItem["color"] = 0;
+                    newItem["icon"] = "";
+                    migrated = true;
+                }
+            }
+        }
+    }
+
+    // If no valid migration data, create defaults
+    if (!migrated || items.size() == 0)
+    {
+        if (systemConfig.debugMode)
+            DEBUG_PRINTLN(F("Creating default rotation config"));
+        for (int i = 0; i < NUM_DEFAULT_APPS; i++)
+        {
+            JsonObject newItem = items.createNestedObject();
+            newItem["id"] = generateItemId();
+            newItem["type"] = "app";
+            newItem["name"] = DEFAULT_NATIVE_APPS[i];
+            newItem["enabled"] = true;
+            newItem["duration"] = 0;
+            newItem["color"] = 0;
+            newItem["icon"] = "";
+        }
+    }
+
+    // Serialize and save
+    serializeJson(doc, rotationConfig.items);
+    Settings.begin("svitrix", false);
+    Settings.putString("ROT_ITEMS", rotationConfig.items);
+    Settings.end();
+    if (systemConfig.debugMode)
+        DEBUG_PRINTF("Rotation config: %d items\n", items.size());
+}
+
 void loadSettings()
 {
     startLittleFS();
@@ -425,10 +546,14 @@ void loadSettings()
     weatherConfig.showUV = Settings.getBool("WAPI_UV", false);
     weatherConfig.uvColor = Settings.getUInt("WAPI_UVCOL", 0x9C27B0);
     weatherConfig.uvDuration = Settings.getUChar("WAPI_UVDUR", 7);
-    // Playlist config
+    // Playlist config (legacy, kept for migration)
     playlistConfig.enabled = Settings.getBool("PL_EN", false);
     playlistConfig.items = Settings.getString("PL_ITEMS", "");
+    // Unified rotation config
+    rotationConfig.items = Settings.getString("ROT_ITEMS", "");
     Settings.end();
+    // Migrate from legacy formats if needed
+    migrateToRotationConfig();
     systemConfig.deviceId = getID();
     mqttConfig.prefix = systemConfig.deviceId;
     systemConfig.hostname = "svitrix";
@@ -527,9 +652,11 @@ void saveSettings()
     Settings.putBool("WAPI_UV", weatherConfig.showUV);
     Settings.putUInt("WAPI_UVCOL", weatherConfig.uvColor);
     Settings.putUChar("WAPI_UVDUR", weatherConfig.uvDuration);
-    // Playlist config
+    // Playlist config (legacy)
     Settings.putBool("PL_EN", playlistConfig.enabled);
     Settings.putString("PL_ITEMS", playlistConfig.items);
+    // Unified rotation config
+    Settings.putString("ROT_ITEMS", rotationConfig.items);
     Settings.end();
 }
 
@@ -551,6 +678,7 @@ SystemConfig systemConfig = {true, 15, 80, "", false, 10000, false, false, "", "
 WeatherConfig weatherConfig = {"", WEATHER_LOC_CITY, "", 0.0, 0.0, "", 30, true, false, false, false, false, false, 0, 0, 0, 0, 7, 7, 7, 7};
 WeatherData weatherData = {0, 0, 0, 0, 0, "", 0, 0, false};
 PlaylistConfig playlistConfig = {false, ""};
+RotationConfig rotationConfig = {""};
 
 String exportSettings()
 {
@@ -656,9 +784,11 @@ String exportSettings()
     doc["WAPI_UVCOL"] = weatherConfig.uvColor;
     doc["WAPI_UVDUR"] = weatherConfig.uvDuration;
 
-    // Playlist
+    // Playlist (legacy)
     doc["PL_EN"] = playlistConfig.enabled;
     doc["PL_ITEMS"] = playlistConfig.items;
+    // Unified rotation
+    doc["ROT_ITEMS"] = rotationConfig.items;
 
     String output;
     serializeJson(doc, output);
@@ -857,11 +987,14 @@ bool importSettings(const char *json)
     if (doc.containsKey("WAPI_UVDUR"))
         weatherConfig.uvDuration = doc["WAPI_UVDUR"];
 
-    // Playlist
+    // Playlist (legacy)
     if (doc.containsKey("PL_EN"))
         playlistConfig.enabled = doc["PL_EN"];
     if (doc.containsKey("PL_ITEMS"))
         playlistConfig.items = doc["PL_ITEMS"].as<String>();
+    // Unified rotation
+    if (doc.containsKey("ROT_ITEMS"))
+        rotationConfig.items = doc["ROT_ITEMS"].as<String>();
 
     // Validate and save to NVS
     validateSettings();

@@ -55,6 +55,7 @@ extern SystemConfig systemConfig;
 extern WeatherConfig weatherConfig;
 extern WeatherData weatherData;
 extern PlaylistConfig playlistConfig;
+extern RotationConfig rotationConfig;
 
 constexpr double movementFactor = 0.5;
 

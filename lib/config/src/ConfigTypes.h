@@ -226,3 +226,14 @@ struct PlaylistConfig {
     bool enabled;             // false = use simple appOrder mode
     String items;             // JSON array of playlist items
 };
+
+// Unified rotation config - replaces both appOrder and playlist
+// Each item: {id, type, name, enabled, duration, color, icon}
+enum RotationItemType : uint8_t {
+    ROTATION_ITEM_APP = 0,
+    ROTATION_ITEM_EFFECT = 1,
+};
+
+struct RotationConfig {
+    String items;             // JSON array: [{id, type, name, enabled, duration, color, icon}, ...]
+};

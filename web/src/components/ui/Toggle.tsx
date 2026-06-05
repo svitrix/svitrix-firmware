@@ -2,13 +2,15 @@ export function Toggle({
   label,
   checked,
   onChange,
+  compact,
 }: {
-  label: string;
+  label?: string;
   checked: boolean;
   onChange: (v: boolean) => void;
+  compact?: boolean;
 }) {
   return (
-    <label>
+    <label style={compact ? { display: "flex", alignItems: "center" } : undefined}>
       <input
         type="checkbox"
         checked={checked}

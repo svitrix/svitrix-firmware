@@ -200,8 +200,13 @@ export const snoozeAlarm = (minutes = 5) =>
   post("/api/alarms", { action: "snooze", minutes });
 export const dismissAlarm = () => post("/api/alarms", { action: "dismiss" });
 
-// Playlist
-import type { PlaylistConfig, PlaylistItem } from "./types";
+// Playlist (legacy)
+import type { PlaylistConfig, PlaylistItem, RotationConfig, RotationItem } from "./types";
 export const getPlaylist = () => get<PlaylistConfig>("/api/playlist");
 export const savePlaylist = (config: { enabled?: boolean; items?: PlaylistItem[] }) =>
   post("/api/playlist", config);
+
+// Unified Rotation
+export const getRotation = () => get<RotationConfig>("/api/rotation");
+export const saveRotation = (config: { items?: RotationItem[] }) =>
+  post("/api/rotation", config);

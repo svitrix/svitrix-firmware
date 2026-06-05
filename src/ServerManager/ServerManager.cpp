@@ -233,6 +233,37 @@ void addHandler()
                             saveSettings();
                             smControl_->applyAllSettings();
                             request->send(200, "text/plain", "OK"); });
+    // Unified rotation config
+    mws.addHandler("/api/rotation", HTTP_GET, [](AsyncWebServerRequest *request)
+                   {
+                    StaticJsonDocument<4096> doc;
+                    if (rotationConfig.items.length() > 0) {
+                        DynamicJsonDocument itemsDoc(4096);
+                        deserializeJson(itemsDoc, rotationConfig.items);
+                        doc["items"] = itemsDoc.as<JsonArray>();
+                    } else {
+                        doc["items"] = serialized("[]");
+                    }
+                    String json;
+                    serializeJson(doc, json);
+                    request->send(200, "application/json", json); });
+    mws.addHandlerWithBody("/api/rotation", HTTP_POST, [](AsyncWebServerRequest *request)
+                           {
+                            String body = getBody(request);
+                            DynamicJsonDocument doc(4096);
+                            DeserializationError err = deserializeJson(doc, body);
+                            if (err) {
+                                request->send(400, "text/plain", "Invalid JSON");
+                                return;
+                            }
+                            if (doc.containsKey("items")) {
+                                String items;
+                                serializeJson(doc["items"], items);
+                                rotationConfig.items = items;
+                            }
+                            saveSettings();
+                            smControl_->applyAllSettings();
+                            request->send(200, "text/plain", "OK"); });
     mws.addHandler("/api/settings", HTTP_GET, [](AsyncWebServerRequest *request)
                    { request->send(200, "application/json", smControl_->getSettings()); });
     mws.addHandler("/api/settings/export", HTTP_GET, [](AsyncWebServerRequest *request)
