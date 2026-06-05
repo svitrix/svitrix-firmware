@@ -21,15 +21,19 @@ async function get<T>(url: string): Promise<T> {
 }
 
 async function post(url: string, body?: unknown): Promise<Response> {
-  return fetch(url, {
+  const res = await fetch(url, {
     method: "POST",
     headers: body ? { "Content-Type": "application/json" } : undefined,
     body: body ? JSON.stringify(body) : undefined,
   });
+  if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+  return res;
 }
 
 async function del(url: string): Promise<Response> {
-  return fetch(url, { method: "DELETE" });
+  const res = await fetch(url, { method: "DELETE" });
+  if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+  return res;
 }
 
 // Settings

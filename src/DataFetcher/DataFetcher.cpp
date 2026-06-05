@@ -73,7 +73,16 @@ void DataFetcher_::tick()
 
     // Round-robin: check one source per tick to avoid blocking the loop
     size_t idx = nextFetchIndex_ % sources_.size();
-    if (now - lastFetch_[idx] >= sources_[idx].interval * 1000UL)
+    nextFetchIndex_ = (idx + 1) % sources_.size();
+
+    // Skip disabled sources
+    if (!sources_[idx].enabled)
+        return;
+
+    // Fetch immediately if never fetched (lastFetch_==0), or after interval elapsed
+    bool shouldFetch = (lastFetch_[idx] == 0) ||
+                       (now - lastFetch_[idx] >= sources_[idx].interval * 1000UL);
+    if (shouldFetch)
     {
         if (ESP.getFreeHeap() > MIN_FREE_HEAP)
         {
@@ -85,7 +94,6 @@ void DataFetcher_::tick()
             DEBUG_PRINTLN(F("DataFetcher: low heap, skipping fetch"));
         }
     }
-    nextFetchIndex_ = (idx + 1) % sources_.size();
 }
 
 // ---------- HTTP fetch + push to custom app ----------
@@ -165,10 +173,14 @@ bool DataFetcher_::fetchAndPush(size_t index)
         return false;
     }
 
+    // Release body memory before parseCustomPage allocates its 8KB JSON buffer.
+    // Prevents heap fragmentation failures on large responses (e.g., exchange rate APIs).
+    body = String();
+
     String formatted = formatValue(src, value);
     String appJson = buildCustomAppJson(src, formatted);
 
-    DEBUG_PRINTF("DataFetcher: pushing %s to display", src.name.c_str());
+    DEBUG_PRINTF("DataFetcher: pushing %s to display (heap: %d)", src.name.c_str(), ESP.getFreeHeap());
     // Feed into the existing custom app pipeline (preventSave=false so app appears in order list)
     nav_->parseCustomPage(src.name, appJson.c_str(), false);
 
@@ -289,12 +301,20 @@ String DataFetcher_::buildCustomAppJson(const DataSourceConfig& src, const Strin
 
 bool DataFetcher_::addSource(const char *json)
 {
+    DEBUG_PRINTF("DataFetcher: addSource received: %s", json);
+
     DynamicJsonDocument doc(1024);
     if (deserializeJson(doc, json))
+    {
+        DEBUG_PRINTLN(F("DataFetcher: addSource JSON parse error"));
         return false;
+    }
 
     if (!doc.containsKey("name") || !doc.containsKey("url") || !doc.containsKey("jsonPath"))
+    {
+        DEBUG_PRINTLN(F("DataFetcher: addSource missing required fields"));
         return false;
+    }
 
     DataSourceConfig cfg;
     cfg.name = doc["name"].as<String>();
@@ -305,6 +325,7 @@ bool DataFetcher_::addSource(const char *json)
     cfg.textColor = doc["color"] | "";
     cfg.interval = doc["interval"] | DataSourceConfig::DEFAULT_INTERVAL;
     cfg.duration = doc["duration"] | DataSourceConfig::DEFAULT_DURATION;
+    cfg.enabled = doc["enabled"] | true;
 
     if (cfg.interval < DataSourceConfig::MIN_INTERVAL)
         cfg.interval = DataSourceConfig::MIN_INTERVAL;
@@ -322,8 +343,16 @@ bool DataFetcher_::addSource(const char *json)
                                  { return s.name == cfg.name; });
     if (existing != sources_.end())
     {
+        DEBUG_PRINTF("DataFetcher: updating source '%s' (enabled=%d)", cfg.name.c_str(), cfg.enabled);
+        bool wasEnabled = existing->enabled;
         *existing = cfg;
         saveSources();
+
+        // If source was just disabled, remove its custom app from display
+        if (wasEnabled && !cfg.enabled && nav_)
+        {
+            nav_->parseCustomPage(cfg.name, "{}", false);
+        }
         return true;
     }
 
@@ -376,6 +405,7 @@ String DataFetcher_::getSourcesAsJson()
         obj["color"] = src.textColor;
         obj["interval"] = src.interval;
         obj["duration"] = src.duration;
+        obj["enabled"] = src.enabled;
     }
 
     String result;
@@ -427,6 +457,7 @@ void DataFetcher_::loadSources()
         cfg.textColor = obj["color"] | "";
         cfg.interval = obj["interval"] | 300;
         cfg.duration = obj["duration"] | 0;
+        cfg.enabled = obj["enabled"] | true;
 
         if (cfg.interval < DataSourceConfig::MIN_INTERVAL)
             cfg.interval = DataSourceConfig::MIN_INTERVAL;
@@ -461,6 +492,7 @@ void DataFetcher_::saveSources()
         obj["color"] = src.textColor;
         obj["interval"] = src.interval;
         obj["duration"] = src.duration;
+        obj["enabled"] = src.enabled;
     }
 
     File file = LittleFS.open(SOURCES_PATH, "w");

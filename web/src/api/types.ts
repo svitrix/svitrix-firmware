@@ -99,6 +99,7 @@ export interface DataSource {
   color: string;
   interval: number;
   duration: number;
+  enabled: boolean;
 }
 
 export interface FileEntry {

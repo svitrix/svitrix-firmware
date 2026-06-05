@@ -19,6 +19,7 @@ const empty: DataSource = {
   color: "#f0b800",
   interval: 900,
   duration: 0,
+  enabled: true,
 };
 
 export function DataFetcherPage(_props: { path?: string }) {
@@ -44,10 +45,29 @@ export function DataFetcherPage(_props: { path?: string }) {
     }
     try {
       await addDataSource(form);
+      // Force immediate fetch if enabled to apply changes
+      if (form.enabled) {
+        await fetchDataSource(form.name);
+      }
       toast(t.dataFetcher.saved);
       setShowForm(false);
       setForm({ ...empty });
       setEditing(false);
+      load();
+    } catch {
+      toast(t.dataFetcher.errorSaving);
+    }
+  }
+
+  async function toggleEnabled(src: DataSource) {
+    try {
+      const newEnabled = !src.enabled;
+      await addDataSource({ ...src, enabled: newEnabled });
+      // If enabling, fetch immediately to show in rotation
+      if (newEnabled) {
+        await fetchDataSource(src.name);
+      }
+      toast(newEnabled ? t.dataFetcher.enabled : t.dataFetcher.disabled);
       load();
     } catch {
       toast(t.dataFetcher.errorSaving);
@@ -166,6 +186,16 @@ export function DataFetcherPage(_props: { path?: string }) {
                 />
               </div>
             </div>
+            <div class="form-row">
+              <label class={styles.checkboxLabel}>
+                <input
+                  type="checkbox"
+                  checked={form.enabled}
+                  onChange={(e) => upd({ enabled: (e.target as HTMLInputElement).checked })}
+                />
+                {t.dataFetcher.enabledLabel}
+              </label>
+            </div>
             <button class="btn-primary" onClick={save}>
               {editing ? t.dataFetcher.update : t.dataFetcher.add}
             </button>
@@ -178,16 +208,27 @@ export function DataFetcherPage(_props: { path?: string }) {
       )}
 
       {sources.map((src) => (
-        <div class="card" key={src.name}>
+        <div class={`card ${!src.enabled ? styles.disabled : ""}`} key={src.name}>
           <div class={styles.sourceHeader}>
-            <strong class={styles.sourceName}>{src.name}</strong>
+            <strong class={styles.sourceName}>
+              {src.name}
+              {!src.enabled && <span class={styles.disabledBadge}>{t.dataFetcher.disabledBadge}</span>}
+            </strong>
             <div class={styles.sourceBtns}>
               <button
                 class={styles.btnSmall}
-                onClick={() => fetchDataSource(src.name).then(() => toast(t.dataFetcher.fetched))}
+                onClick={() => toggleEnabled(src)}
               >
-                {t.dataFetcher.fetch}
+                {src.enabled ? t.dataFetcher.disable : t.dataFetcher.enable}
               </button>
+              {src.enabled && (
+                <button
+                  class={styles.btnSmall}
+                  onClick={() => fetchDataSource(src.name).then(() => toast(t.dataFetcher.fetched))}
+                >
+                  {t.dataFetcher.fetch}
+                </button>
+              )}
               <button
                 class={styles.btnSmall}
                 onClick={() => edit(src)}

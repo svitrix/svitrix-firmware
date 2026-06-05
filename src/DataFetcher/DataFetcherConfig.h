@@ -12,6 +12,7 @@ struct DataSourceConfig
     String textColor;     // Hex color "#RRGGBB" or empty for default
     uint32_t interval;    // Polling interval in seconds (minimum 60, default 900 = 15 min)
     uint32_t duration;    // Display duration in seconds (0 = use global timePerApp)
+    bool enabled = true;  // When false, source is saved but not fetched/displayed
 
     static inline constexpr uint32_t MIN_INTERVAL = 60;
     static inline constexpr uint32_t DEFAULT_INTERVAL = 900;

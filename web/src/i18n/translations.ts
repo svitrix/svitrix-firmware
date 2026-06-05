@@ -302,6 +302,12 @@ export const translations = {
       noSources: "No hay fuentes configuradas.",
       required: "Nombre, URL y Ruta JSON son requeridos",
       confirmDelete: "¿Eliminar",
+      enabledLabel: "Activo (mostrar en rotación)",
+      enable: "Activar",
+      disable: "Desactivar",
+      enabled: "Activado",
+      disabled: "Desactivado",
+      disabledBadge: "desactivado",
     },
 
     // Alarms page
@@ -736,6 +742,12 @@ export const translations = {
       noSources: "No data sources configured.",
       required: "Name, URL, and JSON Path are required",
       confirmDelete: "Delete",
+      enabledLabel: "Enabled (show in rotation)",
+      enable: "Enable",
+      disable: "Disable",
+      enabled: "Enabled",
+      disabled: "Disabled",
+      disabledBadge: "disabled",
     },
 
     // Alarms page

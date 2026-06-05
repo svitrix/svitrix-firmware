@@ -312,7 +312,10 @@ bool DisplayManager_::parseCustomPage(const String& name, const char *json, bool
         return true;
     }
 
-    DynamicJsonDocument doc(8192);
+    // 2KB is enough for most custom apps (DataFetcher: ~150B, typical MQTT: ~500B).
+    // Complex apps with large drawInstructions can use external array parsing.
+    // Smaller buffer reduces heap fragmentation failures.
+    DynamicJsonDocument doc(2048);
     DeserializationError error = deserializeJson(doc, json);
     if (error)
     {
