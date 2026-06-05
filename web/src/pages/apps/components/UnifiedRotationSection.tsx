@@ -271,9 +271,25 @@ export function UnifiedRotationSection() {
             </div>
           )}
 
-          <Button onClick={() => setShowModal(true)}>
-            ➕ {t.apps.playlistAdd}
-          </Button>
+          <div class={styles.buttonRow}>
+            <Button onClick={() => setShowModal(true)}>
+              ➕ {t.apps.playlistAdd}
+            </Button>
+            <Button onClick={() => {
+              const defaultItems: RotationItem[] = NATIVE_APPS_ORIGINAL.map(name => ({
+                id: generateId(),
+                type: "app" as const,
+                name,
+                enabled: true,
+                duration: 0,
+                color: 0,
+                icon: "",
+              }));
+              commitItems(defaultItems);
+            }}>
+              🔄 {t.apps.resetDefaults || "Reset"}
+            </Button>
+          </div>
           <p class={styles.hintMt}>{t.apps.playlistHint}</p>
         </div>
       </Card>

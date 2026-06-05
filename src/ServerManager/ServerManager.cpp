@@ -263,6 +263,7 @@ void addHandler()
                             }
                             saveSettings();
                             smControl_->applyAllSettings();
+                            if (smNav_) smNav_->loadNativeApps();
                             request->send(200, "text/plain", "OK"); });
     mws.addHandler("/api/settings", HTTP_GET, [](AsyncWebServerRequest *request)
                    { request->send(200, "application/json", smControl_->getSettings()); });
