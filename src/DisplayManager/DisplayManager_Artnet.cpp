@@ -142,22 +142,28 @@ CRGB *DisplayManager_::getLeds()
 
 int8_t DisplayManager_::resolveNextApp(int8_t currentApp, int8_t direction)
 {
-    if (!playlistConfig.enabled || playlistItems.empty() || !ui || Apps.empty())
+    // Use rotation items if available, otherwise fall back to default behavior
+    if (rotationItems.empty() || !ui || Apps.empty())
         return -1; // Use default sequential behavior
 
     // Try to find a valid item, but limit attempts to prevent infinite loop
-    for (size_t attempts = 0; attempts < playlistItems.size(); attempts++)
+    for (size_t attempts = 0; attempts < rotationItems.size(); attempts++)
     {
-        // Advance playlist index
+        // Advance rotation index
         if (direction >= 0)
-            playlistIndex = (playlistIndex + 1) % playlistItems.size();
+            rotationIndex = (rotationIndex + 1) % rotationItems.size();
         else
-            playlistIndex = (playlistIndex - 1 + playlistItems.size()) % playlistItems.size();
+            rotationIndex = (rotationIndex - 1 + rotationItems.size()) % rotationItems.size();
 
-        auto& item = playlistItems[playlistIndex];
+        auto& item = rotationItems[rotationIndex];
+        currentRotationItem = &item;
+
+        // Sync legacy aliases
+        playlistIndex = rotationIndex;
 
         if (item.type == 0) // App
         {
+            rotationEffectOnly = false;
             playlistEffectOnly = false;
             ui->setBackgroundEffect(displayConfig.backgroundEffect);
 
@@ -166,7 +172,7 @@ int8_t DisplayManager_::resolveNextApp(int8_t currentApp, int8_t direction)
             {
                 if (Apps[i].first == item.name)
                 {
-                    // Set duration for this playlist item
+                    // Set duration for this rotation item
                     long dur = item.duration > 0 ? item.duration * 1000L : appConfig.timePerApp;
                     ui->setTimePerApp(dur);
                     return (int8_t)i;
@@ -179,6 +185,7 @@ int8_t DisplayManager_::resolveNextApp(int8_t currentApp, int8_t direction)
             int effectIdx = getEffectIndex(item.name.c_str());
             if (effectIdx >= 0)
             {
+                rotationEffectOnly = true;
                 playlistEffectOnly = true;
                 ui->setBackgroundEffect(effectIdx);
                 // Set duration for effect display
@@ -192,10 +199,12 @@ int8_t DisplayManager_::resolveNextApp(int8_t currentApp, int8_t direction)
                 return -2;
             }
             // Effect not found, continue to next item
+            rotationEffectOnly = false;
             playlistEffectOnly = false;
         }
     }
 
     // No valid items found, fall back to default behavior
+    currentRotationItem = nullptr;
     return -1;
 }

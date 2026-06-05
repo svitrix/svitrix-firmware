@@ -23,7 +23,7 @@ void setAppsNotifier(INotifier *notifier)
 // ── Native app preamble ────────────────────────────────────────────
 
 /// Common guard for all native apps. Checks the notification flag,
-/// playlist effect-only mode, sets the current app name, and clears
+/// rotation effect-only mode, sets the current app name, and clears
 /// the custom app tracker.
 /// @param appName Display name of the native app (e.g. "Time").
 /// @return true if the app should return immediately (skip rendering).
@@ -31,8 +31,8 @@ bool nativeAppGuard(const char *appName)
 {
     if (notifyFlag)
         return true;
-    // Playlist effect-only mode: only render background effect, skip app content
-    if (playlistEffectOnly)
+    // Rotation effect-only mode: only render background effect, skip app content
+    if (rotationEffectOnly)
         return true;
     DisplayManager.setCurrentApp(appName);
     currentCustomApp = "";
@@ -42,13 +42,29 @@ bool nativeAppGuard(const char *appName)
 // ── Color override ─────────────────────────────────────────────────
 
 /// Apply a per-app color if set (> 0), otherwise the global text color.
+/// Rotation item color override takes highest priority (per-item from UI).
 /// DisplayManager.resolveTextColor() lets any active IDisplayPolicy
 /// (e.g. NightModePolicy) veto the choice, so this function stays
 /// policy-agnostic.
 /// @param colorValue Per-app color from colorConfig (0 = use global).
 void applyNativeAppColor(uint32_t colorValue)
 {
-    const uint32_t preferred = (colorValue > 0) ? colorValue : colorConfig.textColor;
+    uint32_t preferred;
+
+    // Priority: rotation item override > per-app color > global text color
+    if (currentRotationItem && currentRotationItem->color > 0)
+    {
+        preferred = currentRotationItem->color;
+    }
+    else if (colorValue > 0)
+    {
+        preferred = colorValue;
+    }
+    else
+    {
+        preferred = colorConfig.textColor;
+    }
+
     DisplayManager.setTextColor(DisplayManager.resolveTextColor(preferred));
 }
 

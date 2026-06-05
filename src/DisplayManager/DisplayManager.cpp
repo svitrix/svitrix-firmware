@@ -57,7 +57,13 @@ CRGB colorTemperature;
 // Current app name (declared extern in DisplayManager_internal.h)
 String currentApp;
 
-// Playlist runtime state (declared extern in DisplayManager_internal.h)
+// Rotation runtime state (declared extern in DisplayManager_internal.h)
+std::vector<RotationItemRuntime> rotationItems;
+int rotationIndex = -1;
+bool rotationEffectOnly = false;
+const RotationItemRuntime* currentRotationItem = nullptr;
+
+// Legacy aliases for gradual migration
 std::vector<PlaylistItemRuntime> playlistItems;
 int playlistIndex = -1;
 bool playlistEffectOnly = false;
@@ -65,59 +71,76 @@ bool playlistEffectOnly = false;
 // Forward declaration for getDurationForApp (defined below)
 static long getDurationForApp(const String& appName);
 
-/// Parses the playlist JSON from playlistConfig.items into playlistItems vector.
-/// Called when playlist mode is enabled or playlist config changes.
-static void parsePlaylistConfig()
+/// Parses rotationConfig.items JSON into rotationItems vector.
+/// Only includes enabled items. Called at boot and when rotation config changes.
+void parseRotationConfig()
 {
-    playlistItems.clear();
-    playlistIndex = -1;
+    rotationItems.clear();
+    rotationIndex = -1;
+    currentRotationItem = nullptr;
 
-    if (!playlistConfig.enabled || playlistConfig.items.length() == 0)
+    if (rotationConfig.items.isEmpty())
     {
-        // Reset effect-only mode and restore default background when playlist disabled/empty
-        playlistEffectOnly = false;
+        rotationEffectOnly = false;
         if (ui)
             ui->setBackgroundEffect(displayConfig.backgroundEffect);
         return;
     }
 
-    StaticJsonDocument<2048> doc;
-    DeserializationError err = deserializeJson(doc, playlistConfig.items);
+    DynamicJsonDocument doc(4096);
+    DeserializationError err = deserializeJson(doc, rotationConfig.items);
     if (err)
     {
-        DEBUG_PRINTLN(F("parsePlaylistConfig: JSON error"));
+        DEBUG_PRINTLN(F("parseRotationConfig: JSON error"));
         return;
     }
 
     JsonArray arr = doc.as<JsonArray>();
     for (JsonObject item : arr)
     {
-        PlaylistItemRuntime pir;
+        bool enabled = item["enabled"] | true;
+        if (!enabled)
+            continue;  // Skip disabled items
+
+        RotationItemRuntime rir;
+        rir.id = item["id"].as<String>();
         const char* typeStr = item["type"] | "app";
-        pir.type = (strcmp(typeStr, "effect") == 0) ? 1 : 0;
-        pir.name = item["name"].as<String>();
-        pir.duration = item["duration"] | 0;
-        if (!pir.name.isEmpty())
-            playlistItems.push_back(pir);
+        rir.type = (strcmp(typeStr, "effect") == 0) ? 1 : 0;
+        rir.name = item["name"].as<String>();
+        rir.enabled = true;
+        rir.duration = item["duration"] | 0;
+        rir.color = item["color"] | 0;
+        rir.icon = item["icon"].as<String>();
+
+        if (!rir.name.isEmpty())
+            rotationItems.push_back(rir);
     }
 
-    // Keep playlistIndex at -1 so first resolveNextApp() advances to 0
-    // (don't set to 0 here, or item 0 gets skipped)
+    // Sync legacy playlistEffectOnly
+    playlistEffectOnly = rotationEffectOnly;
 
-    DEBUG_PRINTF("Playlist loaded: %d items\n", playlistItems.size());
+    DEBUG_PRINTF("Rotation loaded: %d enabled items\n", rotationItems.size());
 }
 
-/// Advances display to the current playlist item (app or effect).
-/// For apps: transitions to that app. For effects: sets background effect only (no app content).
-static void advanceToPlaylistItem()
+/// @deprecated Legacy wrapper - calls parseRotationConfig
+static void parsePlaylistConfig()
 {
-    if (playlistIndex < 0 || playlistIndex >= (int)playlistItems.size())
+    parseRotationConfig();
+}
+
+/// Advances display to the current rotation item (app or effect).
+/// For apps: transitions to that app. For effects: sets background effect only.
+static void advanceToRotationItem()
+{
+    if (rotationIndex < 0 || rotationIndex >= (int)rotationItems.size())
         return;
 
-    auto& item = playlistItems[playlistIndex];
+    auto& item = rotationItems[rotationIndex];
+    currentRotationItem = &item;
 
     if (item.type == 0) // app
     {
+        rotationEffectOnly = false;
         playlistEffectOnly = false;
         // Restore normal background (no effect override)
         ui->setBackgroundEffect(displayConfig.backgroundEffect);
@@ -129,31 +152,32 @@ static void advanceToPlaylistItem()
         }
         else
         {
-            DEBUG_PRINTF("Playlist: app '%s' not found\n", item.name.c_str());
+            DEBUG_PRINTF("Rotation: app '%s' not found\n", item.name.c_str());
             // Skip to next item
-            playlistIndex = (playlistIndex + 1) % playlistItems.size();
-            advanceToPlaylistItem();
+            rotationIndex = (rotationIndex + 1) % rotationItems.size();
+            advanceToRotationItem();
             return;
         }
     }
     else // effect (standalone)
     {
+        rotationEffectOnly = true;
         playlistEffectOnly = true;
         // Find effect index by name
         int effectIdx = getEffectIndex(item.name.c_str());
         if (effectIdx >= 0)
         {
-            // Set as background effect - apps will check playlistEffectOnly and skip rendering
             ui->setBackgroundEffect(effectIdx);
-            DEBUG_PRINTF("Playlist: showing effect '%s' (%d)\n", item.name.c_str(), effectIdx);
+            DEBUG_PRINTF("Rotation: showing effect '%s' (%d)\n", item.name.c_str(), effectIdx);
         }
         else
         {
-            DEBUG_PRINTF("Playlist: effect '%s' not found\n", item.name.c_str());
+            DEBUG_PRINTF("Rotation: effect '%s' not found\n", item.name.c_str());
+            rotationEffectOnly = false;
             playlistEffectOnly = false;
             // Skip to next item
-            playlistIndex = (playlistIndex + 1) % playlistItems.size();
-            advanceToPlaylistItem();
+            rotationIndex = (rotationIndex + 1) % rotationItems.size();
+            advanceToRotationItem();
             return;
         }
     }
@@ -163,6 +187,12 @@ static void advanceToPlaylistItem()
     if (item.type == 0 && item.duration == 0)
         dur = getDurationForApp(item.name);
     ui->setTimePerApp(dur);
+}
+
+/// @deprecated Legacy wrapper
+static void advanceToPlaylistItem()
+{
+    advanceToRotationItem();
 }
 
 /// Maps native app names to their configured per-app duration (in milliseconds).

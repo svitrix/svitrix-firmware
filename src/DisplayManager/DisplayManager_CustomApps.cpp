@@ -15,6 +15,7 @@
 #include "INotifier.h"
 #include <ArduinoJson.h>
 #include <LittleFS.h>
+#include <map>
 #include "Apps.h"
 #include "Overlays.h"
 #include "ColorUtils.h"
@@ -520,71 +521,116 @@ void DisplayManager_::loadCustomApps()
     root.close();
 }
 
-/// Rebuilds the unified app loop (native + weather + custom) from the saved
-/// order in appConfig.appOrder. The enabled native/weather apps plus every
-/// loaded custom app form the "desired" set; orderApps() positions them to
-/// follow the saved order and appends any not-yet-ordered apps at the end.
-/// This is the single source of truth for app order — it replaces the old
-/// fixed-position insertion. Called at boot (after loadCustomApps) and after
-/// any settings change that toggles an app.
+/// Rebuilds the unified app loop from rotationConfig.items.
+/// The rotation config is the single source of truth for enabled apps and their order.
+/// Called at boot (after loadCustomApps and parseRotationConfig) and after
+/// any settings change that affects the rotation.
 void DisplayManager_::loadNativeApps()
 {
-    // 1. Build the desired set in default order: enabled native/weather apps,
-    //    then every loaded custom app (callbacks taken from the live vector).
-    std::vector<std::pair<String, AppCallback>> desired;
+    // Ensure rotation config is parsed before building the app list
+    parseRotationConfig();
 
-    auto addNative = [&](const String& name, AppCallback callback, bool show)
-    {
-        if (show)
-            desired.push_back(std::make_pair(name, callback));
-    };
+    // 1. Build a map of all available app callbacks (native + weather + custom)
+    std::map<String, AppCallback> availableApps;
 
-    addNative("Time", TimeApp, appConfig.showTime);
-    addNative("Date", DateApp, appConfig.showDate);
+    // Native apps (always available)
+    availableApps["Time"] = TimeApp;
+    availableApps["Date"] = DateApp;
     if (sensorConfig.sensorReading)
     {
-        addNative("Temperature", TempApp, appConfig.showTemp);
-        addNative("Humidity", HumApp, appConfig.showHum);
+        availableApps["Temperature"] = TempApp;
+        availableApps["Humidity"] = HumApp;
     }
 #ifdef ULANZI
-    addNative("Battery", BatApp, appConfig.showBat);
+    availableApps["Battery"] = BatApp;
 #endif
-    addNative("OutdoorTemp", OutdoorTempApp, weatherConfig.showOutdoorTemp);
-    addNative("OutdoorHum", OutdoorHumApp, weatherConfig.showOutdoorHumidity);
-    addNative("Pressure", PressureApp, weatherConfig.showPressure);
-    addNative("AirQuality", AirQualityApp, weatherConfig.showAirQuality);
-    addNative("UV", UVApp, weatherConfig.showUV);
+    // Weather apps (always available - data presence handled in app itself)
+    availableApps["OutdoorTemp"] = OutdoorTempApp;
+    availableApps["OutdoorHum"] = OutdoorHumApp;
+    availableApps["Pressure"] = PressureApp;
+    availableApps["AirQuality"] = AirQualityApp;
+    availableApps["UV"] = UVApp;
 
-    // Custom apps keep their existing lambda callbacks from the live vector.
+    // Custom apps keep their existing lambda callbacks
     for (const auto& app : Apps)
     {
         if (customApps.count(app.first) > 0)
-            desired.push_back(app);
+            availableApps[app.first] = app.second;
     }
 
-    // 2. Order the desired names to follow the persisted appOrder.
-    std::vector<String> desiredNames;
-    desiredNames.reserve(desired.size());
-    for (const auto& app : desired)
-        desiredNames.push_back(app.first);
-
-    std::vector<String> ordered = orderApps(parseAppOrder(appConfig.appOrder), desiredNames);
-
-    // 3. Rebuild the live vector in that order, mapping each name back to its callback.
+    // 2. Build Apps vector from rotation items (enabled app-type items only)
     std::vector<std::pair<String, AppCallback>> newApps;
-    newApps.reserve(ordered.size());
-    for (const String& name : ordered)
+
+    if (!rotationItems.empty())
     {
-        auto it = std::find_if(desired.begin(), desired.end(),
-                               [&name](const std::pair<String, AppCallback>& app)
-                               { return app.first == name; });
-        if (it != desired.end())
-            newApps.push_back(*it);
+        // Use rotation config as source of truth
+        for (const auto& item : rotationItems)
+        {
+            if (item.type == 0) // app (effects don't go in Apps vector)
+            {
+                auto it = availableApps.find(item.name);
+                if (it != availableApps.end())
+                {
+                    newApps.push_back(std::make_pair(item.name, it->second));
+                }
+            }
+        }
+    }
+    else
+    {
+        // Fallback: use legacy appOrder + show flags
+        std::vector<std::pair<String, AppCallback>> desired;
+
+        auto addNative = [&](const String& name, AppCallback callback, bool show)
+        {
+            if (show)
+                desired.push_back(std::make_pair(name, callback));
+        };
+
+        addNative("Time", TimeApp, appConfig.showTime);
+        addNative("Date", DateApp, appConfig.showDate);
+        if (sensorConfig.sensorReading)
+        {
+            addNative("Temperature", TempApp, appConfig.showTemp);
+            addNative("Humidity", HumApp, appConfig.showHum);
+        }
+#ifdef ULANZI
+        addNative("Battery", BatApp, appConfig.showBat);
+#endif
+        addNative("OutdoorTemp", OutdoorTempApp, weatherConfig.showOutdoorTemp);
+        addNative("OutdoorHum", OutdoorHumApp, weatherConfig.showOutdoorHumidity);
+        addNative("Pressure", PressureApp, weatherConfig.showPressure);
+        addNative("AirQuality", AirQualityApp, weatherConfig.showAirQuality);
+        addNative("UV", UVApp, weatherConfig.showUV);
+
+        for (const auto& app : Apps)
+        {
+            if (customApps.count(app.first) > 0)
+                desired.push_back(app);
+        }
+
+        std::vector<String> desiredNames;
+        desiredNames.reserve(desired.size());
+        for (const auto& app : desired)
+            desiredNames.push_back(app.first);
+
+        std::vector<String> ordered = orderApps(parseAppOrder(appConfig.appOrder), desiredNames);
+
+        for (const String& name : ordered)
+        {
+            auto it = std::find_if(desired.begin(), desired.end(),
+                                   [&name](const std::pair<String, AppCallback>& app)
+                                   { return app.first == name; });
+            if (it != desired.end())
+                newApps.push_back(*it);
+        }
     }
 
     Apps = newApps;
     ui->setApps(Apps);
     setAutoTransition(true);
+
+    DEBUG_PRINTF("loadNativeApps: %d apps loaded\n", Apps.size());
 }
 
 /// Switches to a named app. JSON: {"name":"AppName", "fast":true/false}.
