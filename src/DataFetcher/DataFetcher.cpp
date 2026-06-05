@@ -110,8 +110,10 @@ bool DataFetcher_::fetchAndPush(size_t index)
     {
         // Don't validate cert — DataFetcher hits arbitrary third-party APIs
         // whose CAs we can't pin in advance.
+        // Note: Do NOT call secClient.setTimeout() — it causes hangs on some hosts.
+        // HTTPClient's setConnectTimeout/setTimeout handle timeouts correctly.
         secClient.setInsecure();
-        secClient.setTimeout(HTTP_CONNECT_TIMEOUT / 1000);  // WiFiClientSecure uses seconds
+        DEBUG_PRINTF("DataFetcher: HTTPS request to %s (heap: %d)", src.url.c_str(), ESP.getFreeHeap());
         http.begin(secClient, src.url);
     }
     else
@@ -123,7 +125,9 @@ bool DataFetcher_::fetchAndPush(size_t index)
     http.setTimeout(HTTP_READ_TIMEOUT);
     http.addHeader("Accept", "application/json");
 
+    DEBUG_PRINTF("DataFetcher: GET %s...", src.name.c_str());
     int httpCode = http.GET();
+    DEBUG_PRINTF("DataFetcher: %s httpCode=%d", src.name.c_str(), httpCode);
     if (httpCode != HTTP_CODE_OK)
     {
         DEBUG_PRINTF("DataFetcher: GET %s failed: %d", src.name.c_str(), httpCode);
@@ -139,45 +143,36 @@ bool DataFetcher_::fetchAndPush(size_t index)
         return false;
     }
 
-    // For chunked encoding (contentLength == -1), read with a limit
-    String body;
-    if (contentLength < 0)
-    {
-        // Chunked transfer - read up to MAX_RESPONSE_SIZE
-        WiFiClient *stream = http.getStreamPtr();
-        body.reserve(MAX_RESPONSE_SIZE);
-        size_t bytesRead = 0;
-        while (stream->available() && bytesRead < MAX_RESPONSE_SIZE)
-        {
-            char c = stream->read();
-            body += c;
-            bytesRead++;
-        }
-        if (bytesRead >= MAX_RESPONSE_SIZE)
-        {
-            DEBUG_PRINTLN(F("DataFetcher: chunked response truncated at max size"));
-        }
-    }
-    else
-    {
-        body = http.getString();
-    }
+    // HTTPClient::getString() handles chunked encoding automatically.
+    // For chunked responses (contentLength == -1), we can't pre-check size,
+    // so we read and check after. Most JSON APIs return < 4KB anyway.
+    String body = http.getString();
     http.end();
+
+    if (body.length() > MAX_RESPONSE_SIZE)
+    {
+        DEBUG_PRINTF("DataFetcher: response too large (%d bytes), truncating", body.length());
+        body = body.substring(0, MAX_RESPONSE_SIZE);
+    }
+
+    DEBUG_PRINTF("DataFetcher: %s body length=%d", src.name.c_str(), body.length());
 
     String value = extractJsonValue(body, src.jsonPath);
     if (value.isEmpty())
     {
         DEBUG_PRINTF("DataFetcher: path '%s' not found in response", src.jsonPath.c_str());
+        DEBUG_PRINTF("DataFetcher: body preview: %.100s", body.c_str());
         return false;
     }
 
     String formatted = formatValue(src, value);
     String appJson = buildCustomAppJson(src, formatted);
 
+    DEBUG_PRINTF("DataFetcher: pushing %s to display", src.name.c_str());
     // Feed into the existing custom app pipeline (preventSave=false so app appears in order list)
     nav_->parseCustomPage(src.name, appJson.c_str(), false);
 
-    DEBUG_PRINTF("DataFetcher: %s = %s", src.name.c_str(), formatted.c_str());
+    DEBUG_PRINTF("DataFetcher: %s = %s (done)", src.name.c_str(), formatted.c_str());
     return true;
 }
 
@@ -185,7 +180,8 @@ bool DataFetcher_::fetchAndPush(size_t index)
 
 String DataFetcher_::extractJsonValue(const String& json, const String& path)
 {
-    DynamicJsonDocument doc(2048);
+    // Use larger buffer - some exchange rate APIs return 3KB+ with all currencies
+    DynamicJsonDocument doc(4096);
     DeserializationError err = deserializeJson(doc, json);
     if (err)
         return "";
