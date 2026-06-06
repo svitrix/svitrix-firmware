@@ -102,24 +102,26 @@ Durante el tiempo programado, la pantalla reduce su brillo a la configuración e
 
 ### Apps
 
-**Orden de Apps** — En la parte superior de la página de Apps hay una lista con arrastrar y soltar (drag-and-drop) que controla el orden en que se muestran **todas** las apps del ciclo: las **nativas** (las originales —Hora, Fecha, Temperatura, Humedad, Batería— más las del **clima**) y las **personalizadas**. Arrastra cualquier fila para reordenarla; el cambio se guarda al instante y **se mantiene tras reiniciar** el dispositivo.
+La página de **Apps** contiene una lista unificada de rotación que controla **todas** las apps y efectos que se muestran en el ciclo:
 
-Activa/desactiva apps integradas. Cada app tiene opciones de personalización:
+**Rotación Unificada** — Una lista con arrastrar y soltar (drag-and-drop) que incluye:
+- **Apps nativas** — Hora, Fecha, Temperatura, Humedad, Batería
+- **Apps del clima** — Temp. Exterior, Humedad Exterior, Presión, Calidad del Aire, UV
+- **Apps personalizadas** — creadas vía MQTT, HTTP o Data Fetcher
+- **Efectos** — efectos visuales independientes (sin texto)
 
-**Apps básicas:**
-- **Hora** — reloj digital con duración configurable
-- **Fecha** — fecha con duración configurable
+Cada elemento en la rotación tiene configuraciones individuales:
+- **Toggle** — activa/desactiva el elemento
+- **Duración** — tiempo de visualización (0 = usar duración global)
+- **Color** — color de texto personalizado (0 = usar color por defecto)
 
-**Apps con color:**
-- **Temperatura** — sensor interno, con selector de color, escala Celsius/Fahrenheit y offset
-- **Humedad** — sensor interno, con selector de color
-- **Batería** — nivel de batería, con selector de color
+Arrastra cualquier fila para reordenarla. Los cambios se guardan al instante y persisten entre reinicios.
 
-**Indicador de alarmas:**
-- **Alarms Indicator** — muestra un LED en la esquina inferior derecha cuando hay alarmas activas
+**Agregar elementos:**
+- Botón **+ Agregar** — abre un modal para agregar apps nativas, del clima o efectos
+- Las apps personalizadas se agregan automáticamente cuando se crean vía MQTT/HTTP/DataFetcher
 
-Comportamiento de apps:
-- **Duración de App** — cuánto tiempo se muestra cada app antes de cambiar (1–60s)
+**Comportamiento global:**
 - **Auto Transición** — cicla automáticamente a través de las apps
 - **Efecto de Transición** — efecto visual al cambiar apps (Ninguno, Deslizar, Atenuar, Zoom, etc.)
 - **Velocidad de Transición** — qué tan rápido reproduce la animación de transición (100–2000ms)
@@ -161,12 +163,17 @@ Si no especificas icono, el texto usa los 32 píxeles completos de la pantalla. 
 
 Ver [Sonidos](./sounds) para crear archivos de melodía.
 
-### Selector de Iconos
+### Iconos
 
-Descarga iconos de la [biblioteca de iconos LaMetric](https://developer.lametric.com/icons):
+**Selector de Iconos** — Descarga iconos de la [biblioteca de iconos LaMetric](https://developer.lametric.com/icons):
 1. Ingresa el número de ID del icono
 2. Haz clic en **Vista Previa** para verlo
 3. Haz clic en **Descargar** para guardarlo en la carpeta `/ICONS/` del dispositivo
+
+**Galería de Iconos Guardados** — Debajo del selector, una galería muestra todos los iconos almacenados en el dispositivo:
+- Vista en grid con imagen y número de ID
+- Botón de eliminar (×) al pasar el mouse
+- Botón "Actualizar" para recargar la lista
 
 ### Acciones
 

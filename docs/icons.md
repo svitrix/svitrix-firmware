@@ -11,6 +11,16 @@ Para personalizar tu app personalizada o notificación con tu icono favorito, pu
 
 Puedes explorar y encontrar iconos LaMetric en la [Galería de Iconos LaMetric](https://developer.lametric.com/icons).
 
+### Galería de Iconos Guardados
+
+Debajo del selector de iconos, encontrarás la **Galería de Iconos Guardados** que muestra todos los iconos almacenados en tu dispositivo:
+
+- **Vista en grid**: Cada icono se muestra con su imagen y número de ID.
+- **Eliminar iconos**: Pasa el mouse sobre un icono para ver el botón de eliminar (×).
+- **Actualizar**: Usa el botón "Actualizar" para recargar la lista después de subir iconos manualmente.
+
+Esta galería te permite ver y gestionar rápidamente todos los iconos disponibles en tu dispositivo sin necesidad de navegar por el sistema de archivos.
+
 ### App SVITRIX
 
 Con la app SVITRIX, disponible tanto para Android como iOS, obtienes acceso exclusivo a la base de datos oficial de SVITRIX, con más de 1800 iconos y animaciones en formatos 8x8 y 32x8. La app también te permite crear tus propios iconos y subirlos directamente a tu dispositivo SVITRIX o a la base de datos en la nube.

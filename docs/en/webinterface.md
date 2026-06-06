@@ -116,21 +116,26 @@ Do not lose your auth credentials — otherwise you will need to factory reset t
 
 ### Apps
 
-**App Order** — A drag-and-drop list at the top of the Apps page controls the order in which **all** apps in the loop are shown: the **native** ones (the originals — Time, Date, Temperature, Humidity, Battery — plus the **weather** apps) and your **custom** apps. Drag any row to reorder; the change is saved instantly and **persists across reboots**.
+The **Apps** page contains a unified rotation list that controls **all** apps and effects shown in the display cycle:
 
-**Native Apps** — Toggle and configure:
-- **Time** — digital clock
-- **Date** — date display
-- **Temperature** — internal sensor (Celsius/Fahrenheit, offset, color)
-- **Humidity** — internal sensor (color)
-- **Battery** — battery level (color)
+**Unified Rotation** — A drag-and-drop list including:
+- **Native apps** — Time, Date, Temperature, Humidity, Battery
+- **Weather apps** — Outdoor Temp, Outdoor Humidity, Pressure, Air Quality, UV
+- **Custom apps** — created via MQTT, HTTP or Data Fetcher
+- **Effects** — standalone visual effects (no text)
 
-**Weather Apps** — Toggle outdoor data from Weather API:
-- Outdoor Temperature, Humidity, Pressure, Air Quality, UV Index
-- **Auto Color** — color changes based on level (green → yellow → orange → red)
+Each item in the rotation has individual settings:
+- **Toggle** — enable/disable the item
+- **Duration** — display time (0 = use global duration)
+- **Color** — custom text color (0 = use default color)
 
-**Transitions & Navigation:**
-- **Alarms Indicator** — LED in corner when alarms active
+Drag any row to reorder. Changes save instantly and persist across reboots.
+
+**Adding items:**
+- **+ Add** button — opens a modal to add native, weather apps or effects
+- Custom apps are added automatically when created via MQTT/HTTP/DataFetcher
+
+**Global behavior:**
 - **Auto Transition** — cycle through apps automatically
 - **Transition Effect** — animation style (slide, dim, zoom, etc.)
 - **Transition Speed** — animation speed (100–2000ms)
@@ -178,10 +183,15 @@ Built-in file manager:
 
 ### Iconos / Icons
 
-Download icons from [LaMetric icon library](https://developer.lametric.com/icons):
+**Icon Picker** — Download icons from [LaMetric icon library](https://developer.lametric.com/icons):
 1. Enter the icon ID number
 2. Click **Preview** to see it
 3. Click **Download** to save to `/ICONS/`
+
+**Saved Icons Gallery** — Below the picker, a gallery displays all icons stored on the device:
+- Grid view with image and ID number
+- Delete button (×) on hover
+- "Refresh" button to reload the list
 
 ### Respaldo / Backup
 
