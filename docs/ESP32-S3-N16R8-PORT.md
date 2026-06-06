@@ -190,48 +190,33 @@ El **ESP32-S3-DevKitC-1** es la placa de desarrollo oficial de Espressif que inc
 
 ## 4. Pinout ESP32-S3-DevKitC-1
 
-### 4.1 Pinout de la Placa
+### 4.1 Vista del DevKit
 
-```
-ESP32-S3-DevKitC-1 — Vista superior (USB-C abajo)
+**ESP32-S3-DevKitC-1 N16R8** — Placa de desarrollo con módulo WiFi+BT, 16MB Flash, 8MB PSRAM:
 
-         ┌──────────────────────────────────┐
-         │  [RGB LED]              [BOOT]   │
-         │                         [RESET]  │
-    ─────┼──────────────────────────────────┼─────
-    3V3  │●                                ●│ 3V3
-    3V3  │●                                ●│ RST
-    GND  │●                                ●│ 46
-    IO4  │● ◄── LDR (ADC)                  ●│ 45
-    IO5  │● ◄── VBAT (ADC, opcional)       ●│ GND
-    IO6  │●                                ●│ 44
-    IO7  │●                                ●│ 43
-    IO15 │●                                ●│ 42
-    IO16 │●                                ●│ 41
-    IO17 │● ──► BUZZER (PWM)               ●│ 40
-    IO18 │●                                ●│ 39
-    IO8  │●                                ●│ 38 ──► LED DIN
-    GND  │●                                ●│ 37
-    IO19 │● (USB D-)                       ●│ 36
-    IO20 │● (USB D+)                       ●│ 35
-    IO3  │●                                ●│ GND
-    IO46 │●                                ●│ 34
-    IO9  │● ◄── BTN_LEFT                   ●│ 33
-    IO10 │● ◄── BTN_SELECT                 ●│ 26
-    IO11 │● ◄── BTN_RIGHT                  ●│ 21
-    IO12 │● ◄── BTN_RESET                  ●│ 20
-    IO13 │●                                ●│ 19
-    IO14 │●                                ●│ 18
-    5V   │●                                ●│ 17
-    GND  │●                                ●│ 16
-    IO1  │● ◄──► I2C SDA                   ●│ 15
-    IO2  │● ◄──► I2C SCL                   ●│ GND
-    ─────┼──────────────────────────────────┼─────
-         │         [USB-C]                  │
-         └──────────────────────────────────┘
-```
+![ESP32-S3-DevKitC-1 N16R8](../hardware/images/devkit-photo.png)
 
-### 4.2 Tabla de Pines Usados
+### 4.2 Diagrama de Pines
+
+![ESP32-S3-DevKitC-1 Pinout](../hardware/images/devkit-pinout.png)
+
+**Pines del proyecto Svitrix:**
+
+| Pin Izquierdo | Función | | Pin Derecho | Función |
+|---------------|---------|---|-------------|---------|
+| 3V3 | Alimentación | | GND | Tierra |
+| 4 | **LDR** (ADC) | | 42 | — |
+| 5 | VBAT (opcional) | | 41 | — |
+| 17 | **BUZZER** (PWM) | | 38 | **LED DIN** |
+| 9 | **BTN_LEFT** | | — | — |
+| 10 | **BTN_SELECT** | | — | — |
+| 11 | **BTN_RIGHT** | | — | — |
+| 12 | **BTN_RESET** | | — | — |
+| 5V | Alimentación | | — | — |
+| 1 | **I2C SDA** | | — | — |
+| 2 | **I2C SCL** | | GND | Tierra |
+
+### 4.3 Tabla de Pines Usados
 
 | GPIO | Función | Dirección | Tipo | Notas |
 |------|---------|-----------|------|-------|
@@ -246,7 +231,7 @@ ESP32-S3-DevKitC-1 — Vista superior (USB-C abajo)
 | **17** | Buzzer PWM | Output | LEDC | 2kHz típico |
 | **38** | LED Matrix DIN | Output | RMT | 330Ω serie |
 
-### 4.3 Pines NO Disponibles (Reservados en N16R8)
+### 4.4 Pines NO Disponibles (Reservados en N16R8)
 
 | GPIO | Razón |
 |------|-------|
@@ -260,7 +245,7 @@ ESP32-S3-DevKitC-1 — Vista superior (USB-C abajo)
 
 > **Nota:** GPIO48 está conectado al LED RGB integrado del DevKitC-1. Usamos GPIO38 para la matriz externa.
 
-### 4.4 Pines Libres para Expansión
+### 4.5 Pines Libres para Expansión
 
 | GPIO | ADC | Notas |
 |------|-----|-------|
@@ -873,157 +858,41 @@ Diseño minimalista para impresión 3D que aloja la matriz LED 32×8 WS2812B est
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### 12.3 Código OpenSCAD (Parametrizable)
+### 12.3 Archivo OpenSCAD
 
-> **Archivo:** [`hardware/enclosure.scad`](../hardware/enclosure.scad)
+> **Descargar:** [`hardware/enclosure.scad`](../hardware/enclosure.scad)  
+> **Visualización:** [`hardware/enclosure_preview.txt`](../hardware/enclosure_preview.txt)
+
+**Parámetros principales (editables en el archivo):**
 
 ```openscad
-// ═══════════════════════════════════════════════════════════════════════════
-// Svitrix DIY Enclosure - Parametric Design
-// Para matriz WS2812B 32×8 + ESP32-S3-DevKitC-1
-// ═══════════════════════════════════════════════════════════════════════════
-
-// ─── PARÁMETROS DEL PANEL LED ───
+// Panel LED
 led_pitch      = 10;        // mm entre LEDs (5, 8, o 10)
 led_cols       = 32;        // columnas
 led_rows       = 8;         // filas
-panel_width    = led_pitch * led_cols;  // 320mm para pitch 10
-panel_height   = led_pitch * led_rows;  // 80mm para pitch 10
-panel_thick    = 2;         // grosor del PCB del panel
 
-// ─── PARÁMETROS DEL GABINETE ───
+// Gabinete
 wall           = 2;         // grosor de pared
-clearance      = 1;         // holgura panel
-depth          = 25;        // profundidad total interna
-corner_r       = 3;         // radio de esquinas
+depth          = 25;        // profundidad interna
 
-// Dimensiones calculadas
-inner_w        = panel_width + clearance * 2;
-inner_h        = panel_height + clearance * 2;
-outer_w        = inner_w + wall * 2;
-outer_h        = inner_h + wall * 2;
-outer_d        = depth + wall;
-
-// ─── PARÁMETROS DE COMPONENTES ───
-devkit_w       = 26;        // ancho DevKitC-1
-devkit_l       = 70;        // largo DevKitC-1
-usb_w          = 10;        // ancho puerto USB-C
-usb_h          = 4;         // alto puerto USB-C
+// Componentes
 btn_d          = 6.5;       // diámetro agujero botón
 btn_spacing    = 15;        // espacio entre botones
 ldr_d          = 5;         // diámetro agujero LDR
-vent_w         = 30;        // ancho ranura ventilación
-vent_h         = 2;         // alto ranura ventilación
-
-// ═══════════════════════════════════════════════════════════════════════════
-// MÓDULO PRINCIPAL
-// ═══════════════════════════════════════════════════════════════════════════
-
-module enclosure_bottom() {
-    difference() {
-        // Caja exterior con esquinas redondeadas
-        hull() {
-            for (x = [corner_r, outer_w - corner_r])
-                for (y = [corner_r, outer_h - corner_r])
-                    translate([x, y, 0])
-                        cylinder(r = corner_r, h = outer_d, $fn = 32);
-        }
-        
-        // Cavidad interior
-        translate([wall, wall, wall])
-            cube([inner_w, inner_h, depth + 1]);
-        
-        // Ventana para LEDs (frente)
-        translate([wall + clearance, wall + clearance, -1])
-            cube([panel_width, panel_height, wall + 2]);
-        
-        // Puerto USB-C (lateral)
-        translate([outer_w - wall - 1, outer_h/2 - usb_w/2, depth - usb_h - 5])
-            cube([wall + 2, usb_w, usb_h + 6]);
-        
-        // Agujeros para botones (trasero)
-        for (i = [0:3]) {
-            translate([wall + 20 + i * btn_spacing, -1, depth/2])
-                rotate([-90, 0, 0])
-                    cylinder(d = btn_d, h = wall + 2, $fn = 24);
-        }
-        
-        // Agujero LDR (superior)
-        translate([wall + 15, outer_h/2, outer_d - wall - 1])
-            cylinder(d = ldr_d, h = wall + 2, $fn = 24);
-        
-        // Ranuras de ventilación (trasero)
-        for (i = [0:4]) {
-            translate([outer_w - 60 + i * 12, -1, depth/2 - vent_h/2])
-                cube([vent_w/5, wall + 2, vent_h]);
-        }
-        
-        // Ranuras de ventilación (inferior)
-        for (i = [0:5]) {
-            translate([40 + i * 45, wall + 10, -1])
-                cube([30, 3, wall + 2]);
-        }
-    }
-    
-    // Soportes para panel LED
-    for (x = [wall + 5, outer_w - wall - 8])
-        for (y = [wall + 5, outer_h - wall - 8])
-            translate([x, y, wall])
-                cube([3, 3, 5]);
-    
-    // Soporte para DevKit
-    translate([outer_w/2 - devkit_w/2 - 2, wall + 10, wall])
-        difference() {
-            cube([devkit_w + 4, devkit_l + 4, 8]);
-            translate([2, 2, 2])
-                cube([devkit_w, devkit_l, 10]);
-        }
-}
-
-module enclosure_top() {
-    difference() {
-        // Tapa con esquinas redondeadas
-        hull() {
-            for (x = [corner_r, outer_w - corner_r])
-                for (y = [corner_r, outer_h - corner_r])
-                    translate([x, y, 0])
-                        cylinder(r = corner_r, h = wall + 3, $fn = 32);
-        }
-        
-        // Rebaje para encajar en base
-        translate([wall - 0.5, wall - 0.5, wall])
-            cube([inner_w + 1, inner_h + 1, 4]);
-        
-        // Ventana difusor
-        translate([wall + clearance + 2, wall + clearance + 2, -1])
-            cube([panel_width - 4, panel_height - 4, wall + 2]);
-    }
-}
-
-// ─── RENDER ───
-// Descomentar para ver cada parte:
-
-enclosure_bottom();
-
-// translate([0, outer_h + 20, 0])
-//     enclosure_top();
-
-// ═══════════════════════════════════════════════════════════════════════════
-// NOTAS DE IMPRESIÓN
-// ═══════════════════════════════════════════════════════════════════════════
-// 
-// Material: PLA o PETG
-// Altura de capa: 0.2mm
-// Relleno: 20%
-// Paredes: 3 perímetros
-// Sin soportes (diseñado para imprimir plano)
-// 
-// Para difusor: imprimir tapa en filamento blanco o usar
-// lámina de acrílico opalino de 2mm
-//
-// Tiempo estimado: ~4-6 horas (base) + ~1-2 horas (tapa)
-// Filamento: ~80-100g total
+usb_w          = 10;        // ancho puerto USB-C
 ```
+
+**Módulos disponibles:**
+- `enclosure_bottom()` — Base con soportes para LED y DevKit
+- `enclosure_top()` — Tapa con ventana para difusor
+- `diffuser()` — Lámina difusora opcional
+
+**Para generar STL:**
+1. Instalar [OpenSCAD](https://openscad.org/downloads.html)
+2. Abrir `hardware/enclosure.scad`
+3. Descomentar el módulo deseado
+4. Presionar F6 (render)
+5. File → Export → Export as STL
 
 ### 12.4 Variante Compacta (Panel 8mm - 256×64mm)
 
