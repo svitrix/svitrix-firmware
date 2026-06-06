@@ -68,7 +68,7 @@ All prefixed with `<mqttConfig.prefix>/`. **HTTP equivalent** column shows the m
 | `/alarm/dismiss`            | `AlarmManager.dismiss()`                    | `POST /api/alarms {action:dismiss}`         |
 | `/alarm/add`                | `AlarmManager.addAlarm(json)`               | `POST /api/alarms`                          |
 
-**HTTP-only (no MQTT binding):** `/api/erase` (factory reset), `/api/resetSettings`, `/api/reorder`, `/api/loop`, `/api/stats`, `/api/effects`, `/api/transitions`, `/api/datafetcher*`, `/version`, `/save`. If MQTT access is needed for these, add a new `CMD_*` enum in `MessageRouter` + handler in `onMqttMessage`.
+**HTTP-only (no MQTT binding):** `/api/erase` (factory reset), `/api/resetSettings`, `/api/rotation`, `/api/loop`, `/api/stats`, `/api/effects`, `/api/transitions`, `/api/datafetcher*`, `/version`, `/save`. If MQTT access is needed for these, add a new `CMD_*` enum in `MessageRouter` + handler in `onMqttMessage`.
 
 Routing via `MessageRouter::routeTopic()` → `MqttCommandType` enum → switch dispatch.
 

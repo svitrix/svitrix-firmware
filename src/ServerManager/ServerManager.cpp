@@ -197,43 +197,7 @@ void addHandler()
                     ESP.restart(); });
     mws.addHandler("/api/resetSettings", HTTP_ANY, [](AsyncWebServerRequest *request)
                    { formatSettings(); request->send(200, "text/plain", "OK"); delay(200); ESP.restart(); });
-    mws.addHandlerWithBody("/api/reorder", HTTP_POST, [](AsyncWebServerRequest *request)
-                           { String body = getBody(request); smNav_->reorderApps(body.c_str()); request->send(200, "text/plain", "OK"); });
-    mws.addHandler("/api/playlist", HTTP_GET, [](AsyncWebServerRequest *request)
-                   {
-                    StaticJsonDocument<2048> doc;
-                    doc["enabled"] = playlistConfig.enabled;
-                    if (playlistConfig.items.length() > 0) {
-                        StaticJsonDocument<1536> itemsDoc;
-                        deserializeJson(itemsDoc, playlistConfig.items);
-                        doc["items"] = itemsDoc.as<JsonArray>();
-                    } else {
-                        doc["items"] = serialized("[]");
-                    }
-                    String json;
-                    serializeJson(doc, json);
-                    request->send(200, "application/json", json); });
-    mws.addHandlerWithBody("/api/playlist", HTTP_POST, [](AsyncWebServerRequest *request)
-                           {
-                            String body = getBody(request);
-                            StaticJsonDocument<2048> doc;
-                            DeserializationError err = deserializeJson(doc, body);
-                            if (err) {
-                                request->send(400, "text/plain", "Invalid JSON");
-                                return;
-                            }
-                            if (doc.containsKey("enabled")) {
-                                playlistConfig.enabled = doc["enabled"].as<bool>();
-                            }
-                            if (doc.containsKey("items")) {
-                                String items;
-                                serializeJson(doc["items"], items);
-                                playlistConfig.items = items;
-                            }
-                            saveSettings();
-                            smControl_->applyAllSettings();
-                            request->send(200, "text/plain", "OK"); });
-    // Unified rotation config
+    // Unified rotation config (replaces deprecated /api/reorder and /api/playlist)
     mws.addHandler("/api/rotation", HTTP_GET, [](AsyncWebServerRequest *request)
                    {
                     StaticJsonDocument<4096> doc;

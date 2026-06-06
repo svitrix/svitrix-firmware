@@ -1,7 +1,5 @@
 export { StatsBar } from "./StatsBar";
 export { DisplaySection } from "./DisplaySection";
-export { AppsSection } from "./AppsSection";
-export { AppOrderSection } from "./AppOrderSection";
 export { TimeDateSection } from "./TimeDateSection";
 export { SoundSection } from "./SoundSection";
 export { WifiSection } from "./WifiSection";
@@ -14,6 +12,4 @@ export { InfraSaveButton } from "./InfraSaveButton";
 export { NotifySection } from "./NotifySection";
 export { NightModeSection } from "./NightModeSection";
 export { WeatherApiSection } from "./WeatherApiSection";
-export { WeatherAppsSection } from "./WeatherAppsSection";
 export { AppTransitionsSection } from "./AppTransitionsSection";
-export { PlaylistSection } from "./PlaylistSection";

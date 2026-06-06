@@ -55,11 +55,10 @@ HTTP REST API server, WiFi connectivity, mDNS discovery, UDP device discovery, a
 | `POST` | `/api/switch` | Switch to app by name |
 | `ANY` | `/api/nextapp` | Navigate to next app |
 | `POST` | `/api/previousapp` | Navigate to previous app |
-| `POST` | `/api/reorder` | Reorder app vector |
 | `POST` | `/api/custom?name=X` | Create/update/delete custom app |
 | `POST` | `/api/moodlight` | Set moodlight mode |
-| `GET` | `/api/playlist` | Get playlist config (enabled, items) |
-| `POST` | `/api/playlist` | Save playlist config; supports apps and standalone effects with per-item duration |
+| `GET` | `/api/rotation` | Get unified rotation config (apps + effects + per-item overrides) |
+| `POST` | `/api/rotation` | Save unified rotation config |
 
 ### Notifications & Indicators
 | Method | Path | Description |
