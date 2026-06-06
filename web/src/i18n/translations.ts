@@ -367,6 +367,13 @@ export const translations = {
       iconDownloadFailed: "Error al descargar icono",
       iconNotFound: "Icono no encontrado",
       enterIconId: "Ingresa el ID del icono",
+      localIcons: "Iconos guardados",
+      refresh: "Actualizar",
+      noLocalIcons: "No hay iconos guardados. Descarga iconos usando el selector de arriba.",
+      confirmDelete: "¿Eliminar icono",
+      iconDeleted: "¡Icono eliminado!",
+      deleteFailed: "Error al eliminar",
+      delete: "Eliminar",
     },
 
     // Backup page
@@ -809,6 +816,13 @@ export const translations = {
       iconDownloadFailed: "Icon download failed",
       iconNotFound: "Icon not found",
       enterIconId: "Enter icon ID",
+      localIcons: "Saved Icons",
+      refresh: "Refresh",
+      noLocalIcons: "No saved icons. Download icons using the picker above.",
+      confirmDelete: "Delete icon",
+      iconDeleted: "Icon deleted!",
+      deleteFailed: "Delete failed",
+      delete: "Delete",
     },
 
     // Backup page
