@@ -20,6 +20,7 @@
 9. [Testing y Validación](#9-testing-y-validación)
 10. [Troubleshooting](#10-troubleshooting)
 11. [Plan de Trabajo](#11-plan-de-trabajo)
+12. [Gabinete 3D Imprimible](#12-gabinete-3d-imprimible)
 
 ---
 
@@ -792,14 +793,321 @@ pio run -e esp32s3 -t size
 
 ---
 
+## 12. Gabinete 3D Imprimible
+
+Diseño minimalista para impresión 3D que aloja la matriz LED 32×8 WS2812B estándar y el DevKitC-1.
+
+### 12.1 Dimensiones de Paneles WS2812B Comunes
+
+| Tipo | Pitch | Dimensiones Panel | Dimensiones Gabinete |
+|------|-------|-------------------|----------------------|
+| **WS2812B estándar (5050)** | 10mm | 320 × 80 mm | 340 × 100 × 25 mm |
+| **WS2812B rígido** | 8mm | 256 × 64 mm | 276 × 84 × 25 mm |
+| **WS2812B-Mini** | 5mm | 160 × 40 mm | 180 × 60 × 20 mm |
+
+### 12.2 Diseño del Gabinete (Panel 10mm - 320×80mm)
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           VISTA FRONTAL                                      │
+│                                                                             │
+│    ┌─────────────────────────────────────────────────────────────────────┐  │
+│    │░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│  │
+│    │░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│  │
+│    │░░░░░░░░░░░░░░░░░░  VENTANA DIFUSOR  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│  │
+│    │░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│  │
+│    │░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│  │
+│    └─────────────────────────────────────────────────────────────────────┘  │
+│    │◄──────────────────────── 340 mm ────────────────────────────────►│     │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           VISTA SUPERIOR                                     │
+│                                                                             │
+│    ┌─────────────────────────────────────────────────────────────────────┐  │
+│    │                                                                     │  │
+│    │   [○ LDR]                              [USB-C]                      │  │
+│    │                                                                     │  │
+│    └─────────────────────────────────────────────────────────────────────┘  │
+│    │◄───────────────────────── 340 mm ───────────────────────────────►│     │
+│    ▲                                                                        │
+│   25mm                                                                      │
+│    ▼                                                                        │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           VISTA LATERAL                                      │
+│                                                                             │
+│         ┌──────────────────────────────────────────────┐                    │
+│         │░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│ ◄── Difusor       │
+│         │                                              │                    │
+│         │   ┌────────────────────────────────────┐     │ ◄── Panel LED     │
+│         │   │  ○ ○ ○ ○ ○ ○ ○ ○  (32 LEDs row)   │     │                    │
+│         │   └────────────────────────────────────┘     │                    │
+│         │                                              │                    │
+│         │   ┌─────────────┐                            │ ◄── DevKitC-1     │
+│         │   │  ESP32-S3   │   [SHT31] [DS1307]         │                    │
+│         │   │  DevKitC-1  │                            │                    │
+│         │   └─────────────┘                            │                    │
+│         │      [BUZZER]                                │                    │
+│         └──────────────────────────────────────────────┘                    │
+│         │◄─────────────── 100 mm ─────────────────────►│                    │
+│         ▲                                                                   │
+│        25mm                                                                 │
+│         ▼                                                                   │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           VISTA TRASERA                                      │
+│                                                                             │
+│    ┌─────────────────────────────────────────────────────────────────────┐  │
+│    │                                                                     │  │
+│    │  [BTN_L] [BTN_S] [BTN_R] [BTN_X]          [VENT]  [VENT]  [USB-C]   │  │
+│    │                                                                     │  │
+│    │  ════════════════════════════════════════════════════════════════   │  │
+│    │                         (ranuras ventilación)                       │  │
+│    │                                                                     │  │
+│    └─────────────────────────────────────────────────────────────────────┘  │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+### 12.3 Código OpenSCAD (Parametrizable)
+
+```openscad
+// ═══════════════════════════════════════════════════════════════════════════
+// Svitrix DIY Enclosure - Parametric Design
+// Para matriz WS2812B 32×8 + ESP32-S3-DevKitC-1
+// ═══════════════════════════════════════════════════════════════════════════
+
+// ─── PARÁMETROS DEL PANEL LED ───
+led_pitch      = 10;        // mm entre LEDs (5, 8, o 10)
+led_cols       = 32;        // columnas
+led_rows       = 8;         // filas
+panel_width    = led_pitch * led_cols;  // 320mm para pitch 10
+panel_height   = led_pitch * led_rows;  // 80mm para pitch 10
+panel_thick    = 2;         // grosor del PCB del panel
+
+// ─── PARÁMETROS DEL GABINETE ───
+wall           = 2;         // grosor de pared
+clearance      = 1;         // holgura panel
+depth          = 25;        // profundidad total interna
+corner_r       = 3;         // radio de esquinas
+
+// Dimensiones calculadas
+inner_w        = panel_width + clearance * 2;
+inner_h        = panel_height + clearance * 2;
+outer_w        = inner_w + wall * 2;
+outer_h        = inner_h + wall * 2;
+outer_d        = depth + wall;
+
+// ─── PARÁMETROS DE COMPONENTES ───
+devkit_w       = 26;        // ancho DevKitC-1
+devkit_l       = 70;        // largo DevKitC-1
+usb_w          = 10;        // ancho puerto USB-C
+usb_h          = 4;         // alto puerto USB-C
+btn_d          = 6.5;       // diámetro agujero botón
+btn_spacing    = 15;        // espacio entre botones
+ldr_d          = 5;         // diámetro agujero LDR
+vent_w         = 30;        // ancho ranura ventilación
+vent_h         = 2;         // alto ranura ventilación
+
+// ═══════════════════════════════════════════════════════════════════════════
+// MÓDULO PRINCIPAL
+// ═══════════════════════════════════════════════════════════════════════════
+
+module enclosure_bottom() {
+    difference() {
+        // Caja exterior con esquinas redondeadas
+        hull() {
+            for (x = [corner_r, outer_w - corner_r])
+                for (y = [corner_r, outer_h - corner_r])
+                    translate([x, y, 0])
+                        cylinder(r = corner_r, h = outer_d, $fn = 32);
+        }
+        
+        // Cavidad interior
+        translate([wall, wall, wall])
+            cube([inner_w, inner_h, depth + 1]);
+        
+        // Ventana para LEDs (frente)
+        translate([wall + clearance, wall + clearance, -1])
+            cube([panel_width, panel_height, wall + 2]);
+        
+        // Puerto USB-C (lateral)
+        translate([outer_w - wall - 1, outer_h/2 - usb_w/2, depth - usb_h - 5])
+            cube([wall + 2, usb_w, usb_h + 6]);
+        
+        // Agujeros para botones (trasero)
+        for (i = [0:3]) {
+            translate([wall + 20 + i * btn_spacing, -1, depth/2])
+                rotate([-90, 0, 0])
+                    cylinder(d = btn_d, h = wall + 2, $fn = 24);
+        }
+        
+        // Agujero LDR (superior)
+        translate([wall + 15, outer_h/2, outer_d - wall - 1])
+            cylinder(d = ldr_d, h = wall + 2, $fn = 24);
+        
+        // Ranuras de ventilación (trasero)
+        for (i = [0:4]) {
+            translate([outer_w - 60 + i * 12, -1, depth/2 - vent_h/2])
+                cube([vent_w/5, wall + 2, vent_h]);
+        }
+        
+        // Ranuras de ventilación (inferior)
+        for (i = [0:5]) {
+            translate([40 + i * 45, wall + 10, -1])
+                cube([30, 3, wall + 2]);
+        }
+    }
+    
+    // Soportes para panel LED
+    for (x = [wall + 5, outer_w - wall - 8])
+        for (y = [wall + 5, outer_h - wall - 8])
+            translate([x, y, wall])
+                cube([3, 3, 5]);
+    
+    // Soporte para DevKit
+    translate([outer_w/2 - devkit_w/2 - 2, wall + 10, wall])
+        difference() {
+            cube([devkit_w + 4, devkit_l + 4, 8]);
+            translate([2, 2, 2])
+                cube([devkit_w, devkit_l, 10]);
+        }
+}
+
+module enclosure_top() {
+    difference() {
+        // Tapa con esquinas redondeadas
+        hull() {
+            for (x = [corner_r, outer_w - corner_r])
+                for (y = [corner_r, outer_h - corner_r])
+                    translate([x, y, 0])
+                        cylinder(r = corner_r, h = wall + 3, $fn = 32);
+        }
+        
+        // Rebaje para encajar en base
+        translate([wall - 0.5, wall - 0.5, wall])
+            cube([inner_w + 1, inner_h + 1, 4]);
+        
+        // Ventana difusor
+        translate([wall + clearance + 2, wall + clearance + 2, -1])
+            cube([panel_width - 4, panel_height - 4, wall + 2]);
+    }
+}
+
+// ─── RENDER ───
+// Descomentar para ver cada parte:
+
+enclosure_bottom();
+
+// translate([0, outer_h + 20, 0])
+//     enclosure_top();
+
+// ═══════════════════════════════════════════════════════════════════════════
+// NOTAS DE IMPRESIÓN
+// ═══════════════════════════════════════════════════════════════════════════
+// 
+// Material: PLA o PETG
+// Altura de capa: 0.2mm
+// Relleno: 20%
+// Paredes: 3 perímetros
+// Sin soportes (diseñado para imprimir plano)
+// 
+// Para difusor: imprimir tapa en filamento blanco o usar
+// lámina de acrílico opalino de 2mm
+//
+// Tiempo estimado: ~4-6 horas (base) + ~1-2 horas (tapa)
+// Filamento: ~80-100g total
+```
+
+### 12.4 Variante Compacta (Panel 8mm - 256×64mm)
+
+Para paneles de pitch 8mm, cambiar estos parámetros:
+
+```openscad
+led_pitch      = 8;         // 8mm pitch
+panel_width    = 256;       // 32 × 8mm
+panel_height   = 64;        // 8 × 8mm
+depth          = 22;        // menos profundidad
+```
+
+**Dimensiones resultantes:** 276 × 84 × 24 mm
+
+### 12.5 Lista de Materiales para Impresión
+
+| Componente | Material | Color | Cantidad |
+|------------|----------|-------|----------|
+| Base (enclosure_bottom) | PLA/PETG | Negro/Gris | 1 |
+| Tapa (enclosure_top) | PLA blanco | Blanco | 1 |
+| Difusor (opcional) | Acrílico opalino | Blanco | 1 |
+| Tornillos M3×8 | — | — | 4 |
+| Tuercas M3 | — | — | 4 |
+
+### 12.6 Configuración de Impresión Recomendada
+
+| Parámetro | Valor |
+|-----------|-------|
+| **Altura de capa** | 0.2mm |
+| **Perímetros** | 3 |
+| **Relleno** | 20% |
+| **Patrón relleno** | Grid o Gyroid |
+| **Soportes** | No necesarios |
+| **Brim** | 5mm (recomendado) |
+| **Temperatura** | PLA: 200°C / PETG: 235°C |
+| **Cama** | PLA: 60°C / PETG: 80°C |
+
+### 12.7 Ensamblaje del Gabinete
+
+```
+PASO 1: Imprimir piezas
+├── Imprimir base (boca arriba)
+├── Imprimir tapa (boca abajo para superficie lisa)
+└── Limpiar rebabas
+
+PASO 2: Instalar electrónica
+├── Colocar DevKitC-1 en soporte
+├── Conectar cables a sensores
+├── Montar sensores I2C en lateral
+├── Instalar LDR en agujero superior
+├── Instalar botones en agujeros traseros
+└── Conectar buzzer
+
+PASO 3: Instalar panel LED
+├── Colocar panel en soportes (LEDs hacia arriba)
+├── Conectar cable de datos
+├── Conectar alimentación
+└── Verificar orientación (DIN en esquina correcta)
+
+PASO 4: Cerrar gabinete
+├── Colocar difusor (si aplica)
+├── Encajar tapa en base
+├── Asegurar con tornillos M3 (opcional)
+└── Test final
+```
+
+### 12.8 Alternativas de Difusor
+
+| Opción | Ventajas | Desventajas |
+|--------|----------|-------------|
+| **Tapa impresa en PLA blanco** | Simple, integrado | Menos difusión |
+| **Acrílico opalino 2mm** | Excelente difusión | Requiere corte |
+| **Papel vegetal** | Muy barato | Frágil |
+| **Film difusor LED** | Profesional | Más caro |
+
+---
+
 ## Apéndice: Recursos
 
 - [ESP32-S3-DevKitC-1 Docs](https://docs.espressif.com/projects/esp-idf/en/latest/esp32s3/hw-reference/esp32s3/user-guide-devkitc-1.html)
 - [ESP32-S3 Datasheet](https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf)
 - [PlatformIO ESP32-S3](https://docs.platformio.org/en/latest/boards/espressif32/esp32-s3-devkitc-1.html)
+- [OpenSCAD](https://openscad.org/) — Software para diseño 3D paramétrico
 
 ---
 
 *Documento: Svitrix DIY ESP32-S3-DevKitC-1 Build Guide*  
-*Versión: 3.0 (DevKitC-1)*  
+*Versión: 3.1 (con gabinete 3D)*  
 *Fecha: 2026-06-05*
