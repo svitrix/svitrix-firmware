@@ -286,7 +286,83 @@ Agrega estas fuentes en el Data Fetcher (`http://[IP]/datafetcher`):
 
 ---
 
-## 8. Apps Nativas
+## 8. Datos de Criptomonedas
+
+El Data Fetcher también puede mostrar precios de criptomonedas usando la API gratuita de CoinGecko.
+
+### 8.1 Bitcoin (BTC)
+
+| Campo | Valor |
+|-------|-------|
+| **Name** | `btc` |
+| **URL** | `https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd` |
+| **JSON Path** | `bitcoin.usd` |
+| **Format** | `$%.0f` |
+| **Icon** | `12460` (icono de Bitcoin) |
+| **Color** | `#F7931A` |
+| **Interval** | `300` |
+
+### 8.2 Ethereum (ETH)
+
+| Campo | Valor |
+|-------|-------|
+| **Name** | `eth` |
+| **URL** | `https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd` |
+| **JSON Path** | `ethereum.usd` |
+| **Format** | `$%.0f` |
+| **Icon** | `14630` (icono de Ethereum) |
+| **Color** | `#627EEA` |
+| **Interval** | `300` |
+
+### 8.3 Otras Criptomonedas
+
+Para obtener precios de otras criptomonedas, cambia el ID en la URL:
+
+| Cripto | ID para URL | JSON Path |
+|--------|-------------|-----------|
+| Bitcoin | `bitcoin` | `bitcoin.usd` |
+| Ethereum | `ethereum` | `ethereum.usd` |
+| Solana | `solana` | `solana.usd` |
+| Cardano | `cardano` | `cardano.usd` |
+| Dogecoin | `dogecoin` | `dogecoin.usd` |
+
+> **Tip:** Encuentra más IDs en [CoinGecko](https://www.coingecko.com/). El ID está en la URL de cada criptomoneda.
+
+---
+
+## 9. Iconos
+
+### Descargar Iconos
+
+1. Ve a: `http://[IP]/settings` (pestaña Iconos)
+2. Ingresa el **ID del icono** de LaMetric
+3. Haz clic en **Vista Previa** para verlo
+4. Haz clic en **Descargar** para guardarlo en `/ICONS/`
+
+Explora iconos disponibles en la [Galería de LaMetric](https://developer.lametric.com/icons).
+
+### Galería de Iconos Guardados
+
+Debajo del selector de iconos verás una **galería** con todos los iconos almacenados en el dispositivo:
+
+- **Vista en grid** — cada icono muestra su imagen y número de ID
+- **Eliminar** — pasa el mouse sobre un icono para ver el botón (×)
+- **Actualizar** — recarga la lista después de subir iconos manualmente
+
+### Iconos Personalizados
+
+Puedes crear iconos personalizados y subirlos vía el **Administrador de Archivos** a la carpeta `/ICONS/`:
+
+| Formato | Tamaño máximo |
+|---------|---------------|
+| **GIF** | 32x8 píxeles |
+| **JPG** | 8x8 píxeles |
+
+> **Nota:** El renderizador solo soporta GIFs de 8 bits sin transparencia. Si hay glitches, reemplaza píxeles transparentes con negro sólido.
+
+---
+
+## 10. Apps Nativas
 
 El firmware incluye estas apps preinstaladas:
 
@@ -310,19 +386,36 @@ En **Settings > Apps** puedes configurar colores para cada app nativa:
 
 - **Time, Date, Temperature, Humidity, Battery:** Selector de color directo
 
-### Orden de Apps
+### Rotación Unificada
 
-Las apps **nativas** son las **originales** (Hora, Fecha, Temperatura, Humedad, Batería) **más las del clima** (Temp. exterior, Humedad exterior, Presión, Calidad del aire, Índice UV). Todas comparten el mismo ciclo de rotación junto con las apps **personalizadas** (MQTT/HTTP).
+La página de **Apps** contiene una lista unificada de rotación que controla **todas** las apps y efectos del ciclo:
 
-En la página de **Apps** hay una lista con **arrastrar y soltar** (drag-and-drop) que controla el orden en que se muestran **todas** las apps del ciclo. Arrastra cualquier app para reordenarla; el orden se guarda al instante y **se mantiene tras reiniciar** el dispositivo.
+- **Apps nativas** — Hora, Fecha, Temperatura, Humedad, Batería
+- **Apps del clima** — Temp. Exterior, Humedad Exterior, Presión, Calidad del Aire, UV
+- **Apps personalizadas** — creadas vía MQTT, HTTP o Data Fetcher
+- **Efectos** — efectos visuales independientes (sin texto)
+
+**Configuración por elemento:**
+
+| Campo | Descripción |
+|-------|-------------|
+| **Toggle** | Activa/desactiva el elemento |
+| **Duración** | Tiempo de visualización (0 = usar duración global) |
+| **Color** | Color de texto personalizado (0 = usar color por defecto) |
+
+Arrastra cualquier fila para reordenarla. Los cambios se guardan al instante y persisten entre reinicios.
+
+**Agregar elementos:**
+- Botón **+ Agregar** — abre un modal para agregar apps nativas, del clima o efectos
+- Las apps personalizadas se agregan automáticamente cuando se crean vía MQTT/HTTP/DataFetcher
 
 ---
 
-## 9. Alarmas
+## 11. Alarmas
 
 El dispositivo funciona como **despertador y recordatorio**: hasta 10 alarmas programables, configurables por **botones físicos**, **web** y **MQTT/Home Assistant**. Incluye un RTC (DS1307) que mantiene la hora durante reinicios, así que **las alarmas suenan aunque no haya WiFi**.
 
-### 9.1 Configurar desde la web
+### 11.1 Configurar desde la web
 
 1. Ve a: `http://[IP]/autonomous`
 2. Cada alarma tiene estos campos editables en línea:
@@ -339,7 +432,7 @@ El dispositivo funciona como **despertador y recordatorio**: hasta 10 alarmas pr
 
 Arriba se muestra la **próxima alarma**. Si suena una alarma, aparece una alerta con botones de Posponer/Descartar.
 
-### 9.2 Configurar desde los botones
+### 11.2 Configurar desde los botones
 
 Mantén pulsado el botón central para entrar al menú y navega hasta **ALARMS**:
 - Izquierda/Derecha: recorre las alarmas (`07:30 ON`).
@@ -348,12 +441,12 @@ Mantén pulsado el botón central para entrar al menú y navega hasta **ALARMS**
 
 (Los días, la etiqueta y la melodía se configuran por web/MQTT.)
 
-### 9.3 Cuando suena una alarma
+### 11.3 Cuando suena una alarma
 
 - La pantalla muestra una alerta roja con la etiqueta y el buzzer reproduce la melodía hasta descartarla.
 - **Botones:** Izquierda/Derecha = **Posponer** (usa los minutos de esa alarma); Central (corto o largo) = **Apagar**.
 
-### 9.4 Control por MQTT / Home Assistant
+### 11.4 Control por MQTT / Home Assistant
 
 Con la discovery de HA activada aparecen estas entidades:
 - `binary_sensor` **Alarm ringing** (sonando)
@@ -362,7 +455,7 @@ Con la discovery de HA activada aparecen estas entidades:
 
 También por topics MQTT: `<prefijo>/alarm/snooze`, `<prefijo>/alarm/dismiss`, `<prefijo>/alarm/add` (JSON con hour, minute, days, oneTime, snoozeMinutes, label, melody).
 
-### 9.3 RTC (Reloj de Tiempo Real)
+### 11.5 RTC (Reloj de Tiempo Real)
 
 El Ulanzi TC001 tiene un chip DS1307 con batería de respaldo.
 
@@ -374,7 +467,7 @@ El Ulanzi TC001 tiene un chip DS1307 con batería de respaldo.
 
 **Precisión del DS1307:** ±2 ppm típico (~1 segundo/semana). Suficiente para uso normal; se recorrige automáticamente cuando hay WiFi.
 
-### 9.4 API HTTP
+### 11.6 API HTTP
 
 | Endpoint | Método | Descripción |
 |----------|--------|-------------|
@@ -383,7 +476,7 @@ El Ulanzi TC001 tiene un chip DS1307 con batería de respaldo.
 | `/api/alarms` | PUT | Actualizar alarma |
 | `/api/alarms?id=N` | DELETE | Eliminar alarma |
 
-### 9.5 Habilitar Indicador de Alarmas
+### 11.7 Habilitar Indicador de Alarmas
 
 El indicador LED de alarmas está deshabilitado por defecto.
 
@@ -401,7 +494,7 @@ El indicador LED de alarmas está deshabilitado por defecto.
 
 ---
 
-## 10. Efectos de Fondo Disponibles
+## 12. Efectos de Fondo Disponibles
 
 20 efectos visuales para usar como fondo:
 
@@ -425,7 +518,7 @@ El indicador LED de alarmas está deshabilitado por defecto.
 
 ---
 
-## 11. Enviar Notificaciones
+## 13. Enviar Notificaciones
 
 Las notificaciones muestran mensajes temporales en la pantalla con opciones de personalización.
 
@@ -482,7 +575,7 @@ curl -X POST http://[IP]/api/notify/dismiss
 
 ---
 
-## 12. Backup y Restauración
+## 14. Backup y Restauración
 
 El sistema de backup permite guardar y restaurar toda la configuración del dispositivo.
 
@@ -541,7 +634,7 @@ El sistema de backup permite guardar y restaurar toda la configuración del disp
 
 ---
 
-## 13. Solución de Problemas
+## 15. Solución de Problemas
 
 ### El flasher no detecta el dispositivo
 - Prueba otro cable USB (debe soportar datos)
@@ -563,7 +656,7 @@ El sistema de backup permite guardar y restaurar toda la configuración del disp
 
 ---
 
-## 14. Enlaces Útiles
+## 16. Enlaces Útiles
 
 - **Documentación oficial:** https://svitrix.dev
 - **Repositorio original:** https://github.com/svitrix/svitrix-firmware
@@ -572,7 +665,7 @@ El sistema de backup permite guardar y restaurar toda la configuración del disp
 
 ---
 
-## 15. Configurar GitHub Pages (Flasher Propio)
+## 17. Configurar GitHub Pages (Flasher Propio)
 
 Para tener tu propio flasher web:
 
@@ -593,7 +686,7 @@ https://xe1e.github.io/svitrix-firmware-XE1E/
 
 ---
 
-## 16. Información del Fork
+## 18. Información del Fork
 
 | Campo | Valor |
 |-------|-------|
@@ -604,7 +697,7 @@ https://xe1e.github.io/svitrix-firmware-XE1E/
 
 ---
 
-## 17. Git - Flujo de Trabajo del Fork
+## 19. Git - Flujo de Trabajo del Fork
 
 Este repositorio es un fork del proyecto original SVITRIX.
 
