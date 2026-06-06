@@ -47,12 +47,15 @@ bool nativeAppGuard(const char *appName)
 /// (e.g. NightModePolicy) veto the choice, so this function stays
 /// policy-agnostic.
 /// @param colorValue Per-app color from colorConfig (0 = use global).
-void applyNativeAppColor(uint32_t colorValue)
+/// @param appName    Name of the app being rendered (to verify rotation item match).
+void applyNativeAppColor(uint32_t colorValue, const char* appName)
 {
     uint32_t preferred;
 
     // Priority: rotation item override > per-app color > global text color
-    if (currentRotationItem && currentRotationItem->color > 0)
+    // Only apply rotation override if the current item matches this app
+    if (currentRotationItem && currentRotationItem->color > 0 &&
+        appName && currentRotationItem->name == appName)
     {
         preferred = currentRotationItem->color;
     }

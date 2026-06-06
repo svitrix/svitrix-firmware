@@ -168,7 +168,7 @@ void TimeApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_t x, 
     }
 
     // Modes 0–4: text clock with optional calendar and weekday bar
-    applyNativeAppColor(colorConfig.timeColor);
+    applyNativeAppColor(colorConfig.timeColor, "Time");
 
     char t[20];
     size_t fmtLen = strlen(timeformat);
@@ -249,7 +249,7 @@ void DateApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_t x, 
     if (nativeAppGuard("Date"))
         return;
 
-    applyNativeAppColor(colorConfig.dateColor);
+    applyNativeAppColor(colorConfig.dateColor, "Date");
 
     char d[20];
     strftime(d, sizeof(d), timeConfig.dateFormat.c_str(), timer_localtime());
@@ -269,7 +269,7 @@ void TempApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_t x, 
     if (nativeAppGuard("Temperature"))
         return;
 
-    applyNativeAppColor(colorConfig.tempColor);
+    applyNativeAppColor(colorConfig.tempColor, "Temperature");
 
     LayoutMetrics m = LayoutEngine::computeLayout(appConfig.nativeIconLayout, 0);
 
@@ -305,7 +305,7 @@ void HumApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_t x, i
     if (nativeAppGuard("Humidity"))
         return;
 
-    applyNativeAppColor(colorConfig.humColor);
+    applyNativeAppColor(colorConfig.humColor, "Humidity");
 
     LayoutMetrics m = LayoutEngine::computeLayout(appConfig.nativeIconLayout, 0);
 
@@ -331,7 +331,7 @@ void BatApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_t x, i
     if (nativeAppGuard("Battery"))
         return;
 
-    applyNativeAppColor(colorConfig.batColor);
+    applyNativeAppColor(colorConfig.batColor, "Battery");
 
     LayoutMetrics m = LayoutEngine::computeLayout(appConfig.nativeIconLayout, 0);
 
@@ -370,7 +370,7 @@ void OutdoorTempApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int1
     if (nativeAppGuard("OutdoorTemp"))
         return;
 
-    applyNativeAppColor(weatherConfig.outdoorTempColor);
+    applyNativeAppColor(weatherConfig.outdoorTempColor, "OutdoorTemp");
 
     LayoutMetrics m = LayoutEngine::computeLayout(appConfig.nativeIconLayout, 0);
 
@@ -406,7 +406,7 @@ void OutdoorHumApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16
     if (nativeAppGuard("OutdoorHum"))
         return;
 
-    applyNativeAppColor(weatherConfig.outdoorHumColor);
+    applyNativeAppColor(weatherConfig.outdoorHumColor, "OutdoorHum");
 
     LayoutMetrics m = LayoutEngine::computeLayout(appConfig.nativeIconLayout, 0);
 
@@ -463,7 +463,7 @@ void PressureApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_t
     if (nativeAppGuard("Pressure"))
         return;
 
-    applyNativeAppColor(weatherConfig.pressureColor);
+    applyNativeAppColor(weatherConfig.pressureColor, "Pressure");
 
     LayoutMetrics m = LayoutEngine::computeLayout(appConfig.nativeIconLayout, 0);
 
@@ -546,7 +546,7 @@ void AirQualityApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16
             break; // Hazardous - maroon
         }
     }
-    applyNativeAppColor(aqiColor);
+    applyNativeAppColor(aqiColor, "AirQuality");
 
     LayoutMetrics m = LayoutEngine::computeLayout(appConfig.nativeIconLayout, 0);
 
@@ -619,7 +619,7 @@ void UVApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_t x, in
         else
             uvColor = 0x9400D3; // Extreme - violet
     }
-    applyNativeAppColor(uvColor);
+    applyNativeAppColor(uvColor, "UV");
 
     LayoutMetrics m = LayoutEngine::computeLayout(appConfig.nativeIconLayout, 0);
 

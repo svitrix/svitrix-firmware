@@ -551,11 +551,19 @@ void DisplayManager_::loadNativeApps()
     availableApps["AirQuality"] = AirQualityApp;
     availableApps["UV"] = UVApp;
 
-    // Custom apps keep their existing lambda callbacks
-    for (const auto& app : Apps)
+    // Custom apps from customApps map (covers both Apps vector and newly-created apps)
+    for (const auto& kv : customApps)
     {
-        if (customApps.count(app.first) > 0)
-            availableApps[app.first] = app.second;
+        const String& name = kv.first;
+        if (availableApps.count(name) == 0)
+        {
+            AppCallback callback = [name](FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state,
+                                          int16_t x, int16_t y, GifPlayer *gifPlayer)
+            {
+                ShowCustomApp(name, matrix, state, x, y, gifPlayer);
+            };
+            availableApps[name] = callback;
+        }
     }
 
     // 2. Build Apps vector from rotation items (enabled app-type items only)

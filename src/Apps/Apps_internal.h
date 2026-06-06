@@ -31,7 +31,8 @@ bool nativeAppGuard(const char *appName);
 
 /// Apply per-app color override, or reset to global text color.
 /// @param colorValue Per-app color (0 = use global).
-void applyNativeAppColor(uint32_t colorValue);
+/// @param appName    Name of the app (to verify rotation item match).
+void applyNativeAppColor(uint32_t colorValue, const char* appName = nullptr);
 
 /// Draw the 7-segment weekday indicator bar.
 /// @param x, y       Top-left corner of the bar.

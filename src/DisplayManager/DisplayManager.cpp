@@ -75,12 +75,17 @@ static long getDurationForApp(const String& appName);
 /// Only includes enabled items. Called at boot and when rotation config changes.
 void parseRotationConfig()
 {
+    // Save current item name to restore pointer after rebuild
+    String currentName;
+    if (currentRotationItem)
+        currentName = currentRotationItem->name;
+
     rotationItems.clear();
-    rotationIndex = -1;
     currentRotationItem = nullptr;
 
     if (rotationConfig.items.isEmpty())
     {
+        rotationIndex = -1;
         rotationEffectOnly = false;
         if (ui)
             ui->setBackgroundEffect(displayConfig.backgroundEffect);
@@ -92,6 +97,7 @@ void parseRotationConfig()
     if (err)
     {
         DEBUG_PRINTLN(F("parseRotationConfig: JSON error"));
+        rotationIndex = -1;
         return;
     }
 
@@ -115,6 +121,24 @@ void parseRotationConfig()
         if (!rir.name.isEmpty())
             rotationItems.push_back(rir);
     }
+
+    // Restore currentRotationItem pointer to match saved name
+    if (!currentName.isEmpty())
+    {
+        for (size_t i = 0; i < rotationItems.size(); i++)
+        {
+            if (rotationItems[i].name == currentName)
+            {
+                rotationIndex = i;
+                currentRotationItem = &rotationItems[i];
+                break;
+            }
+        }
+    }
+
+    // If not found, reset index
+    if (!currentRotationItem)
+        rotationIndex = -1;
 
     // Sync legacy playlistEffectOnly
     playlistEffectOnly = rotationEffectOnly;
@@ -482,6 +506,7 @@ void DisplayManager_::tick()
         {
             appIsSwitching = false;
             resetAllEffectState();
+
             if (notifier_)
                 notifier_->setCurrentApp(currentApp);
             // Duration is set by resolveNextApp() when using rotation config.

@@ -44,6 +44,14 @@ void ShowCustomApp(const String& name, FastLED_NeoMatrix *matrix, const MatrixDi
             DisplayManager.setAppTime(ca->duration);
     }
 
+    // Apply rotation item color override (same as native apps)
+    // Only apply if the current rotation item matches this app
+    if (currentRotationItem && currentRotationItem->color > 0 &&
+        currentRotationItem->name == name)
+    {
+        ca->color = currentRotationItem->color;
+    }
+
     // Background + effect
     DisplayManager.drawFilledRect(x, y, 32, 8, ca->background);
     if (ca->effect > -1)
