@@ -101,11 +101,13 @@ src/
     SettingsContext.tsx        # Shared state for settings + config
   pages/
     screen/                   # Live LED matrix preview
-    apps/                     # App loop: unified drag-drop order + per-app settings
     settings/                 # Device configuration
-      sections/               # Independent settings sections (incl. NightModeSection,
-                              #   AppOrderSection — drag-drop unified app order,
-                              #   PlaylistSection — custom app/effect rotation sequences)
+      sections/               # Independent settings sections:
+                              #   UnifiedRotationSection — drag-drop rotation list with
+                              #     per-item duration/color overrides (replaces AppOrder,
+                              #     Playlist, Apps, WeatherApps sections)
+                              #   IconPickerSection — LaMetric download + saved icons gallery
+                              #   NightModeSection — scheduled low-brightness mode
     data-fetcher/             # External API data sources
     files/                    # LittleFS file manager
     backup/                   # Config backup/restore
