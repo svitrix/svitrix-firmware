@@ -175,6 +175,7 @@ class MatrixDisplayUi
     void tick();              ///< State machine: advance ticks, handle state switches, render frame
     void resetState();        ///< Reset to app 0 if current app is no longer valid
     bool isCurrentAppValid(); ///< Check if currentApp index is within bounds
+    void renderBackground();  ///< Render background effect if configured (used by transitions)
 
     // ── Transition effects (MatrixDisplayUi_Transitions.cpp) ──────────
     void slideTransition();

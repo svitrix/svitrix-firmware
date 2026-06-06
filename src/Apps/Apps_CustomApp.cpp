@@ -45,11 +45,16 @@ void ShowCustomApp(const String& name, FastLED_NeoMatrix *matrix, const MatrixDi
     }
 
     // Apply rotation item color override (same as native apps)
-    // Only apply if the current rotation item matches this app
+    // Check currentRotationItem first, then prevRotationItem for outgoing app during transitions
     if (currentRotationItem && currentRotationItem->color > 0 &&
         currentRotationItem->name == name)
     {
         ca->color = currentRotationItem->color;
+    }
+    else if (prevRotationItem && prevRotationItem->color > 0 &&
+             prevRotationItem->name == name)
+    {
+        ca->color = prevRotationItem->color;
     }
 
     // Background + effect

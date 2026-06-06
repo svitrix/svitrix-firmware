@@ -43,6 +43,7 @@ bool nativeAppGuard(const char *appName)
 
 /// Apply a per-app color if set (> 0), otherwise the global text color.
 /// Rotation item color override takes highest priority (per-item from UI).
+/// During transitions, also checks prevRotationItem for the outgoing app.
 /// DisplayManager.resolveTextColor() lets any active IDisplayPolicy
 /// (e.g. NightModePolicy) veto the choice, so this function stays
 /// policy-agnostic.
@@ -53,11 +54,17 @@ void applyNativeAppColor(uint32_t colorValue, const char* appName)
     uint32_t preferred;
 
     // Priority: rotation item override > per-app color > global text color
-    // Only apply rotation override if the current item matches this app
+    // Check currentRotationItem first (incoming app during transitions, or current app when FIXED)
     if (currentRotationItem && currentRotationItem->color > 0 &&
         appName && currentRotationItem->name == appName)
     {
         preferred = currentRotationItem->color;
+    }
+    // During transitions, check prevRotationItem for the outgoing app
+    else if (prevRotationItem && prevRotationItem->color > 0 &&
+             appName && prevRotationItem->name == appName)
+    {
+        preferred = prevRotationItem->color;
     }
     else if (colorValue > 0)
     {

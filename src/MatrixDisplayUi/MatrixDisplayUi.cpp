@@ -301,12 +301,7 @@ void MatrixDisplayUi::tick()
     }
 
     this->matrix->clear();
-
-    if (BackgroundEffect > -1)
-    {
-        NeoMatrixCanvas canvas(this->matrix);
-        callEffect(canvas, 0, 0, BackgroundEffect);
-    }
+    this->renderBackground();
 
     if (this->AppCount > 0)
         this->drawApp();
@@ -322,6 +317,17 @@ void MatrixDisplayUi::tick()
 }
 
 // ── Drawing ─────────────────────────────────────────────────────────
+
+/// Render the background effect if configured.
+/// Used by tick() and by transitions that need to re-render after clearing.
+void MatrixDisplayUi::renderBackground()
+{
+    if (BackgroundEffect > -1)
+    {
+        NeoMatrixCanvas canvas(this->matrix);
+        callEffect(canvas, 0, 0, BackgroundEffect);
+    }
+}
 
 /// Dispatches rendering to the appropriate transition effect (IN_TRANSITION)
 /// or directly invokes the current app callback (FIXED).

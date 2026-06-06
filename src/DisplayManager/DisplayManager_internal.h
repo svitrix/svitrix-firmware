@@ -69,6 +69,7 @@ extern std::vector<RotationItemRuntime> rotationItems;  ///< Parsed rotation con
 extern int rotationIndex;                                ///< Current position in rotation (-1 initially)
 extern bool rotationEffectOnly;                          ///< True when showing standalone effect
 extern const RotationItemRuntime* currentRotationItem;   ///< Current item being displayed (for overrides)
+extern const RotationItemRuntime* prevRotationItem;      ///< Previous item (for outgoing app during transitions)
 
 // Legacy playlist aliases (for gradual migration)
 extern std::vector<PlaylistItemRuntime> playlistItems;   ///< @deprecated Use rotationItems

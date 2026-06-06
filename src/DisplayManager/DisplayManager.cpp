@@ -62,6 +62,7 @@ std::vector<RotationItemRuntime> rotationItems;
 int rotationIndex = -1;
 bool rotationEffectOnly = false;
 const RotationItemRuntime* currentRotationItem = nullptr;
+const RotationItemRuntime* prevRotationItem = nullptr;
 
 // Legacy aliases for gradual migration
 std::vector<PlaylistItemRuntime> playlistItems;

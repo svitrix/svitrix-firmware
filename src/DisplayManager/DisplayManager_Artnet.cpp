@@ -146,6 +146,9 @@ int8_t DisplayManager_::resolveNextApp(int8_t currentApp, int8_t direction)
     if (rotationItems.empty() || !ui || Apps.empty())
         return -1; // Use default sequential behavior
 
+    // Save the current item as previous (for outgoing app color during transitions)
+    prevRotationItem = currentRotationItem;
+
     // Try to find a valid item, but limit attempts to prevent infinite loop
     for (size_t attempts = 0; attempts < rotationItems.size(); attempts++)
     {

@@ -36,6 +36,7 @@ TransitionType getRandomTransition()
 // ── Transitions ─────────────────────────────────────────────────────
 
 /// Fade to black, then fade in the new app. Uses quadratic easing.
+/// Background effect is preserved from tick() - no clear needed here.
 void MatrixDisplayUi::fadeTransition()
 {
     float progress = (float)this->state.ticksSinceLastStateSwitch / (float)this->ticksPerTransition;
@@ -48,7 +49,7 @@ void MatrixDisplayUi::fadeTransition()
     {
         fadeValue = pow((1.0 - progress) * 2, 2) * 255;
     }
-    this->matrix->clear();
+    // No clear() - tick() already cleared and rendered background
     if (progress < 0.5)
     {
         (this->AppFunctions[this->state.currentApp])(this->matrix, &this->state, 0, 0, &gif1);
@@ -77,9 +78,10 @@ void MatrixDisplayUi::slideTransition()
 }
 
 /// Slide transition with explicit direction (used by directional slide variants).
+/// Background effect is preserved from tick() - no clear needed here.
 void MatrixDisplayUi::slideTransitionWithDirection(AnimationDirection direction)
 {
-    this->matrix->clear();
+    // No clear() - tick() already cleared and rendered background
     float progress = (float)this->state.ticksSinceLastStateSwitch / (float)this->ticksPerTransition;
     int16_t x, y, x1, y1;
     switch (direction)
@@ -259,6 +261,7 @@ void MatrixDisplayUi::pixelateTransition()
     }
 
     this->matrix->clear();
+    this->renderBackground();
     (this->AppFunctions[this->getnextAppNumber()])(this->matrix, &this->state, 0, 0, &gif2);
 
     for (int i = 0; i < 32; i++)
@@ -289,6 +292,7 @@ void MatrixDisplayUi::rippleTransition()
     }
 
     this->matrix->clear();
+    this->renderBackground();
     (this->AppFunctions[this->getnextAppNumber()])(this->matrix, &this->state, 0, 0, &gif2);
 
     for (int i = 0; i < 32; i++)
@@ -307,8 +311,8 @@ void MatrixDisplayUi::rippleTransition()
     }
 }
 
-/// Flash between old and new app with 3 blinks. The screen goes black
-/// between flashes, switching from old to new app at the halfway point.
+/// Flash between old and new app with 3 blinks. Background effect is shown
+/// during "off" flashes, switching from old to new app at the halfway point.
 void MatrixDisplayUi::blinkTransition()
 {
     float progress = (float)this->state.ticksSinceLastStateSwitch / (float)this->ticksPerTransition;
@@ -327,10 +331,7 @@ void MatrixDisplayUi::blinkTransition()
             (this->AppFunctions[this->getnextAppNumber()])(this->matrix, &this->state, 0, 0, &gif2);
         }
     }
-    else
-    {
-        this->matrix->clear();
-    }
+    // When "off", just show background (tick() already cleared and rendered it)
 }
 
 /// Wipe the old app off-screen to the right, then wipe the new app in from the left.
@@ -391,6 +392,7 @@ void MatrixDisplayUi::crossfadeTransition()
     }
 
     this->matrix->fillScreen(0);
+    this->renderBackground();
 
     (this->AppFunctions[this->getnextAppNumber()])(this->matrix, &this->state, 0, 0, &gif2);
 
