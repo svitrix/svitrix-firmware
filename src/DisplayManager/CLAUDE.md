@@ -85,20 +85,36 @@ Current implementors: `NightModePolicy` (src/policies/).
 
 > **App order = single source of truth.** `appConfig.appOrder` (NVS key `APPORDER`) holds the canonical order as a JSON array of names. Disabling an app removes it from the live loop but its name lingers in `appOrder` until the next persist, so re-enabling often restores its slot.
 
-### Playlist Mode (DisplayManager_Artnet.cpp)
-When `playlistConfig.enabled == true`, the display follows a custom sequence of apps and standalone effects instead of the simple app rotation.
+### Unified Rotation (DisplayManager_Artnet.cpp)
+Single drag-and-drop list controlling all apps and standalone effects. Replaces the old separate app order + playlist system.
+
+**Runtime struct:**
+```cpp
+struct RotationItemRuntime {
+    String name;       // app or effect name
+    int type;          // 0=native, 1=custom, 2=effect
+    int duration;      // per-item override (0 = use global)
+    uint32_t color;    // per-item text color override (0 = use default)
+    String icon;       // reserved for future
+    int offset;        // reserved for future
+};
+```
 
 **Key components:**
-- `playlistItems` — parsed vector of `{type, name, duration}` from `playlistConfig.items`
-- `playlistIndex` — current position in the playlist (-1 initially)
-- `playlistEffectOnly` — true when displaying a standalone effect (skips app rendering)
+- `rotationItems` — vector of `RotationItemRuntime` parsed from `rotationConfig.items`
+- `rotationIndex` — current position (-1 initially)
+- `currentRotationItem` — pointer to active item (for per-item override access during render)
 - `resolveNextApp(currentApp, direction)` — called by MatrixDisplayUi on each transition:
   - Returns app index for apps
-  - Returns `-2` for effects (signals "stay on current app, just show effect")
-  - Returns `-1` for default sequential behavior (playlist disabled or empty)
-- `parsePlaylistConfig()` — parses JSON items, validates apps/effects exist, resets state
+  - Returns `-2` for standalone effects (no app UI)
+  - Returns `-1` for default sequential behavior (empty rotation)
+- `parseRotationConfig()` — parses JSON items, validates apps/effects exist, resets state; preserves `currentRotationItem` pointer across reloads
 
-**Persistence:** `playlistConfig` stored in NVS; survives reboots.
+**Per-item overrides:**
+- **Duration:** `tick()` uses `currentRotationItem->duration` if > 0
+- **Color:** `applyNativeAppColor(color, appName)` checks `currentRotationItem->color` and verifies name match before applying
+
+**Persistence:** `rotationConfig` stored in NVS key `ROT_ITEMS`; survives reboots.
 
 **HA Integration:** When a standalone effect is displayed, HA receives `Effect: EffectName` via `setCurrentApp()`.
 
