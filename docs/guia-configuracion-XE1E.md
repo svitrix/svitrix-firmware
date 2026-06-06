@@ -386,28 +386,58 @@ En **Settings > Apps** puedes configurar colores para cada app nativa:
 
 - **Time, Date, Temperature, Humidity, Battery:** Selector de color directo
 
-### Rotación Unificada
+### Interfaz Web de Apps
 
-La página de **Apps** contiene una lista unificada de rotación que controla **todas** las apps y efectos del ciclo:
+Accede a la configuración de apps en: `http://[IP]/settings` → pestaña **Apps**
 
+La interfaz tiene una **lista unificada de rotación** que controla **todas** las apps y efectos del ciclo de visualización:
+
+```
+┌─────────────────────────────────────────────────────┐
+│  ☰  1  Time                              [●] [▼]   │
+│  ☰  2  Date                              [●] [▼]   │
+│  ☰  3  btc                    [custom]   [●] [▼]   │
+│  ☰  4  Plasma                 [effect]   [●] [▼]   │
+│  ☰  5  Temperature                       [○] [▼]   │
+└─────────────────────────────────────────────────────┘
+         │                                  │    │
+         │                                  │    └── Expandir ajustes
+         │                                  └─────── Toggle on/off
+         └────────────────────────────────────────── Arrastrar para reordenar
+```
+
+**Tipos de elementos:**
 - **Apps nativas** — Hora, Fecha, Temperatura, Humedad, Batería
 - **Apps del clima** — Temp. Exterior, Humedad Exterior, Presión, Calidad del Aire, UV
-- **Apps personalizadas** — creadas vía MQTT, HTTP o Data Fetcher
-- **Efectos** — efectos visuales independientes (sin texto)
+- **Apps personalizadas** — creadas vía MQTT, HTTP o Data Fetcher (badge `[custom]`)
+- **Efectos** — efectos visuales independientes sin texto (badge `[effect]`)
 
-**Configuración por elemento:**
+**Configuración por elemento (expandir con ▼):**
 
 | Campo | Descripción |
 |-------|-------------|
-| **Toggle** | Activa/desactiva el elemento |
-| **Duración** | Tiempo de visualización (0 = usar duración global) |
-| **Color** | Color de texto personalizado (0 = usar color por defecto) |
-
-Arrastra cualquier fila para reordenarla. Los cambios se guardan al instante y persisten entre reinicios.
+| **Duración** | Segundos de visualización (0 = usar duración global) |
+| **Color** | Color de texto personalizado (selector de color, negro = usar color por defecto) |
+| **Eliminar** | Botón para quitar el elemento de la rotación |
 
 **Agregar elementos:**
-- Botón **+ Agregar** — abre un modal para agregar apps nativas, del clima o efectos
-- Las apps personalizadas se agregan automáticamente cuando se crean vía MQTT/HTTP/DataFetcher
+1. Haz clic en **+ Agregar**
+2. Selecciona la pestaña: **Apps** o **Efectos**
+3. Elige el elemento de la lista
+4. Se agrega al final de la rotación
+
+**Comportamiento global** (abajo de la lista):
+
+| Opción | Descripción |
+|--------|-------------|
+| **Auto Transición** | Cicla automáticamente entre apps |
+| **Duración** | Segundos por app (valor global) |
+| **Efecto de Transición** | Animación al cambiar (Ninguno, Deslizar, Atenuar, Zoom, etc.) |
+| **Velocidad de Transición** | Duración de la animación (100-2000ms) |
+| **Velocidad de Scroll** | Velocidad de desplazamiento de texto largo |
+| **Bloquear Navegación** | Deshabilita navegación con botones físicos |
+
+> **Tip:** Las apps personalizadas (Data Fetcher, MQTT) se agregan automáticamente a la rotación cuando se crean. Puedes deshabilitarlas sin eliminarlas usando el toggle.
 
 ---
 
