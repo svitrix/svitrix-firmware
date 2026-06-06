@@ -875,6 +875,8 @@ Diseño minimalista para impresión 3D que aloja la matriz LED 32×8 WS2812B est
 
 ### 12.3 Código OpenSCAD (Parametrizable)
 
+> **Archivo:** [`hardware/enclosure.scad`](../hardware/enclosure.scad)
+
 ```openscad
 // ═══════════════════════════════════════════════════════════════════════════
 // Svitrix DIY Enclosure - Parametric Design
