@@ -586,3 +586,135 @@
 .iconGridItem:hover .iconGridDelete {
   opacity: 1;
 }
+
+/* Melodies Section */
+.melodyList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.melodyItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.melodyName {
+  font-size: 14px;
+  font-weight: 500;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.melodyActions {
+  display: flex;
+  gap: 6px;
+}
+
+.melodyBtn {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg-secondary);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+
+.melodyBtn:hover {
+  border-color: var(--accent);
+  background: var(--bg);
+}
+
+.melodyBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.melodyBtnDanger:hover {
+  border-color: #e53935;
+  color: #e53935;
+}
+
+.rtttlTextarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-input);
+  color: var(--text);
+  font-family: monospace;
+  font-size: 13px;
+  resize: vertical;
+}
+
+.rtttlTextarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.fileInput {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-input);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.fileInput::file-selector-button {
+  padding: 6px 12px;
+  margin-right: 12px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg-secondary);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.fileInput::file-selector-button:hover {
+  background: var(--bg);
+}
+
+.filePreview {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.filePreviewHeader {
+  padding: 8px 12px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+}
+
+.fileName {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.filePreviewContent {
+  padding: 12px;
+  margin: 0;
+  font-family: monospace;
+  font-size: 12px;
+  max-height: 150px;
+  overflow: auto;
+  background: var(--bg-input);
+  white-space: pre-wrap;
+  word-break: break-all;
+}

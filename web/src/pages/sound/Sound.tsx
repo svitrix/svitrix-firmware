@@ -1,5 +1,5 @@
 import { SettingsProvider, useSettings } from "../../context/SettingsContext";
-import { SoundSection } from "../settings/sections";
+import { SoundSection, MelodiesSection } from "../settings/sections";
 import { useT } from "../../i18n";
 import styles from "../settings/Settings.module.css";
 
@@ -13,6 +13,7 @@ function SoundContent() {
   return (
     <div class={styles.page}>
       <SoundSection />
+      <MelodiesSection />
     </div>
   );
 }
