@@ -21,6 +21,8 @@
 10. [Troubleshooting](#10-troubleshooting)
 11. [Plan de Trabajo](#11-plan-de-trabajo)
 12. [Gabinete 3D Imprimible](#12-gabinete-3d-imprimible)
+13. [Apéndice A: Improv WiFi](#apéndice-a-improv-wifi--configuración-sin-access-point)
+14. [Apéndice B: Recursos](#apéndice-b-recursos)
 
 ---
 
@@ -970,7 +972,139 @@ PASO 4: Cerrar gabinete
 
 ---
 
-## Apéndice: Recursos
+## Apéndice A: Improv WiFi — Configuración Sin Access Point
+
+### A.1 Resumen
+
+[Improv WiFi](https://www.improv-wifi.com/) es un estándar abierto para configurar WiFi en dispositivos IoT **sin necesidad de crear un Access Point**. El usuario envía las credenciales WiFi via Bluetooth LE o Serial USB directamente desde el navegador.
+
+**Flujo de configuración:**
+1. Usuario abre web (Chrome/Edge) → conecta via BLE o Serial
+2. Envía credenciales WiFi al dispositivo
+3. Dispositivo se conecta y devuelve URL de configuración
+4. Usuario accede a la Web UI normalmente
+
+### A.2 ¿Por qué en ESP32-S3?
+
+| Aspecto | ESP32 (TC001) | ESP32-S3 (DIY) |
+|---------|---------------|----------------|
+| Partición OTA | 1.8 MB | **3 MB** |
+| Firmware actual | ~1.3 MB | ~1.3 MB |
+| Espacio libre | ~500 KB | **~1.7 MB** |
+| Bluetooth | Classic + BLE | **BLE 5.0 nativo** |
+| Stack BLE (NimBLE) | +100-170 KB | +100-170 KB |
+| **Viabilidad** | ⚠️ Ajustado | ✅ **Sin problema** |
+
+El ESP32-S3 tiene espacio de sobra y BLE 5.0 optimizado — Improv BLE es viable sin compromisos.
+
+### A.3 Consumo de Memoria BLE
+
+| Stack | Flash | RAM | Notas |
+|-------|-------|-----|-------|
+| **Bluedroid** | ~250-400 KB | ~60-80 KB | BT Classic + BLE, pesado |
+| **NimBLE** (recomendado) | ~100-170 KB | ~30-40 KB | Solo BLE, ligero |
+
+**NimBLE ahorra ~170 KB flash y ~30-40 KB RAM** vs Bluedroid.
+
+### A.4 Opciones de Implementación
+
+| Opción | Flash Extra | Complejidad | Caso de Uso |
+|--------|-------------|-------------|-------------|
+| **Improv Serial** | ~5-10 KB | Baja | Flasher web, configuración inicial via USB |
+| **Improv BLE** | ~100-170 KB | Media | Configuración inalámbrica post-instalación |
+| **Ambos** | ~110-180 KB | Media | Máxima flexibilidad |
+
+### A.5 Integración con Flasher Web
+
+El [flasher web](../web/flasher/) ya usa Web Serial para flashear el firmware. Añadir Improv Serial permitiría:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    FLASHER WEB + IMPROV                          │
+│                                                                 │
+│  1. Usuario conecta USB                                         │
+│  2. Flashea firmware via Web Serial (ESP Web Tools)             │
+│  3. Sin desconectar, configura WiFi via Improv Serial           │
+│  4. Dispositivo se conecta y muestra URL de Web UI              │
+│  5. Usuario accede a la configuración completa                  │
+│                                                                 │
+│  ✅ Sin cambiar de red WiFi                                     │
+│  ✅ Sin buscar IP del dispositivo                               │
+│  ✅ Experiencia fluida de principio a fin                       │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### A.6 Librerías Recomendadas
+
+| Librería | Protocolo | Repo |
+|----------|-----------|------|
+| **ImprovWiFiLibrary** | Serial | [github.com/jnthas/Improv-WiFi-Library](https://github.com/jnthas/Improv-WiFi-Library) |
+| **esp-nimble-cpp** | BLE | [github.com/h2zero/esp-nimble-cpp](https://github.com/h2zero/esp-nimble-cpp) |
+| **Improv BLE (ESPHome)** | BLE | Referencia en [esphome.io/components/esp32_improv](https://esphome.io/components/esp32_improv.html) |
+
+### A.7 Plan de Implementación
+
+**Fase 1: Improv Serial (prioridad alta)**
+- [ ] Integrar `ImprovWiFiLibrary` en `ServerManager`
+- [ ] Habilitar durante modo AP o si no hay WiFi configurado
+- [ ] Actualizar flasher web para enviar credenciales post-flash
+- [ ] Retornar URL `http://<ip>/` tras conexión exitosa
+
+**Fase 2: Improv BLE (prioridad media)**
+- [ ] Agregar `esp-nimble-cpp` a `lib_deps`
+- [ ] Crear `ImprovBleManager` con servicio GATT
+- [ ] Habilitar BLE solo durante configuración inicial (ahorra RAM)
+- [ ] Deshabilitar BLE tras conexión WiFi exitosa
+- [ ] Agregar flag `HW::kHasImprovBle` en `HardwarePins.h`
+
+**Fase 3: Integración Home Assistant**
+- Improv es el estándar de ESPHome/HA — dispositivos con Improv aparecen automáticamente en HA durante onboarding
+
+### A.8 Ejemplo de Código (Improv Serial)
+
+```cpp
+#include <ImprovWiFiLibrary.h>
+
+ImprovWiFi improvSerial(&Serial);
+
+void setup() {
+    Serial.begin(115200);
+    
+    improvSerial.setDeviceInfo(
+        ImprovTypes::ChipFamily::CF_ESP32_S3,
+        "Svitrix",
+        VERSION,
+        "Svitrix DIY"
+    );
+    
+    improvSerial.onImprovConnected([](const char* ssid, const char* password) {
+        // Guardar credenciales y conectar
+        WiFi.begin(ssid, password);
+    });
+    
+    improvSerial.onImprovConnectedCallback([](const char* url) {
+        // Retornar URL de la Web UI
+        return String("http://") + WiFi.localIP().toString() + "/";
+    });
+}
+
+void loop() {
+    improvSerial.handleSerial();
+    // ... resto del loop
+}
+```
+
+### A.9 Referencias
+
+- [Improv WiFi Specification](https://www.improv-wifi.com/)
+- [ESP32 BLE NimBLE vs Bluedroid](https://www.esp32.com/viewtopic.php?t=16094)
+- [NimBLE Flash/RAM Savings](https://h2zero.github.io/esp-nimble-cpp/)
+- [ESPHome Improv Serial](https://esphome.io/components/improv_serial.html)
+- [ESPHome ESP32 Improv BLE](https://esphome.io/components/esp32_improv.html)
+
+---
+
+## Apéndice B: Recursos
 
 - [ESP32-S3-DevKitC-1 Docs](https://docs.espressif.com/projects/esp-idf/en/latest/esp32s3/hw-reference/esp32s3/user-guide-devkitc-1.html)
 - [ESP32-S3 Datasheet](https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf)
@@ -980,5 +1114,5 @@ PASO 4: Cerrar gabinete
 ---
 
 *Documento: Svitrix DIY ESP32-S3-DevKitC-1 Build Guide*  
-*Versión: 3.1 (con gabinete 3D)*  
-*Fecha: 2026-06-05*
+*Versión: 3.2 (+ Improv WiFi)*  
+*Fecha: 2026-06-07*
