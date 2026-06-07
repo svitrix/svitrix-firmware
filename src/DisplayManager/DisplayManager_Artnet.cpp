@@ -146,8 +146,10 @@ int8_t DisplayManager_::resolveNextApp(int8_t currentApp, int8_t direction)
     if (rotationItems.empty() || !ui || Apps.empty())
         return -1; // Use default sequential behavior
 
-    // Save the current item as previous (for outgoing app color during transitions)
-    prevRotationItem = currentRotationItem;
+    // Save the current item as previous only if it was an app (not an effect).
+    // This ensures outgoing app color works correctly when transitioning from effect to app.
+    if (currentRotationItem && currentRotationItem->type == 0)
+        prevRotationItem = currentRotationItem;
 
     // Try to find a valid item, but limit attempts to prevent infinite loop
     for (size_t attempts = 0; attempts < rotationItems.size(); attempts++)
@@ -166,6 +168,7 @@ int8_t DisplayManager_::resolveNextApp(int8_t currentApp, int8_t direction)
 
         if (item.type == 0) // App
         {
+            bool wasEffectOnly = rotationEffectOnly;
             rotationEffectOnly = false;
             playlistEffectOnly = false;
             ui->setBackgroundEffect(displayConfig.backgroundEffect);
@@ -178,6 +181,14 @@ int8_t DisplayManager_::resolveNextApp(int8_t currentApp, int8_t direction)
                     // Set duration for this rotation item
                     long dur = item.duration > 0 ? item.duration * 1000L : appConfig.timePerApp;
                     ui->setTimePerApp(dur);
+
+                    // If coming from an effect, switch instantly (no transition animation)
+                    // to avoid showing the stale "previous app" during transition
+                    if (wasEffectOnly)
+                    {
+                        ui->switchToApp((uint8_t)i);
+                        return -2; // Signal: already switched, don't start transition
+                    }
                     return (int8_t)i;
                 }
             }
