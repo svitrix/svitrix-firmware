@@ -271,7 +271,7 @@ static void publishInitialHAState()
 
         bgEffect->setState(displayConfig.backgroundEffect, true);
 
-        timePerAppNum->setState(static_cast<float>(appConfig.timePerApp));
+        timePerAppNum->setState(static_cast<float>(appConfig.timePerApp / 1000));  // ms → s
         scrollSpeedNum->setState(static_cast<float>(appConfig.scrollSpeed));
         timeDurationNum->setState(static_cast<float>(appConfig.timeDuration));
         dateDurationNum->setState(static_cast<float>(appConfig.dateDuration));

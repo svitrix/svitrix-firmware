@@ -329,7 +329,7 @@ void onDisplayTimingCommand(HANumeric number, HANumber *sender)
 
     if (sender == timePerAppNum)
     {
-        appConfig.timePerApp = number.toUInt16();
+        appConfig.timePerApp = number.toUInt16() * 1000L;  // s → ms
     }
     else if (sender == scrollSpeedNum)
     {

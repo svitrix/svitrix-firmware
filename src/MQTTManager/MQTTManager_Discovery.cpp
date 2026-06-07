@@ -569,7 +569,7 @@ void MQTTManager_::setup()
         timePerAppNum->setMax(60);
         timePerAppNum->setStep(1);
         timePerAppNum->onCommand(onDisplayTimingCommand);
-        timePerAppNum->setState(static_cast<float>(appConfig.timePerApp));
+        timePerAppNum->setState(static_cast<float>(appConfig.timePerApp / 1000));  // ms → s
 
         // Scroll speed (20-200 ms)
         buildEntityId(timingDescs[1].idTemplate, macStr, scrollSpeedID, sizeof(scrollSpeedID));
