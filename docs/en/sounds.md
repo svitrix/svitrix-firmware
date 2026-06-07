@@ -2,7 +2,40 @@
 
 SVITRIX uses the integrated passive buzzer in the Ulanzi TC001 to play monophonic RTTTL melodies.
 
-## Playing Melodies
+## Melodies Manager
+
+The web interface includes a complete melodies manager in the **Sound Tab**:
+
+### Saved Melodies
+
+List of all melodies stored in `/MELODIES/`:
+- **▶ Play** — plays the melody on the device
+- **✎ Edit** — loads the melody into the RTTTL editor
+- **✕ Delete** — removes the melody from the device
+
+### RTTTL Editor
+
+Built-in editor to create and edit melodies:
+
+| Field | Description |
+|-------|-------------|
+| **Name** | Filename (without extension) |
+| **Content** | RTTTL melody code |
+
+**Buttons:**
+- **🔊 Preview** — plays the melody in your browser using Web Audio API (no device required)
+- **▶ Play on device** — sends the melody to the Ulanzi buzzer
+- **Save** — saves the melody to `/MELODIES/`
+
+### Upload Melody
+
+Upload melody files from your computer:
+1. Select a `.txt` or `.rtttl` file
+2. Preview the content
+3. **Preview** locally before uploading
+4. **Upload to device**
+
+## Playing Melodies via API
 
 You can play RTTTL melodies in two ways:
 
@@ -17,6 +50,8 @@ This method avoids long JSON payloads since the receive buffer is limited.
 Go to the file manager in the [web interface](./webinterface) and create a new text file in the `MELODIES` folder.
 Name it whatever you like but use the `.txt` extension, e.g. `alarm.txt`. Inside the file, place a melody in RTTTL format.
 When referencing the sound file in API calls, omit the file extension.
+
+## RTTTL Melody Resources
 
 You can find many melodies on the internet:
 * [Laub-Home Wiki: RTTTL Songs](https://www.laub-home.de/wiki/RTTTL_Songs)

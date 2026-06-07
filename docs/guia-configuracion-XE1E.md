@@ -418,7 +418,18 @@ La interfaz tiene una **lista unificada de rotación** que controla **todas** la
 |-------|-------------|
 | **Duración** | Segundos de visualización (0 = usar duración global) |
 | **Color** | Color de texto personalizado (selector de color, negro = usar color por defecto) |
+| **Icono** | Número de icono personalizado (muestra el icono por defecto como placeholder) |
 | **Eliminar** | Botón para quitar el elemento de la rotación |
+
+> **Nota:** Las apps **Hora** y **Fecha** no tienen opción de icono porque no usan iconos.
+
+**Apps de clima adicionales:**
+| App | Opción especial |
+|-----|-----------------|
+| **Calidad del Aire** | Toggle **Auto** — color dinámico según nivel (verde → amarillo → naranja → rojo) |
+| **UV** | Toggle **Auto** — color dinámico según índice UV |
+
+> **Tip:** Cuando configuras la **API del clima** por primera vez, las apps de clima (Temp. Exterior, Humedad Exterior, Presión, Calidad del Aire, UV) se agregan automáticamente a la rotación.
 
 **Agregar elementos:**
 1. Haz clic en **+ Agregar**
@@ -508,11 +519,11 @@ El Ulanzi TC001 tiene un chip DS1307 con batería de respaldo.
 
 ### 11.7 Habilitar Indicador de Alarmas
 
-El indicador LED de alarmas está deshabilitado por defecto.
+El indicador LED de alarmas está deshabilitado por defecto. Cuando está activo, muestra **3 LEDs rojos** en la esquina inferior derecha cuando hay alarmas habilitadas.
 
 **Desde la web:**
-1. Ve a: `http://[IP]` (Settings)
-2. En la sección de apps, activa **Alarms Indicator**
+1. Ve a: `http://[IP]/autonomous` (Tab Alarmas)
+2. Activa el toggle **Indicador de alarmas** en la parte superior
 
 **Desde el dispositivo (menú físico):**
 1. Mantén presionado el botón central para entrar al menú
@@ -560,7 +571,7 @@ Las notificaciones muestran mensajes temporales en la pantalla con opciones de p
 | Campo | Descripción |
 |-------|-------------|
 | **Text** | Mensaje a mostrar (requerido) |
-| **Icon** | ID de icono de LaMetric o nombre de archivo en `/ICONS/` |
+| **Icon** | Dropdown con iconos disponibles en `/ICONS/` (se cargan automáticamente) |
 | **Layout** | Posición del icono: Left o Right (solo si hay icono) |
 | **Hold** | Mantiene la notificación hasta presionar Dismiss |
 | **Duration** | Duración en segundos (1-60, solo si Hold está desactivado) |
@@ -744,6 +755,29 @@ Configuración inicial del dispositivo después del flasheo o reset de valores.
 | **Volumen** | `30` |
 | **Sonido de arranque** | (vacío) |
 
+#### Gestor de Melodías
+
+El tab Sonido incluye un gestor completo de melodías RTTTL:
+
+**Melodías guardadas:**
+- Lista de melodías en `/MELODIES/`
+- ▶ Reproducir en dispositivo
+- ✎ Editar (carga en el editor)
+- ✕ Eliminar
+
+**Editor RTTTL:**
+- Campo de nombre de melodía
+- Editor de contenido RTTTL
+- 🔊 **Pre-escuchar** — reproduce en el navegador (Web Audio API)
+- ▶ **Reproducir en dispositivo** — envía al buzzer
+- **Guardar** — almacena en `/MELODIES/`
+
+**Subir melodía:**
+- Seleccionar archivo `.txt` o `.rtttl`
+- Vista previa del contenido
+- Pre-escuchar antes de subir
+- Subir al dispositivo
+
 ### 15.6 Tab Alarmas
 
 | Campo | Valor por defecto |
@@ -752,7 +786,33 @@ Configuración inicial del dispositivo después del flasheo o reset de valores.
 | **Máximo de alarmas** | 10 |
 | **Snooze por defecto** | 5 minutos |
 
-> **Nota:** Los valores se restauran con la opción **Restablecer valores** en el tab Sistema. La configuración WiFi **no** se borra con esta opción — para borrar WiFi usar **Restablecer de fábrica**.
+### 15.7 Tab Sistema
+
+El tab Sistema muestra información del dispositivo y opciones de mantenimiento.
+
+**Barra de información:**
+
+| Campo | Descripción |
+|-------|-------------|
+| **FW** | Versión del firmware |
+| **RAM** | Memoria libre / total (KB) |
+| **WiFi** | Señal WiFi (dBm) |
+| **Lux** | Nivel de luz ambiental |
+| **Activo** | Tiempo de actividad (ej: `2d 5h 30m 15s`) |
+| **Temp** | Temperatura del sensor (si disponible) |
+| **Hum** | Humedad del sensor (si disponible) |
+| **Brillo** | Nivel de brillo actual |
+
+**Acciones:**
+
+| Botón | Descripción |
+|-------|-------------|
+| **Guardar todo** | Guarda toda la configuración pendiente |
+| **Restablecer valores** | Restaura valores por defecto (no borra WiFi) |
+| **Borrar WiFi** | Elimina las credenciales WiFi guardadas |
+| **Reiniciar** | Reinicia el dispositivo |
+
+> **Nota:** Los valores se restauran con la opción **Restablecer valores**. La configuración WiFi **no** se borra con esta opción — para borrar WiFi usar **Borrar WiFi**.
 
 ---
 

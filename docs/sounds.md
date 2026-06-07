@@ -2,7 +2,40 @@
 
 SVITRIX usa el buzzer pasivo integrado en el Ulanzi TC001 para reproducir melodías RTTTL monofónicas.
 
-## Reproducir Melodías
+## Gestor de Melodías
+
+La interfaz web incluye un gestor completo de melodías en el **Tab Sonido**:
+
+### Melodías Guardadas
+
+Lista de todas las melodías almacenadas en `/MELODIES/`:
+- **▶ Reproducir** — reproduce la melodía en el dispositivo
+- **✎ Editar** — carga la melodía en el editor RTTTL
+- **✕ Eliminar** — elimina la melodía del dispositivo
+
+### Editor RTTTL
+
+Editor integrado para crear y editar melodías:
+
+| Campo | Descripción |
+|-------|-------------|
+| **Nombre** | Nombre del archivo (sin extensión) |
+| **Contenido** | Código RTTTL de la melodía |
+
+**Botones:**
+- **🔊 Pre-escuchar** — reproduce la melodía en tu navegador usando Web Audio API (no requiere dispositivo)
+- **▶ Reproducir en dispositivo** — envía la melodía al buzzer del Ulanzi
+- **Guardar** — guarda la melodía en `/MELODIES/`
+
+### Subir Melodía
+
+Sube archivos de melodía desde tu computadora:
+1. Selecciona un archivo `.txt` o `.rtttl`
+2. Vista previa del contenido
+3. **Pre-escuchar** localmente antes de subir
+4. **Subir al dispositivo**
+
+## Reproducir Melodías vía API
 
 Puedes reproducir melodías RTTTL de dos formas:
 
@@ -17,6 +50,8 @@ Este método evita payloads JSON largos ya que el buffer de recepción es limita
 Ve al administrador de archivos en la [interfaz web](./webinterface) y crea un nuevo archivo de texto en la carpeta `MELODIES`.
 Nómbralo como quieras pero usa la extensión `.txt`, ej. `alarma.txt`. Dentro del archivo, coloca una melodía en formato RTTTL.
 Cuando hagas referencia al archivo de sonido en llamadas API, omite la extensión del archivo.
+
+## Recursos de Melodías RTTTL
 
 Puedes encontrar muchas melodías en internet:
 * [Laub-Home Wiki: RTTTL Songs](https://www.laub-home.de/wiki/RTTTL_Songs)

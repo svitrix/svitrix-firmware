@@ -70,6 +70,11 @@ SVITRIX-XE1E es un fork de [SVITRIX](https://github.com/svitrix/svitrix-firmware
 ### Notificaciones y Sonido
 - **Notificaciones** — mensajes únicos con iconos, sonidos y efectos
 - **Melodías RTTTL** — reproduce sonidos monofónicos vía el buzzer incorporado
+- **Gestor de melodías (NUEVO)** — administra melodías RTTTL desde la interfaz web
+  - Editor RTTTL integrado con pre-escucha local en el navegador
+  - Subir archivos de melodía (.txt/.rtttl) con vista previa
+  - Reproducir en dispositivo o pre-escuchar localmente antes de guardar
+  - Galería de melodías guardadas con reproducción y edición
 
 ### Configuración y Gestión
 - **Interfaz web moderna** — configuración WiFi, MQTT, clima, gestor de archivos, descargador de iconos, actualizaciones OTA, vista en vivo
