@@ -1,0 +1,1 @@
+scale_up:d=32,o=5,b=100:c,c#,d#,e,f#,g#,a#,b

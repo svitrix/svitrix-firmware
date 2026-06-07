@@ -30,6 +30,7 @@ dist/
 web/node_modules
 /data/*
 !/data/ICONS/
+!/data/MELODIES/
 
 # Internal docs (not for public repo)
 ANALYSIS.md
