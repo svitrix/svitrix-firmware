@@ -459,7 +459,7 @@ void loadSettings()
     if (systemConfig.debugMode)
         DEBUG_PRINTLN(F("Loading Usersettings"));
     Settings.begin("svitrix", false);
-    brightnessConfig.brightness = Settings.getUInt("BRI", 120);
+    brightnessConfig.brightness = Settings.getUInt("BRI", 30);
     brightnessConfig.autoBrightness = Settings.getBool("ABRI", false);
     brightnessConfig.minBrightness = Settings.getUChar("MINBRI", 2);
     brightnessConfig.maxBrightness = Settings.getUChar("MAXBRI", 160);
@@ -669,9 +669,9 @@ BatteryConfig batteryConfig = {0, 0, 475, 665};
 AuthConfig authConfig = {"", "svitrix"};
 
 DisplayConfig displayConfig = {0, 42, false, false, false, true, -1};
-BrightnessConfig brightnessConfig = {120, 0, true, 2, 160, 3.0, 1.0, false};
+BrightnessConfig brightnessConfig = {30, 0, true, 2, 160, 3.0, 1.0, false};
 ColorConfig colorConfig = {0xFFFFFF, 0, 0, 0, 0, 0, 0xFFFFFF, 0x666666, 0xFF0000, 0x000000, 0xFFFFFF};
-TimeConfig timeConfig = {"%H:%M:%S", "%d.%m.%y", 1, false, "time.cloudflare.com", "CST6", false, 0};
+TimeConfig timeConfig = {"%H:%M:%S", "%d.%m.%y", 1, false, "time.cloudflare.com", "CST6", true, 0};
 AppConfig appConfig = {true, true, true, true, true, true, false, false, 1, 400, 7000, 100, 7, 7, 7, 7, 7, IconLayout::Left, false, false, 1260, 360, 5, 0xFF0000, true, ""};
 AudioConfig audioConfig = {false, 30, ""};
 SystemConfig systemConfig = {true, 15, 80, "", false, 10000, false, false, "", "", false, false, "", ""};

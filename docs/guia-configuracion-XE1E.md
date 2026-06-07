@@ -664,7 +664,99 @@ El sistema de backup permite guardar y restaurar toda la configuración del disp
 
 ---
 
-## 15. Solución de Problemas
+## 15. Valores por Defecto
+
+Configuración inicial del dispositivo después del flasheo o reset de valores.
+
+### 15.1 Tab MQTT
+
+| Campo | Valor por defecto |
+|-------|-------------------|
+| **Host** | (vacío) |
+| **Port** | `1883` |
+| **User** | (vacío) |
+| **Pass** | (vacío) |
+| **Prefix** | (ID del dispositivo) |
+| **HA Discovery** | Desactivado |
+| **HA Prefix** | `homeassistant` |
+
+### 15.2 Tab Pantalla
+
+| Campo | Valor por defecto |
+|-------|-------------------|
+| **Brillo** | `30` |
+| **Brillo automático** | Activado |
+| **Brillo mínimo** | `2` |
+| **Brillo máximo** | `160` |
+| **LDR Gamma** | `3.0` |
+| **LDR Factor** | `1.0` |
+| **Mirror (espejo)** | Desactivado |
+| **Rotate 180°** | Desactivado |
+| **Mayúsculas** | Activado |
+| **Efecto de fondo** | Ninguno |
+
+### 15.3 Tab Apps
+
+| Campo | Valor por defecto |
+|-------|-------------------|
+| **Time** | Activado |
+| **Date** | Activado |
+| **Battery** | Activado |
+| **Temperature** | Activado |
+| **Humidity** | Activado |
+| **Weekday indicator** | Activado |
+| **Auto transición** | Desactivado |
+| **Efecto de transición** | Slide (deslizar) |
+| **Velocidad de transición** | `400` ms |
+| **Duración por app** | `7` segundos |
+| **Velocidad de scroll** | `100` ms |
+| **Bloquear navegación** | Desactivado |
+
+**Modo Nocturno:**
+
+| Campo | Valor por defecto |
+|-------|-------------------|
+| **Night mode** | Desactivado |
+| **Inicio** | `21:00` |
+| **Fin** | `06:00` |
+| **Brillo nocturno** | `5` |
+| **Color nocturno** | Rojo (`#FF0000`) |
+| **Bloquear transiciones** | Activado |
+
+### 15.4 Tab Fecha/Hora
+
+| Campo | Valor por defecto |
+|-------|-------------------|
+| **Formato de hora** | `%H:%M:%S` (24h con segundos) |
+| **Formato de fecha** | `%d.%m.%y` |
+| **Modo 24h** | Activado |
+| **Semana inicia en lunes** | Desactivado |
+| **Servidor NTP** | `time.cloudflare.com` |
+| **Zona horaria** | `CST6` (México Centro) |
+| **Unidad de temperatura** | Celsius (°C) |
+| **Decimales temperatura** | `0` |
+
+### 15.5 Tab Sonido
+
+| Campo | Valor por defecto |
+|-------|-------------------|
+| **Sonido activo** | Desactivado |
+| **Volumen** | `30` |
+| **Sonido de arranque** | (vacío) |
+
+### 15.6 Tab Alarmas
+
+| Campo | Valor por defecto |
+|-------|-------------------|
+| **Alarmas configuradas** | Ninguna |
+| **Máximo de alarmas** | 10 |
+| **Snooze por defecto** | 5 minutos |
+
+> **Nota:** Los valores se restauran con la opción **Restablecer valores** en el tab Sistema. La configuración WiFi **no** se borra con esta opción — para borrar WiFi usar **Restablecer de fábrica**.
+
+---
+
+## 16. Solución de Problemas
 
 ### El flasher no detecta el dispositivo
 - Prueba otro cable USB (debe soportar datos)
@@ -686,7 +778,7 @@ El sistema de backup permite guardar y restaurar toda la configuración del disp
 
 ---
 
-## 16. Enlaces Útiles
+## 17. Enlaces Útiles
 
 - **Documentación oficial:** https://svitrix.dev
 - **Repositorio original:** https://github.com/svitrix/svitrix-firmware
@@ -695,7 +787,7 @@ El sistema de backup permite guardar y restaurar toda la configuración del disp
 
 ---
 
-## 17. Configurar GitHub Pages (Flasher Propio)
+## 18. Configurar GitHub Pages (Flasher Propio)
 
 Para tener tu propio flasher web:
 
@@ -716,7 +808,7 @@ https://xe1e.github.io/svitrix-firmware-XE1E/
 
 ---
 
-## 18. Información del Fork
+## 19. Información del Fork
 
 | Campo | Valor |
 |-------|-------|
@@ -727,7 +819,7 @@ https://xe1e.github.io/svitrix-firmware-XE1E/
 
 ---
 
-## 19. Git - Flujo de Trabajo del Fork
+## 20. Git - Flujo de Trabajo del Fork
 
 Este repositorio es un fork del proyecto original SVITRIX.
 

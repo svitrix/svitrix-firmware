@@ -29,6 +29,7 @@ class DataFetcher_
 
     void fetchWeather();
     String buildWeatherQuery();
+    void cleanupOrphanedApps();
 
   public:
     static DataFetcher_& getInstance();

@@ -86,7 +86,7 @@ Shared configuration structs consumed by all modules. Single header, no logic, n
 ### BrightnessConfig
 | Field | Type | Default | Notes |
 |-------|------|---------|-------|
-| `brightness` | int | `120` | Current brightness (0-255) |
+| `brightness` | int | `30` | Current brightness (0-255) |
 | `brightnessPercent` | int | `0` | Brightness as percentage |
 | `autoBrightness` | bool | `true` | Enable LDR auto-brightness |
 | `minBrightness` | uint8_t | `2` | Auto-brightness floor |
@@ -119,7 +119,7 @@ Shared configuration structs consumed by all modules. Single header, no logic, n
 | `startOnMonday` | bool | `false` | Week starts on Monday |
 | `ntpServer` | String | `"time.cloudflare.com"` | NTP server |
 | `ntpTz` | String | `"CET-1CEST,M3.5.0,M10.5.0/3"` | POSIX timezone |
-| `isCelsius` | bool | `false` | Temperature unit |
+| `isCelsius` | bool | `true` | Temperature unit |
 | `tempDecimalPlaces` | int | `0` | Decimal places for temp display |
 
 ### AppConfig

@@ -39,6 +39,7 @@ void DataFetcher_::setup()
 {
     LittleFS.mkdir("/DATAFETCHER");
     loadSources();
+    cleanupOrphanedApps();
     DEBUG_PRINTF("DataFetcher: loaded %d sources", sources_.size());
 }
 
@@ -424,6 +425,83 @@ void DataFetcher_::forceFetch(const String& name)
     auto idx = std::distance(sources_.begin(), it);
     fetchAndPush(idx);
     lastFetch_[idx] = millis();
+}
+
+// ---------- Orphaned app cleanup ----------
+
+void DataFetcher_::cleanupOrphanedApps()
+{
+    // Scan /CUSTOMAPPS/ for .json files that match source names
+    // If a file exists but no corresponding enabled source exists, delete it
+    // This cleans up custom apps created by DataFetcher when sources are removed
+
+    File root = LittleFS.open("/CUSTOMAPPS");
+    if (!root || !root.isDirectory())
+    {
+        if (root) root.close();
+        return;
+    }
+
+    std::vector<String> toDelete;
+    File file = root.openNextFile();
+    while (file)
+    {
+        if (!file.isDirectory())
+        {
+            String fileName = file.name();
+            // Extract app name from filename (remove .json extension)
+            if (fileName.endsWith(".json"))
+            {
+                String appName = fileName.substring(0, fileName.length() - 5);
+                // Check if there's an enabled source with this name
+                bool hasSource = false;
+                for (const auto& src : sources_)
+                {
+                    if (src.name == appName && src.enabled)
+                    {
+                        hasSource = true;
+                        break;
+                    }
+                }
+                // If no source exists, check if the file looks like a DataFetcher app
+                // DataFetcher apps have lifetime:0 and simple structure
+                if (!hasSource)
+                {
+                    String fullPath = String("/CUSTOMAPPS/") + fileName;
+                    File appFile = LittleFS.open(fullPath, "r");
+                    if (appFile)
+                    {
+                        StaticJsonDocument<512> doc;
+                        if (!deserializeJson(doc, appFile))
+                        {
+                            // DataFetcher apps have lifetime=0 and no save=true
+                            // They shouldn't be persisted, but if they are, clean them up
+                            int lifetime = doc["lifetime"] | -1;
+                            bool hasSave = doc.containsKey("save");
+                            if (lifetime == 0 && !hasSave)
+                            {
+                                toDelete.push_back(fullPath);
+                                DEBUG_PRINTF("DataFetcher: marking orphan for cleanup: %s", appName.c_str());
+                            }
+                        }
+                        appFile.close();
+                    }
+                }
+            }
+        }
+        file = root.openNextFile();
+    }
+    root.close();
+
+    // Delete orphaned files and remove from display
+    for (const String& path : toDelete)
+    {
+        String name = path.substring(12, path.length() - 5); // Extract name from /CUSTOMAPPS/X.json
+        if (nav_)
+            nav_->parseCustomPage(name, "{}", false);
+        LittleFS.remove(path);
+        DEBUG_PRINTF("DataFetcher: cleaned up orphan: %s", name.c_str());
+    }
 }
 
 // ---------- LittleFS persistence ----------
