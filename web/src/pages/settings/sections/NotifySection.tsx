@@ -1,5 +1,5 @@
-import { useState } from "preact/hooks";
-import { sendNotify, dismissNotify } from "../../../api/client";
+import { useState, useEffect } from "preact/hooks";
+import { sendNotify, dismissNotify, listDir } from "../../../api/client";
 import type { Notification } from "../../../api/types";
 import { Card, TextField, ColorField, Toggle, Slider, Select, Button, FormRow } from "../../../components/ui";
 import { toast } from "../../../components/Toast";
@@ -16,7 +16,18 @@ export function NotifySection() {
   });
   const [hold, setHold] = useState(false);
   const [sending, setSending] = useState(false);
+  const [iconList, setIconList] = useState<string[]>([]);
   const t = useT();
+
+  useEffect(() => {
+    listDir("/ICONS").then((files) => {
+      const icons = files
+        .filter((f) => f.type === "file" && (f.name.endsWith(".gif") || f.name.endsWith(".jpg")))
+        .map((f) => f.name.replace(/\.(gif|jpg)$/, ""))
+        .sort((a, b) => parseInt(a, 10) - parseInt(b, 10));
+      setIconList(icons);
+    }).catch(() => {});
+  }, []);
 
   function upd(patch: Partial<Notification>) {
     setNotif((prev) => ({ ...prev, ...patch }));
@@ -73,11 +84,14 @@ export function NotifySection() {
           placeholder="Hello world!"
         />
         <FormRow>
-          <TextField
+          <Select
             label={t.display.notifyIcon}
             value={notif.icon || ""}
-            onChange={(v) => upd({ icon: v })}
-            placeholder={t.display.notifyIconPlaceholder}
+            options={[
+              { value: "", label: t.display.none },
+              ...iconList.map((id) => ({ value: id, label: id })),
+            ]}
+            onChange={(v) => upd({ icon: v as string })}
           />
           {notif.icon && (
             <Select

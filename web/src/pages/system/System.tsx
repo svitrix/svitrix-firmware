@@ -4,6 +4,7 @@ import { resetSettings, reboot, eraseWifi } from "../../api/client";
 import { toast } from "../../components/Toast";
 import { Button, Card } from "../../components/ui";
 import { useT } from "../../i18n";
+import { StatsBar } from "../settings/sections";
 import styles from "../settings/Settings.module.css";
 import sectionStyles from "../settings/sections/sections.module.css";
 
@@ -29,6 +30,7 @@ function SystemContent() {
 
   return (
     <div class={styles.page}>
+      <StatsBar />
       <Card title={t.system.title}>
         <div class={sectionStyles.stack}>
           <p class={sectionStyles.hint}>

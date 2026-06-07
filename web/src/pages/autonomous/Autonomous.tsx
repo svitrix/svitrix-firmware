@@ -10,7 +10,7 @@ import {
 } from "../../api/client";
 import type { Alarm, AlarmsState } from "../../api/types";
 import { useT } from "../../i18n";
-import { useSettings } from "../../context/SettingsContext";
+import { useSettings, SettingsProvider } from "../../context/SettingsContext";
 import styles from "./Autonomous.module.css";
 
 // Preset RTTTL melodies offered in the alarm melody dropdown.
@@ -305,8 +305,10 @@ function AlarmsSection() {
 
 export function AutonomousPage(_props: { path?: string }) {
   return (
-    <div class={styles.container}>
-      <AlarmsSection />
-    </div>
+    <SettingsProvider>
+      <div class={styles.container}>
+        <AlarmsSection />
+      </div>
+    </SettingsProvider>
   );
 }

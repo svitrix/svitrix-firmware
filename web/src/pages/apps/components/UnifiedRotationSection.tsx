@@ -244,19 +244,21 @@ export function UnifiedRotationSection() {
                           />
                           {item.color === 0 && <span class={styles.hint}>(default)</span>}
                         </div>
-                        <div class={styles.rotationField}>
-                          <label>Icon:</label>
-                          <input
-                            type="text"
-                            class={styles.iconInput}
-                            value={item.icon}
-                            onChange={(e) => updateItem(item.id, { icon: (e.target as HTMLInputElement).value })}
-                            placeholder={DEFAULT_ICONS[item.name] || "-"}
-                          />
-                          {!item.icon && DEFAULT_ICONS[item.name] && (
-                            <span class={styles.hint}>(#{DEFAULT_ICONS[item.name]})</span>
-                          )}
-                        </div>
+                        {item.name !== "Time" && item.name !== "Date" && (
+                          <div class={styles.rotationField}>
+                            <label>{t.apps.icon || "Icono"}:</label>
+                            <input
+                              type="text"
+                              class={styles.iconInput}
+                              value={item.icon}
+                              onChange={(e) => updateItem(item.id, { icon: (e.target as HTMLInputElement).value })}
+                              placeholder={DEFAULT_ICONS[item.name] || "-"}
+                            />
+                            {!item.icon && DEFAULT_ICONS[item.name] && (
+                              <span class={styles.hint}>(#{DEFAULT_ICONS[item.name]})</span>
+                            )}
+                          </div>
+                        )}
                         {(item.name === "Temperature" || item.name === "OutdoorTemp") && settings && (
                           <div class={styles.rotationField}>
                             <Toggle

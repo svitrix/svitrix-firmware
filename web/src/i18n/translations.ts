@@ -127,7 +127,7 @@ export const translations = {
       maxBrightness: "Máx",
       gamma: "Gamma",
       uppercase: "Mayúsculas",
-      textColor: "Color de texto",
+      textColor: "Color de texto por defecto",
       backgroundEffect: "Efecto de fondo",
       none: "Ninguno",
       colorCorrection: "Corrección de color",
@@ -223,6 +223,7 @@ export const translations = {
       playlistSeconds: "s",
       playlistDelete: "Eliminar",
       playlistEffectBadge: "efecto",
+      icon: "Icono",
     },
 
     // Time/Date page
@@ -577,7 +578,7 @@ export const translations = {
       maxBrightness: "Max",
       gamma: "Gamma",
       uppercase: "Uppercase",
-      textColor: "Text Color",
+      textColor: "Default Text Color",
       backgroundEffect: "Background Effect",
       none: "None",
       colorCorrection: "Color Correction",
@@ -673,6 +674,7 @@ export const translations = {
       playlistSeconds: "s",
       playlistDelete: "Delete",
       playlistEffectBadge: "effect",
+      icon: "Icon",
     },
 
     // Time/Date page

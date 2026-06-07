@@ -2,7 +2,6 @@ import { SettingsProvider, useSettings } from "../../context/SettingsContext";
 import { useT } from "../../i18n";
 import styles from "./Settings.module.css";
 import {
-  StatsBar,
   WifiSection,
   NetworkSection,
   NtpSection,
@@ -28,7 +27,6 @@ function SettingsContent() {
 
   return (
     <div class={styles.page}>
-      <StatsBar />
       <WifiSection />
       <NetworkSection />
       <NtpSection />
