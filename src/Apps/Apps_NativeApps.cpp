@@ -520,9 +520,9 @@ void AirQualityApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16
     if (nativeAppGuard("AirQuality"))
         return;
 
-    // Use config color if set, otherwise dynamic color based on AQI level
+    // Use dynamic color if autoColor enabled, otherwise use config color
     uint32_t aqiColor = weatherConfig.aqiColor;
-    if (aqiColor == 0 && weatherData.valid && weatherData.aqi > 0)
+    if (weatherConfig.aqiAutoColor && weatherData.valid && weatherData.aqi > 0)
     {
         switch (weatherData.aqi)
         {
@@ -603,9 +603,9 @@ void UVApp(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, int16_t x, in
     if (nativeAppGuard("UV"))
         return;
 
-    // Use config color if set, otherwise dynamic color based on UV level
+    // Use dynamic color if autoColor enabled, otherwise use config color
     uint32_t uvColor = weatherConfig.uvColor;
-    if (uvColor == 0 && weatherData.valid)
+    if (weatherConfig.uvAutoColor && weatherData.valid)
     {
         float uv = weatherData.uv;
         if (uv < 3)

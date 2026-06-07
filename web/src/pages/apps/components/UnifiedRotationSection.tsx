@@ -16,6 +16,20 @@ const NATIVE_APPS_WEATHER = [
 ];
 const ALL_NATIVE_APPS = [...NATIVE_APPS_ORIGINAL, ...NATIVE_APPS_WEATHER];
 
+// Default icon numbers for native apps (from firmware icons.h / NativeApps.cpp)
+const DEFAULT_ICONS: Record<string, string> = {
+  Time: "-",           // no icon
+  Date: "-",           // no icon
+  Temperature: "234",  // icon_234 thermometer
+  Humidity: "2075",    // icon_2075 water drop
+  Battery: "1486",     // icon_1486 battery
+  OutdoorTemp: "-",    // dynamic weather icon
+  OutdoorHum: "61756", // GIF
+  Pressure: "66893",   // GIF
+  AirQuality: "73559", // GIF
+  UV: "64310",         // GIF
+};
+
 function generateId(): string {
   const chars = "0123456789abcdef";
   let id = "";
@@ -27,7 +41,7 @@ function generateId(): string {
 
 export function UnifiedRotationSection() {
   const t = useT();
-  const { settings, updateSettings } = useSettings();
+  const { settings, updateSettings, weatherConfig, updateWeatherConfig, saveWeatherConfig } = useSettings();
   const [config, setConfig] = useState<RotationConfig | null>(null);
   const [effects, setEffects] = useState<EffectInfo[]>([]);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
@@ -237,8 +251,11 @@ export function UnifiedRotationSection() {
                             class={styles.iconInput}
                             value={item.icon}
                             onChange={(e) => updateItem(item.id, { icon: (e.target as HTMLInputElement).value })}
-                            placeholder="default"
+                            placeholder={DEFAULT_ICONS[item.name] || "-"}
                           />
+                          {!item.icon && DEFAULT_ICONS[item.name] && (
+                            <span class={styles.hint}>(#{DEFAULT_ICONS[item.name]})</span>
+                          )}
                         </div>
                         {(item.name === "Temperature" || item.name === "OutdoorTemp") && settings && (
                           <div class={styles.rotationField}>
@@ -261,6 +278,24 @@ export function UnifiedRotationSection() {
                               onChange={(e) => updateSettings({ TOFF: parseInt((e.target as HTMLInputElement).value) || 0 })}
                             />
                             <span class={styles.hint}>°</span>
+                          </div>
+                        )}
+                        {item.name === "AirQuality" && weatherConfig && (
+                          <div class={styles.rotationField}>
+                            <Toggle
+                              label={t.apps.autoColor || "Auto color"}
+                              checked={weatherConfig.aqiAutoColor}
+                              onChange={(v) => { updateWeatherConfig({ aqiAutoColor: v }); saveWeatherConfig(""); }}
+                            />
+                          </div>
+                        )}
+                        {item.name === "UV" && weatherConfig && (
+                          <div class={styles.rotationField}>
+                            <Toggle
+                              label={t.apps.autoColor || "Auto color"}
+                              checked={weatherConfig.uvAutoColor}
+                              onChange={(v) => { updateWeatherConfig({ uvAutoColor: v }); saveWeatherConfig(""); }}
+                            />
                           </div>
                         )}
                       </div>

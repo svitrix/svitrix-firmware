@@ -31,7 +31,6 @@ export function AppTransitionsSection() {
   return (
     <Card title={t.apps.transitions}>
       <div class={styles.stack}>
-        <Toggle label={t.apps.alarmsIndicator} checked={s.SALARMS} onChange={(v) => instantSave({ SALARMS: v })} />
         <Toggle label={t.apps.autoTransition} checked={s.ATRANS} onChange={(v) => instantSave({ ATRANS: v })} />
         <Select
           label={t.apps.transitionEffect}

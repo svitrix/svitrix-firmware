@@ -192,6 +192,8 @@ struct WeatherConfig {
     uint32_t pressureColor;
     uint32_t aqiColor;
     uint32_t uvColor;
+    bool aqiAutoColor;            // Use dynamic color based on AQI level
+    bool uvAutoColor;             // Use dynamic color based on UV level
     uint8_t outdoorTempDuration;  // seconds
     uint8_t outdoorHumDuration;
     uint8_t pressureDuration;

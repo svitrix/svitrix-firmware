@@ -95,6 +95,7 @@ export const translations = {
       condition: "Condición",
       uvIndex: "Índice UV",
       noWeatherData: "Sin datos del clima. Haz clic en \"Obtener ahora\" para probar tu clave API.",
+      weatherAppsAdded: "Apps de clima agregadas",
     },
 
     // MQTT page
@@ -544,6 +545,7 @@ export const translations = {
       condition: "Condition",
       uvIndex: "UV Index",
       noWeatherData: "No weather data yet. Click \"Fetch Now\" to test your API key.",
+      weatherAppsAdded: "Weather apps added",
     },
 
     // MQTT page

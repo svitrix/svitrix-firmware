@@ -10,6 +10,7 @@ import {
 } from "../../api/client";
 import type { Alarm, AlarmsState } from "../../api/types";
 import { useT } from "../../i18n";
+import { useSettings } from "../../context/SettingsContext";
 import styles from "./Autonomous.module.css";
 
 // Preset RTTTL melodies offered in the alarm melody dropdown.
@@ -59,6 +60,7 @@ function AlarmsSection() {
   const [newOnce, setNewOnce] = useState(false);
   const pollRef = useRef<ReturnType<typeof setInterval>>();
   const t = useT();
+  const { settings, instantSave } = useSettings();
 
   // Full reload — replaces the whole list (mount, add, delete).
   const load = async () => {
@@ -147,6 +149,17 @@ function AlarmsSection() {
           </span>
         )}
       </div>
+
+      {settings && (
+        <label class={styles.indicatorToggle}>
+          <input
+            type="checkbox"
+            checked={settings.SALARMS}
+            onChange={(e) => instantSave({ SALARMS: (e.target as HTMLInputElement).checked })}
+          />
+          {t.apps.alarmsIndicator}
+        </label>
+      )}
 
       {state?.ringing && (
         <div class={styles.ringingAlert}>

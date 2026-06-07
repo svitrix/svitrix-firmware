@@ -546,6 +546,8 @@ void loadSettings()
     weatherConfig.showUV = Settings.getBool("WAPI_UV", false);
     weatherConfig.uvColor = Settings.getUInt("WAPI_UVCOL", 0x9C27B0);
     weatherConfig.uvDuration = Settings.getUChar("WAPI_UVDUR", 7);
+    weatherConfig.aqiAutoColor = Settings.getBool("WAPI_AQAUTO", true);
+    weatherConfig.uvAutoColor = Settings.getBool("WAPI_UVAUTO", true);
     // Playlist config (legacy, kept for migration)
     playlistConfig.enabled = Settings.getBool("PL_EN", false);
     playlistConfig.items = Settings.getString("PL_ITEMS", "");
@@ -652,6 +654,8 @@ void saveSettings()
     Settings.putBool("WAPI_UV", weatherConfig.showUV);
     Settings.putUInt("WAPI_UVCOL", weatherConfig.uvColor);
     Settings.putUChar("WAPI_UVDUR", weatherConfig.uvDuration);
+    Settings.putBool("WAPI_AQAUTO", weatherConfig.aqiAutoColor);
+    Settings.putBool("WAPI_UVAUTO", weatherConfig.uvAutoColor);
     // Playlist config (legacy)
     Settings.putBool("PL_EN", playlistConfig.enabled);
     Settings.putString("PL_ITEMS", playlistConfig.items);
@@ -783,6 +787,8 @@ String exportSettings()
     doc["WAPI_UV"] = weatherConfig.showUV;
     doc["WAPI_UVCOL"] = weatherConfig.uvColor;
     doc["WAPI_UVDUR"] = weatherConfig.uvDuration;
+    doc["WAPI_AQAUTO"] = weatherConfig.aqiAutoColor;
+    doc["WAPI_UVAUTO"] = weatherConfig.uvAutoColor;
 
     // Playlist (legacy)
     doc["PL_EN"] = playlistConfig.enabled;
@@ -986,6 +992,10 @@ bool importSettings(const char *json)
         weatherConfig.uvColor = doc["WAPI_UVCOL"].as<uint32_t>();
     if (doc.containsKey("WAPI_UVDUR"))
         weatherConfig.uvDuration = doc["WAPI_UVDUR"];
+    if (doc.containsKey("WAPI_AQAUTO"))
+        weatherConfig.aqiAutoColor = doc["WAPI_AQAUTO"];
+    if (doc.containsKey("WAPI_UVAUTO"))
+        weatherConfig.uvAutoColor = doc["WAPI_UVAUTO"];
 
     // Playlist (legacy)
     if (doc.containsKey("PL_EN"))

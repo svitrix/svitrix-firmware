@@ -21,6 +21,22 @@
   gap: 0.5rem;
 }
 
+.indicatorToggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary, #aaa);
+  margin-bottom: 1rem;
+  cursor: pointer;
+}
+
+.indicatorToggle input {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
 .timerDisplay {
   font-size: 2.5rem;
   font-family: monospace;

@@ -1,11 +1,22 @@
 import { useState, useEffect, useMemo } from "preact/hooks";
 import { useSettings } from "../../../context/SettingsContext";
 import { Select, Card, FormRow, Button } from "../../../components/ui";
-import { getWeatherData, forceWeatherFetch } from "../../../api/client";
+import { getWeatherData, forceWeatherFetch, getRotation, saveRotation } from "../../../api/client";
 import { toast } from "../../../components/Toast";
 import { useT } from "../../../i18n";
-import type { WeatherData } from "../../../api/types";
+import type { WeatherData, RotationItem } from "../../../api/types";
 import styles from "./sections.module.css";
+
+const WEATHER_APPS = ["OutdoorTemp", "OutdoorHum", "Pressure", "AirQuality", "UV"];
+
+function generateId(): string {
+  const chars = "0123456789abcdef";
+  let id = "";
+  for (let i = 0; i < 8; i++) {
+    id += chars[Math.floor(Math.random() * 16)];
+  }
+  return id;
+}
 
 export function WeatherApiSection() {
   const { weatherConfig, updateWeatherConfig, saveWeatherConfig } = useSettings();
@@ -37,7 +48,32 @@ export function WeatherApiSection() {
 
   async function handleSave() {
     setSaving(true);
+    const hadApiKey = Boolean(weatherConfig?.apiKey);
     await saveWeatherConfig(t.settings.weatherApiSaved);
+
+    // Auto-add weather apps if API key was just configured
+    if (!hadApiKey && w.apiKey) {
+      try {
+        const rotation = await getRotation();
+        const existingNames = new Set(rotation.items.map((i: RotationItem) => i.name));
+        const missing = WEATHER_APPS.filter(name => !existingNames.has(name));
+        if (missing.length > 0) {
+          const newItems: RotationItem[] = missing.map(name => ({
+            id: generateId(),
+            type: "app" as const,
+            name,
+            enabled: true,
+            duration: 0,
+            color: 0,
+            icon: "",
+          }));
+          await saveRotation({ items: [...rotation.items, ...newItems] });
+          toast(t.settings.weatherAppsAdded || "Weather apps added");
+        }
+      } catch {
+        // Ignore rotation errors
+      }
+    }
     setSaving(false);
   }
 
