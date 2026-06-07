@@ -576,6 +576,13 @@ void DisplayManager_::tick()
             }
         }
     }
+    else if (!appConfig.showAlarms && lastHasEnabledAlarms)
+    {
+        // Turn off indicator when showAlarms is disabled
+        lastHasEnabledAlarms = false;
+        lastAlarmRinging = false;
+        ui->setIndicator3State(false);
+    }
 }
 
 bool newYearEventTriggered = false;

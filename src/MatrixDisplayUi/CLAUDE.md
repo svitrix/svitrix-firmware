@@ -106,7 +106,7 @@ Default: ~5s per app, ~500ms per transition at 30 FPS.
 |-----------|----------|---------------|
 | 1 | Top-right (31,0), (30,0), (31,1) | Red |
 | 2 | Mid-right (31,3), (31,4) | Green |
-| 3 | Bottom-right (31,7), (31,6), (30,7) | Blue |
+| 3 | Bottom-right (31,7), (30,7), (31,6) | Red (alarm) |
 
 Each supports 3 modes:
 - **Solid** — blink=0, fade=0
