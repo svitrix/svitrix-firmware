@@ -499,23 +499,17 @@ void DisplayManager_::gammaCorrection()
     {
         leds[i] = applyGamma_video(leds[i], gamma);
     }
+
     if (displayConfig.mirrorDisplay)
     {
         for (int y = 0; y < MATRIX_HEIGHT; y++)
         {
             for (int x = 0; x < MATRIX_WIDTH / 2; x++)
             {
-                int left = y * MATRIX_WIDTH + x;
-                int right = y * MATRIX_WIDTH + (MATRIX_WIDTH - 1 - x);
-                CRGB temp = leds[left];
-                leds[left] = leds[right];
-                leds[right] = temp;
+                int index1 = y * MATRIX_WIDTH + x;
+                int index2 = y * MATRIX_WIDTH + (MATRIX_WIDTH - x - 1);
+                std::swap(leds[index1], leds[index2]);
             }
         }
     }
-}
-
-void DisplayManager_::ResetCustomApps()
-{
-    resetAppTime = millis();
 }
