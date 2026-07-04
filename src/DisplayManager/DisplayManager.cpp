@@ -266,7 +266,15 @@ void DisplayManager_::tick()
                 if (activePolicy_->overridesTextColor(col))
                     setTextColor(col);
                 if (activePolicy_->blocksAutoTransition())
+                {
                     setAutoTransition(false);
+                    // When auto-transition is blocked (e.g. night mode),
+                    // switch to the Time app so the display locks on the
+                    // clock screen rather than freezing on a random app.
+                    int timeIndex = findAppIndexByName("Time");
+                    if (timeIndex >= 0)
+                        ui->switchToApp(timeIndex);
+                }
             }
             else
             {
@@ -491,17 +499,23 @@ void DisplayManager_::gammaCorrection()
     {
         leds[i] = applyGamma_video(leds[i], gamma);
     }
-
     if (displayConfig.mirrorDisplay)
     {
         for (int y = 0; y < MATRIX_HEIGHT; y++)
         {
             for (int x = 0; x < MATRIX_WIDTH / 2; x++)
             {
-                int index1 = y * MATRIX_WIDTH + x;
-                int index2 = y * MATRIX_WIDTH + (MATRIX_WIDTH - x - 1);
-                std::swap(leds[index1], leds[index2]);
+                int left = y * MATRIX_WIDTH + x;
+                int right = y * MATRIX_WIDTH + (MATRIX_WIDTH - 1 - x);
+                CRGB temp = leds[left];
+                leds[left] = leds[right];
+                leds[right] = temp;
             }
         }
     }
+}
+
+void DisplayManager_::ResetCustomApps()
+{
+    resetAppTime = millis();
 }
