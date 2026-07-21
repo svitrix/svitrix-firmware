@@ -9,6 +9,8 @@
 
 Preferences Settings;
 
+String lastResetReason;
+
 const char *getID()
 {
     static char macStr[24];

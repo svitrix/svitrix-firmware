@@ -56,3 +56,7 @@ constexpr double movementFactor = 0.5;
 
 void loadSettings();
 void saveSettings();
+
+// Captured once at boot via esp_reset_reason(); mapped via ResetReason service.
+// Read-only after setup(). Empty string before setup() runs.
+extern String lastResetReason;
