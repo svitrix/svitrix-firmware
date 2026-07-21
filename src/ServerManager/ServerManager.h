@@ -33,6 +33,7 @@ class ServerManager_ : public IButtonReporter
     void sendButton(byte btn, bool state) override;
     void erase();
     void sendTCP(String message);
+    void shutdown();
     bool isConnected;
     IPAddress myIP;
 };

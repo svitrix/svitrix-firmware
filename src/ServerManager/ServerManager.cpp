@@ -114,7 +114,11 @@ void addHandler()
         {
             String body = getBody(request);
             request->send(200, "text/plain", "OK");
+            // Turn off display
             smControl_->setPower(false);
+            // Close HTTP server
+            ServerManager.shutdown();
+            // WiFi off + enter deep sleep
             smPower_->sleepParser(body.c_str()); });
     mws.addHandler("/api/loop", HTTP_GET, [](AsyncWebServerRequest *request)
                    { request->send(200, "application/json", smNav_->getAppsAsJson()); });
@@ -517,4 +521,11 @@ void ServerManager_::sendButton(byte btn, bool state)
         http.POST(payload);
         http.end();
     }
+}
+
+void ServerManager_::shutdown()
+{
+    DEBUG_PRINTLN(F("HTTP server: shutting down..."));
+    server.end();
+    delay(5);
 }

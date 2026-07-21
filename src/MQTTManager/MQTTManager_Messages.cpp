@@ -126,7 +126,12 @@ void processMqttMessage(const String& strTopic, const String& payloadCopy)
         }
         if (doc.containsKey("sleep"))
         {
+            DEBUG_PRINTLN(F("Sleep command received via MQTT"));
+            // Turn off display
             dmControl_->setPower(false);
+            // Close MQTT connection
+            MQTTManager.disconnect();
+            // WiFi off + enter deep sleep
             mqttPower_->sleep(doc["sleep"].as<uint64_t>());
         }
         return;
