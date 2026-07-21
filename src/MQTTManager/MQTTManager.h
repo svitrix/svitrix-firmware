@@ -124,6 +124,10 @@ class MQTTManager_ : public IButtonReporter, public INotifier
     /// @return true if connected, or if no MQTT host is configured.
     bool isConnected();
 
+    /// Gracefully disconnect from MQTT broker before sleep/reboot.
+    /// Closes the socket and stops listening for messages.
+    void disconnect();
+
     /// Retrieve the last known value for a subscribed topic.
     /// @param topic The full MQTT topic to look up.
     /// @return The stored value, or "N/A" if the topic is unknown.

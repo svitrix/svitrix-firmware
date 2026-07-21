@@ -286,3 +286,12 @@ void MQTTManager_::endPublish()
 {
     mqtt.endPublish();
 }
+
+/// Gracefully disconnect from MQTT broker before sleep/reboot.
+/// Closes the socket and stops listening for messages.
+void MQTTManager_::disconnect()
+{
+    DEBUG_PRINTLN(F("MQTT: disconnecting from broker..."));
+    mqtt.disconnect();
+    delay(5);
+}
