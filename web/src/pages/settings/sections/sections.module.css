@@ -6,6 +6,11 @@
   flex-direction: column;
   gap: 10px;
 }
+/* Secondary (non-primary) buttons hug their content and left-align, so the
+   amber primary is the only full-width action per screen (P2-6). */
+.stack > button:not(:global(.btn-primary)) {
+  align-self: flex-start;
+}
 
 /* Stats bar */
 .statsBar {
@@ -13,6 +18,7 @@
   gap: 16px;
   flex-wrap: wrap;
   font-size: 13px;
+  font-variant-numeric: tabular-nums; /* aligned digits (P2-2) */
 }
 
 /* Hint / helper text */
@@ -45,7 +51,10 @@
 .networkItem {
   padding: 4px 8px;
   cursor: pointer;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 0.5px solid var(--separator);
+}
+.networkItem:hover {
+  background: var(--fill);
 }
 
 /* Icon picker preview box */
@@ -53,8 +62,8 @@
   width: 150px;
   height: 150px;
   background: #000;
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
+  border-radius: var(--r-control);
+  border: 0.5px solid var(--separator);
   display: flex;
   align-items: center;
   justify-content: center;

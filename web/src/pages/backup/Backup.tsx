@@ -1,4 +1,5 @@
 import { useState } from "preact/hooks";
+import { useTranslation } from "react-i18next";
 import { listDir, uploadFile, reboot } from "../../api/client";
 import type { FileEntry } from "../../api/types";
 import { toast } from "../../components/Toast";
@@ -21,10 +22,11 @@ async function collectFiles(
 }
 
 export function BackupPage(_props: { path?: string }) {
+  const { t } = useTranslation();
   const [busy, setBusy] = useState("");
 
   async function doBackup() {
-    setBusy("Collecting files...");
+    setBusy(t("backup.collecting"));
     try {
       const files: { path: string; blob: Blob }[] = [];
       await collectFiles("/", files);
@@ -45,54 +47,52 @@ export function BackupPage(_props: { path?: string }) {
       a.download = "svitrix-backup.json";
       a.click();
       URL.revokeObjectURL(a.href);
-      toast("Backup downloaded!");
+      toast(t("backup.backupDownloaded"));
     } catch {
-      toast("Backup failed");
+      toast(t("backup.backupFailed"));
     }
     setBusy("");
   }
 
   async function doRestore(file: File) {
-    setBusy("Restoring...");
+    setBusy(t("backup.restoring"));
     try {
       const text = await file.text();
       const backup: Record<string, string> = JSON.parse(text);
       const paths = Object.keys(backup);
       let done = 0;
       for (const path of paths) {
-        setBusy(`Restoring ${++done}/${paths.length}...`);
+        setBusy(
+          t("backup.restoringProgress", { done: ++done, total: paths.length }),
+        );
         const binary = atob(backup[path]);
         const bytes = new Uint8Array(binary.length);
         for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
         await uploadFile(path, new Blob([bytes]));
       }
-      toast("Restore complete! Rebooting...");
+      toast(t("backup.restoreComplete"));
       await reboot();
     } catch {
-      toast("Restore failed");
+      toast(t("backup.restoreFailed"));
     }
     setBusy("");
   }
 
   return (
     <div class={styles.page}>
-      <h2>Backup & Restore</h2>
+      <h2>{t("backup.title")}</h2>
 
       <div class="card">
-        <h3 class={styles.cardHeading}>Backup</h3>
-        <p class={styles.hint}>
-          Download all files from device filesystem as a JSON backup.
-        </p>
+        <h3 class={styles.cardHeading}>{t("backup.backupHeading")}</h3>
+        <p class={styles.hint}>{t("backup.backupHint")}</p>
         <button class="btn-primary" onClick={doBackup} disabled={!!busy}>
-          {busy || "Download Backup"}
+          {busy || t("backup.downloadBackup")}
         </button>
       </div>
 
       <div class="card">
-        <h3 class={styles.cardHeading}>Restore</h3>
-        <p class={styles.hint}>
-          Upload a previously downloaded backup file. Device will reboot after restore.
-        </p>
+        <h3 class={styles.cardHeading}>{t("backup.restoreHeading")}</h3>
+        <p class={styles.hint}>{t("backup.restoreHint")}</p>
         <input
           type="file"
           accept=".json"

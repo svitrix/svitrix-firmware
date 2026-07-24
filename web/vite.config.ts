@@ -40,6 +40,14 @@ export default defineConfig({
       deleteOriginalAssets: true,
     }),
   ],
+  resolve: {
+    alias: {
+      // Redirect the react-i18next specifier to our lightweight signals-based
+      // shim so existing `import { useTranslation } from "react-i18next"` call
+      // sites keep working unchanged.
+      "react-i18next": path.resolve(__dirname, "src/i18n/index.ts"),
+    },
+  },
   build: {
     outDir: path.resolve(__dirname, "../data"),
     emptyOutDir: true,

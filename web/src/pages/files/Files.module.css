@@ -8,94 +8,217 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
 }
-
 .headerBtns {
   display: flex;
-  gap: 6px;
+  gap: 8px;
 }
-
 .uploadLabel {
   display: inline-flex;
   align-items: center;
   cursor: pointer;
-  padding: 8px 16px;
-  border-radius: var(--radius);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--r-control);
+  font-weight: 600;
 }
 
+/* --- Breadcrumb ---------------------------------------------------------- */
 .breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  overflow-x: auto;
+  scrollbar-width: none;
   font-size: 13px;
-  color: var(--text-dim);
+  white-space: nowrap;
+}
+.breadcrumb::-webkit-scrollbar {
+  display: none;
+}
+.crumbGroup {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+.crumb {
+  display: inline-flex;
+  align-items: center;
+  border: none;
+  background: none;
+  box-shadow: none;
+  padding: 4px 6px;
+  border-radius: var(--r-inner);
+  color: var(--label-secondary);
+  cursor: pointer;
+  font: inherit;
+}
+.crumb:hover {
+  background: var(--fill);
+  color: var(--label);
+}
+.crumbCurrent,
+.crumbCurrent:hover {
+  color: var(--label);
+  font-weight: 600;
+  background: none;
+  cursor: default;
+}
+.chevron {
+  color: var(--label-tertiary);
+  flex: 0 0 auto;
 }
 
-.breadcrumbLink {
-  cursor: pointer;
-  color: var(--accent);
+/* --- Drop zone + list ---------------------------------------------------- */
+.dropWrap {
+  position: relative;
+}
+.dropOverlay {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  border-radius: var(--r-card);
+  border: 2px dashed var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: var(--label);
+  font-weight: 600;
+  pointer-events: none;
 }
 
 .fileList {
-  padding: 0;
+  padding: 4px 0;
 }
 
-.fileListRow {
-  padding: 8px 16px;
-  border-bottom: 1px solid var(--border);
+.row,
+.rowNav {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 4px 14px;
+  border-bottom: 0.5px solid var(--separator);
 }
-
-.fileListRowNav {
-  padding: 8px 16px;
-  border-bottom: 1px solid var(--border);
+.row:last-child,
+.rowNav:last-child {
+  border-bottom: none;
+}
+.rowNav {
+  border: none;
+  background: none;
+  box-shadow: none;
+  width: 100%;
+  color: var(--label-secondary);
   cursor: pointer;
-  color: var(--text-dim);
+  font: inherit;
+  border-bottom: 0.5px solid var(--separator);
+}
+.rowNav:hover {
+  background: var(--fill);
 }
 
-.fileName {
+.nameBtn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1 1 auto;
+  min-width: 0;
+  border: none;
+  background: none;
+  box-shadow: none;
+  padding: 4px 0;
+  color: var(--label);
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+.name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lock {
+  color: var(--label-secondary);
+  flex: 0 0 auto;
+}
+.chev {
+  color: var(--label-tertiary);
+  margin-left: 2px;
+}
+
+/* --- Row actions (revealed on hover / focus / touch) --------------------- */
+.actions {
+  display: flex;
+  gap: 2px;
+  flex: 0 0 auto;
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease-out);
+}
+.row:hover .actions,
+.row:focus-within .actions {
+  opacity: 1;
+}
+@media (pointer: coarse) {
+  .actions {
+    opacity: 0.85;
+  }
+}
+.iconBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  background: none;
+  box-shadow: none;
+  border-radius: var(--r-inner);
+  color: var(--label-secondary);
   cursor: pointer;
 }
-
-.fileNameDir {
-  color: var(--accent);
+.iconBtn:hover {
+  background: var(--fill);
+  color: var(--label);
+}
+.iconDelete:hover {
+  color: var(--red);
+  background: color-mix(in srgb, var(--red) 12%, transparent);
 }
 
-.fileNameFile {
-  color: var(--text);
-}
-
-.btnDel {
-  padding: 2px 8px;
-  font-size: 12px;
-}
-
-.emptyDir {
-  padding: 16px;
-  color: var(--text-dim);
+.state {
+  padding: 20px;
   text-align: center;
+  color: var(--label-secondary);
 }
 
+/* --- Editor -------------------------------------------------------------- */
 .editorHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  gap: 12px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
 }
-
 .editorPath {
   font-size: 13px;
-  color: var(--text-dim);
+  color: var(--label-secondary);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-
 .editorBtns {
   display: flex;
-  gap: 6px;
+  gap: 8px;
 }
-
 .textarea {
   width: 100%;
-  min-height: 300px;
-  font-family: monospace;
+  min-height: 320px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 13px;
+  line-height: 1.5;
   resize: vertical;
 }

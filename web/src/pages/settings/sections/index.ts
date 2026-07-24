@@ -1,4 +1,3 @@
-export { StatsBar } from "./StatsBar";
 export { DisplaySection } from "./DisplaySection";
 export { AppsSection } from "./AppsSection";
 export { TimeDateSection } from "./TimeDateSection";

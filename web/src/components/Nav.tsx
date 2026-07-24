@@ -1,5 +1,7 @@
 import { route } from "preact-router";
 import { signal } from "@preact/signals";
+import { useTranslation } from "react-i18next";
+import { supportedLanguages } from "../i18n";
 import styles from "./Nav.module.css";
 
 const currentPath = signal(window.location.pathname);
@@ -19,15 +21,17 @@ window.addEventListener("popstate", () => {
 });
 
 const links = [
-  { href: "/", label: "Screen" },
-  { href: "/settings", label: "Settings" },
-  { href: "/datafetcher", label: "Data" },
-  { href: "/files", label: "Files" },
-  { href: "/backup", label: "Backup" },
-  { href: "/update", label: "Update" },
-];
+  { href: "/", key: "nav.screen" },
+  { href: "/stats", key: "nav.stats" },
+  { href: "/settings", key: "nav.settings" },
+  { href: "/datafetcher", key: "nav.data" },
+  { href: "/files", key: "nav.files" },
+  { href: "/backup", key: "nav.backup" },
+  { href: "/update", key: "nav.update" },
+] as const;
 
 export function Nav() {
+  const { t, i18n } = useTranslation();
   const path = currentPath.value;
 
   function navigate(e: Event, href: string) {
@@ -38,7 +42,7 @@ export function Nav() {
 
   return (
     <nav class={styles.nav}>
-      <strong class={styles.logo}>Svitrix</strong>
+      <strong class={styles.logo}>{t("nav.logo")}</strong>
       {links.map((l) => (
         <a
           key={l.href}
@@ -46,16 +50,33 @@ export function Nav() {
           onClick={(e: Event) => navigate(e, l.href)}
           class={`${styles.link}${path === l.href ? ` ${styles.linkActive}` : ""}`}
         >
-          {l.label}
+          {t(l.key)}
         </a>
       ))}
-      <button
-        class={`theme-toggle ${styles.themeToggle}`}
-        onClick={toggleTheme}
-        title="Toggle theme"
-      >
-        {theme.value === "dark" ? "\u2600" : "\u263D"}
-      </button>
+      <div class={styles.navRight}>
+        <select
+          class={styles.langSelect}
+          value={i18n.resolvedLanguage}
+          onChange={(e: Event) =>
+            i18n.changeLanguage((e.target as HTMLSelectElement).value)
+          }
+          title={t("nav.language")}
+          aria-label={t("nav.language")}
+        >
+          {supportedLanguages.map((l) => (
+            <option key={l.code} value={l.code}>
+              {l.label}
+            </option>
+          ))}
+        </select>
+        <button
+          class="theme-toggle"
+          onClick={toggleTheme}
+          title={t("nav.toggleTheme")}
+        >
+          {theme.value === "dark" ? "\u2600" : "\u263D"}
+        </button>
+      </div>
     </nav>
   );
 }

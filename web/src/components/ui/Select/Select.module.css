@@ -1,0 +1,69 @@
+/* Two-layer Liquid Glass Select (see web/LIQUID-GLASS-COMPONENTS.md §6).
+   Outer shell = 1px gradient glass rim (same gradient as TextField); the native
+   <select> is the inner stabilized plate that keeps the value legible over the
+   vivid scene. The chevron is drawn with CSS borders on .shell::after (no image
+   → cannot tile, survives the focus recipe, theme-aware via --label-secondary). */
+
+.shell {
+  position: relative;
+  border-radius: var(--r-control);
+  padding: 1px;
+  background: var(--glass-shell); /* theme-aware rim (dark: white / light: dark edge) */
+}
+/* Custom chevron — a rotated square with two borders = a clean "v". */
+.shell::after {
+  content: "";
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  border-right: 2px solid var(--label-secondary);
+  border-bottom: 2px solid var(--label-secondary);
+  transform: translateY(-65%) rotate(45deg);
+  pointer-events: none;
+}
+
+/* Class overrides the global `input, select, textarea` element rules
+   (class > element specificity). Inner plate = dense, legible surface. */
+.select {
+  display: block;
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  border: none;
+  border-radius: calc(var(--r-control) - 1px);
+  /* right padding clears the chevron drawn by .shell::after */
+  padding: var(--space-3) calc(var(--space-4) + 20px) var(--space-3) var(--space-4);
+  min-height: 44px;
+  font: inherit;
+  color: var(--text);
+  background: var(--field-plate); /* stabilized plate — legible on any background */
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.22); /* recessed */
+  outline: none;
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-out),
+              box-shadow var(--dur-fast) var(--ease-out);
+}
+
+/* Focus: plate goes solid (max legibility) + crisp accent ring ignoring the bg.
+   A style/recipe change, not just a colour swap. */
+.select:focus {
+  background: var(--surface-tint);
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.12),
+    0 0 0 3px color-mix(in srgb, var(--accent) 28%, transparent);
+}
+
+/* Native <option> list can't be styled cross-browser; nudge the few engines
+   that honour it (Firefox / some OS combos) toward the plate palette. */
+.select option {
+  color: var(--text);
+  background: var(--surface-tint);
+}
+
+.select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

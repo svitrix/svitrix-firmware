@@ -1,0 +1,36 @@
+import type en from "../en/files";
+
+const nl: typeof en = {
+  title: "Bestanden",
+  newDir: "Nieuwe map",
+  emptyDir: "Lege map",
+  del: "Wis",
+  dirNamePrompt: "Mapnaam:",
+  cannotRead: "Kan bestand niet lezen",
+  saved: "Opgeslagen!",
+  saveFailed: "Opslaan mislukt",
+  deleted: "Verwijderd",
+  uploaded: "Geüpload!",
+  typeDir: "map",
+  typeFile: "bestand",
+  deleteConfirm: '{{type}} "{{path}}" verwijderen?',
+  newFolder: "Nieuwe map",
+  folderName: "Mapnaam",
+  create: "Aanmaken",
+  deleteTitle: "{{type}} verwijderen?",
+  deleteBody: '"{{name}}" permanent verwijderen? Dit kan niet ongedaan worden gemaakt.',
+  protectedWarn: "Dit is een systeemconfiguratiebestand — verwijderen kan het apparaat beschadigen.",
+  protected: "Beschermd systeembestand",
+  uploadHint: "sleep bestanden hierheen of druk op Uploaden",
+  dropHere: "Zet bestanden neer om te uploaden",
+  loadError: "Kan deze map niet laden.",
+  retry: "Opnieuw",
+  unsavedTitle: "Niet-opgeslagen wijzigingen negeren?",
+  unsavedBody: "Je wijzigingen aan dit bestand zijn niet opgeslagen.",
+  discard: "Negeren",
+  home: "Hoofdmap",
+  breadcrumb: "Kruimelpad",
+  downloadFailed: "Downloaden mislukt",
+};
+
+export default nl;

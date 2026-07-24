@@ -1,10 +1,12 @@
 import { useState } from "preact/hooks";
+import { useTranslation } from "react-i18next";
 import { scanWifi, connectWifi } from "../../../api/client";
 import { toast } from "../../../components/Toast";
 import { TextField, Card, FormRow, Button } from "../../../components/ui";
 import styles from "./sections.module.css";
 
 export function WifiSection({ apMode }: { apMode?: boolean }) {
+  const { t } = useTranslation();
   const [networks, setNetworks] = useState<Array<{ ssid: string; rssi: number; secure: number }>>([]);
   const [scanning, setScanning] = useState(false);
   const [wifiSsid, setWifiSsid] = useState("");
@@ -16,34 +18,32 @@ export function WifiSection({ apMode }: { apMode?: boolean }) {
       const nets = await scanWifi();
       setNetworks(nets.sort((a, b) => b.rssi - a.rssi));
     } catch {
-      toast("Scan failed");
+      toast(t("settings.wifi.scanFailed"));
     }
     setScanning(false);
   }
 
   async function doConnect() {
-    if (!wifiSsid) { toast("Enter SSID"); return; }
+    if (!wifiSsid) { toast(t("settings.wifi.enterSsid")); return; }
     try {
       await connectWifi(wifiSsid, wifiPass);
-      toast("Connecting to WiFi...");
+      toast(t("settings.wifi.connecting"));
       setTimeout(() => {
-        toast("Device rebooting... check matrix for new IP");
+        toast(t("settings.wifi.rebooting"));
         fetch("/restart").catch(() => {});
       }, 3000);
     } catch {
-      toast("Connection failed");
+      toast(t("settings.wifi.connectionFailed"));
     }
   }
 
-  const subtitle = apMode
-    ? "Connect to your home WiFi network. After connecting, the device will reboot with full settings available."
-    : undefined;
+  const subtitle = apMode ? t("settings.wifi.apSubtitle") : undefined;
 
   return (
-    <Card title="WiFi" subtitle={subtitle}>
+    <Card title={t("settings.wifi.title")} subtitle={subtitle}>
       <div class={styles.stack}>
         <Button onClick={doScan} disabled={scanning}>
-          {scanning ? "Scanning..." : "Scan Networks"}
+          {scanning ? t("settings.wifi.scanning") : t("settings.wifi.scan")}
         </Button>
         {networks.length > 0 && (
           <div class={styles.networkList}>
@@ -59,10 +59,10 @@ export function WifiSection({ apMode }: { apMode?: boolean }) {
           </div>
         )}
         <FormRow>
-          <TextField label="SSID" value={wifiSsid} onChange={setWifiSsid} />
-          <TextField label="Password" value={wifiPass} onChange={setWifiPass} type="password" />
+          <TextField label={t("settings.wifi.ssid")} value={wifiSsid} onChange={setWifiSsid} placeholder={t("settings.wifi.ssidPlaceholder")} />
+          <TextField label={t("settings.wifi.password")} value={wifiPass} onChange={setWifiPass} type="password" placeholder="••••••••" />
         </FormRow>
-        <Button variant="primary" onClick={doConnect}>Connect</Button>
+        <Button variant="primary" onClick={doConnect}>{t("settings.wifi.connect")}</Button>
       </div>
     </Card>
   );

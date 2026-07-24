@@ -1,4 +1,5 @@
 import { useState } from "preact/hooks";
+import { useTranslation } from "react-i18next";
 import { useSettings } from "../../../context/SettingsContext";
 import { Toggle, Slider, ColorField, Card, FormRow, Button } from "../../../components/ui";
 import styles from "./sections.module.css";
@@ -15,6 +16,7 @@ function timeToMinutes(time: string): number {
 }
 
 export function NightModeSection() {
+  const { t } = useTranslation();
   const { settings, updateSettings, saveDisplaySettings } = useSettings();
   const [saving, setSaving] = useState(false);
   if (!settings) return null;
@@ -34,10 +36,10 @@ export function NightModeSection() {
   }
 
   return (
-    <Card title="Night Mode">
+    <Card title={t("settingsDisplay.nightMode.title")}>
       <div class={styles.stack}>
         <Toggle
-          label="Enable Night Mode"
+          label={t("settingsDisplay.nightMode.enable")}
           checked={s.NMODE}
           onChange={(v) => updateSettings({ NMODE: v })}
         />
@@ -45,7 +47,7 @@ export function NightModeSection() {
           <>
             <FormRow>
               <div class="form-group">
-                <label htmlFor="night-start">Start</label>
+                <label htmlFor="night-start">{t("settingsDisplay.nightMode.start")}</label>
                 <input
                   id="night-start"
                   type="time"
@@ -56,7 +58,7 @@ export function NightModeSection() {
                 />
               </div>
               <div class="form-group">
-                <label htmlFor="night-end">End</label>
+                <label htmlFor="night-end">{t("settingsDisplay.nightMode.end")}</label>
                 <input
                   id="night-end"
                   type="time"
@@ -68,26 +70,26 @@ export function NightModeSection() {
               </div>
             </FormRow>
             <Slider
-              label="Night Brightness"
+              label={t("settingsDisplay.nightMode.nightBrightness")}
               min={1}
               max={50}
               value={s.NBRI}
               onChange={(v) => updateSettings({ NBRI: v })}
             />
             <ColorField
-              label="Night Color"
+              label={t("settingsDisplay.nightMode.nightColor")}
               value={s.NCOL}
               onChange={(v) => updateSettings({ NCOL: v })}
             />
             <Toggle
-              label="Block Auto-Transition"
+              label={t("settingsDisplay.nightMode.blockAutoTransition")}
               checked={s.NBTRANS}
               onChange={(v) => updateSettings({ NBTRANS: v })}
             />
           </>
         )}
         <Button variant="primary" onClick={handleSave} loading={saving}>
-          Save Night Mode
+          {t("settingsDisplay.nightMode.save")}
         </Button>
       </div>
     </Card>

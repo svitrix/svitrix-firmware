@@ -1,7 +1,7 @@
+import { useTranslation } from "react-i18next";
 import { SettingsProvider, useSettings } from "../../context/SettingsContext";
 import styles from "./Settings.module.css";
 import {
-  StatsBar,
   WifiSection,
   NetworkSection,
   MqttSection,
@@ -20,8 +20,9 @@ import {
 
 function SettingsContent() {
   const { settings, apiAvailable, loading } = useSettings();
+  const { t } = useTranslation();
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <p>{t("common.loading")}</p>;
 
   if (!settings && !apiAvailable) {
     return (
@@ -31,11 +32,10 @@ function SettingsContent() {
     );
   }
 
-  if (!settings) return <p>Loading...</p>;
+  if (!settings) return <p>{t("common.loading")}</p>;
 
   return (
     <div class={styles.page}>
-      <StatsBar />
       <WifiSection />
       <NetworkSection />
       <MqttSection />

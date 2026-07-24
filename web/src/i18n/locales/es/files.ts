@@ -1,0 +1,36 @@
+import type en from "../en/files";
+
+const es: typeof en = {
+  title: "Archivos",
+  newDir: "Nueva carpeta",
+  emptyDir: "Carpeta vacía",
+  del: "Elim.",
+  dirNamePrompt: "Nombre de la carpeta:",
+  cannotRead: "No se puede leer el archivo",
+  saved: "¡Guardado!",
+  saveFailed: "Error al guardar",
+  deleted: "Eliminado",
+  uploaded: "¡Subido!",
+  typeDir: "carpeta",
+  typeFile: "archivo",
+  deleteConfirm: '¿Eliminar {{type}} "{{path}}"?',
+  newFolder: "Nueva carpeta",
+  folderName: "Nombre de la carpeta",
+  create: "Crear",
+  deleteTitle: "¿Eliminar {{type}}?",
+  deleteBody: '¿Eliminar «{{name}}» de forma permanente? Esta acción no se puede deshacer.',
+  protectedWarn: "Es un archivo de configuración del sistema — eliminarlo puede dañar el dispositivo.",
+  protected: "Archivo de sistema protegido",
+  uploadHint: "arrastra archivos aquí o pulsa Subir",
+  dropHere: "Suelta archivos para subir",
+  loadError: "No se pudo cargar esta carpeta.",
+  retry: "Reintentar",
+  unsavedTitle: "¿Descartar cambios sin guardar?",
+  unsavedBody: "Tus cambios en este archivo no se han guardado.",
+  discard: "Descartar",
+  home: "Inicio",
+  breadcrumb: "Ruta de navegación",
+  downloadFailed: "Error al descargar",
+};
+
+export default es;

@@ -1,0 +1,122 @@
+/* Liquid Glass slider (see web/LIQUID-GLASS-COMPONENTS.md §4).
+   Recessed capsule track with accent fill up to the value + raised glass thumb
+   that scales up while dragging. Cross-browser: WebKit/Blink use ::-webkit-*,
+   Firefox uses ::-moz-*. The accent fill is driven by the inline --pct custom
+   property so it renders identically in every engine.
+
+   The `.range` class overrides the global `input[type="range"]` element rule
+   (class > element specificity), replacing the native accent-color fill. */
+
+.range {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  display: block;
+  width: 100%;
+  /* Thin track, but a comfortable ~44px vertical hit area for touch. */
+  height: 44px;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  outline: none;
+  cursor: pointer;
+  /* consumed by ::-*-track and ::-*-thumb */
+  --pct: 0%;
+  --track-h: 6px;
+  --thumb-d: 20px;
+}
+
+/* ---- Recessed track — WebKit / Blink -------------------------------------- */
+.range::-webkit-slider-runnable-track {
+  height: var(--track-h);
+  border-radius: var(--r-pill);
+  /* accent fill up to --pct, neutral track fill after */
+  background: linear-gradient(
+    90deg,
+    var(--accent) 0 var(--pct),
+    var(--fill) var(--pct)
+  );
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.22);
+}
+
+/* ---- Recessed track — Firefox --------------------------------------------- */
+.range::-moz-range-track {
+  height: var(--track-h);
+  border-radius: var(--r-pill);
+  background: var(--fill);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.22);
+}
+/* Firefox paints the filled portion with ::-moz-range-progress. */
+.range::-moz-range-progress {
+  height: var(--track-h);
+  border-radius: var(--r-pill);
+  background: var(--accent);
+}
+
+/* ---- Raised glass thumb — WebKit / Blink ---------------------------------- */
+.range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: var(--thumb-d);
+  height: var(--thumb-d);
+  border-radius: 50%;
+  border: none;
+  background: #fff;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  /* center the thumb on the thin track */
+  margin-top: calc((var(--track-h) - var(--thumb-d)) / 2);
+  transition: transform var(--dur-fast) var(--ease-spring);
+}
+
+/* ---- Raised glass thumb — Firefox ----------------------------------------- */
+.range::-moz-range-thumb {
+  width: var(--thumb-d);
+  height: var(--thumb-d);
+  border-radius: 50%;
+  border: none;
+  background: #fff;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  transition: transform var(--dur-fast) var(--ease-spring);
+}
+
+/* ---- Scale-on-drag — energy lives in the interaction ---------------------- */
+.range:active::-webkit-slider-thumb {
+  transform: scale(1.15);
+}
+.range:active::-moz-range-thumb {
+  transform: scale(1.15);
+}
+
+/* Focus ring that ignores the background (accent, structural). */
+.range:focus-visible::-webkit-slider-thumb {
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+.range:focus-visible::-moz-range-thumb {
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+/* Reduced motion: no scale, no transition. */
+@media (prefers-reduced-motion: reduce) {
+  .range::-webkit-slider-thumb,
+  .range::-moz-range-thumb {
+    transition: none;
+  }
+  .range:active::-webkit-slider-thumb {
+    transform: none;
+  }
+  .range:active::-moz-range-thumb {
+    transform: none;
+  }
+}

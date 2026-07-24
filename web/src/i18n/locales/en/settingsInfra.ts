@@ -1,0 +1,50 @@
+export default {
+  wifi: {
+    title: "WiFi",
+    apSubtitle:
+      "Connect to your home WiFi network. After connecting, the device will reboot with full settings available.",
+    scan: "Scan Networks",
+    scanning: "Scanning...",
+    connect: "Connect",
+    ssid: "SSID",
+    ssidPlaceholder: "Network name",
+    password: "Password",
+    scanFailed: "Scan failed",
+    enterSsid: "Enter SSID",
+    connecting: "Connecting to WiFi...",
+    rebooting: "Device rebooting... check matrix for new IP",
+    connectionFailed: "Connection failed",
+  },
+  network: {
+    title: "Network",
+    staticIp: "Static IP",
+    localIp: "Local IP",
+    gateway: "Gateway",
+    subnet: "Subnet",
+    primaryDns: "Primary DNS",
+  },
+  mqtt: {
+    title: "MQTT",
+    broker: "Broker",
+    port: "Port",
+    username: "Username",
+    password: "Password",
+    prefix: "Prefix",
+    haDiscovery: "Home Assistant Discovery",
+  },
+  ntp: {
+    title: "NTP & Timezone",
+    server: "NTP Server",
+    timezone: "Timezone",
+    hint: "Find your timezone at",
+  },
+  auth: {
+    title: "Authentication",
+    username: "Username",
+    password: "Password",
+    hint: "Leave empty to disable HTTP authentication.",
+  },
+  infra: {
+    save: "Save Network/MQTT/Time/Auth",
+  },
+};

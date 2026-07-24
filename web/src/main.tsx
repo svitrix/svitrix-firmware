@@ -4,10 +4,12 @@ import { Nav } from "./components/Nav";
 import { ToastContainer } from "./components/Toast";
 import { ScreenPage } from "./pages/screen";
 import { SettingsPage } from "./pages/settings";
+import { StatsPage } from "./pages/stats";
 import { DataFetcherPage } from "./pages/data-fetcher";
 import { BackupPage } from "./pages/backup";
 import { UpdatePage } from "./pages/update";
 import { FilesPage } from "./pages/files";
+import "./i18n";
 import "./styles/global.css";
 import styles from "./main.module.css";
 
@@ -18,6 +20,7 @@ function App() {
       <main class={styles.main}>
         <Router>
           <ScreenPage path="/" />
+          <StatsPage path="/stats" />
           <SettingsPage path="/settings" />
           <DataFetcherPage path="/datafetcher" />
           <BackupPage path="/backup" />

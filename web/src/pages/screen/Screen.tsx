@@ -1,4 +1,5 @@
 import { useRef, useEffect } from "preact/hooks";
+import { useTranslation } from "react-i18next";
 import { getScreen, nextApp, previousApp } from "../../api/client";
 import styles from "./Screen.module.css";
 
@@ -8,6 +9,7 @@ const CELL = 33;
 const PIX = 29;
 
 export function ScreenPage(_props: { path?: string; default?: boolean }) {
+  const { t } = useTranslation();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const running = useRef(true);
 
@@ -59,9 +61,9 @@ export function ScreenPage(_props: { path?: string; default?: boolean }) {
   return (
     <div>
       <div class={styles.controls}>
-        <button onClick={() => previousApp()}>&#9664; Prev</button>
-        <button onClick={() => nextApp()}>Next &#9654;</button>
-        <button onClick={downloadPng}>Download PNG</button>
+        <button onClick={() => previousApp()}>&#9664; {t("screen.prevApp")}</button>
+        <button onClick={() => nextApp()}>{t("screen.nextApp")} &#9654;</button>
+        <button onClick={downloadPng}>{t("screen.downloadPng")}</button>
       </div>
       <canvas
         ref={canvasRef}

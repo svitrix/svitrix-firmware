@@ -1,9 +1,11 @@
 import { useState } from "preact/hooks";
+import { useTranslation } from "react-i18next";
 import { useSettings } from "../../../context/SettingsContext";
 import { Toggle, TextField, ColorField, Select, Card, FormRow, Button } from "../../../components/ui";
 import styles from "./sections.module.css";
 
 export function TimeDateSection() {
+  const { t } = useTranslation();
   const { settings, updateSettings, saveDisplaySettings } = useSettings();
   const [saving, setSaving] = useState(false);
   if (!settings) return null;
@@ -22,45 +24,45 @@ export function TimeDateSection() {
   }
 
   return (
-    <Card title="Time & Date Format">
+    <Card title={t("settingsDisplay.timeDate.title")}>
       <div class={styles.stack}>
         <FormRow>
-          <TextField label="Time Format" value={s.TFORMAT} onChange={(v) => updateSettings({ TFORMAT: v })} />
-          <TextField label="Date Format" value={s.DFORMAT} onChange={(v) => updateSettings({ DFORMAT: v })} />
+          <TextField label={t("settingsDisplay.timeDate.timeFormat")} value={s.TFORMAT} onChange={(v) => updateSettings({ TFORMAT: v })} />
+          <TextField label={t("settingsDisplay.timeDate.dateFormat")} value={s.DFORMAT} onChange={(v) => updateSettings({ DFORMAT: v })} />
         </FormRow>
         <Select
-          label="Time Mode"
+          label={t("settingsDisplay.timeDate.timeMode")}
           value={s.TMODE}
           options={[
-            { value: 0, label: "Plain Text" },
-            { value: 1, label: "Calendar" },
-            { value: 2, label: "Calendar Top" },
-            { value: 3, label: "Calendar Alt" },
-            { value: 4, label: "Calendar Alt Top" },
-            { value: 5, label: "Big Digits" },
-            { value: 6, label: "Binary" },
+            { value: 0, label: t("settingsDisplay.timeDate.modePlainText") },
+            { value: 1, label: t("settingsDisplay.timeDate.modeCalendar") },
+            { value: 2, label: t("settingsDisplay.timeDate.modeCalendarTop") },
+            { value: 3, label: t("settingsDisplay.timeDate.modeCalendarAlt") },
+            { value: 4, label: t("settingsDisplay.timeDate.modeCalendarAltTop") },
+            { value: 5, label: t("settingsDisplay.timeDate.modeBigDigits") },
+            { value: 6, label: t("settingsDisplay.timeDate.modeBinary") },
           ]}
           onChange={(v) => updateSettings({ TMODE: v as number })}
         />
-        <Toggle label="Start on Monday" checked={s.SOM} onChange={(v) => updateSettings({ SOM: v })} />
-        <Toggle label="Celsius" checked={s.CEL} onChange={(v) => updateSettings({ CEL: v })} />
+        <Toggle label={t("settingsDisplay.timeDate.startOnMonday")} checked={s.SOM} onChange={(v) => updateSettings({ SOM: v })} />
+        <Toggle label={t("settingsDisplay.timeDate.celsius")} checked={s.CEL} onChange={(v) => updateSettings({ CEL: v })} />
         <FormRow>
-          <ColorField label="Time Color" value={s.TIME_COL} onChange={(v) => updateSettings({ TIME_COL: v })} />
-          <ColorField label="Date Color" value={s.DATE_COL} onChange={(v) => updateSettings({ DATE_COL: v })} />
+          <ColorField label={t("settingsDisplay.timeDate.timeColor")} value={s.TIME_COL} onChange={(v) => updateSettings({ TIME_COL: v })} />
+          <ColorField label={t("settingsDisplay.timeDate.dateColor")} value={s.DATE_COL} onChange={(v) => updateSettings({ DATE_COL: v })} />
         </FormRow>
         <FormRow>
-          <Toggle label="Show Weekday" checked={s.WD} onChange={(v) => updateSettings({ WD: v })} />
+          <Toggle label={t("settingsDisplay.timeDate.showWeekday")} checked={s.WD} onChange={(v) => updateSettings({ WD: v })} />
         </FormRow>
         <FormRow>
-          <ColorField label="Weekday Active" value={s.WDCA} onChange={(v) => updateSettings({ WDCA: v })} />
-          <ColorField label="Weekday Inactive" value={s.WDCI} onChange={(v) => updateSettings({ WDCI: v })} />
+          <ColorField label={t("settingsDisplay.timeDate.weekdayActive")} value={s.WDCA} onChange={(v) => updateSettings({ WDCA: v })} />
+          <ColorField label={t("settingsDisplay.timeDate.weekdayInactive")} value={s.WDCI} onChange={(v) => updateSettings({ WDCI: v })} />
         </FormRow>
         <FormRow>
-          <ColorField label="Cal Header" value={s.CHCOL} onChange={(v) => updateSettings({ CHCOL: v })} />
-          <ColorField label="Cal Text" value={s.CTCOL} onChange={(v) => updateSettings({ CTCOL: v })} />
+          <ColorField label={t("settingsDisplay.timeDate.calHeader")} value={s.CHCOL} onChange={(v) => updateSettings({ CHCOL: v })} />
+          <ColorField label={t("settingsDisplay.timeDate.calText")} value={s.CTCOL} onChange={(v) => updateSettings({ CTCOL: v })} />
         </FormRow>
-        <ColorField label="Cal Body" value={s.CBCOL} onChange={(v) => updateSettings({ CBCOL: v })} />
-        <Button variant="primary" onClick={handleSave} loading={saving}>Save Time & Date</Button>
+        <ColorField label={t("settingsDisplay.timeDate.calBody")} value={s.CBCOL} onChange={(v) => updateSettings({ CBCOL: v })} />
+        <Button variant="primary" onClick={handleSave} loading={saving}>{t("settingsDisplay.timeDate.save")}</Button>
       </div>
     </Card>
   );

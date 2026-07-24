@@ -1,9 +1,11 @@
 import { useState } from "preact/hooks";
+import { useTranslation } from "react-i18next";
 import { useSettings } from "../../../context/SettingsContext";
 import { Toggle, Slider, ColorField, Select, Card, FormRow, Button } from "../../../components/ui";
 import styles from "./sections.module.css";
 
 export function DisplaySection() {
+  const { t } = useTranslation();
   const { settings, effects, updateSettings, saveDisplaySettings } = useSettings();
   const [saving, setSaving] = useState(false);
   if (!settings) return null;
@@ -32,39 +34,39 @@ export function DisplaySection() {
   }
 
   return (
-    <Card title="Display">
+    <Card title={t("settingsDisplay.display.title")}>
       <div class={styles.stack}>
-        <Toggle label="Matrix Power" checked={s.MATP} onChange={(v) => updateSettings({ MATP: v })} />
-        <Toggle label="Auto Brightness" checked={s.ABRI} onChange={(v) => updateSettings({ ABRI: v })} />
-        <Slider label="Brightness" min={0} max={255} value={s.BRI} onChange={(v) => updateSettings({ BRI: v })} />
-        <Slider label="Gamma" min={0.5} max={3} step={0.1} value={s.GAMMA} onChange={(v) => updateSettings({ GAMMA: v })} />
-        <Toggle label="Uppercase" checked={s.UPPERCASE} onChange={(v) => updateSettings({ UPPERCASE: v })} />
-        <ColorField label="Text Color" value={s.TCOL} onChange={(v) => updateSettings({ TCOL: v })} />
+        <Toggle label={t("settingsDisplay.display.matrixPower")} checked={s.MATP} onChange={(v) => updateSettings({ MATP: v })} />
+        <Toggle label={t("settingsDisplay.display.autoBrightness")} checked={s.ABRI} onChange={(v) => updateSettings({ ABRI: v })} />
+        <Slider label={t("settingsDisplay.display.brightness")} min={0} max={255} value={s.BRI} onChange={(v) => updateSettings({ BRI: v })} />
+        <Slider label={t("settingsDisplay.display.gamma")} min={0.5} max={3} step={0.1} value={s.GAMMA} onChange={(v) => updateSettings({ GAMMA: v })} />
+        <Toggle label={t("settingsDisplay.display.uppercase")} checked={s.UPPERCASE} onChange={(v) => updateSettings({ UPPERCASE: v })} />
+        <ColorField label={t("settingsDisplay.display.textColor")} value={s.TCOL} onChange={(v) => updateSettings({ TCOL: v })} />
         <Select
-          label="Background Effect"
+          label={t("settingsDisplay.display.backgroundEffect")}
           value={s.BEFF ?? -1}
           options={[
-            { value: -1, label: "None" },
+            { value: -1, label: t("common.none") },
             ...effects.map((e, i) => ({
               value: i,
-              label: humanize(e.name, `Effect ${i + 1}`),
+              label: humanize(e.name, t("settingsDisplay.display.effectFallback", { n: i + 1 })),
             })),
           ]}
           onChange={(v) => updateSettings({ BEFF: v as number })}
         />
         <FormRow>
           <div class="form-group">
-            <label>Color Correction</label>
+            <label>{t("settingsDisplay.display.colorCorrection")}</label>
             <input type="color" value={s.CCORRECTION}
               onInput={(e) => updateSettings({ CCORRECTION: (e.target as HTMLInputElement).value })} />
           </div>
           <div class="form-group">
-            <label>Color Temperature</label>
+            <label>{t("settingsDisplay.display.colorTemperature")}</label>
             <input type="color" value={s.CTEMP}
               onInput={(e) => updateSettings({ CTEMP: (e.target as HTMLInputElement).value })} />
           </div>
         </FormRow>
-        <Button variant="primary" onClick={handleSave} loading={saving}>Save Display</Button>
+        <Button variant="primary" onClick={handleSave} loading={saving}>{t("settingsDisplay.display.save")}</Button>
       </div>
     </Card>
   );

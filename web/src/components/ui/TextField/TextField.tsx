@@ -1,3 +1,5 @@
+import styles from "./TextField.module.css";
+
 export function TextField({
   label,
   value,
@@ -15,13 +17,16 @@ export function TextField({
   return (
     <div class="form-group">
       <label htmlFor={id}>{label}</label>
-      <input
-        id={id}
-        type={type}
-        value={value}
-        placeholder={placeholder}
-        onInput={(e) => onChange((e.target as HTMLInputElement).value)}
-      />
+      <div class={styles.shell}>
+        <input
+          class={styles.input}
+          id={id}
+          type={type}
+          value={value}
+          placeholder={placeholder}
+          onInput={(e) => onChange((e.target as HTMLInputElement).value)}
+        />
+      </div>
     </div>
   );
 }

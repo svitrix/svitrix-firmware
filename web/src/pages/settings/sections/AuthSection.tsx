@@ -1,19 +1,21 @@
+import { useTranslation } from "react-i18next";
 import { useSettings } from "../../../context/SettingsContext";
 import { TextField, Card, FormRow } from "../../../components/ui";
 import styles from "./sections.module.css";
 
 export function AuthSection() {
   const { config, updateConfig } = useSettings();
+  const { t } = useTranslation();
   if (!config) return null;
 
   return (
-    <Card title="Authentication">
+    <Card title={t("settings.auth.title")}>
       <FormRow>
-        <TextField label="Username" value={config["Auth Username"] || ""} onChange={(v) => updateConfig("Auth Username", v)} />
-        <TextField label="Password" value={config["Auth Password"] || ""} onChange={(v) => updateConfig("Auth Password", v)} type="password" />
+        <TextField label={t("settings.auth.username")} value={config["Auth Username"] || ""} onChange={(v) => updateConfig("Auth Username", v)} />
+        <TextField label={t("settings.auth.password")} value={config["Auth Password"] || ""} onChange={(v) => updateConfig("Auth Password", v)} type="password" />
       </FormRow>
       <p class={styles.hintMt}>
-        Leave empty to disable HTTP authentication.
+        {t("settings.auth.hint")}
       </p>
     </Card>
   );

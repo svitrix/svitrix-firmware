@@ -1,0 +1,30 @@
+import type en from "../en/common";
+
+const de: typeof en = {
+  save: "Speichern",
+  cancel: "Abbrechen",
+  reset: "Zurücksetzen",
+  reboot: "Neustart",
+  delete: "Löschen",
+  edit: "Bearbeiten",
+  add: "Hinzufügen",
+  upload: "Hochladen",
+  download: "Herunterladen",
+  refresh: "Aktualisieren",
+  close: "Schließen",
+  loading: "Lädt...",
+  saving: "Speichert...",
+  enabled: "Aktiviert",
+  disabled: "Deaktiviert",
+  on: "An",
+  off: "Aus",
+  yes: "Ja",
+  no: "Nein",
+  none: "Keine",
+  displaySettingsSaved: "Anzeigeeinstellungen gespeichert!",
+  errorSaving: "Fehler beim Speichern",
+  configSaved: "Konfiguration gespeichert & übernommen!",
+  errorSavingConfig: "Fehler beim Speichern der Konfiguration",
+};
+
+export default de;

@@ -1,0 +1,36 @@
+import type en from "../en/files";
+
+const uk: typeof en = {
+  title: "Файли",
+  newDir: "Нова папка",
+  emptyDir: "Папка порожня",
+  del: "Вид.",
+  dirNamePrompt: "Назва папки:",
+  cannotRead: "Не вдалося прочитати файл",
+  saved: "Збережено!",
+  saveFailed: "Не вдалося зберегти",
+  deleted: "Видалено",
+  uploaded: "Вивантажено!",
+  typeDir: "папку",
+  typeFile: "файл",
+  deleteConfirm: 'Видалити {{type}} "{{path}}"?',
+  newFolder: "Нова папка",
+  folderName: "Назва папки",
+  create: "Створити",
+  deleteTitle: "Видалити {{type}}?",
+  deleteBody: 'Остаточно видалити «{{name}}»? Цю дію не можна скасувати.',
+  protectedWarn: "Це системний файл конфігурації — видалення може зламати пристрій.",
+  protected: "Захищений системний файл",
+  uploadHint: "перетягніть файли сюди або натисніть Вивантажити",
+  dropHere: "Перетягніть файли для вивантаження",
+  loadError: "Не вдалося завантажити цю папку.",
+  retry: "Повторити",
+  unsavedTitle: "Скасувати незбережені зміни?",
+  unsavedBody: "Ваші зміни цього файлу не збережено.",
+  discard: "Відхилити",
+  home: "Корінь",
+  breadcrumb: "Навігаційний ланцюжок",
+  downloadFailed: "Не вдалося завантажити",
+};
+
+export default uk;

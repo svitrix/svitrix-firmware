@@ -1,41 +1,40 @@
 import { useState } from "preact/hooks";
+import { useTranslation } from "react-i18next";
 import { toast } from "../../components/Toast";
 import styles from "./Update.module.css";
 
 export function UpdatePage(_props: { path?: string }) {
+  const { t } = useTranslation();
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState("");
 
   async function handleUpload(file: File) {
     setUploading(true);
-    setProgress("Uploading firmware...");
+    setProgress(t("update.uploading"));
     try {
       const form = new FormData();
       form.append("update", file);
       const res = await fetch("/update", { method: "POST", body: form });
       if (res.ok) {
-        setProgress("Upload complete! Device is rebooting...");
-        toast("Firmware uploaded!");
+        setProgress(t("update.uploadComplete"));
+        toast(t("update.toastUploaded"));
       } else {
-        setProgress(`Upload failed: ${res.statusText}`);
-        toast("Upload failed");
+        setProgress(t("update.uploadFailedStatus", { status: res.statusText }));
+        toast(t("update.toastFailed"));
       }
     } catch {
-      setProgress("Upload failed — connection lost (device may be rebooting)");
+      setProgress(t("update.uploadFailedConnection"));
     }
     setUploading(false);
   }
 
   return (
     <div class={styles.page}>
-      <h2>Firmware Update</h2>
+      <h2>{t("update.title")}</h2>
 
       <div class="card">
-        <h3 class={styles.cardHeading}>OTA Update</h3>
-        <p class={styles.hint}>
-          Select a firmware .bin file to upload. The device will reboot automatically after a
-          successful update.
-        </p>
+        <h3 class={styles.cardHeading}>{t("update.otaHeading")}</h3>
+        <p class={styles.hint}>{t("update.otaHint")}</p>
         <input
           type="file"
           accept=".bin,.bin.gz"

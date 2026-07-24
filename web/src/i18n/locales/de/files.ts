@@ -1,0 +1,36 @@
+import type en from "../en/files";
+
+const de: typeof en = {
+  title: "Dateien",
+  newDir: "Neuer Ordner",
+  emptyDir: "Leerer Ordner",
+  del: "Lösch.",
+  dirNamePrompt: "Ordnername:",
+  cannotRead: "Datei kann nicht gelesen werden",
+  saved: "Gespeichert!",
+  saveFailed: "Speichern fehlgeschlagen",
+  deleted: "Gelöscht",
+  uploaded: "Hochgeladen!",
+  typeDir: "Ordner",
+  typeFile: "Datei",
+  deleteConfirm: '{{type}} "{{path}}" löschen?',
+  newFolder: "Neuer Ordner",
+  folderName: "Ordnername",
+  create: "Erstellen",
+  deleteTitle: "{{type}} löschen?",
+  deleteBody: '„{{name}}“ endgültig löschen? Dies kann nicht rückgängig gemacht werden.',
+  protectedWarn: "Dies ist eine System-Konfigurationsdatei — das Löschen kann das Gerät beschädigen.",
+  protected: "Geschützte Systemdatei",
+  uploadHint: "Dateien hierher ziehen oder auf Hochladen klicken",
+  dropHere: "Dateien zum Hochladen ablegen",
+  loadError: "Ordner konnte nicht geladen werden.",
+  retry: "Erneut versuchen",
+  unsavedTitle: "Ungespeicherte Änderungen verwerfen?",
+  unsavedBody: "Die Änderungen an dieser Datei wurden nicht gespeichert.",
+  discard: "Verwerfen",
+  home: "Start",
+  breadcrumb: "Brotkrümelnavigation",
+  downloadFailed: "Download fehlgeschlagen",
+};
+
+export default de;

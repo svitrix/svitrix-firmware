@@ -1,3 +1,5 @@
+import styles from "./Slider.module.css";
+
 export function Slider({
   label,
   min,
@@ -16,6 +18,9 @@ export function Slider({
   unit?: string;
 }) {
   const id = label.toLowerCase().replace(/\s+/g, "-");
+  // Accent-fill percentage — drives the recessed track gradient cross-browser.
+  const span = max - min;
+  const pct = span > 0 ? ((value - min) / span) * 100 : 0;
   return (
     <div class="form-group">
       <label htmlFor={id}>
@@ -23,11 +28,13 @@ export function Slider({
       </label>
       <input
         id={id}
+        class={styles.range}
         type="range"
         min={min}
         max={max}
         step={step}
         value={value}
+        style={{ "--pct": `${pct}%` } as any}
         onInput={(e) => onChange(+(e.target as HTMLInputElement).value)}
       />
     </div>

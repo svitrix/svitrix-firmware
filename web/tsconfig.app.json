@@ -8,7 +8,8 @@
     "skipLibCheck": true,
     "paths": {
       "react": ["./node_modules/preact/compat/"],
-      "react-dom": ["./node_modules/preact/compat/"]
+      "react-dom": ["./node_modules/preact/compat/"],
+      "react-i18next": ["./src/i18n/index.ts"]
     },
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
@@ -23,5 +24,6 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["src/**/*.stories.tsx", "src/design-system"]
 }

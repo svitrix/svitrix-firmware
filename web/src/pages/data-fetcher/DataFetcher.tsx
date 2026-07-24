@@ -1,4 +1,5 @@
 import { useState, useEffect } from "preact/hooks";
+import { useTranslation } from "react-i18next";
 import {
   getDataSources,
   addDataSource,
@@ -20,6 +21,7 @@ const empty: DataSource = {
 };
 
 export function DataFetcherPage(_props: { path?: string }) {
+  const { t } = useTranslation();
   const [sources, setSources] = useState<DataSource[]>([]);
   const [form, setForm] = useState<DataSource>({ ...empty });
   const [showForm, setShowForm] = useState(false);
@@ -36,25 +38,25 @@ export function DataFetcherPage(_props: { path?: string }) {
 
   async function save() {
     if (!form.name || !form.url || !form.jsonPath) {
-      toast("Name, URL, and JSON Path are required");
+      toast(t("dataFetcher.requiredFields"));
       return;
     }
     try {
       await addDataSource(form);
-      toast("Saved!");
+      toast(t("dataFetcher.saved"));
       setShowForm(false);
       setForm({ ...empty });
       setEditing(false);
       load();
     } catch {
-      toast("Error saving");
+      toast(t("dataFetcher.errorSaving"));
     }
   }
 
   async function remove(name: string) {
-    if (!confirm(`Delete "${name}"?`)) return;
+    if (!confirm(t("dataFetcher.confirmDelete", { name }))) return;
     await deleteDataSource(name);
-    toast("Deleted");
+    toast(t("dataFetcher.deleted"));
     load();
   }
 
@@ -67,7 +69,7 @@ export function DataFetcherPage(_props: { path?: string }) {
   return (
     <div class={styles.page}>
       <div class={styles.header}>
-        <h2>Data Sources</h2>
+        <h2>{t("dataFetcher.title")}</h2>
         <button
           class="btn-primary"
           onClick={() => {
@@ -76,17 +78,17 @@ export function DataFetcherPage(_props: { path?: string }) {
             setShowForm(!showForm);
           }}
         >
-          {showForm ? "Cancel" : "+ Add Source"}
+          {showForm ? t("common.cancel") : t("dataFetcher.addSource")}
         </button>
       </div>
 
       {showForm && (
         <div class="card">
-          <h3 class={styles.formHeading}>{editing ? "Edit Source" : "New Source"}</h3>
+          <h3 class={styles.formHeading}>{editing ? t("dataFetcher.editSource") : t("dataFetcher.newSource")}</h3>
           <div class={styles.formStack}>
             <div class="form-row">
               <div class="form-group">
-                <label>Name</label>
+                <label>{t("dataFetcher.name")}</label>
                 <input
                   type="text"
                   value={form.name}
@@ -96,7 +98,7 @@ export function DataFetcherPage(_props: { path?: string }) {
                 />
               </div>
               <div class="form-group">
-                <label>Interval (sec)</label>
+                <label>{t("dataFetcher.intervalSec")}</label>
                 <input
                   type="number"
                   min={60}
@@ -106,7 +108,7 @@ export function DataFetcherPage(_props: { path?: string }) {
               </div>
             </div>
             <div class="form-group">
-              <label>URL</label>
+              <label>{t("dataFetcher.url")}</label>
               <input
                 type="text"
                 value={form.url}
@@ -116,7 +118,7 @@ export function DataFetcherPage(_props: { path?: string }) {
             </div>
             <div class="form-row">
               <div class="form-group">
-                <label>JSON Path</label>
+                <label>{t("dataFetcher.jsonPath")}</label>
                 <input
                   type="text"
                   value={form.jsonPath}
@@ -125,7 +127,7 @@ export function DataFetcherPage(_props: { path?: string }) {
                 />
               </div>
               <div class="form-group">
-                <label>Display Format</label>
+                <label>{t("dataFetcher.displayFormat")}</label>
                 <input
                   type="text"
                   value={form.displayFormat}
@@ -136,7 +138,7 @@ export function DataFetcherPage(_props: { path?: string }) {
             </div>
             <div class="form-row">
               <div class="form-group">
-                <label>Icon Name</label>
+                <label>{t("dataFetcher.iconName")}</label>
                 <input
                   type="text"
                   value={form.icon}
@@ -145,7 +147,7 @@ export function DataFetcherPage(_props: { path?: string }) {
                 />
               </div>
               <div class="form-group">
-                <label>Color</label>
+                <label>{t("dataFetcher.color")}</label>
                 <input
                   type="color"
                   value={form.color}
@@ -154,14 +156,14 @@ export function DataFetcherPage(_props: { path?: string }) {
               </div>
             </div>
             <button class="btn-primary" onClick={save}>
-              {editing ? "Update" : "Add"}
+              {editing ? t("dataFetcher.update") : t("common.add")}
             </button>
           </div>
         </div>
       )}
 
       {sources.length === 0 && !showForm && (
-        <p class={styles.empty}>No data sources configured.</p>
+        <p class={styles.empty}>{t("dataFetcher.empty")}</p>
       )}
 
       {sources.map((src) => (
@@ -171,30 +173,34 @@ export function DataFetcherPage(_props: { path?: string }) {
             <div class={styles.sourceBtns}>
               <button
                 class={styles.btnSmall}
-                onClick={() => fetchDataSource(src.name).then(() => toast("Fetched!"))}
+                onClick={() => fetchDataSource(src.name).then(() => toast(t("dataFetcher.fetched")))}
               >
-                Fetch
+                {t("dataFetcher.fetch")}
               </button>
               <button
                 class={styles.btnSmall}
                 onClick={() => edit(src)}
               >
-                Edit
+                {t("common.edit")}
               </button>
               <button
                 class={`btn-danger ${styles.btnSmall}`}
                 onClick={() => remove(src.name)}
               >
-                Delete
+                {t("common.delete")}
               </button>
             </div>
           </div>
           <div class={styles.sourceMeta}>
-            <div>URL: {src.url}</div>
+            <div>{t("dataFetcher.metaUrl", { url: src.url })}</div>
             <div>
-              Path: {src.jsonPath} | Format: {src.displayFormat || "—"} | Every {src.interval}s
+              {t("dataFetcher.metaLine", {
+                path: src.jsonPath,
+                format: src.displayFormat || "—",
+                interval: src.interval,
+              })}
             </div>
-            {src.icon && <div>Icon: {src.icon}</div>}
+            {src.icon && <div>{t("dataFetcher.metaIcon", { icon: src.icon })}</div>}
           </div>
         </div>
       ))}

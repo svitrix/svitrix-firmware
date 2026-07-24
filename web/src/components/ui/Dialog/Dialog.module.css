@@ -1,0 +1,62 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: dlgFade 0.15s var(--ease-out);
+}
+
+.dialog {
+  width: 100%;
+  max-width: 380px;
+  background: color-mix(in srgb, var(--surface-tint) 92%, transparent);
+  backdrop-filter: blur(var(--glass-blur-thick)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur-thick)) saturate(180%);
+  border-radius: var(--r-card);
+  padding: 20px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 20px 60px rgba(0, 0, 0, 0.45);
+  animation: dlgPop 0.22s var(--ease-spring);
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .dialog {
+    background: var(--surface-tint);
+  }
+}
+
+.title {
+  font-size: 17px;
+  font-weight: 650;
+  color: var(--label);
+  margin-bottom: 8px;
+}
+.body {
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--label-secondary);
+  margin-bottom: 18px;
+}
+.field {
+  margin-bottom: 18px;
+}
+.row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+@keyframes dlgFade {
+  from { opacity: 0; }
+}
+@keyframes dlgPop {
+  from { opacity: 0; transform: scale(0.96); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .backdrop, .dialog { animation: none; }
+}

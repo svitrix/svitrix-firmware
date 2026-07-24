@@ -1,9 +1,11 @@
 import { useState } from "preact/hooks";
+import { useTranslation } from "react-i18next";
 import { useSettings } from "../../../context/SettingsContext";
 import { Toggle, Slider, Card, Button } from "../../../components/ui";
 import styles from "./sections.module.css";
 
 export function SoundSection() {
+  const { t } = useTranslation();
   const { settings, updateSettings, saveDisplaySettings } = useSettings();
   const [saving, setSaving] = useState(false);
   if (!settings) return null;
@@ -16,11 +18,11 @@ export function SoundSection() {
   }
 
   return (
-    <Card title="Sound">
+    <Card title={t("settingsDisplay.sound.title")}>
       <div class={styles.stack}>
-        <Toggle label="Sound Enabled" checked={s.SOUND} onChange={(v) => updateSettings({ SOUND: v })} />
-        <Slider label="Volume" min={0} max={30} value={s.VOL} onChange={(v) => updateSettings({ VOL: v })} />
-        <Button variant="primary" onClick={handleSave} loading={saving}>Save Sound</Button>
+        <Toggle label={t("settingsDisplay.sound.soundEnabled")} checked={s.SOUND} onChange={(v) => updateSettings({ SOUND: v })} />
+        <Slider label={t("settingsDisplay.sound.volume")} min={0} max={30} value={s.VOL} onChange={(v) => updateSettings({ VOL: v })} />
+        <Button variant="primary" onClick={handleSave} loading={saving}>{t("settingsDisplay.sound.save")}</Button>
       </div>
     </Card>
   );

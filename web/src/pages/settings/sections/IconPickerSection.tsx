@@ -1,15 +1,17 @@
 import { useState } from "preact/hooks";
+import { useTranslation } from "react-i18next";
 import { uploadFile } from "../../../api/client";
 import { toast } from "../../../components/Toast";
 import { TextField, Card, FormRow, Button } from "../../../components/ui";
 import styles from "./sections.module.css";
 
 export function IconPickerSection() {
+  const { t } = useTranslation();
   const [iconId, setIconId] = useState("");
   const [iconPreview, setIconPreview] = useState("");
 
   async function downloadIcon() {
-    if (!iconId) { toast("Enter icon ID"); return; }
+    if (!iconId) { toast(t("settingsDisplay.iconPicker.enterIconId")); return; }
     try {
       const res = await fetch(
         `https://developer.lametric.com/content/apps/icon_thumbs/${iconId}`
@@ -30,7 +32,7 @@ export function IconPickerSection() {
           canvas.toBlob(async (jpgBlob) => {
             if (jpgBlob) {
               await uploadFile(`/ICONS/${iconId}.jpg`, jpgBlob);
-              toast("Icon saved!");
+              toast(t("settingsDisplay.iconPicker.iconSaved"));
             }
           }, "image/jpeg", 1);
           URL.revokeObjectURL(url);
@@ -38,24 +40,24 @@ export function IconPickerSection() {
         img.src = url;
       } else {
         await uploadFile(`/ICONS/${iconId}.gif`, blob);
-        toast("Icon saved!");
+        toast(t("settingsDisplay.iconPicker.iconSaved"));
       }
     } catch {
-      toast("Icon download failed");
+      toast(t("settingsDisplay.iconPicker.downloadFailed"));
     }
   }
 
   return (
-    <Card title="Icon Picker">
+    <Card title={t("settingsDisplay.iconPicker.title")}>
       <div class={styles.stack}>
         <FormRow>
-          <TextField label="LaMetric Icon ID" value={iconId} onChange={setIconId} placeholder="13" />
+          <TextField label={t("settingsDisplay.iconPicker.iconId")} value={iconId} onChange={setIconId} placeholder="13" />
           <div class={`form-group ${styles.formGroupEnd}`}>
             <div class={styles.btnGroup}>
               <Button onClick={() => {
                 if (iconId) setIconPreview(`https://developer.lametric.com/content/apps/icon_thumbs/${iconId}`);
-              }}>Preview</Button>
-              <Button variant="primary" onClick={downloadIcon}>Download</Button>
+              }}>{t("settingsDisplay.iconPicker.preview")}</Button>
+              <Button variant="primary" onClick={downloadIcon}>{t("settingsDisplay.iconPicker.download")}</Button>
             </div>
           </div>
         </FormRow>
@@ -64,7 +66,7 @@ export function IconPickerSection() {
             <img
               src={iconPreview}
               class={styles.iconPreviewImg}
-              onError={() => { setIconPreview(""); toast("Icon not found"); }}
+              onError={() => { setIconPreview(""); toast(t("settingsDisplay.iconPicker.iconNotFound")); }}
             />
           </div>
         )}

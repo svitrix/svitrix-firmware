@@ -1,38 +1,49 @@
 import { useState, useEffect } from "preact/hooks";
-import {
-  listDir,
-  readFile,
-  uploadFile,
-  deleteFile,
-  createDir,
-} from "../../api/client";
+import { useTranslation } from "react-i18next";
+import { listDir, readFile, uploadFile, deleteFile, createDir } from "../../api/client";
 import type { FileEntry } from "../../api/types";
 import { toast } from "../../components/Toast";
+import { ConfirmDialog, PromptDialog } from "../../components/ui";
+import { FileIcon } from "./FileIcon";
+import { Breadcrumb } from "./Breadcrumb";
+import { RowActions } from "./RowActions";
+import { DropZone } from "./DropZone";
+import { fileType, isEditable, protection, downloadPath } from "./fileType";
 import styles from "./Files.module.css";
 
 export function FilesPage(_props: { path?: string }) {
+  const { t } = useTranslation();
   const [cwd, setCwd] = useState("/");
   const [entries, setEntries] = useState<FileEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [content, setContent] = useState<string | null>(null);
   const [editPath, setEditPath] = useState("");
   const [modified, setModified] = useState(false);
+  const [promptOpen, setPromptOpen] = useState(false);
+  const [delTarget, setDelTarget] = useState<FileEntry | null>(null);
+  const [confirmClose, setConfirmClose] = useState(false);
 
   function load(dir: string) {
     setCwd(dir);
     setContent(null);
     setEditPath("");
     setModified(false);
-    listDir(dir).then(setEntries);
+    setLoading(true);
+    setError(false);
+    listDir(dir)
+      .then((e) => { setEntries(e); setLoading(false); })
+      .catch(() => { setError(true); setLoading(false); });
   }
 
-  useEffect(() => {
-    load("/");
-  }, []);
+  useEffect(() => { load("/"); }, []);
 
-  function openDir(name: string) {
-    const next = cwd === "/" ? `/${name}` : `${cwd}/${name}`;
-    load(next);
-  }
+  const full = (name: string) => (cwd === "/" ? `/${name}` : `${cwd}/${name}`);
+
+  // Folders first, then alpha within each group.
+  const sorted = [...entries].sort((a, b) =>
+    a.type === b.type ? a.name.localeCompare(b.name) : a.type === "dir" ? -1 : 1
+  );
 
   function goUp() {
     const parts = cwd.split("/").filter(Boolean);
@@ -40,15 +51,24 @@ export function FilesPage(_props: { path?: string }) {
     load(parts.length ? `/${parts.join("/")}` : "/");
   }
 
-  async function openFile(name: string) {
-    const path = cwd === "/" ? `/${name}` : `${cwd}/${name}`;
+  async function download(name: string) {
     try {
-      const text = await readFile(path);
+      await downloadPath(full(name), name);
+    } catch {
+      toast(t("files.downloadFailed"));
+    }
+  }
+
+  async function openFile(name: string) {
+    const kind = fileType(name, "file");
+    if (!isEditable(kind)) return download(name); // binary → download, never textarea
+    try {
+      const text = await readFile(full(name));
       setContent(text);
-      setEditPath(path);
+      setEditPath(full(name));
       setModified(false);
     } catch {
-      toast("Cannot read file");
+      toast(t("files.cannotRead"));
     }
   }
 
@@ -56,109 +76,132 @@ export function FilesPage(_props: { path?: string }) {
     if (!editPath || content === null) return;
     try {
       await uploadFile(editPath, content);
-      toast("Saved!");
+      toast(t("files.saved"));
       setModified(false);
     } catch {
-      toast("Save failed");
+      toast(t("files.saveFailed"));
     }
   }
 
-  async function handleDelete(name: string, type: string) {
-    const path = cwd === "/" ? `/${name}` : `${cwd}/${name}`;
-    if (!confirm(`Delete ${type} "${path}"?`)) return;
-    await deleteFile(path);
-    toast("Deleted");
+  function closeEditor() {
+    setContent(null);
+    setEditPath("");
+    setModified(false);
+    setConfirmClose(false);
+  }
+  function requestClose() {
+    if (modified) setConfirmClose(true);
+    else closeEditor();
+  }
+
+  async function doDelete() {
+    if (!delTarget) return;
+    try {
+      await deleteFile(full(delTarget.name));
+      toast(t("files.deleted"));
+    } catch {
+      toast(t("files.saveFailed"));
+    }
+    setDelTarget(null);
     load(cwd);
   }
 
-  async function handleNewDir() {
-    const name = prompt("Directory name:");
-    if (!name) return;
-    const path = cwd === "/" ? `/${name}` : `${cwd}/${name}`;
-    await createDir(path);
+  async function createFolder(name: string) {
+    setPromptOpen(false);
+    await createDir(full(name));
     load(cwd);
   }
 
-  async function handleUpload(file: File) {
-    const path = cwd === "/" ? `/${file.name}` : `${cwd}/${file.name}`;
-    await uploadFile(path, file);
-    toast("Uploaded!");
+  async function handleUpload(files: FileList) {
+    for (const f of Array.from(files)) {
+      try {
+        await uploadFile(full(f.name), f);
+      } catch {
+        /* keep going, report at the end */
+      }
+    }
+    toast(t("files.uploaded"));
     load(cwd);
   }
 
   return (
     <div class={styles.page}>
       <div class={styles.header}>
-        <h2>Files</h2>
+        <h2>{t("files.title")}</h2>
         <div class={styles.headerBtns}>
-          <button onClick={handleNewDir}>New Dir</button>
+          <button onClick={() => setPromptOpen(true)}>{t("files.newFolder")}</button>
           <label class={`btn-primary ${styles.uploadLabel}`}>
-            Upload
+            {t("common.upload")}
             <input
               type="file"
+              multiple
               style={{ display: "none" }}
               onChange={(e) => {
-                const f = (e.target as HTMLInputElement).files?.[0];
-                if (f) handleUpload(f);
+                const files = (e.target as HTMLInputElement).files;
+                if (files && files.length) handleUpload(files);
               }}
             />
           </label>
         </div>
       </div>
 
-      {/* Breadcrumb */}
-      <div class={styles.breadcrumb}>
-        <span class={styles.breadcrumbLink} onClick={() => load("/")}>
-          /
-        </span>
-        {cwd
-          .split("/")
-          .filter(Boolean)
-          .map((part, i, arr) => {
-            const path = "/" + arr.slice(0, i + 1).join("/");
-            return (
-              <span key={path}>
-                <span class={styles.breadcrumbLink} onClick={() => load(path)}>
-                  {part}
-                </span>
-                {i < arr.length - 1 && " / "}
-              </span>
-            );
-          })}
-      </div>
+      <Breadcrumb path={cwd} onNavigate={load} />
 
-      {/* File list */}
-      <div class={`card ${styles.fileList}`}>
-        {cwd !== "/" && (
-          <div class={styles.fileListRowNav} onClick={goUp}>
-            ..
-          </div>
-        )}
-        {entries.map((e) => (
-          <div key={e.name} class={styles.fileListRow}>
-            <span
-              class={`${styles.fileName} ${e.type === "dir" ? styles.fileNameDir : styles.fileNameFile}`}
-              onClick={() => (e.type === "dir" ? openDir(e.name) : openFile(e.name))}
-            >
-              {e.type === "dir" ? "📁 " : "📄 "}
-              {e.name}
-            </span>
-            <button
-              class={`btn-danger ${styles.btnDel}`}
-              onClick={() => handleDelete(e.name, e.type)}
-            >
-              Del
-            </button>
-          </div>
-        ))}
-        {entries.length === 0 && (
-          <div class={styles.emptyDir}>
-            Empty directory
-          </div>
-        )}
-      </div>
+      <DropZone onFiles={handleUpload} label={t("files.dropHere")}>
+        <div class={`card ${styles.fileList}`}>
+          {loading && <div class={styles.state}>{t("common.loading")}</div>}
+          {error && (
+            <div class={styles.state}>
+              {t("files.loadError")}{" "}
+              <button onClick={() => load(cwd)}>{t("files.retry")}</button>
+            </div>
+          )}
+          {!loading && !error && (
+            <>
+              {cwd !== "/" && (
+                <button class={styles.rowNav} onClick={goUp}>‹ ..</button>
+              )}
+              {sorted.map((e) => {
+                const kind = fileType(e.name, e.type);
+                const prot = protection(e.name);
+                const locked = prot === "lock";
+                return (
+                  <div key={e.name} class={styles.row}>
+                    <button
+                      class={styles.nameBtn}
+                      onClick={() => (e.type === "dir" ? load(full(e.name)) : openFile(e.name))}
+                    >
+                      <FileIcon kind={kind} />
+                      <span class={styles.name}>{e.name}</span>
+                      {prot && (
+                        <svg class={styles.lock} width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-label={t("files.protected")}>
+                          <rect x="5" y="11" width="14" height="9" rx="2" />
+                          <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+                        </svg>
+                      )}
+                      {e.type === "dir" && <span class={styles.chev}>›</span>}
+                    </button>
+                    <RowActions
+                      canDownload={e.type === "file"}
+                      canEdit={e.type === "file" && isEditable(kind) && !locked}
+                      canDelete={!locked}
+                      onDownload={() => download(e.name)}
+                      onEdit={() => openFile(e.name)}
+                      onDelete={() => setDelTarget(e)}
+                    />
+                  </div>
+                );
+              })}
+              {sorted.length === 0 && (
+                <div class={styles.state}>
+                  {t("files.emptyDir")} · {t("files.uploadHint")}
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      </DropZone>
 
-      {/* Editor */}
       {content !== null && (
         <div class="card">
           <div class={styles.editorHeader}>
@@ -167,16 +210,9 @@ export function FilesPage(_props: { path?: string }) {
             </span>
             <div class={styles.editorBtns}>
               <button class="btn-primary" onClick={saveFile} disabled={!modified}>
-                Save
+                {t("common.save")}
               </button>
-              <button
-                onClick={() => {
-                  setContent(null);
-                  setEditPath("");
-                }}
-              >
-                Close
-              </button>
+              <button onClick={requestClose}>{t("common.close")}</button>
             </div>
           </div>
           <textarea
@@ -189,6 +225,40 @@ export function FilesPage(_props: { path?: string }) {
           />
         </div>
       )}
+
+      <ConfirmDialog
+        open={!!delTarget}
+        title={t("files.deleteTitle", {
+          type: delTarget?.type === "dir" ? t("files.typeDir") : t("files.typeFile"),
+        })}
+        body={
+          t("files.deleteBody", { name: delTarget?.name ?? "" }) +
+          (protection(delTarget?.name ?? "") === "warn" ? " " + t("files.protectedWarn") : "")
+        }
+        confirmLabel={t("common.delete")}
+        danger
+        onConfirm={doDelete}
+        onCancel={() => setDelTarget(null)}
+      />
+
+      <ConfirmDialog
+        open={confirmClose}
+        title={t("files.unsavedTitle")}
+        body={t("files.unsavedBody")}
+        confirmLabel={t("files.discard")}
+        danger
+        onConfirm={closeEditor}
+        onCancel={() => setConfirmClose(false)}
+      />
+
+      <PromptDialog
+        open={promptOpen}
+        title={t("files.newFolder")}
+        label={t("files.folderName")}
+        submitLabel={t("files.create")}
+        onSubmit={createFolder}
+        onCancel={() => setPromptOpen(false)}
+      />
     </div>
   );
 }

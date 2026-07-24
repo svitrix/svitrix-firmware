@@ -1,5 +1,6 @@
 import { createContext } from "preact";
 import { useContext, useState, useEffect, useCallback } from "preact/hooks";
+import i18n from "../i18n";
 import type { Settings, Stats, TransitionInfo, EffectInfo, InfraConfig } from "../api/types";
 import {
   getSettings,
@@ -81,9 +82,9 @@ export function SettingsProvider({ children }: { children: ComponentChildren }) 
   async function saveDisplaySettings(fields: Partial<Settings>) {
     try {
       await saveSettings(prepareSettingsForSave(fields) as Partial<Settings>);
-      toast("Display settings saved!");
+      toast(i18n.t("common.displaySettingsSaved"));
     } catch {
-      toast("Error saving");
+      toast(i18n.t("common.errorSaving"));
     }
   }
 
@@ -91,9 +92,9 @@ export function SettingsProvider({ children }: { children: ComponentChildren }) 
     if (!config) return;
     try {
       await saveConfig(config as unknown as Record<string, unknown>);
-      toast("Config saved & applied!");
+      toast(i18n.t("common.configSaved"));
     } catch {
-      toast("Error saving config");
+      toast(i18n.t("common.errorSavingConfig"));
     }
   }
 
