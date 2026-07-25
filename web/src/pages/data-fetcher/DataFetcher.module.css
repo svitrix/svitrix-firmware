@@ -38,14 +38,21 @@
 
 .btnSmall {
   padding: 4px 10px;
-  font-size: 12px;
+  font-size: var(--text-caption);
 }
 
 .sourceMeta {
-  font-size: 13px;
-  color: var(--text-dim);
+  font-size: var(--text-footnote);
+  color: var(--label-secondary);
 }
 
 .empty {
-  color: var(--text-dim);
+  color: var(--label-secondary);
+}
+
+.hint {
+  margin-top: var(--space-1);
+  color: var(--label-secondary);
+  font-size: var(--text-footnote);
+  line-height: var(--lh-tight);
 }

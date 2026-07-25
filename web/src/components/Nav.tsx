@@ -49,12 +49,15 @@ export function Nav() {
           href={l.href}
           onClick={(e: Event) => navigate(e, l.href)}
           class={`${styles.link}${path === l.href ? ` ${styles.linkActive}` : ""}`}
+          aria-current={path === l.href ? "page" : undefined}
         >
           {t(l.key)}
         </a>
       ))}
       <div class={styles.navRight}>
         <select
+          id="nav-language"
+          name="language"
           class={styles.langSelect}
           value={i18n.resolvedLanguage}
           onChange={(e: Event) =>
@@ -64,7 +67,7 @@ export function Nav() {
           aria-label={t("nav.language")}
         >
           {supportedLanguages.map((l) => (
-            <option key={l.code} value={l.code}>
+            <option key={l.code} value={l.code} lang={l.code}>
               {l.label}
             </option>
           ))}
@@ -73,6 +76,8 @@ export function Nav() {
           class="theme-toggle"
           onClick={toggleTheme}
           title={t("nav.toggleTheme")}
+          aria-label={t("nav.toggleTheme")}
+          aria-pressed={theme.value === "light"}
         >
           {theme.value === "dark" ? "\u2600" : "\u263D"}
         </button>

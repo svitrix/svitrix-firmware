@@ -1,6 +1,7 @@
 import type en from "../en/common";
 
 const de: typeof en = {
+  skipToContent: "Zum Inhalt springen",
   save: "Speichern",
   cancel: "Abbrechen",
   reset: "Zurücksetzen",

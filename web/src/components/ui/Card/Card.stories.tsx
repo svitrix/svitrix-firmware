@@ -6,7 +6,6 @@ import { Button, FormRow, Slider, TextField, Toggle } from "..";
 const meta: Meta<typeof Card> = {
   title: "Components/Card",
   component: Card,
-  tags: ["autodocs"],
   args: {
     title: "Display",
     subtitle: "Brightness, color and matrix behaviour",

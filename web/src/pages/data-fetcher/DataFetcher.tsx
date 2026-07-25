@@ -1,4 +1,4 @@
-import { useState, useEffect } from "preact/hooks";
+import { useState, useEffect, useId } from "preact/hooks";
 import { useTranslation } from "react-i18next";
 import {
   getDataSources,
@@ -8,6 +8,7 @@ import {
 } from "../../api/client";
 import type { DataSource } from "../../api/types";
 import { toast } from "../../components/Toast";
+import { TextField, ConfirmDialog } from "../../components/ui";
 import styles from "./DataFetcher.module.css";
 
 const empty: DataSource = {
@@ -20,12 +21,16 @@ const empty: DataSource = {
   interval: 900,
 };
 
+const isValidUrl = (url: string) => /^https?:\/\//i.test(url.trim());
+
 export function DataFetcherPage(_props: { path?: string }) {
   const { t } = useTranslation();
+  const colorId = useId();
   const [sources, setSources] = useState<DataSource[]>([]);
   const [form, setForm] = useState<DataSource>({ ...empty });
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState(false);
+  const [delTarget, setDelTarget] = useState<string | null>(null);
 
   const load = () => getDataSources().then(setSources);
   useEffect(() => {
@@ -36,9 +41,19 @@ export function DataFetcherPage(_props: { path?: string }) {
     setForm((f) => ({ ...f, ...patch }));
   }
 
+  // Inline URL error surfaces as soon as a non-empty, malformed URL is present.
+  const urlError =
+    form.url.trim() !== "" && !isValidUrl(form.url)
+      ? t("dataFetcher.err.url")
+      : undefined;
+
   async function save() {
     if (!form.name || !form.url || !form.jsonPath) {
-      toast(t("dataFetcher.requiredFields"));
+      toast(t("dataFetcher.requiredFields"), { error: true });
+      return;
+    }
+    if (!isValidUrl(form.url)) {
+      toast(t("dataFetcher.err.url"), { error: true });
       return;
     }
     try {
@@ -49,12 +64,12 @@ export function DataFetcherPage(_props: { path?: string }) {
       setEditing(false);
       load();
     } catch {
-      toast(t("dataFetcher.errorSaving"));
+      toast(t("dataFetcher.errorSaving"), { error: true });
     }
   }
 
   async function remove(name: string) {
-    if (!confirm(t("dataFetcher.confirmDelete", { name }))) return;
+    setDelTarget(null);
     await deleteDataSource(name);
     toast(t("dataFetcher.deleted"));
     load();
@@ -87,68 +102,58 @@ export function DataFetcherPage(_props: { path?: string }) {
           <h3 class={styles.formHeading}>{editing ? t("dataFetcher.editSource") : t("dataFetcher.newSource")}</h3>
           <div class={styles.formStack}>
             <div class="form-row">
-              <div class="form-group">
-                <label>{t("dataFetcher.name")}</label>
-                <input
-                  type="text"
-                  value={form.name}
-                  disabled={editing}
-                  onInput={(e) => upd({ name: (e.target as HTMLInputElement).value })}
-                  placeholder="btc"
-                />
-              </div>
-              <div class="form-group">
-                <label>{t("dataFetcher.intervalSec")}</label>
-                <input
-                  type="number"
-                  min={60}
-                  value={form.interval}
-                  onInput={(e) => upd({ interval: +(e.target as HTMLInputElement).value })}
-                />
-              </div>
-            </div>
-            <div class="form-group">
-              <label>{t("dataFetcher.url")}</label>
-              <input
-                type="text"
-                value={form.url}
-                onInput={(e) => upd({ url: (e.target as HTMLInputElement).value })}
-                placeholder="https://api.example.com/data"
+              <TextField
+                label={t("dataFetcher.name")}
+                value={form.name}
+                onChange={(v) => upd({ name: v })}
+                placeholder="btc"
+              />
+              <TextField
+                label={t("dataFetcher.intervalSec")}
+                type="number"
+                value={form.interval}
+                onChange={(v) => upd({ interval: +v })}
               />
             </div>
+            <TextField
+              label={t("dataFetcher.url")}
+              value={form.url}
+              onChange={(v) => upd({ url: v })}
+              placeholder="https://api.example.com/data"
+              autocomplete="url"
+              error={urlError}
+            />
             <div class="form-row">
               <div class="form-group">
-                <label>{t("dataFetcher.jsonPath")}</label>
-                <input
-                  type="text"
+                <TextField
+                  label={t("dataFetcher.jsonPath")}
                   value={form.jsonPath}
-                  onInput={(e) => upd({ jsonPath: (e.target as HTMLInputElement).value })}
+                  onChange={(v) => upd({ jsonPath: v })}
                   placeholder="data.price"
                 />
+                <p class={styles.hint}>{t("dataFetcher.hint.jsonPath")}</p>
               </div>
               <div class="form-group">
-                <label>{t("dataFetcher.displayFormat")}</label>
-                <input
-                  type="text"
+                <TextField
+                  label={t("dataFetcher.displayFormat")}
                   value={form.displayFormat}
-                  onInput={(e) => upd({ displayFormat: (e.target as HTMLInputElement).value })}
+                  onChange={(v) => upd({ displayFormat: v })}
                   placeholder="$%.0f"
                 />
+                <p class={styles.hint}>{t("dataFetcher.hint.displayFormat")}</p>
               </div>
             </div>
             <div class="form-row">
+              <TextField
+                label={t("dataFetcher.iconName")}
+                value={form.icon}
+                onChange={(v) => upd({ icon: v })}
+                placeholder="bitcoin"
+              />
               <div class="form-group">
-                <label>{t("dataFetcher.iconName")}</label>
+                <label htmlFor={colorId}>{t("dataFetcher.color")}</label>
                 <input
-                  type="text"
-                  value={form.icon}
-                  onInput={(e) => upd({ icon: (e.target as HTMLInputElement).value })}
-                  placeholder="bitcoin"
-                />
-              </div>
-              <div class="form-group">
-                <label>{t("dataFetcher.color")}</label>
-                <input
+                  id={colorId}
                   type="color"
                   value={form.color}
                   onInput={(e) => upd({ color: (e.target as HTMLInputElement).value })}
@@ -185,7 +190,7 @@ export function DataFetcherPage(_props: { path?: string }) {
               </button>
               <button
                 class={`btn-danger ${styles.btnSmall}`}
-                onClick={() => remove(src.name)}
+                onClick={() => setDelTarget(src.name)}
               >
                 {t("common.delete")}
               </button>
@@ -204,6 +209,16 @@ export function DataFetcherPage(_props: { path?: string }) {
           </div>
         </div>
       ))}
+
+      <ConfirmDialog
+        open={delTarget !== null}
+        title={t("dataFetcher.deleteTitle")}
+        body={t("dataFetcher.confirmDelete", { name: delTarget ?? "" })}
+        confirmLabel={t("common.delete")}
+        danger
+        onConfirm={() => delTarget && remove(delTarget)}
+        onCancel={() => setDelTarget(null)}
+      />
     </div>
   );
 }

@@ -5,7 +5,6 @@ import { TextField } from "./TextField";
 const meta: Meta<typeof TextField> = {
   title: "Components/TextField",
   component: TextField,
-  tags: ["autodocs"],
 };
 export default meta;
 

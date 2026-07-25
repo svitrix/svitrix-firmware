@@ -1,6 +1,10 @@
 import type en from "../en/backup";
 
 const nl: typeof en = {
+  fileLabel: "Back-upbestand (.json)",
+  confirmRestoreTitle: "Bestandssysteem overschrijven en herstarten?",
+  confirmRestoreBody: "Herstellen overschrijft de huidige bestanden op het apparaat met deze back-up en start vervolgens opnieuw op. Dit kan niet ongedaan worden gemaakt.",
+  confirmRestore: "Herstellen en herstarten",
   title: "Back-up & Herstel",
   collecting: "Bestanden verzamelen...",
   restoring: "Herstellen...",

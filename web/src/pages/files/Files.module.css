@@ -21,7 +21,7 @@
   cursor: pointer;
   padding: var(--space-2) var(--space-4);
   border-radius: var(--r-control);
-  font-weight: 600;
+  font-weight: var(--weight-semibold);
 }
 
 /* --- Breadcrumb ---------------------------------------------------------- */
@@ -31,7 +31,7 @@
   gap: 2px;
   overflow-x: auto;
   scrollbar-width: none;
-  font-size: 13px;
+  font-size: var(--text-footnote);
   white-space: nowrap;
 }
 .breadcrumb::-webkit-scrollbar {
@@ -61,7 +61,7 @@
 .crumbCurrent,
 .crumbCurrent:hover {
   color: var(--label);
-  font-weight: 600;
+  font-weight: var(--weight-semibold);
   background: none;
   cursor: default;
 }
@@ -84,12 +84,18 @@
   border: 2px dashed var(--accent);
   background: color-mix(in srgb, var(--accent) 12%, transparent);
   color: var(--label);
-  font-weight: 600;
+  font-weight: var(--weight-semibold);
   pointer-events: none;
 }
 
 .fileList {
   padding: 4px 0;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
 .row,
@@ -204,7 +210,7 @@
   flex-wrap: wrap;
 }
 .editorPath {
-  font-size: 13px;
+  font-size: var(--text-footnote);
   color: var(--label-secondary);
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   overflow: hidden;
@@ -218,7 +224,7 @@
   width: 100%;
   min-height: 320px;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 13px;
-  line-height: 1.5;
+  font-size: var(--text-footnote);
+  line-height: var(--lh-body);
   resize: vertical;
 }

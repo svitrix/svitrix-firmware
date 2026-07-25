@@ -70,6 +70,8 @@ export function ScreenPage(_props: { path?: string; default?: boolean }) {
         width={COLS * CELL}
         height={ROWS * CELL}
         class={styles.canvas}
+        role="img"
+        aria-label={t("screen.livePreview")}
       />
     </div>
   );

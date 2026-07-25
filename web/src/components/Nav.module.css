@@ -33,13 +33,17 @@
   border-radius: var(--r-control);
   background: transparent;
   color: var(--label-secondary);
-  font-size: 13px;
+  font-size: var(--text-footnote);
   transition: background var(--dur-fast) var(--ease-out),
               color var(--dur-fast) var(--ease-out);
 }
 .link:hover {
   background: var(--fill);
   color: var(--label);
+}
+.link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .linkActive,
@@ -64,6 +68,6 @@
   color: var(--label);
   border: 0.5px solid var(--separator);
   box-shadow: none;
-  font-size: 13px;
+  font-size: var(--text-footnote);
   cursor: pointer;
 }

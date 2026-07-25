@@ -17,11 +17,33 @@
   border: 0;
 }
 
+/* Skip link (WCAG 2.4.1) — hidden via .sr-only until focused, then un-hidden
+   as a real, visible control pinned top-left above everything. */
+.skip-link:focus {
+  position: fixed;
+  top: var(--space-3);
+  left: var(--space-3);
+  z-index: 2000;
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: var(--space-2) var(--space-4);
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+  background: var(--accent);
+  color: #000;
+  font-weight: var(--weight-semibold);
+  border-radius: var(--r-control);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  /* accent-on-accent would be invisible; use a dark ring on the amber pill */
+  outline: 2px solid rgba(0, 0, 0, 0.65);
+  outline-offset: 2px;
+}
+
 /* ---------------------------------------------------------------------------
    Design tokens — Liquid Glass (see web/DESIGN.md).
-   Step 1 of migration: new token set introduced; legacy names kept as aliases
-   so existing components keep working. Later steps consume the new tokens
-   directly (materials, geometry, motion).
+   Components consume these tokens directly (materials, geometry, motion).
    --------------------------------------------------------------------------- */
 :root {
   /* scene — a vivid environment so glass has something to refract/tint
@@ -66,6 +88,9 @@
   --green: #30d158;
   --red: #ff453a;
   --orange: #ff9f0a;
+  /* red is for fills/rims (non-text); danger *text* needs a tuned value to hit
+     4.5:1 on the card surface (WCAG 1.4.3). Dark: lightened red ≈5.1:1. */
+  --danger-text: #ff8a80;
 
   /* material thickness (blur radius) */
   --glass-blur-thin: 30px;
@@ -87,16 +112,25 @@
 
   --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
 
-  /* legacy aliases — resolved to new tokens (removed as components migrate) */
-  --bg: #0e1016;
-  --bg-card: var(--surface-tint);
-  --bg-input: var(--fill);
-  --border: var(--separator);
-  --text: var(--label);
-  --text-dim: var(--label-secondary);
-  --danger: var(--red);
-  --success: var(--green);
-  --radius: var(--r-control);
+  /* typography — sizes in rem (root = the browser's font-size) so text scales
+     with the user's setting / zoom (WCAG 1.4.4). Names map to Apple text styles;
+     base is a compact 14px, one step below Apple Body (17px). */
+  --text-title:    1.25rem;   /* 20px · Title 3 */
+  --text-headline: 1.0625rem; /* 17px · Headline */
+  --text-subhead:  0.9375rem; /* 15px · Subheadline */
+  --text-body:     0.875rem;  /* 14px · body (compact) */
+  --text-footnote: 0.8125rem; /* 13px · Footnote */
+  --text-caption:  0.75rem;   /* 12px · Caption */
+  /* line-height: looser for prose (WCAG 1.4.12 ≥1.5), tight for dense UI /
+     large numerals */
+  --lh-body:  1.5;
+  --lh-tight: 1.3;
+  --lh-solid: 1.1;
+  /* weights — standard SF ladder only (no off-scale values) */
+  --weight-regular:  400;
+  --weight-medium:   500;
+  --weight-semibold: 600;
+  --weight-bold:     700;
 }
 
 [data-theme="light"] {
@@ -132,25 +166,22 @@
   --green: #34c759;
   --red: #ff3b30;
   --orange: #ff9500;
-
-  /* legacy aliases */
-  --bg: #e8eaef;
-  --bg-card: var(--surface-tint);
-  --bg-input: var(--fill);
-  --border: var(--separator);
-  --text: var(--label);
-  --text-dim: var(--label-secondary);
-  --danger: var(--red);
-  --success: var(--green);
+  --danger-text: #d70015; /* darker red — 4.9:1 on the light card (system red fails at 3.9:1) */
 }
 
-html, body {
+/* Don't hard-pin the root in px — that would freeze `rem` and ignore the
+   browser's font-size preference. Leave root at the user's default; scope the
+   compact base size to the body instead. */
+html {
+  font-size: 100%;
+}
+body {
   font-family: var(--font);
-  font-size: 14px;
+  font-size: var(--text-body);
   background: var(--scene);
   background-attachment: fixed;
-  color: var(--text);
-  line-height: 1.5;
+  color: var(--label);
+  line-height: var(--lh-body);
   min-height: 100vh;
 }
 
@@ -161,17 +192,23 @@ a {
 a:hover {
   color: var(--accent-hover);
 }
+/* Global link focus ring (WCAG 2.4.7 AA). Nav's own .link ring is set in
+   Nav.module.css; the .skip-link supplies its own darker ring above. */
+a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
 
 /* --- Buttons — raised (convex) glass elements (see web/DESIGN.md §6) ------- */
 button {
   cursor: pointer;
   font: inherit;
-  font-weight: 500;
+  font-weight: var(--weight-medium);
   border: none;
   border-radius: var(--r-control);
   padding: var(--space-2) var(--space-4);
   background: var(--fill);
-  color: var(--text);
+  color: var(--label);
   /* top specular + hairline + subtle lift off the card surface */
   box-shadow:
     inset 0 0.5px 0 rgba(255, 255, 255, 0.16),
@@ -203,7 +240,7 @@ button:focus-visible {
 .btn-primary {
   background: var(--accent);
   color: #000;
-  font-weight: 600;
+  font-weight: var(--weight-semibold);
   /* crisp specular + tight shadow, a hint of warmth — no outer colour halo */
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.45),
@@ -218,7 +255,7 @@ button:focus-visible {
 }
 
 .btn-danger {
-  color: var(--red);
+  color: var(--danger-text);
   background: color-mix(in srgb, var(--red) 10%, transparent);
   box-shadow:
     inset 0 0 0 0.5px color-mix(in srgb, var(--red) 55%, transparent),
@@ -233,7 +270,7 @@ button:focus-visible {
 input, select, textarea {
   font: inherit;
   background: var(--fill);
-  color: var(--text);
+  color: var(--label);
   border: none;
   border-radius: var(--r-control);
   padding: var(--space-2) var(--space-3);
@@ -336,7 +373,7 @@ label {
   align-items: center;
   gap: var(--space-2);
   color: var(--label-secondary);
-  font-size: 13px;
+  font-size: var(--text-footnote);
 }
 
 /* Liquid Glass material — translucent neutral surface over the vivid scene
@@ -411,7 +448,7 @@ label {
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.18),
     0 8px 24px rgba(0, 0, 0, 0.3);
-  font-weight: 600;
+  font-weight: var(--weight-semibold);
   z-index: 1000;
   animation: toastIn var(--dur-med) var(--ease-spring);
 }
@@ -426,9 +463,9 @@ label {
   background: none;
   border: none;
   padding: 4px;
-  font-size: 18px;
+  font-size: 1.125rem; /* 18px icon glyph */
   line-height: 1;
-  color: var(--text-dim);
+  color: var(--label-secondary);
 }
 .theme-toggle:hover {
   color: var(--accent);

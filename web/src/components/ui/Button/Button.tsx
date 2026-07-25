@@ -19,8 +19,20 @@ export function Button({
     undefined;
 
   return (
-    <button class={cls} onClick={onClick} disabled={disabled || loading}>
-      {loading ? "..." : children}
+    <button
+      class={cls}
+      onClick={onClick}
+      disabled={disabled || loading}
+      aria-busy={loading}
+    >
+      {loading ? (
+        <>
+          <span aria-hidden="true">...</span>
+          <span class="sr-only">{children}</span>
+        </>
+      ) : (
+        children
+      )}
     </button>
   );
 }

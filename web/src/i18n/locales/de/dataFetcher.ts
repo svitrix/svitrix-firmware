@@ -1,6 +1,9 @@
 import type en from "../en/dataFetcher";
 
 const de: typeof en = {
+  deleteTitle: "Datenquelle löschen?",
+  err: { url: "Die URL muss mit http:// oder https:// beginnen" },
+  hint: { jsonPath: "Punktpfad in der JSON-Antwort, z. B. data.price", displayFormat: "printf-Formatzeichenfolge, z. B. $%.0f" },
   title: "Datenquellen",
   addSource: "+ Quelle hinzufügen",
   newSource: "Neue Quelle",

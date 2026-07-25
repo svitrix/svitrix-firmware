@@ -11,8 +11,8 @@ export function AuthSection() {
   return (
     <Card title={t("settings.auth.title")}>
       <FormRow>
-        <TextField label={t("settings.auth.username")} value={config["Auth Username"] || ""} onChange={(v) => updateConfig("Auth Username", v)} />
-        <TextField label={t("settings.auth.password")} value={config["Auth Password"] || ""} onChange={(v) => updateConfig("Auth Password", v)} type="password" />
+        <TextField label={t("settings.auth.username")} value={config["Auth Username"] || ""} onChange={(v) => updateConfig("Auth Username", v)} autocomplete="username" />
+        <TextField label={t("settings.auth.password")} value={config["Auth Password"] || ""} onChange={(v) => updateConfig("Auth Password", v)} type="password" autocomplete="current-password" />
       </FormRow>
       <p class={styles.hintMt}>
         {t("settings.auth.hint")}

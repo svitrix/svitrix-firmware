@@ -1,4 +1,7 @@
 export default {
+  deleteTitle: "Delete data source?",
+  err: { url: "URL must start with http:// or https://" },
+  hint: { jsonPath: "Dot path into the JSON response, e.g. data.price", displayFormat: "printf format string, e.g. $%.0f" },
   title: "Data Sources",
   addSource: "+ Add Source",
   newSource: "New Source",

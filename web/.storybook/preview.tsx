@@ -44,6 +44,15 @@ const preview: Preview = {
       matchers: { color: /(background|color)$/i, date: /Date$/i },
     },
     a11y: { test: "todo" },
+    options: {
+      storySort: {
+        order: [
+          "Design System",
+          ["Introduction", "Foundations", "Refraction"],
+          "Components",
+        ],
+      },
+    },
   },
 };
 

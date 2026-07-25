@@ -1,0 +1,51 @@
+import { Meta, Canvas } from "@storybook/addon-docs/blocks";
+import * as FoundationsStories from "./Foundations.stories";
+
+<Meta of={FoundationsStories} />
+
+# Foundations
+
+The primitives every component is assembled from — colour, type, material and the
+toast surface. All values are CSS custom properties defined in
+`web/src/styles/global.css`; components reference the token, never the literal.
+
+## Colours
+
+Semantic tokens (`--label`, `--fill`, `--separator`, …) plus the Apple-derived
+system accents. Each token resolves to a different value per theme, so components
+stay theme-agnostic. Flip the **Theme** toolbar to see both palettes.
+
+<Canvas of={FoundationsStories.Colors} />
+
+**Accents** are structural — an accent ring or fill signals focus/state and is
+drawn to ignore the background (`color-mix(in srgb, var(--accent) N%, transparent)`).
+**Neutrals & fills** build the material: `--surface-tint` is the card body,
+`--fill` / `--fill-secondary` are recessed control wells, `--separator` is the
+hairline rim.
+
+## Typography
+
+A six-step scale from Large Title (28/700) down to Footnote (12/400), each with its
+own tracking. Tighter negative letter-spacing on the large sizes keeps headings
+optically even; body and below sit at 0.
+
+<Canvas of={FoundationsStories.Typography} />
+
+## Materials (glass)
+
+The blur amount defines the material's *thickness*. Thin (~30px) for transient
+capsules like the toast, Regular (~40px) for cards, Thick (~50px) for modals. Every
+glass surface pairs `blur()` with `saturate(180%)` so the scene colour underneath
+stays vivid, an `inset` top highlight (the specular rim), and a drop shadow for
+lift. Rendered here over a colourful gradient so the translucency reads.
+
+<Canvas of={FoundationsStories.Materials} />
+
+## Toast
+
+The thinnest glass surface in the system — a floating capsule (`--r-pill`) with a
+spring entrance, used for transient confirmations ("Settings saved"). Same
+material recipe as a card but with a lighter blur and a hairline `--separator`
+border.
+
+<Canvas of={FoundationsStories.Toast} />

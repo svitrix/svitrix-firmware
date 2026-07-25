@@ -98,6 +98,7 @@ const nl: typeof en = {
     save: "Nachtmodus opslaan",
   },
   iconPicker: {
+    previewAlt: "Voorbeeld van pictogram {{id}}",
     title: "Pictogramkiezer",
     iconId: "LaMetric-pictogram-ID",
     preview: "Voorbeeld",
@@ -108,6 +109,8 @@ const nl: typeof en = {
     iconNotFound: "Pictogram niet gevonden",
   },
   actions: {
+    resetTitle: "Alle instellingen resetten?",
+    rebootTitle: "Apparaat opnieuw opstarten?",
     saveAll: "Alle scherminstellingen opslaan",
     resetDefaults: "Standaard herstellen",
     resetConfirm: "Alle instellingen terugzetten naar standaard?",

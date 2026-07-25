@@ -161,37 +161,39 @@ export function FilesPage(_props: { path?: string }) {
               {cwd !== "/" && (
                 <button class={styles.rowNav} onClick={goUp}>‹ ..</button>
               )}
-              {sorted.map((e) => {
-                const kind = fileType(e.name, e.type);
-                const prot = protection(e.name);
-                const locked = prot === "lock";
-                return (
-                  <div key={e.name} class={styles.row}>
-                    <button
-                      class={styles.nameBtn}
-                      onClick={() => (e.type === "dir" ? load(full(e.name)) : openFile(e.name))}
-                    >
-                      <FileIcon kind={kind} />
-                      <span class={styles.name}>{e.name}</span>
-                      {prot && (
-                        <svg class={styles.lock} width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-label={t("files.protected")}>
-                          <rect x="5" y="11" width="14" height="9" rx="2" />
-                          <path d="M8 11V8a4 4 0 0 1 8 0v3" />
-                        </svg>
-                      )}
-                      {e.type === "dir" && <span class={styles.chev}>›</span>}
-                    </button>
-                    <RowActions
-                      canDownload={e.type === "file"}
-                      canEdit={e.type === "file" && isEditable(kind) && !locked}
-                      canDelete={!locked}
-                      onDownload={() => download(e.name)}
-                      onEdit={() => openFile(e.name)}
-                      onDelete={() => setDelTarget(e)}
-                    />
-                  </div>
-                );
-              })}
+              <ul class={styles.list} role="list">
+                {sorted.map((e) => {
+                  const kind = fileType(e.name, e.type);
+                  const prot = protection(e.name);
+                  const locked = prot === "lock";
+                  return (
+                    <li key={e.name} class={styles.row}>
+                      <button
+                        class={styles.nameBtn}
+                        onClick={() => (e.type === "dir" ? load(full(e.name)) : openFile(e.name))}
+                      >
+                        <FileIcon kind={kind} />
+                        <span class={styles.name}>{e.name}</span>
+                        {prot && (
+                          <svg class={styles.lock} width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" role="img" aria-label={t("files.protected")}>
+                            <rect x="5" y="11" width="14" height="9" rx="2" />
+                            <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+                          </svg>
+                        )}
+                        {e.type === "dir" && <span class={styles.chev}>›</span>}
+                      </button>
+                      <RowActions
+                        canDownload={e.type === "file"}
+                        canEdit={e.type === "file" && isEditable(kind) && !locked}
+                        canDelete={!locked}
+                        onDownload={() => download(e.name)}
+                        onEdit={() => openFile(e.name)}
+                        onDelete={() => setDelTarget(e)}
+                      />
+                    </li>
+                  );
+                })}
+              </ul>
               {sorted.length === 0 && (
                 <div class={styles.state}>
                   {t("files.emptyDir")} · {t("files.uploadHint")}

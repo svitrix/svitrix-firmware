@@ -14,6 +14,12 @@
 .dialog {
   width: 100%;
   max-width: 380px;
+  /* Never taller than the viewport — scroll inside instead of pushing the
+     buttons off-screen when text is enlarged (WCAG 1.4.4 / 1.4.10). Backdrop
+     has 20px padding top+bottom. */
+  max-height: calc(100vh - 40px);
+  max-height: calc(100dvh - 40px);
+  overflow-y: auto;
   background: color-mix(in srgb, var(--surface-tint) 92%, transparent);
   backdrop-filter: blur(var(--glass-blur-thick)) saturate(180%);
   -webkit-backdrop-filter: blur(var(--glass-blur-thick)) saturate(180%);
@@ -31,14 +37,14 @@
 }
 
 .title {
-  font-size: 17px;
-  font-weight: 650;
+  font-size: var(--text-headline);
+  font-weight: var(--weight-semibold);
   color: var(--label);
   margin-bottom: 8px;
 }
 .body {
-  font-size: 14px;
-  line-height: 1.45;
+  font-size: var(--text-body);
+  line-height: var(--lh-body);
   color: var(--label-secondary);
   margin-bottom: 18px;
 }

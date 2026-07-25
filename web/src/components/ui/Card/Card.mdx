@@ -1,0 +1,54 @@
+import { Meta, Canvas, ArgTypes } from "@storybook/addon-docs/blocks";
+import * as CardStories from "./Card.stories";
+
+<Meta of={CardStories} />
+
+# Card
+
+The primary Liquid Glass surface — a translucent, blurred section container with an
+optional title/subtitle header. Every settings section in the app is a `Card`.
+
+<Canvas of={CardStories.Basic} />
+
+## Props
+
+<ArgTypes of={CardStories} />
+
+## Composition
+
+Cards are containers; drop any controls inside as children. This is how a real
+settings section is assembled:
+
+<Canvas of={CardStories.WithForm} />
+
+## Implementation
+
+The material recipe lives on the global `.card` class in `global.css`; the component
+only adds the header (`Card.module.css`):
+
+- **Material** — `--surface-tint` mixed to `--glass` opacity, over a faint top-sheen
+  gradient, with `backdrop-filter: blur(--glass-blur-regular) saturate(180%)`. Colour
+  comes from the scene bleeding through, not the tint.
+- **Curved specular rim** — `.card::before` paints a 1px `--glass-shell` gradient
+  masked to a ring (`mask-composite: exclude`), so the edge reads as light catching a
+  curved glass bevel, not a flat border. It's theme-aware (white edge in dark, dark
+  edge in light).
+- **`overflow: hidden`** clips the `backdrop-filter` to the rounded corners —
+  otherwise the blurred backdrop renders in the square bounding box and pokes past the
+  radius.
+- **Entrance** — a `glassIn` animation on mount.
+- **Fallback** — `@supports not (backdrop-filter)` swaps to a solid `--surface-tint`
+  fill so content stays readable without the effect.
+
+The header is `--r-card`-radius agnostic; `title` is a 20/650 headline and the
+optional `subtitle` a 13px secondary line.
+
+## Usage
+
+```tsx
+import { Card } from "@/components/ui";
+
+<Card title="Display" subtitle="Brightness, color and matrix behaviour">
+  {/* controls */}
+</Card>
+```

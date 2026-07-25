@@ -1,0 +1,45 @@
+import { Meta, Canvas } from "@storybook/addon-docs/blocks";
+import * as RefractionStories from "./Refraction.stories";
+
+<Meta of={RefractionStories} />
+
+# Refraction (experimental)
+
+Apple's Liquid Glass differentiator is real **refraction** — content behind the
+panel bends at the rim, like light through a thick lens. These stories prototype
+that effect with an SVG displacement filter used as a `backdrop-filter`.
+
+> **Chromium only.** SVG filters as `backdrop-filter` are unsupported in Safari and
+> Firefox — there the panel falls back to a plain blur. See `web/DESIGN.md §3.3`.
+> The displacement math is sound, but the exact `scale`/bezel want a visual tuning
+> pass in Chrome (`SCALE` / `BEZEL` constants in `Refraction.stories.tsx`).
+
+## Refracting panel
+
+<Canvas of={RefractionStories.RefractingPanel} />
+
+**How it works** (`makeDisplacementMap` in the story):
+
+1. **Signed distance field** — for each pixel, compute the signed distance to a
+   rounded box (negative inside). Only pixels within `BEZEL` px of the boundary get
+   displaced; the interior stays flat.
+2. **Squircle surface slope** — the bezel follows `f(x) = ⁴√(1-(1-x)⁴)`, so
+   refraction ramps up sharply toward the rim, matching a physical squircle lens.
+3. **Encode as a displacement map** — the inward surface normal is written into an
+   RGBA canvas (`R = X`, `G = Y`, encoded `128 + component·127`), exported as a
+   data URL.
+4. **Apply** — an `<feImage>` loads the map, `<feDisplacementMap>` shifts
+   `SourceGraphic` by it (`xChannelSelector="R"`, `yChannelSelector="G"`, `scale=SCALE`),
+   and the whole filter is set as the panel's `backdrop-filter`.
+
+A masked `linear-gradient` draws the curved specular rim on top, so the edge reads
+as light catching a glass bevel rather than a flat border.
+
+## Two-layer text field
+
+<Canvas of={RefractionStories.LiquidGlassTextField} />
+
+The corrected field anatomy that ships in `components/ui/TextField`: an **outer
+glass shell** (1px gradient rim) wrapping an **inner stabilized plate** — a dense,
+blurred surface that keeps the value and placeholder legible over any scene. This
+two-layer pattern is the answer to "glass that also has to hold readable text".

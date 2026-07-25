@@ -1,0 +1,52 @@
+import { Meta, Canvas, ArgTypes } from "@storybook/addon-docs/blocks";
+import * as TextFieldStories from "./TextField.stories";
+
+<Meta of={TextFieldStories} />
+
+# TextField
+
+Labelled single-line text input — the canonical **two-layer Liquid Glass field**.
+Handles any native `type` (`text`, `password`, `number`, …) and an optional
+`placeholder`.
+
+<Canvas of={TextFieldStories.Text} />
+
+## Props
+
+<ArgTypes of={TextFieldStories} />
+
+## Variants
+
+<Canvas of={TextFieldStories.WithPlaceholder} />
+<Canvas of={TextFieldStories.Password} />
+
+## Implementation
+
+A field has to be glass *and* hold readable text, so it uses a two-layer anatomy
+(`TextField.module.css`, recipe in `LIQUID-GLASS-COMPONENTS.md §1`):
+
+- **Outer shell** (`.shell`) — a 1px-padded box whose background is the theme-aware
+  `--glass-shell` gradient, i.e. a bright glass rim (white edge in dark, dark edge in
+  light).
+- **Inner plate** (`.input`) — a *stabilized* surface (`--field-plate`) dense enough
+  to keep the value and placeholder legible over the vivid scene, recessed with an
+  `inset` shadow (carved-in, not raised). The class beats the global `input` element
+  rule by specificity.
+- **Focus is a recipe change, not just a colour swap** — the plate goes fully solid
+  (`--surface-tint`, max legibility) and gains a 3px accent ring drawn with
+  `color-mix` so it ignores whatever is behind it.
+- Padding is `12 × 16` and `min-height: 44px` for a comfortable touch target.
+
+The label and input are associated through a unique `useId()` `id`/`htmlFor` pair, so
+repeated labels across the settings page never collide. `onChange` fires on every
+`input` event with the raw string value.
+
+## Usage
+
+```tsx
+import { TextField } from "@/components/ui";
+
+<TextField label="Device name" value={name} onChange={setName} />
+<TextField label="MQTT host" placeholder="192.168.1.10" value={host} onChange={setHost} />
+<TextField label="WiFi password" type="password" value={pw} onChange={setPw} />
+```

@@ -1,6 +1,9 @@
 import type en from "../en/dataFetcher";
 
 const uk: typeof en = {
+  deleteTitle: "Видалити джерело даних?",
+  err: { url: "URL має починатися з http:// або https://" },
+  hint: { jsonPath: "Шлях у JSON через крапку, напр. data.price", displayFormat: "Рядок формату printf, напр. $%.0f" },
   title: "Джерела даних",
   addSource: "+ Додати джерело",
   newSource: "Нове джерело",

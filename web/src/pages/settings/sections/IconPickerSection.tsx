@@ -66,6 +66,7 @@ export function IconPickerSection() {
             <img
               src={iconPreview}
               class={styles.iconPreviewImg}
+              alt={t("settingsDisplay.iconPicker.previewAlt", { id: iconId })}
               onError={() => { setIconPreview(""); toast(t("settingsDisplay.iconPicker.iconNotFound")); }}
             />
           </div>

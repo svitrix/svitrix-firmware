@@ -1,6 +1,9 @@
 import type en from "../en/dataFetcher";
 
 const nl: typeof en = {
+  deleteTitle: "Gegevensbron verwijderen?",
+  err: { url: "URL moet beginnen met http:// of https://" },
+  hint: { jsonPath: "Puntpad in de JSON-respons, bijv. data.price", displayFormat: "printf-opmaakreeks, bijv. $%.0f" },
   title: "Databronnen",
   addSource: "+ Bron toevoegen",
   newSource: "Nieuwe bron",

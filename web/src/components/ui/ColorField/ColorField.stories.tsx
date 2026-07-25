@@ -5,7 +5,6 @@ import { ColorField } from "./ColorField";
 const meta: Meta<typeof ColorField> = {
   title: "Components/ColorField",
   component: ColorField,
-  tags: ["autodocs"],
 };
 export default meta;
 

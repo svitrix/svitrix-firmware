@@ -98,6 +98,7 @@ const es: typeof en = {
     save: "Guardar modo nocturno",
   },
   iconPicker: {
+    previewAlt: "Vista previa del icono {{id}}",
     title: "Selector de iconos",
     iconId: "ID de icono LaMetric",
     preview: "Vista previa",
@@ -108,6 +109,8 @@ const es: typeof en = {
     iconNotFound: "Icono no encontrado",
   },
   actions: {
+    resetTitle: "¿Restablecer todos los ajustes?",
+    rebootTitle: "¿Reiniciar el dispositivo?",
     saveAll: "Guardar todos los ajustes de pantalla",
     resetDefaults: "Restablecer valores predeterminados",
     resetConfirm: "¿Restablecer todos los ajustes a los valores predeterminados?",

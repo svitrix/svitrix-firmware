@@ -1,0 +1,44 @@
+import { Meta, Canvas, ArgTypes } from "@storybook/addon-docs/blocks";
+import * as ToggleStories from "./Toggle.stories";
+
+<Meta of={ToggleStories} />
+
+# Toggle
+
+iOS-style on/off switch with an inline label. A boolean control for settings —
+`checked` + `onChange(boolean)`.
+
+<Canvas of={ToggleStories.Interactive} />
+
+## Props
+
+<ArgTypes of={ToggleStories} />
+
+## On / off
+
+<Canvas of={ToggleStories.OnAndOff} />
+
+## Implementation
+
+`Toggle.tsx` is a native `<input type="checkbox">` inside a `<label>` — no component
+CSS. The switch appearance is the **global** `input[type="checkbox"]` rule in
+`global.css` (the checkbox element is used *only* by Toggle, so styling it globally is
+safe):
+
+- `appearance: none` on a 44×26 pill with an `inset` shadow — a recessed track.
+- `::after` is a 21px white knob with a specular highlight; `:checked` slides it
+  `translateX(18px)` with a spring easing and turns the track `--green`.
+- `:focus-visible` adds the standard 3px accent ring.
+
+Wrapping in `<label>` makes the text itself a click target and associates it with the
+input natively — no `id` plumbing needed.
+
+## Usage
+
+```tsx
+import { Toggle } from "@/components/ui";
+
+<Toggle label="Night mode" checked={on} onChange={setOn} />
+```
+
+For a toggle inside a two-column settings grid, wrap it in a `FormRow`.

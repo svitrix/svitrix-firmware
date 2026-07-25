@@ -1,0 +1,81 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Components/Dialog" />
+
+# Dialog
+
+Glass modal dialogs that replace the native `confirm()` / `prompt()` — those are
+inconsistent to style and `prompt()` is outright blocked in some iOS webviews. Two
+components ship from `components/ui/Dialog`:
+
+- **`ConfirmDialog`** — yes/no confirmation, optionally `danger`.
+- **`PromptDialog`** — single text input with submit/cancel.
+
+Both are **controlled** by an `open` prop (they render `null` when closed), so you
+own the visibility state. They aren't a Storybook story because they're driven
+imperatively from app state; the recipe and usage are documented here.
+
+## ConfirmDialog
+
+```tsx
+import { ConfirmDialog } from "@/components/ui";
+
+const [open, setOpen] = useState(false);
+
+<ConfirmDialog
+  open={open}
+  title="Delete app?"
+  body="This removes the custom app from the device."
+  confirmLabel="Delete"
+  danger
+  onConfirm={() => { remove(); setOpen(false); }}
+  onCancel={() => setOpen(false)}
+/>
+```
+
+| Prop | Type | Notes |
+| --- | --- | --- |
+| `open` | `boolean` | Renders nothing when false. |
+| `title` | `string` | Headline. |
+| `body` | `string?` | Optional description. |
+| `confirmLabel` | `string` | Text of the affirmative button. |
+| `danger` | `boolean?` | Renders the confirm button in the `danger` variant. |
+| `onConfirm` / `onCancel` | `() => void` | Callbacks. |
+
+## PromptDialog
+
+```tsx
+import { PromptDialog } from "@/components/ui";
+
+<PromptDialog
+  open={open}
+  title="Rename app"
+  label="App name"
+  initial={current}
+  submitLabel="Rename"
+  onSubmit={(name) => { rename(name); setOpen(false); }}
+  onCancel={() => setOpen(false)}
+/>
+```
+
+The input is local state seeded from `initial`. **Enter** submits, and an empty /
+whitespace-only value is rejected (submit is a no-op) so `onSubmit` always receives a
+trimmed, non-empty string.
+
+## Implementation
+
+`Dialog.module.css` — a shared backdrop + dialog surface:
+
+- **Backdrop** — `position: fixed`, `z-index: 2000`, a 45% black scrim with its own
+  `blur(6px)` and a fade-in. Clicking it calls `onCancel`; the dialog stops
+  propagation so inner clicks don't dismiss.
+- **Dialog** — the **thickest** glass in the system: `--surface-tint` at 92% with
+  `blur(--glass-blur-thick) saturate(180%)`, an `inset` specular top edge, a deep drop
+  shadow, and a `dlgPop` spring scale-in. `@supports not (backdrop-filter)` falls back
+  to a solid surface.
+- **Interaction** — mounting focuses a safe default (Cancel on confirm, the input on
+  prompt) and registers an `Escape`→cancel key listener, both cleaned up on unmount.
+  `role="dialog"` + `aria-modal="true"`.
+- Both compose the glass **`Button`** for the primary/danger action and a bare
+  `<button>` for cancel; the cancel label comes from i18n (`common.cancel`).
+- All animation is disabled under `prefers-reduced-motion: reduce`.

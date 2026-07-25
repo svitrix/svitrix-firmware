@@ -1,0 +1,54 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Design System/Introduction" />
+
+# Svitrix Web UI — Liquid Glass
+
+The configuration SPA for the Svitrix firmware (Ulanzi TC001 pixel clock). The
+interface is built on a small, hand-rolled **Liquid Glass** design system —
+translucent surfaces floating over a vivid, colourful scene, with concentric
+radii, a 4-pt spacing grid, and Apple system colours.
+
+This Storybook is the living reference for that system. Every control here is the
+exact component shipped in the app (`web/src/components/ui/`), rendered against the
+same tokens from `web/src/styles/global.css`. Use the **Theme** toolbar (top bar)
+to flip any story between Dark and Light.
+
+## How this is organised
+
+| Section | What's inside |
+| --- | --- |
+| **Design System → Foundations** | Colour tokens, type scale, glass materials, toast. |
+| **Design System → Refraction** | The experimental Chromium-only SVG refraction panel + two-layer field. |
+| **Components** | Every reusable control in `components/ui/`, one page each, with props, live examples and an implementation write-up. |
+
+## The core idea: material, not chrome
+
+Liquid Glass is a **material**, not a decoration. Three rules drive every recipe:
+
+1. **Colour comes from the scene, not the tint.** Cards are a near-neutral
+   translucent surface (`--surface-tint`) with `backdrop-filter: blur() saturate(180%)`.
+   The colour you see is the vivid background bleeding through — so the same card
+   reads correctly on any page.
+2. **Elevation = lightness (in dark mode).** Higher surfaces are lighter; recessed
+   controls (inputs, sliders, toggle tracks) are darker wells carved in with an
+   `inset` shadow. This is inverted from the classic "shadows go down" model.
+3. **Legibility beats the effect.** Interactive controls that hold text or a value
+   use a **two-layer** anatomy — an outer 1px gradient glass rim plus an inner
+   *stabilized plate* dense enough to stay readable over any background. Where
+   `backdrop-filter` is unsupported, every surface falls back to a solid fill via
+   `@supports`.
+
+## Tokens
+
+All colours, radii, spacing, blur amounts, durations and easings live as CSS
+custom properties in `global.css` and are documented visually under
+**Foundations**. Components reference tokens only — never hard-coded values — so a
+token change re-themes the whole app.
+
+## Source of truth
+
+- Design spec: `web/DESIGN.md`
+- Per-control Liquid Glass recipes: `web/LIQUID-GLASS-COMPONENTS.md`
+- Components: `web/src/components/ui/`
+- Tokens: `web/src/styles/global.css`

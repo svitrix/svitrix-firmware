@@ -1,0 +1,43 @@
+import { Meta, Canvas, ArgTypes } from "@storybook/addon-docs/blocks";
+import * as ColorFieldStories from "./ColorField.stories";
+
+<Meta of={ColorFieldStories} />
+
+# ColorField
+
+Colour picker whose value is a **24-bit integer** (`0xRRGGBB`) rather than a hex
+string — matching how colours travel over the firmware's JSON API and are stored in
+config. The label sits next to a rounded glass swatch.
+
+<Canvas of={ColorFieldStories.Accent} />
+
+## Props
+
+<ArgTypes of={ColorFieldStories} />
+
+## Implementation
+
+A native `<input type="color">` with two conversions bridging the int-based API and
+the browser's hex string (`ColorField.tsx`):
+
+```ts
+intToHex(0xffc93c) // → "#ffc93c"   (mask & pad to 6 digits)
+hexToInt("#ffc93c") // → 16763708    (strip #, parse base-16)
+```
+
+`onInput` fires the converted integer up through `onChange`, so consumers only ever
+deal in numbers.
+
+The swatch is the global `input[type="color"]` rule in `global.css`: a 44×32 rounded
+frame on a `--fill` background with a specular top edge and subtle lift (a *raised*
+element, unlike the recessed text inputs). The inner swatch corners are rounded to
+`--r-inner` via `::-webkit-color-swatch`.
+
+## Usage
+
+```tsx
+import { ColorField } from "@/components/ui";
+
+// value/onChange are integers, e.g. from settings state
+<ColorField label="Text color" value={color} onChange={setColor} />
+```

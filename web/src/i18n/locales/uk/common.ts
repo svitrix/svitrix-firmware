@@ -1,6 +1,7 @@
 import type en from "../en/common";
 
 const uk: typeof en = {
+  skipToContent: "Перейти до вмісту",
   save: "Зберегти",
   cancel: "Скасувати",
   reset: "Скинути",

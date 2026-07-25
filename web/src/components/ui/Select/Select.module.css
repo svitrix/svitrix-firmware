@@ -38,7 +38,7 @@
   padding: var(--space-3) calc(var(--space-4) + 20px) var(--space-3) var(--space-4);
   min-height: 44px;
   font: inherit;
-  color: var(--text);
+  color: var(--label);
   background: var(--field-plate); /* stabilized plate — legible on any background */
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.22); /* recessed */
   outline: none;
@@ -59,11 +59,39 @@
 /* Native <option> list can't be styled cross-browser; nudge the few engines
    that honour it (Firefox / some OS combos) toward the plate palette. */
 .select option {
-  color: var(--text);
+  color: var(--label);
   background: var(--surface-tint);
 }
 
 .select:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+/* Invalid state — red rim AND a text/icon cue (never colour alone, WCAG 1.4.1). */
+.shell:has([aria-invalid="true"]) {
+  background: var(--red);
+}
+.select[aria-invalid="true"] {
+  box-shadow: inset 0 0 0 1px var(--red),
+    inset 0 1px 2px rgba(0, 0, 0, 0.22);
+}
+.select[aria-invalid="true"]:focus {
+  box-shadow: inset 0 0 0 1px var(--red),
+    0 0 0 3px color-mix(in srgb, var(--red) 28%, transparent);
+}
+
+.error {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-1);
+  margin-top: var(--space-2);
+  color: var(--danger-text); /* AA-contrast red text (WCAG 1.4.3) */
+  font-size: var(--text-footnote);
+  line-height: var(--lh-tight);
+}
+.errorIcon {
+  flex: none;
+  font-size: var(--text-subhead);
+  line-height: 1;
 }

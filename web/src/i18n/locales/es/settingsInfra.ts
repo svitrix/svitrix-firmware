@@ -2,6 +2,9 @@ import type en from "../en/settingsInfra";
 
 const es: typeof en = {
   wifi: {
+    confirmConnectTitle: "¿Conectar y reiniciar?",
+    confirmConnectBody: "El dispositivo guardará las credenciales Wi-Fi de «{{ssid}}» y se reiniciará para volver a conectarse. Puede que pierdas el acceso a esta página si se une a otra red.",
+    confirmConnect: "Conectar y reiniciar",
     title: "WiFi",
     apSubtitle:
       "Conéctate a tu red WiFi doméstica. Tras conectarse, el dispositivo se reiniciará con todos los ajustes disponibles.",
@@ -18,6 +21,7 @@ const es: typeof en = {
     connectionFailed: "Error de conexión",
   },
   network: {
+    invalidIp: "Introduce una dirección IPv4 válida, p. ej. 192.168.1.100",
     title: "Red",
     staticIp: "IP estática",
     localIp: "IP local",
@@ -26,6 +30,7 @@ const es: typeof en = {
     primaryDns: "DNS primario",
   },
   mqtt: {
+    invalidPort: "Introduce un puerto entre 1 y 65535",
     title: "MQTT",
     broker: "Broker",
     port: "Puerto",

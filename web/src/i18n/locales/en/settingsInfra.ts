@@ -1,5 +1,8 @@
 export default {
   wifi: {
+    confirmConnectTitle: "Connect and reboot?",
+    confirmConnectBody: "The device will save the Wi-Fi credentials for \"{{ssid}}\" and reboot to reconnect. You may lose access to this page if it joins a different network.",
+    confirmConnect: "Connect & reboot",
     title: "WiFi",
     apSubtitle:
       "Connect to your home WiFi network. After connecting, the device will reboot with full settings available.",
@@ -16,6 +19,7 @@ export default {
     connectionFailed: "Connection failed",
   },
   network: {
+    invalidIp: "Enter a valid IPv4 address, e.g. 192.168.1.100",
     title: "Network",
     staticIp: "Static IP",
     localIp: "Local IP",
@@ -24,6 +28,7 @@ export default {
     primaryDns: "Primary DNS",
   },
   mqtt: {
+    invalidPort: "Enter a port between 1 and 65535",
     title: "MQTT",
     broker: "Broker",
     port: "Port",

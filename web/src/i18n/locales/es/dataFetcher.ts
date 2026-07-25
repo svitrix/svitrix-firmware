@@ -1,6 +1,9 @@
 import type en from "../en/dataFetcher";
 
 const es: typeof en = {
+  deleteTitle: "¿Eliminar la fuente de datos?",
+  err: { url: "La URL debe empezar por http:// o https://" },
+  hint: { jsonPath: "Ruta con puntos en el JSON, p. ej. data.price", displayFormat: "Cadena de formato printf, p. ej. $%.0f" },
   title: "Fuentes de datos",
   addSource: "+ Añadir fuente",
   newSource: "Nueva fuente",

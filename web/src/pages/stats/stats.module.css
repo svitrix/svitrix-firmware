@@ -7,9 +7,9 @@
 }
 
 .groupHead {
-  margin-bottom: 10px;
-  font-size: 13px;
-  font-weight: 600;
+  margin: 0 0 10px;
+  font-size: var(--text-footnote);
+  font-weight: var(--weight-semibold);
   color: var(--label-secondary);
 }
 
@@ -37,7 +37,7 @@
 }
 
 .label {
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--label-secondary);
 }
 
@@ -47,18 +47,18 @@
   gap: 4px;
 }
 .value {
-  font-size: 20px;
-  font-weight: 650;
-  line-height: 1.1;
+  font-size: var(--text-title);
+  font-weight: var(--weight-semibold);
+  line-height: var(--lh-solid);
   color: var(--label);
   font-variant-numeric: tabular-nums;
 }
 .mono {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 15px;
+  font-size: var(--text-subhead);
 }
 .unit {
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--label-secondary);
 }
 
@@ -94,7 +94,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--label-secondary);
   white-space: nowrap;
 }

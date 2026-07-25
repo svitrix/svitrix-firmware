@@ -9,9 +9,9 @@
 }
 
 .hint {
-  color: var(--text-dim);
+  color: var(--label-secondary);
   margin-bottom: 12px;
-  font-size: 13px;
+  font-size: var(--text-footnote);
 }
 
 .progress {

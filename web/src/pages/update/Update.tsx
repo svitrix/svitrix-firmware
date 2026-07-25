@@ -38,6 +38,7 @@ export function UpdatePage(_props: { path?: string }) {
         <input
           type="file"
           accept=".bin,.bin.gz"
+          aria-label={t("update.fileLabel")}
           disabled={uploading}
           onChange={(e) => {
             const file = (e.target as HTMLInputElement).files?.[0];

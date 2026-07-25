@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { listDir, uploadFile, reboot } from "../../api/client";
 import type { FileEntry } from "../../api/types";
 import { toast } from "../../components/Toast";
+import { ConfirmDialog } from "../../components/ui";
 import styles from "./Backup.module.css";
 
 async function collectFiles(
@@ -24,6 +25,7 @@ async function collectFiles(
 export function BackupPage(_props: { path?: string }) {
   const { t } = useTranslation();
   const [busy, setBusy] = useState("");
+  const [pendingRestore, setPendingRestore] = useState<File | null>(null);
 
   async function doBackup() {
     setBusy(t("backup.collecting"));
@@ -73,7 +75,7 @@ export function BackupPage(_props: { path?: string }) {
       toast(t("backup.restoreComplete"));
       await reboot();
     } catch {
-      toast(t("backup.restoreFailed"));
+      toast(t("backup.restoreFailed"), { error: true });
     }
     setBusy("");
   }
@@ -96,13 +98,31 @@ export function BackupPage(_props: { path?: string }) {
         <input
           type="file"
           accept=".json"
+          aria-label={t("backup.fileLabel")}
           disabled={!!busy}
           onChange={(e) => {
-            const file = (e.target as HTMLInputElement).files?.[0];
-            if (file) doRestore(file);
+            const input = e.target as HTMLInputElement;
+            const file = input.files?.[0];
+            if (file) setPendingRestore(file);
+            // Reset so re-selecting the same file re-triggers change.
+            input.value = "";
           }}
         />
       </div>
+
+      <ConfirmDialog
+        open={!!pendingRestore}
+        title={t("backup.confirmRestoreTitle")}
+        body={t("backup.confirmRestoreBody")}
+        confirmLabel={t("backup.confirmRestore")}
+        danger
+        onConfirm={() => {
+          const file = pendingRestore;
+          setPendingRestore(null);
+          if (file) doRestore(file);
+        }}
+        onCancel={() => setPendingRestore(null)}
+      />
     </div>
   );
 }

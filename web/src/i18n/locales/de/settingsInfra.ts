@@ -2,6 +2,9 @@ import type en from "../en/settingsInfra";
 
 const de: typeof en = {
   wifi: {
+    confirmConnectTitle: "Verbinden und neu starten?",
+    confirmConnectBody: "Das Gerät speichert die WLAN-Zugangsdaten für „{{ssid}}“ und startet neu, um die Verbindung herzustellen. Möglicherweise verlierst du den Zugriff auf diese Seite, wenn es einem anderen Netzwerk beitritt.",
+    confirmConnect: "Verbinden & neu starten",
     title: "WiFi",
     apSubtitle:
       "Mit dem Heim-WiFi-Netzwerk verbinden. Nach der Verbindung startet das Gerät neu und alle Einstellungen sind verfügbar.",
@@ -18,6 +21,7 @@ const de: typeof en = {
     connectionFailed: "Verbindung fehlgeschlagen",
   },
   network: {
+    invalidIp: "Gib eine gültige IPv4-Adresse ein, z. B. 192.168.1.100",
     title: "Netzwerk",
     staticIp: "Statische IP",
     localIp: "Lokale IP",
@@ -26,6 +30,7 @@ const de: typeof en = {
     primaryDns: "Primärer DNS",
   },
   mqtt: {
+    invalidPort: "Gib einen Port zwischen 1 und 65535 ein",
     title: "MQTT",
     broker: "Broker",
     port: "Port",

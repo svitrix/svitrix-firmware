@@ -1,4 +1,5 @@
 export default {
+  fileLabel: "Firmware file (.bin)",
   title: "Firmware Update",
   otaHeading: "OTA Update",
   otaHint:

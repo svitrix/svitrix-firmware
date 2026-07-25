@@ -1,0 +1,53 @@
+import { Meta, Canvas, ArgTypes } from "@storybook/addon-docs/blocks";
+import * as SelectStories from "./Select.stories";
+
+<Meta of={SelectStories} />
+
+# Select
+
+Labelled dropdown over a native `<select>`, styled to match the two-layer glass
+field. Options carry `value` (`string | number`) + `label`; the numeric type is
+preserved through `onChange`.
+
+<Canvas of={SelectStories.TimeMode} />
+
+## Props
+
+<ArgTypes of={SelectStories} />
+
+## Implementation
+
+Same two-layer shell as `TextField`, plus a custom chevron (`Select.module.css`,
+recipe in `LIQUID-GLASS-COMPONENTS.md §6`):
+
+- **Outer shell / inner plate** — identical `--glass-shell` rim + recessed
+  `--field-plate` plate, with the same focus recipe (solid `--surface-tint` + accent
+  ring). `appearance: none` strips the native control chrome.
+- **Custom chevron** — `.shell::after` is a 7px square with a right + bottom border
+  rotated 45° into a clean "v". Drawn in CSS (no image) so it can't tile, survives the
+  focus recipe, and is theme-aware via `--label-secondary`. The plate reserves right
+  padding to clear it.
+- **`<option>` caveat** — the native option list can't be styled cross-browser; the
+  CSS only nudges the engines that honour `option { … }` (Firefox / some OS combos)
+  toward the plate palette.
+
+**Type preservation:** the change handler looks the raw string value back up in
+`options`; if the matched option's `value` was a `number`, it coerces the result
+back to a number before calling `onChange`. So a `{ value: 0 }` option round-trips as
+`0`, not `"0"`.
+
+## Usage
+
+```tsx
+import { Select } from "@/components/ui";
+
+<Select
+  label="Time mode"
+  value={mode}
+  onChange={setMode}
+  options={[
+    { value: 0, label: "HH:MM" },
+    { value: 1, label: "HH:MM:SS" },
+  ]}
+/>
+```

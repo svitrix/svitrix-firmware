@@ -8,8 +8,8 @@
 .canvas {
   display: block;
   background: #000;
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
+  border-radius: var(--r-control);
+  border: 1px solid var(--separator);
   max-width: 100%;
   height: auto;
 }

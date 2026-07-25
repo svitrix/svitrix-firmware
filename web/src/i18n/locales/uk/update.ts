@@ -1,6 +1,7 @@
 import type en from "../en/update";
 
 const uk: typeof en = {
+  fileLabel: "Файл прошивки (.bin)",
   title: "Оновлення прошивки",
   otaHeading: "Оновлення OTA",
   otaHint:

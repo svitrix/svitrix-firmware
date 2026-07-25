@@ -1,0 +1,55 @@
+import { Meta, Canvas, ArgTypes } from "@storybook/addon-docs/blocks";
+import * as SliderStories from "./Slider.stories";
+
+<Meta of={SliderStories} />
+
+# Slider
+
+Labelled range input with an accent-filled recessed track and a raised glass thumb.
+The current value (with optional `unit`) is shown inline in the label. Supports
+`min`/`max`/`step`.
+
+<Canvas of={SliderStories.Brightness} />
+
+## Props
+
+<ArgTypes of={SliderStories} />
+
+## With unit and step
+
+<Canvas of={SliderStories.WithUnit} />
+
+## Implementation
+
+Native `<input type="range">` fully restyled (`Slider.module.css`, recipe in
+`LIQUID-GLASS-COMPONENTS.md §4`). The one thing the component computes is the fill
+percentage:
+
+```ts
+const pct = ((value - min) / (max - min)) * 100;  // → inline style --pct
+```
+
+That `--pct` custom property drives the track gradient so the accent fill renders
+**identically in every engine** — the story doesn't rely on the native
+`accent-color`.
+
+- **Recessed track** — a thin (`--track-h: 6px`) capsule with an `inset` shadow;
+  filled with `--accent` up to `--pct`, `--fill` after. WebKit/Blink paint it on
+  `::-webkit-slider-runnable-track`; Firefox splits it across `::-moz-range-track` +
+  `::-moz-range-progress`.
+- **Raised glass thumb** — a 20px white disc with a specular inset and drop shadow,
+  centred on the thin track via a negative `margin-top`. Duplicated for
+  `::-webkit-slider-thumb` and `::-moz-range-thumb`.
+- **Energy in the interaction** — the thumb `scale(1.15)` on `:active` with a spring
+  easing; focus adds an accent ring. Both are dropped under
+  `prefers-reduced-motion: reduce`.
+- The track sits in a 44px-tall transparent hit area for comfortable touch.
+
+## Usage
+
+```tsx
+import { Slider } from "@/components/ui";
+
+<Slider label="Brightness" min={0} max={255} value={b} onChange={setB} />
+<Slider label="Scroll speed" min={0} max={100} step={5} unit="%" value={s} onChange={setS} />
+```

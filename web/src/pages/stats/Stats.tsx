@@ -25,7 +25,7 @@ export function StatsPage(_props: { path?: string }) {
   return (
     <div class="card">
       <section class={styles.section}>
-        <div class={styles.groupHead}>{t("stats.device")}</div>
+        <h2 class={styles.groupHead}>{t("stats.device")}</h2>
         <div class={styles.kpis}>
           <StatTile label={t("stats.firmware")} value={"v" + s.version} />
           <StatTile label={t("stats.uptime")} value={formatUptime(s.uptime)} />
@@ -40,7 +40,7 @@ export function StatsPage(_props: { path?: string }) {
       </section>
 
       <section class={styles.section}>
-        <div class={styles.groupHead}>{t("stats.environment")}</div>
+        <h2 class={styles.groupHead}>{t("stats.environment")}</h2>
         <div class={styles.kpis}>
           {s.hum > 0 && (
             <StatTile label={t("stats.humidity")} value={s.hum} unit="%">
@@ -60,7 +60,7 @@ export function StatsPage(_props: { path?: string }) {
       </section>
 
       <section class={styles.section}>
-        <div class={styles.groupHead}>{t("stats.displayPower")}</div>
+        <h2 class={styles.groupHead}>{t("stats.displayPower")}</h2>
         <div class={styles.kpis}>
           <StatTile label={t("stats.brightness")} value={s.bri}>
             <Meter value={s.bri} max={255} ariaLabel={t("stats.brightness")} />

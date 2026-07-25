@@ -1,0 +1,52 @@
+import { Meta, Canvas, Controls, ArgTypes } from "@storybook/addon-docs/blocks";
+import * as ButtonStories from "./Button.stories";
+
+<Meta of={ButtonStories} />
+
+# Button
+
+Three-variant action control. `primary` for the main affirmative action, `danger`
+for destructive actions, and the unstyled `default` for secondary/cancel. Supports
+a `loading` state that disables the button and shows an ellipsis.
+
+<Canvas of={ButtonStories.AllVariants} />
+
+## Props
+
+<ArgTypes of={ButtonStories} />
+
+Interactive controls (try the `variant`, `disabled`, `loading` args):
+
+<Canvas of={ButtonStories.Primary} />
+<Controls of={ButtonStories.Primary} />
+
+## Implementation
+
+`Button.tsx` is a thin wrapper over a native `<button>`. It maps the `variant` prop
+to a global class and leaves `default` unstyled (the bare element rule):
+
+- **`btn-primary`** — solid `--accent` fill with black text. The lift is *inside*
+  the button: an `inset` specular highlight, a tight drop shadow, and only a faint
+  accent-tinted halo — no coloured glow. Hover/active shift the fill through
+  `--accent-hover` / `--accent-pressed`.
+- **`btn-danger`** — a tinted "outline" button: 10% `--red` fill with a 55% red
+  inset hairline border. Hover fills solid red with white text.
+- **`default`** — no class; inherits the base glass button styling from `global.css`.
+
+`disabled || loading` both disable the element, and while `loading` the children are
+replaced by `...` so the button keeps its footprint. Styling lives entirely in
+`web/src/styles/global.css` (`.btn-primary` / `.btn-danger`) — the component owns no
+CSS of its own.
+
+## Usage
+
+```tsx
+import { Button } from "@/components/ui";
+
+<Button variant="primary" onClick={save}>Save</Button>
+<Button variant="danger" onClick={remove}>Delete</Button>
+<Button variant="primary" loading={saving}>Save</Button>
+```
+
+`onClick` may return a `Promise` — pair it with a `loading` flag you flip around the
+awaited call to get the built-in busy state.

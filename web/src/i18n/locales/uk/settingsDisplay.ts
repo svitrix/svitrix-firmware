@@ -98,6 +98,7 @@ const uk: typeof en = {
     save: "Зберегти нічний режим",
   },
   iconPicker: {
+    previewAlt: "Перегляд іконки {{id}}",
     title: "Вибір іконки",
     iconId: "ID іконки LaMetric",
     preview: "Перегляд",
@@ -108,6 +109,8 @@ const uk: typeof en = {
     iconNotFound: "Іконку не знайдено",
   },
   actions: {
+    resetTitle: "Скинути всі налаштування?",
+    rebootTitle: "Перезавантажити пристрій?",
     saveAll: "Зберегти всі налаштування дисплея",
     resetDefaults: "Скинути налаштування",
     resetConfirm: "Скинути всі налаштування до типових?",

@@ -98,6 +98,7 @@ const de: typeof en = {
     save: "Nachtmodus speichern",
   },
   iconPicker: {
+    previewAlt: "Vorschau von Symbol {{id}}",
     title: "Icon-Auswahl",
     iconId: "LaMetric Icon-ID",
     preview: "Vorschau",
@@ -108,6 +109,8 @@ const de: typeof en = {
     iconNotFound: "Icon nicht gefunden",
   },
   actions: {
+    resetTitle: "Alle Einstellungen zurücksetzen?",
+    rebootTitle: "Gerät neu starten?",
     saveAll: "Alle Anzeigeeinstellungen speichern",
     resetDefaults: "Auf Standard zurücksetzen",
     resetConfirm: "Alle Einstellungen auf Standard zurücksetzen?",

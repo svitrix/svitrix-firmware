@@ -2,6 +2,9 @@ import type en from "../en/settingsInfra";
 
 const nl: typeof en = {
   wifi: {
+    confirmConnectTitle: "Verbinden en opnieuw opstarten?",
+    confirmConnectBody: "Het apparaat slaat de wifi-gegevens voor «{{ssid}}» op en start opnieuw op om verbinding te maken. Mogelijk verlies je toegang tot deze pagina als het met een ander netwerk verbindt.",
+    confirmConnect: "Verbinden en herstarten",
     title: "WiFi",
     apSubtitle:
       "Verbind met je thuis-WiFi-netwerk. Na het verbinden herstart het apparaat en zijn alle instellingen beschikbaar.",
@@ -18,6 +21,7 @@ const nl: typeof en = {
     connectionFailed: "Verbinding mislukt",
   },
   network: {
+    invalidIp: "Voer een geldig IPv4-adres in, bijv. 192.168.1.100",
     title: "Netwerk",
     staticIp: "Statisch IP",
     localIp: "Lokaal IP",
@@ -26,6 +30,7 @@ const nl: typeof en = {
     primaryDns: "Primaire DNS",
   },
   mqtt: {
+    invalidPort: "Voer een poort tussen 1 en 65535 in",
     title: "MQTT",
     broker: "Broker",
     port: "Poort",

@@ -1,5 +1,6 @@
 // Strings shared across multiple pages. Reference as t("common.save"), etc.
 export default {
+  skipToContent: "Skip to content",
   save: "Save",
   cancel: "Cancel",
   reset: "Reset",

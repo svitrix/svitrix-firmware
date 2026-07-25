@@ -56,13 +56,13 @@ export function DisplaySection() {
         />
         <FormRow>
           <div class="form-group">
-            <label>{t("settingsDisplay.display.colorCorrection")}</label>
-            <input type="color" value={s.CCORRECTION}
+            <label htmlFor="color-correction">{t("settingsDisplay.display.colorCorrection")}</label>
+            <input id="color-correction" name="colorCorrection" type="color" value={s.CCORRECTION}
               onInput={(e) => updateSettings({ CCORRECTION: (e.target as HTMLInputElement).value })} />
           </div>
           <div class="form-group">
-            <label>{t("settingsDisplay.display.colorTemperature")}</label>
-            <input type="color" value={s.CTEMP}
+            <label htmlFor="color-temperature">{t("settingsDisplay.display.colorTemperature")}</label>
+            <input id="color-temperature" name="colorTemperature" type="color" value={s.CTEMP}
               onInput={(e) => updateSettings({ CTEMP: (e.target as HTMLInputElement).value })} />
           </div>
         </FormRow>

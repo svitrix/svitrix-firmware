@@ -1,6 +1,7 @@
 import type en from "../en/update";
 
 const nl: typeof en = {
+  fileLabel: "Firmwarebestand (.bin)",
   title: "Firmware-update",
   otaHeading: "OTA-update",
   otaHint:

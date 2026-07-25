@@ -1,6 +1,7 @@
 import type en from "../en/common";
 
 const nl: typeof en = {
+  skipToContent: "Naar inhoud springen",
   save: "Opslaan",
   cancel: "Annuleren",
   reset: "Herstellen",

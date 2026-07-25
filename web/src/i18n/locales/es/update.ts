@@ -1,6 +1,7 @@
 import type en from "../en/update";
 
 const es: typeof en = {
+  fileLabel: "Archivo de firmware (.bin)",
   title: "Actualización de firmware",
   otaHeading: "Actualización OTA",
   otaHint:

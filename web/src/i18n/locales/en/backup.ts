@@ -1,4 +1,8 @@
 export default {
+  fileLabel: "Backup file (.json)",
+  confirmRestoreTitle: "Overwrite filesystem and reboot?",
+  confirmRestoreBody: "Restoring will overwrite the files currently on the device with this backup, then reboot. This cannot be undone.",
+  confirmRestore: "Restore & reboot",
   title: "Backup & Restore",
   collecting: "Collecting files...",
   restoring: "Restoring...",

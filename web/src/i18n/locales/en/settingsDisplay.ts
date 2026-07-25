@@ -96,6 +96,7 @@ export default {
     save: "Save Night Mode",
   },
   iconPicker: {
+    previewAlt: "Preview of icon {{id}}",
     title: "Icon Picker",
     iconId: "LaMetric Icon ID",
     preview: "Preview",
@@ -106,6 +107,8 @@ export default {
     iconNotFound: "Icon not found",
   },
   actions: {
+    resetTitle: "Reset all settings?",
+    rebootTitle: "Reboot device?",
     saveAll: "Save All Display Settings",
     resetDefaults: "Reset Defaults",
     resetConfirm: "Reset all settings to defaults?",

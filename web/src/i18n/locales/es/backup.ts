@@ -1,6 +1,10 @@
 import type en from "../en/backup";
 
 const es: typeof en = {
+  fileLabel: "Archivo de copia de seguridad (.json)",
+  confirmRestoreTitle: "¿Sobrescribir el sistema de archivos y reiniciar?",
+  confirmRestoreBody: "Restaurar sobrescribirá los archivos actuales del dispositivo con esta copia de seguridad y luego reiniciará. Esto no se puede deshacer.",
+  confirmRestore: "Restaurar y reiniciar",
   title: "Copia de seguridad y restauración",
   collecting: "Recopilando archivos...",
   restoring: "Restaurando...",

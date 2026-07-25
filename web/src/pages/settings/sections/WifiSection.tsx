@@ -2,7 +2,7 @@ import { useState } from "preact/hooks";
 import { useTranslation } from "react-i18next";
 import { scanWifi, connectWifi } from "../../../api/client";
 import { toast } from "../../../components/Toast";
-import { TextField, Card, FormRow, Button } from "../../../components/ui";
+import { TextField, Card, FormRow, Button, ConfirmDialog } from "../../../components/ui";
 import styles from "./sections.module.css";
 
 export function WifiSection({ apMode }: { apMode?: boolean }) {
@@ -11,6 +11,8 @@ export function WifiSection({ apMode }: { apMode?: boolean }) {
   const [scanning, setScanning] = useState(false);
   const [wifiSsid, setWifiSsid] = useState("");
   const [wifiPass, setWifiPass] = useState("");
+  const [ssidError, setSsidError] = useState("");
+  const [confirmConnect, setConfirmConnect] = useState(false);
 
   async function doScan() {
     setScanning(true);
@@ -18,13 +20,22 @@ export function WifiSection({ apMode }: { apMode?: boolean }) {
       const nets = await scanWifi();
       setNetworks(nets.sort((a, b) => b.rssi - a.rssi));
     } catch {
-      toast(t("settings.wifi.scanFailed"));
+      toast(t("settings.wifi.scanFailed"), { error: true });
     }
     setScanning(false);
   }
 
+  function requestConnect() {
+    if (!wifiSsid) {
+      setSsidError(t("settings.wifi.enterSsid"));
+      return;
+    }
+    setSsidError("");
+    setConfirmConnect(true);
+  }
+
   async function doConnect() {
-    if (!wifiSsid) { toast(t("settings.wifi.enterSsid")); return; }
+    setConfirmConnect(false);
     try {
       await connectWifi(wifiSsid, wifiPass);
       toast(t("settings.wifi.connecting"));
@@ -33,7 +44,7 @@ export function WifiSection({ apMode }: { apMode?: boolean }) {
         fetch("/restart").catch(() => {});
       }, 3000);
     } catch {
-      toast(t("settings.wifi.connectionFailed"));
+      toast(t("settings.wifi.connectionFailed"), { error: true });
     }
   }
 
@@ -51,7 +62,7 @@ export function WifiSection({ apMode }: { apMode?: boolean }) {
               <div
                 key={n.ssid}
                 class={styles.networkItem}
-                onClick={() => setWifiSsid(n.ssid)}
+                onClick={() => { setWifiSsid(n.ssid); setSsidError(""); }}
               >
                 {n.ssid} ({n.rssi} dBm) {n.secure ? "\u{1f512}" : ""}
               </div>
@@ -59,11 +70,20 @@ export function WifiSection({ apMode }: { apMode?: boolean }) {
           </div>
         )}
         <FormRow>
-          <TextField label={t("settings.wifi.ssid")} value={wifiSsid} onChange={setWifiSsid} placeholder={t("settings.wifi.ssidPlaceholder")} />
-          <TextField label={t("settings.wifi.password")} value={wifiPass} onChange={setWifiPass} type="password" placeholder="••••••••" />
+          <TextField label={t("settings.wifi.ssid")} value={wifiSsid} onChange={(v) => { setWifiSsid(v); if (v) setSsidError(""); }} placeholder={t("settings.wifi.ssidPlaceholder")} error={ssidError || undefined} autocomplete="off" />
+          <TextField label={t("settings.wifi.password")} value={wifiPass} onChange={setWifiPass} type="password" placeholder="••••••••" autocomplete="off" />
         </FormRow>
-        <Button variant="primary" onClick={doConnect}>{t("settings.wifi.connect")}</Button>
+        <Button variant="primary" onClick={requestConnect}>{t("settings.wifi.connect")}</Button>
       </div>
+
+      <ConfirmDialog
+        open={confirmConnect}
+        title={t("settings.wifi.confirmConnectTitle")}
+        body={t("settings.wifi.confirmConnectBody", { ssid: wifiSsid })}
+        confirmLabel={t("settings.wifi.confirmConnect")}
+        onConfirm={doConnect}
+        onCancel={() => setConfirmConnect(false)}
+      />
     </Card>
   );
 }

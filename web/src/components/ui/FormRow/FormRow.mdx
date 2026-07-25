@@ -1,0 +1,40 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Components/FormRow" />
+
+# FormRow
+
+A layout primitive — a two-column grid for placing two controls side by side inside a
+`Card`. Pure structure, no visuals of its own.
+
+```tsx
+import { FormRow, TextField, Select } from "@/components/ui";
+
+<FormRow>
+  <TextField label="Host" value={host} onChange={setHost} />
+  <TextField label="Port" value={port} onChange={setPort} />
+</FormRow>
+```
+
+| Prop | Type | Notes |
+| --- | --- | --- |
+| `children` | `ComponentChildren` | Usually two controls; each takes one column. |
+| `style` | `JSX.CSSProperties?` | Optional inline overrides (e.g. a custom `gridTemplateColumns`). |
+
+## Implementation
+
+The component just renders `<div class="form-row">`; the layout is the global
+`.form-row` rule in `global.css`:
+
+```css
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+```
+
+Two equal columns with a 4-pt-grid gap. On narrow viewports the responsive rule in
+`global.css` collapses it to a single column, so paired controls stack on mobile
+without any per-call handling. Pass `style` to override the template for the
+occasional asymmetric row.
