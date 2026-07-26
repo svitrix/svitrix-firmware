@@ -18,7 +18,6 @@ const uk: typeof en = {
     colorCorrectionHelper: "Тонко коригує загальний відтінок дисплея.",
     colorTemperature: "Тепло",
     colorTemperatureHelper: "Робить увесь дисплей теплішим або холоднішим.",
-    save: "Зберегти дисплей",
   },
   apps: {
     title: "Застосунки",
@@ -38,7 +37,6 @@ const uk: typeof en = {
     scrollSpeedHelper: "Наскільки швидко прокручується довгий текст.",
     blockNavigation: "Заблокувати перемикання кнопками",
     blockNavigationHelper: "Бічні кнопки більше не перемикають застосунки.",
-    save: "Зберегти застосунки",
   },
   timeDate: {
     title: "Циферблат",
@@ -65,13 +63,13 @@ const uk: typeof en = {
     calHeader: "Заголовок календаря",
     calText: "Текст календаря",
     calBody: "Тіло календаря",
-    save: "Зберегти час і дату",
+    nowShows: "Зараз показує:",
+    presets: "Шаблони",
   },
   sound: {
     title: "Звук",
     soundEnabled: "Звук увімкнено",
     volume: "Гучність",
-    save: "Зберегти звук",
   },
   notify: {
     title: "Надіслати сповіщення",
@@ -106,7 +104,6 @@ const uk: typeof en = {
     nightColor: "Нічний колір",
     blockAutoTransition: "Зупинити на одному застосунку вночі",
     blockAutoTransitionHelper: "Не перемикати екрани автоматично в нічному режимі.",
-    save: "Зберегти нічний режим",
   },
   iconPicker: {
     previewAlt: "Перегляд іконки {{id}}",
@@ -122,7 +119,6 @@ const uk: typeof en = {
   actions: {
     resetTitle: "Скинути всі налаштування?",
     rebootTitle: "Перезавантажити пристрій?",
-    saveAll: "Зберегти всі налаштування дисплея",
     resetDefaults: "Скинути налаштування",
     resetConfirm: "Скинути всі налаштування до типових?",
     settingsReset: "Налаштування скинуто",

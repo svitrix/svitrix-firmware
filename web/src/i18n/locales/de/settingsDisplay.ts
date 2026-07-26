@@ -18,7 +18,6 @@ const de: typeof en = {
     colorCorrectionHelper: "Feineinstellung des allgemeinen Farbstichs der Anzeige.",
     colorTemperature: "Wärme",
     colorTemperatureHelper: "Macht die gesamte Anzeige wärmer oder kühler.",
-    save: "Anzeige speichern",
   },
   apps: {
     title: "Apps",
@@ -38,7 +37,6 @@ const de: typeof en = {
     scrollSpeedHelper: "Wie schnell langer Text scrollt.",
     blockNavigation: "Tastennavigation sperren",
     blockNavigationHelper: "Verhindert, dass die Seitentasten Apps wechseln.",
-    save: "Apps speichern",
   },
   timeDate: {
     title: "Zifferblatt",
@@ -65,13 +63,13 @@ const de: typeof en = {
     calHeader: "Kal.-Kopf",
     calText: "Kal.-Text",
     calBody: "Kal.-Rumpf",
-    save: "Zeit & Datum speichern",
+    nowShows: "Zeigt gerade:",
+    presets: "Vorlagen",
   },
   sound: {
     title: "Ton",
     soundEnabled: "Ton aktiviert",
     volume: "Lautstärke",
-    save: "Ton speichern",
   },
   notify: {
     title: "Benachrichtigung senden",
@@ -106,7 +104,6 @@ const de: typeof en = {
     nightColor: "Nacht-Farbe",
     blockAutoTransition: "Nachts auf einer App bleiben",
     blockAutoTransitionHelper: "Kein automatischer Bildschirmwechsel im Nachtmodus.",
-    save: "Nachtmodus speichern",
   },
   iconPicker: {
     previewAlt: "Vorschau von Symbol {{id}}",
@@ -122,7 +119,6 @@ const de: typeof en = {
   actions: {
     resetTitle: "Alle Einstellungen zurücksetzen?",
     rebootTitle: "Gerät neu starten?",
-    saveAll: "Alle Anzeigeeinstellungen speichern",
     resetDefaults: "Auf Standard zurücksetzen",
     resetConfirm: "Alle Einstellungen auf Standard zurücksetzen?",
     settingsReset: "Einstellungen zurückgesetzt",

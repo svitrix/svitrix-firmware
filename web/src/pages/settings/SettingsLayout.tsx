@@ -82,7 +82,11 @@ export function SettingsLayout() {
             <h2 class={styles.heading}>{t(`settingsNav.${active}.label`)}</h2>
             <p class={styles.subtitle}>{t(`settingsNav.${active}.description`)}</p>
           </header>
-          <div class={styles.sections}>{CATEGORY_SECTIONS[active]()}</div>
+          {/* Native fieldset[disabled] switches off every descendant control while
+              the device is unreachable — one place, no per-control threading. */}
+          <fieldset class={styles.fieldset} disabled={!online}>
+            <div class={styles.sections}>{CATEGORY_SECTIONS[active]()}</div>
+          </fieldset>
         </section>
       </div>
     </div>

@@ -16,7 +16,6 @@ export default {
     colorCorrectionHelper: "Fine-tunes the display's overall colour cast.",
     colorTemperature: "Warmth",
     colorTemperatureHelper: "Shifts the whole display warmer or cooler.",
-    save: "Save Display",
   },
   apps: {
     title: "Apps",
@@ -36,7 +35,6 @@ export default {
     scrollSpeedHelper: "How fast long text scrolls.",
     blockNavigation: "Lock button navigation",
     blockNavigationHelper: "Stops the side buttons switching apps.",
-    save: "Save Apps",
   },
   timeDate: {
     title: "Clock face",
@@ -63,13 +61,13 @@ export default {
     calHeader: "Cal Header",
     calText: "Cal Text",
     calBody: "Cal Body",
-    save: "Save Time & Date",
+    nowShows: "Right now it shows:",
+    presets: "Presets",
   },
   sound: {
     title: "Sound",
     soundEnabled: "Sound Enabled",
     volume: "Volume",
-    save: "Save Sound",
   },
   notify: {
     title: "Send Notification",
@@ -104,7 +102,6 @@ export default {
     nightColor: "Night Color",
     blockAutoTransition: "Freeze on one app at night",
     blockAutoTransitionHelper: "Stop auto-cycling screens during night mode.",
-    save: "Save Night Mode",
   },
   iconPicker: {
     previewAlt: "Preview of icon {{id}}",
@@ -120,7 +117,6 @@ export default {
   actions: {
     resetTitle: "Reset all settings?",
     rebootTitle: "Reboot device?",
-    saveAll: "Save All Display Settings",
     resetDefaults: "Reset Defaults",
     resetConfirm: "Reset all settings to defaults?",
     settingsReset: "Settings reset",

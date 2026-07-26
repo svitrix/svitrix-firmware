@@ -18,7 +18,6 @@ const nl: typeof en = {
     colorCorrectionHelper: "Stemt de algehele kleurzweem van het scherm af.",
     colorTemperature: "Warmte",
     colorTemperatureHelper: "Maakt het hele scherm warmer of koeler.",
-    save: "Scherm opslaan",
   },
   apps: {
     title: "Apps",
@@ -38,7 +37,6 @@ const nl: typeof en = {
     scrollSpeedHelper: "Hoe snel lange tekst schuift.",
     blockNavigation: "Knopnavigatie vergrendelen",
     blockNavigationHelper: "Voorkomt dat de zijknoppen apps wisselen.",
-    save: "Apps opslaan",
   },
   timeDate: {
     title: "Wijzerplaat",
@@ -65,13 +63,13 @@ const nl: typeof en = {
     calHeader: "Kalenderkop",
     calText: "Kalendertekst",
     calBody: "Kalenderinhoud",
-    save: "Tijd & Datum opslaan",
+    nowShows: "Nu toont het:",
+    presets: "Sjablonen",
   },
   sound: {
     title: "Geluid",
     soundEnabled: "Geluid ingeschakeld",
     volume: "Volume",
-    save: "Geluid opslaan",
   },
   notify: {
     title: "Melding verzenden",
@@ -106,7 +104,6 @@ const nl: typeof en = {
     nightColor: "Nachtkleur",
     blockAutoTransition: "'s Nachts op één app bevriezen",
     blockAutoTransitionHelper: "Stopt het automatisch wisselen van schermen in nachtmodus.",
-    save: "Nachtmodus opslaan",
   },
   iconPicker: {
     previewAlt: "Voorbeeld van pictogram {{id}}",
@@ -122,7 +119,6 @@ const nl: typeof en = {
   actions: {
     resetTitle: "Alle instellingen resetten?",
     rebootTitle: "Apparaat opnieuw opstarten?",
-    saveAll: "Alle scherminstellingen opslaan",
     resetDefaults: "Standaard herstellen",
     resetConfirm: "Alle instellingen terugzetten naar standaard?",
     settingsReset: "Instellingen hersteld",

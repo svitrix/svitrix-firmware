@@ -18,7 +18,6 @@ const es: typeof en = {
     colorCorrectionHelper: "Ajusta el tono general del color de la pantalla.",
     colorTemperature: "Calidez",
     colorTemperatureHelper: "Hace toda la pantalla más cálida o más fría.",
-    save: "Guardar pantalla",
   },
   apps: {
     title: "Apps",
@@ -38,7 +37,6 @@ const es: typeof en = {
     scrollSpeedHelper: "Qué tan rápido se desplaza el texto largo.",
     blockNavigation: "Bloquear navegación con botones",
     blockNavigationHelper: "Impide que los botones laterales cambien de app.",
-    save: "Guardar apps",
   },
   timeDate: {
     title: "Esfera del reloj",
@@ -65,13 +63,13 @@ const es: typeof en = {
     calHeader: "Encabezado del cal.",
     calText: "Texto del cal.",
     calBody: "Cuerpo del cal.",
-    save: "Guardar hora y fecha",
+    nowShows: "Ahora muestra:",
+    presets: "Preajustes",
   },
   sound: {
     title: "Sonido",
     soundEnabled: "Sonido activado",
     volume: "Volumen",
-    save: "Guardar sonido",
   },
   notify: {
     title: "Enviar notificación",
@@ -106,7 +104,6 @@ const es: typeof en = {
     nightColor: "Color nocturno",
     blockAutoTransition: "Fijar una sola app de noche",
     blockAutoTransitionHelper: "Detiene el ciclo automático de pantallas en modo nocturno.",
-    save: "Guardar modo nocturno",
   },
   iconPicker: {
     previewAlt: "Vista previa del icono {{id}}",
@@ -122,7 +119,6 @@ const es: typeof en = {
   actions: {
     resetTitle: "¿Restablecer todos los ajustes?",
     rebootTitle: "¿Reiniciar el dispositivo?",
-    saveAll: "Guardar todos los ajustes de pantalla",
     resetDefaults: "Restablecer valores predeterminados",
     resetConfirm: "¿Restablecer todos los ajustes a los valores predeterminados?",
     settingsReset: "Ajustes restablecidos",

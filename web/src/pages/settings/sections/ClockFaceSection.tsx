@@ -1,20 +1,63 @@
+import { useEffect, useState } from "preact/hooks";
 import { useTranslation } from "react-i18next";
 import { useSettings } from "../../../context/SettingsContext";
 import { Toggle, TextField, ColorField, Select, Card, FormRow } from "../../../components/ui";
+import { formatStrftime } from "../../../utils/strftime";
 import styles from "./sections.module.css";
+
+const TIME_PRESETS = ["%H:%M", "%I:%M %p", "%H:%M:%S", "%I:%M"];
+const DATE_PRESETS = ["%a %d", "%d %b", "%m/%d", "%Y-%m-%d", "%a, %e %b"];
 
 export function ClockFaceSection() {
   const { t } = useTranslation();
   const { settings, setSetting } = useSettings();
+
+  // Tick the reference time so the chip labels / live preview stay current.
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const id = setInterval(() => setNow(new Date()), 10_000);
+    return () => clearInterval(id);
+  }, []);
+
   if (!settings) return null;
   const s = settings;
+
+  const chipRow = (presets: string[], value: string, key: "TFORMAT" | "DFORMAT") => (
+    <div class={styles.chipRow} role="group" aria-label={t("settingsDisplay.timeDate.presets")}>
+      {presets.map((fmt) => (
+        <button
+          key={fmt}
+          type="button"
+          class={styles.chip}
+          aria-pressed={value === fmt ? "true" : "false"}
+          onClick={() => setSetting({ [key]: fmt }, true)}
+        >
+          {formatStrftime(fmt, now)}
+        </button>
+      ))}
+    </div>
+  );
+
+  const preview = (value: string) => (
+    <p class={styles.formatPreview}>
+      {t("settingsDisplay.timeDate.nowShows")} <b>{formatStrftime(value, now)}</b>
+    </p>
+  );
 
   return (
     <Card title={t("settingsDisplay.timeDate.title")}>
       <div class={styles.stack}>
         <FormRow>
-          <TextField label={t("settingsDisplay.timeDate.timeFormat")} value={s.TFORMAT} onChange={(v) => setSetting({ TFORMAT: v })} />
-          <TextField label={t("settingsDisplay.timeDate.dateFormat")} value={s.DFORMAT} onChange={(v) => setSetting({ DFORMAT: v })} />
+          <div class="form-group">
+            <TextField label={t("settingsDisplay.timeDate.timeFormat")} value={s.TFORMAT} onChange={(v) => setSetting({ TFORMAT: v })} />
+            {chipRow(TIME_PRESETS, s.TFORMAT, "TFORMAT")}
+            {preview(s.TFORMAT)}
+          </div>
+          <div class="form-group">
+            <TextField label={t("settingsDisplay.timeDate.dateFormat")} value={s.DFORMAT} onChange={(v) => setSetting({ DFORMAT: v })} />
+            {chipRow(DATE_PRESETS, s.DFORMAT, "DFORMAT")}
+            {preview(s.DFORMAT)}
+          </div>
         </FormRow>
         <Select
           label={t("settingsDisplay.timeDate.timeMode")}

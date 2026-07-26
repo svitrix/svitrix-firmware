@@ -50,6 +50,51 @@
   color: var(--label-secondary);
 }
 
+/* Format-preset chip row (Time/Date format quick picks) */
+.chipRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin-top: var(--space-1);
+}
+
+.chip {
+  padding: 4px 10px;
+  min-height: 32px;
+  border-radius: var(--r-inner);
+  border: 0.5px solid var(--separator);
+  background: var(--fill);
+  color: var(--label);
+  font-size: var(--text-footnote);
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+
+  &:hover {
+    background: color-mix(in srgb, var(--accent) 12%, var(--fill));
+  }
+
+  &[aria-pressed="true"] {
+    background: color-mix(in srgb, var(--accent) 20%, transparent);
+    border-color: var(--accent);
+    color: var(--label);
+    font-weight: var(--weight-medium);
+  }
+}
+
+/* Live "right now it shows" preview line under a format field */
+.formatPreview {
+  font-size: var(--text-caption);
+  color: var(--label-secondary);
+  margin: var(--space-1) 0 0;
+
+  & b {
+    color: var(--label);
+    font-variant-numeric: tabular-nums;
+    font-weight: var(--weight-medium);
+  }
+}
+
 /* Hint / helper text */
 .hint {
   font-size: var(--text-caption);
