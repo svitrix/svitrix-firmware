@@ -1,7 +1,6 @@
 import type { ComponentChildren } from "preact";
 import { useState } from "preact/hooks";
 import { useTranslation } from "react-i18next";
-import { LivePreview } from "../../components/LivePreview";
 import { SaveIndicator } from "../../components/SaveIndicator";
 import { useSettings } from "../../context/SettingsContext";
 import { OfflineBanner } from "./OfflineBanner";
@@ -45,6 +44,7 @@ const CATEGORY_SECTIONS: Record<CategoryId, () => ComponentChildren> = {
   system: () => (
     <>
       <AuthSection />
+      <InfraSaveBar />
       <SoundSection />
       <ActionsBar />
     </>
@@ -66,13 +66,12 @@ export function SettingsLayout() {
     <div class={styles.layout}>
       {!online && <OfflineBanner lastSeen={lastSeen} onRetry={reload} />}
       <div class={styles.header}>
-        <LivePreview variant="compact" />
         <SaveIndicator />
       </div>
       <div class={styles.body}>
         <SettingsNav active={active} onChange={setActive} />
         <section
-          class={`${styles.panel} ${active === "tools" ? styles.tools : ""}`}
+          class={styles.panel}
           role="tabpanel"
           id={`settings-panel-${active}`}
           aria-labelledby={`settings-tab-${active}`}

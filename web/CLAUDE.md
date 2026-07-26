@@ -50,8 +50,16 @@ scan (all routes × light/dark). Keep it that way.
   (`src/i18n/locales/{en,uk,es,de,nl}/…`) — `Dict = typeof en`, so a key missing
   in another locale fails `tsc`.
 - **Reuse `components/ui/`** (`Button` `TextField` `Select` `Slider` `Toggle`
-  `ColorField` `Card` `FormRow` `Dialog`) instead of raw elements — they already
-  carry the glass recipe + a11y wiring.
+  `ColorField` `TimeField` `Card` `FormRow` `Dialog`) instead of raw elements —
+  they already carry the glass recipe + a11y wiring. Form controls take an
+  optional `helper?` caption; `Select`/`Slider`/`Toggle`/`ColorField`/`TimeField`
+  also take `error?`. `ColorField` has two modes: default **number** (colour as a
+  24-bit int) and `hex` (colour as `"#RRGGBB"`, for string fields like
+  CCORRECTION/CTEMP). Use `TimeField` (not raw `<input type=time>`) for HH:MM.
+  Larger reusable pieces live directly under `components/`: `LivePreview`
+  (polls `GET /api/screen`, `page`|`compact` variants), `SaveIndicator`
+  (renders the `saveState`), `RebootOverlay` (polls `/version` via `ping()`
+  until the device is back).
 - **Verify:** `cd web && npm run build` (tsc + vite) must pass after every change.
 
 ## Recipe — new UI component (`components/ui/`)
@@ -95,8 +103,34 @@ link + i18n `nav.*` key. See README.md "Project Structure" / "Pages".
 
 ## Recipe — new settings field / section
 
-Settings live in `pages/settings/sections/`; each section saves only its own
-fields via `SettingsContext`. A new device-config field also touches firmware +
-API + types — follow the repo `CLAUDE.md` "New config field" pattern
-(`ConfigTypes.h` → `Globals.cpp` → ServerManager → `api/types.ts` →
-`SettingsContext.tsx` → the section UI).
+`/settings` is a **master–detail** screen: `pages/settings/SettingsLayout.tsx`
+renders a `SaveIndicator` header, then a vertical category rail
+(`SettingsNav.tsx`, an ARIA `tablist` with keyboard nav) beside a content panel. Five categories (`CategoryId` in `SettingsNav.tsx`): **Appearance ·
+Screens · Network · System · Tools**. Sections themselves are in
+`pages/settings/sections/`; the `CATEGORY_SECTIONS` map in `SettingsLayout.tsx`
+places each section under a category.
+
+**Two save models — pick by field kind:**
+
+- **Display fields auto-save.** Controls call `setSetting(patch, immediate?)`
+  from `SettingsContext` — debounced 400 ms + coalescing, `immediate: true` for
+  discrete inputs (toggles/selects/swatches). No per-section Save button (they
+  and "Save All" were removed); `saveState` (`idle|saving|saved|error`) is shown
+  by `SaveIndicator`. These sections live under **Appearance** (`DisplaySection`,
+  `ClockFaceSection`, `NightModeSection`) and **Screens** (`AppsSection`).
+- **Infra fields save explicitly.** Network/MQTT/NTP/Auth edit `config` via
+  `updateConfig()` and persist through `InfraSaveBar` (a "Requires restart" badge
+  + one Save button that fires `RebootOverlay`). These sit under **Network** /
+  **System**.
+
+The panel is wrapped in `<fieldset disabled={!online}>`, so controls disable
+while the device is unreachable (heartbeat + `OfflineBanner`).
+
+**Add a section:** create it in `sections/` (export from `sections/index.ts`),
+then add it to the right category in `CATEGORY_SECTIONS`. A whole new category
+also needs a `CategoryId` entry in `SettingsNav.tsx` (`CATEGORY_IDS`) + a
+`settingsNav.*` i18n slice.
+
+A new device-config field also touches firmware + API + types — follow the repo
+`CLAUDE.md` "New config field" pattern (`ConfigTypes.h` → `Globals.cpp` →
+ServerManager → `api/types.ts` → `SettingsContext.tsx` → the section UI).

@@ -4,6 +4,7 @@
 
 .shell {
   position: relative;
+  width: fit-content; /* hug the HH:MM value, don't stretch to the form-group width */
   border-radius: var(--r-control);
   padding: 1px;
   background: var(--glass-shell); /* theme-aware rim (dark: white / light: dark edge) */
@@ -17,7 +18,7 @@
 /* Class overrides the global `input` element rules (class > element). */
 .input {
   display: block;
-  width: 100%;
+  width: auto; /* size to the HH:MM content, not the parent */
   border: none;
   border-radius: calc(var(--r-control) - 1px);
   padding: var(--space-3) var(--space-4);

@@ -54,7 +54,7 @@ const nl: typeof en = {
   infra: {
     save: "Opslaan & herstarten",
     requiresRestart: "Herstart vereist",
-    restartHint: "Netwerkwijzigingen herstarten de klok en deze verliest kort de verbinding.",
+    restartHint: "Het opslaan van deze instellingen herstart de klok en deze verliest kort de verbinding.",
   },
 };
 

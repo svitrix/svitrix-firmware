@@ -54,7 +54,7 @@ const es: typeof en = {
   infra: {
     save: "Guardar y reiniciar",
     requiresRestart: "Requiere reinicio",
-    restartHint: "Los cambios de red reinician el reloj y se desconecta brevemente.",
+    restartHint: "Guardar estos ajustes reinicia el reloj y se desconecta brevemente.",
   },
 };
 

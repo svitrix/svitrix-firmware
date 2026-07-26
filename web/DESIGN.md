@@ -335,8 +335,15 @@ An **outer shell** `.shell` (1px `--glass-shell` rim) + an **inner plate** `.inp
 (`--field-plate`, opaque) — the plate keeps the value and placeholder
 (`--placeholder`, AA) legible over any scene. Recessed inset shadow ("carved into
 the glass"); on focus the plate → `--surface-tint` + ring
-`0 0 0 3px color-mix(--accent 25%, transparent)`. The `ColorField` swatch is
-`--fill` with a top specular. Min height 44px.
+`0 0 0 3px color-mix(--accent 25%, transparent)`. Min height 44px.
+
+### `ColorField.tsx` / `TimeField.tsx` — native inputs on the two-layer recipe
+`ColorField` (promoted from a bare swatch) and `TimeField` wrap the native
+`<input type=color|time>` in the same shell + plate as `TextField`: swatch/well is
+`--fill` with a top specular, rim `--glass-shell`, accent focus ring. Both carry
+the a11y contract (`helper?` caption, `error?` → `aria-invalid`/`aria-describedby`
++ icon+text). `ColorField` has a number mode (24-bit int) and a `hex` mode
+(`"#RRGGBB"` string).
 
 ### `ConfirmDialog.tsx` / `PromptDialog.tsx` — modals (in `components/ui/`)
 Thick glass over a scrim; focus on the safe button (Cancel), Esc/backdrop click
@@ -350,6 +357,27 @@ right/below.
 A thin-glass capsule near the bottom edge, icon colour by type (green/red/orange),
 spring + fade entrance. It is a live region (`role=status`/`alert`, `aria-live`);
 success auto-dismisses, errors persist. `toast(msg, { error })`.
+
+### `SettingsLayout` / `SettingsNav` — settings master–detail (in `pages/settings/`)
+`/settings` is a two-pane layout: a vertical category **rail** (`SettingsNav`, an
+ARIA `tablist` — `role=tab`/`tabpanel`, roving `tabindex`, arrow/Home/End keys)
+beside a content panel, with a `SaveIndicator` in the header. The active tab is a
+`--fill` pill + `--accent` text (same active-state
+recipe as `Nav`). The panel is a `<fieldset disabled>` when the device is
+offline. Not a `ui/` primitive, but it follows the language.
+
+### `SaveIndicator` — auto-save status (in `components/`)
+A quiet inline `role=status`/`aria-live=polite` label reflecting the context
+`saveState`: "Saving…" → "Saved" (`--green`) → fades to idle; "Not saved" on
+error (`--danger-text`). Replaces per-section Save buttons for display settings.
+
+### `RebootOverlay` — device-reconnect modal (in `components/`)
+Full-screen scrim + a dialog (`role=dialog`, `aria-modal`, `aria-busy` while
+working) shown after an action that restarts the device. Polls `/version` via
+`ping()` with backoff until the device answers → "Back online" then hands back;
+on timeout → a retry/dismiss failed state. An `info` mode is a terminal
+informational state (Wi-Fi hand-off, no auto-reload). Spinner + `--accent`
+primary action.
 
 ### Segmented control — not implemented (future)
 Candidate to replace `Select` for short lists (2–4 options, e.g. a TMODE picker):

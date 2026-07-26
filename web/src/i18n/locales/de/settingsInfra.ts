@@ -54,7 +54,7 @@ const de: typeof en = {
   infra: {
     save: "Speichern & neu starten",
     requiresRestart: "Neustart erforderlich",
-    restartHint: "Netzwerkänderungen starten die Uhr neu, wobei sie kurz die Verbindung verliert.",
+    restartHint: "Das Speichern dieser Einstellungen startet die Uhr neu, wobei sie kurz die Verbindung verliert.",
   },
 };
 

@@ -49,11 +49,21 @@ Browser  ←→  ESP32
 | Route | Page | Replaces |
 |-------|------|----------|
 | `/` | Screen — live 32x8 canvas, app navigation | `screen_html`, `screenfull_html` |
-| `/settings` | Settings — display, WiFi, MQTT, NTP, auth, icons | `SETUP_HTML`, `custom_html/css/script` |
+| `/settings` | Settings — master–detail: category rail + auto-save | `SETUP_HTML`, `custom_html/css/script` |
 | `/datafetcher` | DataFetcher — CRUD for HTTP data sources | `datafetcher_html` |
 | `/backup` | Backup — download/upload device config | `backup_html` |
 | `/update` | Update — OTA firmware upload | `update_html` (fallback kept in firmware) |
 | `/files` | Files — LittleFS browser and text editor | `edit_htm_gz` |
+
+**Settings** is a master–detail screen (`SettingsLayout` + `SettingsNav`, an ARIA
+tablist): sections are grouped into five categories — **Appearance** (display,
+clock face, night mode), **Screens** (apps), **Network** (WiFi, MQTT, NTP), **System**
+(auth, sound, device actions), **Tools** (notify, icon picker) — replacing the old
+flat card list. **Display settings auto-save** on change (debounced `setSetting()` in `SettingsContext`, status shown
+by `SaveIndicator`; no per-section Save buttons). **Network/auth settings save
+explicitly** via `InfraSaveBar` and trigger a `RebootOverlay` that polls the device
+back online. Controls disable via a `<fieldset disabled>` while the device is
+unreachable.
 
 ## Dev Proxy
 
@@ -97,22 +107,19 @@ src/
   components/
     Nav.tsx + Nav.module.css   # Navigation bar + theme toggle
     Toast.tsx                 # Toast notifications (signal-based)
-    ui/                       # Reusable UI components (8)
-      Toggle.tsx              # On/off switch
-      TextField.tsx           # Text input with label
-      ColorField.tsx          # Color picker with hex conversion
-      Slider.tsx              # Range input with value display
-      Select.tsx              # Dropdown with typed onChange
-      Card.tsx                # Section card with title
-      FormRow.tsx             # 2-column grid layout
-      Button.tsx              # Primary/danger/default variants
+    LivePreview/              # Live 32x8 canvas (polls /api/screen); page|compact
+    SaveIndicator/            # Auto-save status label (idle/saving/saved/error)
+    RebootOverlay/            # Reconnect modal (polls /version until back online)
+    ui/                       # Reusable UI primitives (glass + a11y)
+      Toggle/ TextField/ ColorField/ TimeField/ Slider/ Select/
+      Card/ FormRow/ Button/ Dialog/   # (Dialog = Confirm/Prompt)
       index.ts                # Barrel export
   context/
-    SettingsContext.tsx        # Shared state for settings + config
+    SettingsContext.tsx        # Shared settings/config state + auto-save + heartbeat
   pages/
     screen/                   # Live LED matrix preview
-    settings/                 # Device configuration
-      sections/               # 15 independent settings sections (incl. NightModeSection)
+    settings/                 # Master–detail: SettingsLayout + SettingsNav (tablist)
+      sections/               # Per-category settings sections + InfraSaveBar
     data-fetcher/             # External API data sources
     files/                    # LittleFS file manager
     backup/                   # Config backup/restore
@@ -129,5 +136,5 @@ src/
 - **Typography**: use the `rem`-based type tokens (`--text-body`, `--text-footnote`, `--lh-*`, `--weight-*`) — never hard-code `px` font sizes (WCAG 1.4.4); see `DESIGN.md` §5
 - **Preact**: use `class` not `className`, import from `preact` and `preact/hooks`
 - **Components**: reusable UI in `components/ui/`, page-specific in page directory
-- **Context**: shared state via `SettingsContext`, sections save only their own fields
+- **Context**: shared state via `SettingsContext` — display sections auto-save with `setSetting()`; infra sections save explicitly through `InfraSaveBar`
 - **Types**: strict TypeScript, explicit interfaces for all API data

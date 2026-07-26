@@ -9,7 +9,7 @@ Once SVITRIX is connected to your Wi-Fi network, access the web interface by ent
 | Page | Route | Description |
 |------|-------|-------------|
 | **Screen** | `/` | Live view of the 32x8 LED matrix with app navigation (previous/next), PNG download, and GIF recording. |
-| **Settings** | `/settings` | Device configuration split into independent sections, each with its own Save button: WiFi, Network, MQTT, NTP/Timezone, Authentication, Display, Apps, Time & Date, Sound, Send Notification, and Icon Picker. Includes dark/light theme toggle. |
+| **Settings** | `/settings` | Device configuration as a master–detail screen with five category tabs — Appearance, Screens, Network, System, and Tools. Appearance and Screens auto-save; Network and Authentication save explicitly with a "Save & restart" button. Includes a dark/light theme toggle. |
 | **Data Fetcher** | `/datafetcher` | Configure external HTTP data sources that automatically fetch and display data on the matrix. See [Data Fetcher](./datafetcher) for details. |
 | **Files** | `/files` | Built-in file manager to browse, upload, download, edit, and delete files on the device (icons, melodies, custom apps, palettes). |
 | **Backup** | `/backup` | Download all device files as a JSON backup, or restore from a previously downloaded backup. |
@@ -24,7 +24,7 @@ When SVITRIX cannot connect to a saved WiFi network, it creates its own access p
 | Network name | `svitrix_XXXXX` |
 | Password | `12345678` |
 
-Connect to this network and open **http://192.168.4.1** in your browser. A minimal WiFi setup page will appear with network scanning and connection. After connecting to your home WiFi, the device reboots and the full SPA becomes available.
+Connect to this network and open **http://192.168.4.1** in your browser. The setup page opens with a short welcome, then a minimal WiFi form with network scanning and connection. After connecting to your home WiFi, the device reboots and the full SPA becomes available.
 
 ## SPA Deployment
 
@@ -42,23 +42,80 @@ Once uploaded, the SPA persists across firmware updates. You only need to re-upl
 
 ## Settings Guide
 
-The Settings page is organized into independent sections. Each section has its own **Save** button — you only save what you changed.
+The Settings page is a **master–detail** screen. A category rail holds five tabs — **Appearance · Screens · Network · System · Tools** — and the panel beside it shows one category at a time, instead of one long scroll of cards. Most controls also carry a short one-line hint explaining what they do.
 
-A **dark/light theme toggle** (☀/☽) is available in the top-right corner of the navigation bar. Your preference is saved in the browser.
+A **dark/light theme toggle** (System/Light/Dark) is available in the top-right corner of the navigation bar. Your preference is saved in the browser.
 
-### Stats Bar
+### Two ways settings save
 
-A read-only bar at the top showing real-time device info: firmware version, free RAM, WiFi signal strength, ambient light (lux), uptime, temperature, humidity, and current brightness.
+- **Appearance & Screens settings auto-save.** They apply and save the moment you change a control — there is no per-section Save button. A small status indicator at the top shows **Saving…** and then **Saved ✓**.
+- **Network & Authentication save explicitly.** These edits are held until you press **Save & restart** (marked **Requires restart**), because applying them reboots the clock. After you save — or after a Reboot or Reset — a **reconnect overlay** appears, waits for the clock to come back online, and then reloads the page.
 
-### WiFi
+### Offline handling
 
-Scan for available networks, select one, and enter the password to connect. The device reboots after connecting.
+If the clock becomes unreachable, a banner appears at the top of the page and every control is disabled until it returns (with a **Retry** button), so you can't edit settings that couldn't be delivered.
+
+### Appearance
+
+How the clock looks — Display, Clock face, and Night Mode.
+
+#### Display
+
+- **Display** — turn the whole LED display on or off
+- **Auto Brightness** — automatically adjust brightness based on ambient light
+- **Brightness** — manual brightness level (5–255)
+- **Color depth** — mid-tone richness of the gamma curve (0.5–3.0)
+- **Uppercase** — force all text to uppercase
+- **Text Color** — default text color for all apps
+- **Background Effect** — an animated effect drawn behind the apps (None, or one of the built-in effects)
+- **White balance** — advanced LED color tuning:
+  - **Tint** — fine-tunes the display's overall color cast
+  - **Warmth** — shifts the whole display warmer or cooler
+
+#### Clock face
+
+- **Time Format / Date Format** — strftime format strings (e.g. `%H:%M`, `%d.%m.%y`). One-tap **preset chips** below each field render the actual result — e.g. `13:45`, `1:45 PM`, `13:45:30`, `Mon 05`, `05 Jul`, `2026-07-05` — and a live **"Right now it shows: …"** line previews your current format. You can still type a custom format.
+- **Time Mode** — display style: Plain Text, Calendar, Calendar Top, Calendar Alt, Calendar Alt Top, Big Digits, or Binary
+- **Start on Monday** — week starts on Monday instead of Sunday
+- **Celsius** — show temperature in °C (off = °F)
+- **Time / Date Color** — individual colors for the time and date
+- **Calendar colors** (Header / Text / Body) — appear only in the calendar time modes
+- **Show Weekday** — show the weekday indicator row
+- **Weekday colors** (Active / Inactive) — appear only when the weekday row is enabled
+
+#### Night Mode
+
+Schedule a low-brightness, single-color mode for nighttime use (e.g. a bedroom clock):
+
+- **Enable Night Mode** — toggle the feature on/off
+- **Start / End** — time range (e.g. 21:00 to 06:00, supports crossing midnight)
+- **Night Brightness** — display brightness during night hours (1–50)
+- **Night Color** — text color during night mode (default: red — easier on the eyes)
+- **Freeze on one app at night** — stop auto-cycling screens during night mode; use the buttons to navigate
+
+During the scheduled window the display dims to the configured brightness and all text renders in the chosen night color. When the window ends, normal settings are restored automatically.
+
+### Screens
+
+Which built-in screens rotate on the display, and how they cycle. Toggle each screen on or off; temperature, humidity, and battery each have their own color picker.
+
+- **Time**, **Date**, **Temperature** (with color), **Humidity** (with color), **Battery** (with color)
+- **App Duration** — how long each screen shows before switching (1–60s)
+- **Auto Transition** — automatically cycle through screens
+- **Transition Effect** — visual effect when switching screens (None, Slide, Dim, Zoom, etc.)
+- **Transition Speed** — how fast the transition animation plays (100–2000ms)
+- **Scroll Speed** — how fast long text scrolls
+- **Lock button navigation** — stop the side buttons switching screens
 
 ### Network
 
-Enable **Static IP** to configure a fixed IP address, gateway, subnet, and DNS server instead of DHCP.
+Connectivity and time sync. Everything in this category is applied with the explicit **Save & restart** button at the bottom.
 
-### MQTT
+#### WiFi
+
+Scan for available networks, select one, and enter the password to connect. Connecting warns you that the page will lose contact — the clock shows its new IP on the display, so reconnect there.
+
+#### MQTT
 
 Connect to an MQTT broker for Home Assistant integration and remote control:
 - **Broker** — hostname or IP of your MQTT broker
@@ -67,67 +124,40 @@ Connect to an MQTT broker for Home Assistant integration and remote control:
 - **Prefix** — MQTT topic prefix (default: device ID)
 - **Home Assistant Discovery** — enable auto-discovery of device entities in HA
 
-### NTP & Timezone
+#### NTP & Timezone
 
 - **NTP Server** — time server (default: `pool.ntp.org`)
 - **Timezone** — POSIX timezone string (find yours at [posix_tz_db](https://github.com/nayarsystems/posix_tz_db/blob/master/zones.csv))
 
-### Authentication
+#### Network (Static IP)
 
-See the [Authentication](#authentication) section below.
+Enable **Static IP** to configure a fixed IP address, gateway, subnet, and DNS server instead of DHCP.
 
-### Night Mode
+### System
 
-Schedule a low-brightness, single-color mode for nighttime use (e.g. bedroom clock):
+Access, sound, and recovery — Authentication, Sound, and device Actions.
 
-- **Enable Night Mode** — toggle the feature on/off
-- **Start / End** — time range (e.g. 21:00 to 06:00, supports crossing midnight)
-- **Night Brightness** — display brightness during night hours (1–50)
-- **Night Color** — text color during night mode (default: red — easier on the eyes)
-- **Block Auto-Transition** — when checked, apps won't cycle automatically; use buttons to navigate
+#### Authentication
 
-During the scheduled time, the display dims to the configured brightness and all text renders in the chosen night color. When the time window ends, normal settings are restored automatically.
+Set a username and password for the web interface — see the [Authentication](#authentication) section below. Because credentials are part of the device configuration, they take effect through the same **Save & restart** flow as the Network settings.
 
-### Display
-
-- **Matrix Power** — turn the LED matrix on/off
-- **Auto Brightness** — automatically adjust brightness based on ambient light
-- **Brightness** — manual brightness level (0–255)
-- **Gamma** — gamma correction curve (0.5–3.0)
-- **Uppercase** — force all text to uppercase
-- **Text Color** — default text color for all apps
-- **Color Correction / Color Temperature** — advanced LED color tuning
-
-### Apps
-
-Toggle built-in apps on/off, each with its own color picker:
-- **Time**, **Date**, **Temperature** (with color), **Humidity** (with color), **Battery** (with color)
-
-App behavior:
-- **App Duration** — how long each app shows before switching (1–60s)
-- **Auto Transition** — automatically cycle through apps
-- **Transition Effect** — visual effect when switching apps (None, Slide, Dim, Zoom, etc.)
-- **Transition Speed** — how fast the transition animation plays (100–2000ms)
-- **Scroll Speed** — text scroll speed for long text
-- **Block Navigation** — disable button navigation between apps
-
-### Time & Date
-
-- **Time Format / Date Format** — strftime format strings (e.g., `%H:%M`, `%d.%m.%y`)
-- **Time Mode** — display style: Plain Text, Calendar, Calendar Top, Calendar Alt, Big Digits, or Binary
-- **Start on Monday** — week starts on Monday instead of Sunday
-- **Celsius** — show temperature in °C (off = °F)
-- **Time / Date Color** — individual colors for time and date apps
-- **Show Weekday** — show weekday indicator bar
-- **Weekday Active / Inactive Color** — colors for weekday dots
-- **Calendar Header / Text / Body Color** — colors for the calendar box
-
-### Sound
+#### Sound
 
 - **Sound Enabled** — enable/disable the buzzer
 - **Volume** — buzzer volume level (0–30)
 
-### Send Notification
+#### Actions
+
+- **Reset Defaults** — restore all settings to factory defaults (requires confirmation)
+- **Reboot** — restart the device (requires confirmation)
+
+Both actions trigger the **reconnect overlay**, which waits for the clock to come back online and then reloads the page.
+
+### Tools
+
+One-off actions you send to the clock — nothing here is a saved setting.
+
+#### Send Notification
 
 Send a one-time message to the display:
 - **Text** — message to show (required)
@@ -139,18 +169,12 @@ Send a one-time message to the display:
 - **Sound** — play a sound file from `/MELODIES/`
 - **RTTTL** — play a melody in [RTTTL format](https://en.wikipedia.org/wiki/Ring_Tone_Text_Transfer_Language)
 
-### Icon Picker
+#### Icon Picker
 
 Download icons from the [LaMetric icon library](https://developer.lametric.com/icons):
 1. Enter the icon ID number
 2. Click **Preview** to see it
 3. Click **Download** to save it to the device's `/ICONS/` folder
-
-### Actions
-
-- **Save Display Settings** — saves all display-related settings at once (fallback if individual Save buttons were skipped)
-- **Reset Defaults** — restore all settings to factory defaults (requires confirmation)
-- **Reboot** — restart the device (requires confirmation)
 
 ## Authentication
 

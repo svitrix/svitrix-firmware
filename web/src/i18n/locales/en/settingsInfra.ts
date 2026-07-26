@@ -52,6 +52,6 @@ export default {
   infra: {
     save: "Save & restart",
     requiresRestart: "Requires restart",
-    restartHint: "Network changes restart the clock and it briefly disconnects.",
+    restartHint: "Saving these settings restarts the clock, which briefly disconnects.",
   },
 };

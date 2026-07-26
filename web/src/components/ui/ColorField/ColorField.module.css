@@ -5,6 +5,7 @@
 
 .shell {
   position: relative;
+  width: fit-content; /* hug the swatch, don't stretch to the form-group width */
   border-radius: var(--r-control);
   padding: 1px;
   background: var(--glass-shell); /* theme-aware rim (dark: white / light: dark edge) */
@@ -18,7 +19,7 @@
 /* Class overrides the global `input` element rules (class > element). */
 .swatch {
   display: block;
-  width: 100%;
+  width: 4.5rem; /* fixed colour chip — no text content to size to */
   min-height: 44px;
   border: none;
   border-radius: calc(var(--r-control) - 1px);
