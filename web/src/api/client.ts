@@ -156,6 +156,8 @@ export async function saveConfig(config: Record<string, unknown>): Promise<void>
   const blob = new Blob([JSON.stringify(config, null, 2)], { type: "application/json" });
   const form = new FormData();
   form.append("data", blob, "/DoNotTouch.json");
-  await fetch("/edit", { method: "POST", body: form });
-  await fetch("/save", { method: "POST" });
+  const editRes = await fetch("/edit", { method: "POST", body: form });
+  if (!editRes.ok) throw new Error(`HTTP ${editRes.status}`);
+  const saveRes = await fetch("/save", { method: "POST" });
+  if (!saveRes.ok) throw new Error(`HTTP ${saveRes.status}`);
 }

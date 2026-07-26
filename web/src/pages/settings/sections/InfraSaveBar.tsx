@@ -18,6 +18,8 @@ export function InfraSaveBar() {
       await saveInfraConfig();
       // Infra /save restarts networking — poll until the device returns.
       setRebooting(true);
+    } catch {
+      // save failed (saveInfraConfig already toasted) — don't open the reboot overlay
     } finally {
       setSaving(false);
     }

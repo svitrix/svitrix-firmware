@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "preact/hooks";
+import { createPortal } from "preact/compat";
 import { useTranslation } from "react-i18next";
 import { ping } from "../../api/client";
 import { Button } from "../ui";
@@ -106,7 +107,9 @@ export function RebootOverlay({ open, onBack, title, mode = "reconnect", infoMes
           ? t("deviceState.lookAtClockTitle")
           : title || t("deviceState.restarting");
 
-  return (
+  // Portal to <body> so the overlay escapes the settings' `<fieldset disabled>`
+  // (which would otherwise disable the Retry/Dismiss buttons during a reboot).
+  return createPortal(
     <div class={styles.backdrop}>
       <div
         class={styles.dialog}
@@ -135,6 +138,7 @@ export function RebootOverlay({ open, onBack, title, mode = "reconnect", infoMes
           </div>
         )}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

@@ -75,7 +75,13 @@ export function SettingsProvider({ children }: { children: ComponentChildren }) 
   const load = useCallback(() => {
     setLoading(true);
     Promise.allSettled([
-      getSettings().then(setSettings).catch(() => setApiAvailable(false)),
+      getSettings()
+        .then((s) => {
+          setSettings(s);
+          setOnline(true);
+          setLastSeen(Date.now());
+        })
+        .catch(() => setApiAvailable(false)),
       getStats().then(setStats).catch(() => {}),
       getTransitions().then(setTransitions).catch(() => {}),
       getEffects().then(setEffects).catch(() => {}),
@@ -126,10 +132,13 @@ export function SettingsProvider({ children }: { children: ComponentChildren }) 
     if (!Object.keys(patch).length) return;
     setSaveState("saving");
     try {
-      await saveSettings(prepareSettingsForSave(patch) as Partial<Settings>);
+      const res = await saveSettings(prepareSettingsForSave(patch) as Partial<Settings>);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       setSaveState("saved");
       setTimeout(() => setSaveState((s) => (s === "saved" ? "idle" : s)), 1400);
     } catch {
+      // Re-queue the failed fields (under any newer edits) so a later save retries them.
+      pending.current = { ...patch, ...pending.current };
       setSaveState("error");
       toast(i18n.t("common.errorSaving"), { error: true });
     }
@@ -165,8 +174,9 @@ export function SettingsProvider({ children }: { children: ComponentChildren }) 
     try {
       await saveConfig(config as unknown as Record<string, unknown>);
       toast(i18n.t("common.configSaved"));
-    } catch {
-      toast(i18n.t("common.errorSavingConfig"));
+    } catch (e) {
+      toast(i18n.t("common.errorSavingConfig"), { error: true });
+      throw e; // let InfraSaveBar skip the reboot overlay on a failed save
     }
   }
 
