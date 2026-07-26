@@ -3,7 +3,7 @@ import type en from "../en/settingsInfra";
 const de: typeof en = {
   wifi: {
     confirmConnectTitle: "Verbinden und neu starten?",
-    confirmConnectBody: "Das Gerät speichert die WLAN-Zugangsdaten für „{{ssid}}“ und startet neu, um die Verbindung herzustellen. Möglicherweise verlierst du den Zugriff auf diese Seite, wenn es einem anderen Netzwerk beitritt.",
+    confirmConnectBody: "Nach dem Verbinden mit „{{ssid}}“ verliert diese Seite den Kontakt und kehrt unter dieser Adresse möglicherweise nicht zurück. Die Uhr zeigt ihre neue IP auf dem Display an – verbinde dich dort neu.",
     confirmConnect: "Verbinden & neu starten",
     title: "WiFi",
     apSubtitle:
@@ -52,7 +52,9 @@ const de: typeof en = {
     hint: "Leer lassen, um die HTTP-Authentifizierung zu deaktivieren.",
   },
   infra: {
-    save: "Netzwerk/MQTT/Zeit/Auth speichern",
+    save: "Speichern & neu starten",
+    requiresRestart: "Neustart erforderlich",
+    restartHint: "Netzwerkänderungen starten die Uhr neu, wobei sie kurz die Verbindung verliert.",
   },
 };
 

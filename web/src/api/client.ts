@@ -85,6 +85,13 @@ export const resetSettings = () => fetch("/api/resetSettings");
 export const doUpdate = () => post("/api/doupdate");
 export const getVersion = () => get<string>("/version");
 
+// Cheap reachability probe — `/version` returns text/plain, so we can't JSON.parse
+// it; a bare `res.ok` check is all we need. Works in AP mode too.
+export async function ping(): Promise<void> {
+  const res = await fetch("/version", { cache: "no-store" });
+  if (!res.ok) throw new Error(`${res.status}`);
+}
+
 // File Manager (LittleFS)
 export const listDir = (dir: string) =>
   get<FileEntry[]>(`/list?dir=${encodeURIComponent(dir)}`);

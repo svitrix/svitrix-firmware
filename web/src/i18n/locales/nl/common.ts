@@ -15,6 +15,8 @@ const nl: typeof en = {
   close: "Sluiten",
   loading: "Laden...",
   saving: "Opslaan...",
+  saved: "Opgeslagen ✓",
+  notSaved: "Niet opgeslagen",
   enabled: "Ingeschakeld",
   disabled: "Uitgeschakeld",
   on: "Aan",

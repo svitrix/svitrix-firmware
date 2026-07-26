@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { scanWifi, connectWifi } from "../../../api/client";
 import { toast } from "../../../components/Toast";
 import { TextField, Card, FormRow, Button, ConfirmDialog } from "../../../components/ui";
+import { RebootOverlay } from "../../../components/RebootOverlay";
 import styles from "./sections.module.css";
 
 export function WifiSection({ apMode }: { apMode?: boolean }) {
@@ -13,6 +14,7 @@ export function WifiSection({ apMode }: { apMode?: boolean }) {
   const [wifiPass, setWifiPass] = useState("");
   const [ssidError, setSsidError] = useState("");
   const [confirmConnect, setConfirmConnect] = useState(false);
+  const [handedOff, setHandedOff] = useState(false);
 
   async function doScan() {
     setScanning(true);
@@ -34,18 +36,16 @@ export function WifiSection({ apMode }: { apMode?: boolean }) {
     setConfirmConnect(true);
   }
 
-  async function doConnect() {
+  function doConnect() {
     setConfirmConnect(false);
-    try {
-      await connectWifi(wifiSsid, wifiPass);
-      toast(t("settings.wifi.connecting"));
-      setTimeout(() => {
-        toast(t("settings.wifi.rebooting"));
-        fetch("/restart").catch(() => {});
-      }, 3000);
-    } catch {
-      toast(t("settings.wifi.connectionFailed"), { error: true });
-    }
+    // The device joins the new network and reboots on its own (ESP.restart in
+    // /connect), moving to a new IP — this page will lose contact and may never
+    // return on the old URL. Fire the request and show an informational
+    // terminal state that points the user at the clock's display; do NOT auto-
+    // reload. (connectWifi's response often never arrives — the device reboots
+    // mid-response — so we don't await it.)
+    connectWifi(wifiSsid, wifiPass).catch(() => {});
+    setHandedOff(true);
   }
 
   const subtitle = apMode ? t("settings.wifi.apSubtitle") : undefined;
@@ -83,6 +83,13 @@ export function WifiSection({ apMode }: { apMode?: boolean }) {
         confirmLabel={t("settings.wifi.confirmConnect")}
         onConfirm={doConnect}
         onCancel={() => setConfirmConnect(false)}
+      />
+
+      <RebootOverlay
+        open={handedOff}
+        mode="info"
+        infoMessage={t("deviceState.lookAtClockBody", { ssid: wifiSsid })}
+        onBack={() => setHandedOff(false)}
       />
     </Card>
   );

@@ -9,6 +9,7 @@ export function Slider({
   onChange,
   step,
   unit,
+  helper,
 }: {
   label: string;
   min: number;
@@ -17,8 +18,11 @@ export function Slider({
   onChange: (v: number) => void;
   step?: number;
   unit?: string;
+  /** Optional caption rendered under the control. */
+  helper?: string;
 }) {
   const id = useId();
+  const helperId = `${id}-helper`;
   // Accent-fill percentage — drives the recessed track gradient cross-browser.
   const span = max - min;
   const pct = span > 0 ? ((value - min) / span) * 100 : 0;
@@ -36,8 +40,14 @@ export function Slider({
         step={step}
         value={value}
         style={{ "--pct": `${pct}%` } as any}
+        aria-describedby={helper ? helperId : undefined}
         onInput={(e) => onChange(+(e.target as HTMLInputElement).value)}
       />
+      {helper && (
+        <p id={helperId} class={styles.helper}>
+          {helper}
+        </p>
+      )}
     </div>
   );
 }

@@ -8,6 +8,7 @@ export function Select({
   onChange,
   autocomplete,
   error,
+  helper,
 }: {
   label: string;
   value: string | number;
@@ -17,10 +18,15 @@ export function Select({
   autocomplete?: string;
   /** When non-empty, marks the field invalid and shows a described message. */
   error?: string;
+  /** Optional caption rendered under the control. */
+  helper?: string;
 }) {
   const id = useId();
   const errorId = `${id}-error`;
+  const helperId = `${id}-helper`;
   const invalid = !!error;
+  const describedBy =
+    [invalid ? errorId : null, helper ? helperId : null].filter(Boolean).join(" ") || undefined;
   return (
     <div class="form-group">
       <label htmlFor={id}>{label}</label>
@@ -31,7 +37,7 @@ export function Select({
           value={value}
           autocomplete={autocomplete}
           aria-invalid={invalid ? "true" : undefined}
-          aria-describedby={invalid ? errorId : undefined}
+          aria-describedby={describedBy}
           onChange={(e) => {
             const raw = (e.target as HTMLSelectElement).value;
             const opt = options.find((o) => String(o.value) === raw);
@@ -51,6 +57,11 @@ export function Select({
             ⚠
           </span>
           {error}
+        </p>
+      )}
+      {helper && (
+        <p id={helperId} class={styles.helper}>
+          {helper}
         </p>
       )}
     </div>

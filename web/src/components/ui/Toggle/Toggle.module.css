@@ -1,0 +1,14 @@
+/* Toggle wrapper — stacks the switch label above an optional helper caption. */
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+/* Caption line under the control (plain-language hint). */
+.helper {
+  margin: 0;
+  font-size: var(--text-caption);
+  color: var(--label-secondary);
+  line-height: var(--lh-tight);
+}

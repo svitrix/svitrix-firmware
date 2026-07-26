@@ -3,7 +3,7 @@ import type en from "../en/settingsInfra";
 const es: typeof en = {
   wifi: {
     confirmConnectTitle: "¿Conectar y reiniciar?",
-    confirmConnectBody: "El dispositivo guardará las credenciales Wi-Fi de «{{ssid}}» y se reiniciará para volver a conectarse. Puede que pierdas el acceso a esta página si se une a otra red.",
+    confirmConnectBody: "Tras conectarse a «{{ssid}}», esta página perderá el contacto y puede que no vuelva en esta dirección. El reloj mostrará su nueva IP en la pantalla: vuelve a conectarte allí.",
     confirmConnect: "Conectar y reiniciar",
     title: "WiFi",
     apSubtitle:
@@ -52,7 +52,9 @@ const es: typeof en = {
     hint: "Déjalo vacío para desactivar la autenticación HTTP.",
   },
   infra: {
-    save: "Guardar Red/MQTT/Hora/Autenticación",
+    save: "Guardar y reiniciar",
+    requiresRestart: "Requiere reinicio",
+    restartHint: "Los cambios de red reinician el reloj y se desconecta brevemente.",
   },
 };
 

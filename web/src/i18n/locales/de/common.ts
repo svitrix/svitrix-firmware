@@ -15,6 +15,8 @@ const de: typeof en = {
   close: "Schließen",
   loading: "Lädt...",
   saving: "Speichert...",
+  saved: "Gespeichert ✓",
+  notSaved: "Nicht gespeichert",
   enabled: "Aktiviert",
   disabled: "Deaktiviert",
   on: "An",

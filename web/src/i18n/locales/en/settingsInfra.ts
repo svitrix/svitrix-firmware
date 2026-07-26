@@ -1,7 +1,7 @@
 export default {
   wifi: {
     confirmConnectTitle: "Connect and reboot?",
-    confirmConnectBody: "The device will save the Wi-Fi credentials for \"{{ssid}}\" and reboot to reconnect. You may lose access to this page if it joins a different network.",
+    confirmConnectBody: "After connecting to \"{{ssid}}\", this page will lose contact and may not return on this address. The clock will show its new IP on the display — reconnect there.",
     confirmConnect: "Connect & reboot",
     title: "WiFi",
     apSubtitle:
@@ -50,6 +50,8 @@ export default {
     hint: "Leave empty to disable HTTP authentication.",
   },
   infra: {
-    save: "Save Network/MQTT/Time/Auth",
+    save: "Save & restart",
+    requiresRestart: "Requires restart",
+    restartHint: "Network changes restart the clock and it briefly disconnects.",
   },
 };

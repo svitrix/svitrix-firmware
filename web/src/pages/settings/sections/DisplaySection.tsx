@@ -1,13 +1,11 @@
-import { useState } from "preact/hooks";
 import { useTranslation } from "react-i18next";
 import { useSettings } from "../../../context/SettingsContext";
-import { Toggle, Slider, ColorField, Select, Card, FormRow, Button } from "../../../components/ui";
+import { Toggle, Slider, ColorField, Select, Card, FormRow } from "../../../components/ui";
 import styles from "./sections.module.css";
 
 export function DisplaySection() {
   const { t } = useTranslation();
-  const { settings, effects, updateSettings, saveDisplaySettings } = useSettings();
-  const [saving, setSaving] = useState(false);
+  const { settings, effects, setSetting } = useSettings();
   if (!settings) return null;
   const s = settings;
 
@@ -22,26 +20,15 @@ export function DisplaySection() {
       .trim();
   };
 
-  async function handleSave() {
-    setSaving(true);
-    await saveDisplaySettings({
-      MATP: s.MATP, ABRI: s.ABRI, BRI: s.BRI,
-      GAMMA: s.GAMMA, UPPERCASE: s.UPPERCASE,
-      TCOL: s.TCOL, CCORRECTION: s.CCORRECTION, CTEMP: s.CTEMP,
-      BEFF: s.BEFF,
-    });
-    setSaving(false);
-  }
-
   return (
     <Card title={t("settingsDisplay.display.title")}>
       <div class={styles.stack}>
-        <Toggle label={t("settingsDisplay.display.matrixPower")} checked={s.MATP} onChange={(v) => updateSettings({ MATP: v })} />
-        <Toggle label={t("settingsDisplay.display.autoBrightness")} checked={s.ABRI} onChange={(v) => updateSettings({ ABRI: v })} />
-        <Slider label={t("settingsDisplay.display.brightness")} min={0} max={255} value={s.BRI} onChange={(v) => updateSettings({ BRI: v })} />
-        <Slider label={t("settingsDisplay.display.gamma")} min={0.5} max={3} step={0.1} value={s.GAMMA} onChange={(v) => updateSettings({ GAMMA: v })} />
-        <Toggle label={t("settingsDisplay.display.uppercase")} checked={s.UPPERCASE} onChange={(v) => updateSettings({ UPPERCASE: v })} />
-        <ColorField label={t("settingsDisplay.display.textColor")} value={s.TCOL} onChange={(v) => updateSettings({ TCOL: v })} />
+        <Toggle label={t("settingsDisplay.display.matrixPower")} helper={t("settingsDisplay.display.matrixPowerHelper")} checked={s.MATP} onChange={(v) => setSetting({ MATP: v }, true)} />
+        <Toggle label={t("settingsDisplay.display.autoBrightness")} checked={s.ABRI} onChange={(v) => setSetting({ ABRI: v }, true)} />
+        <Slider label={t("settingsDisplay.display.brightness")} min={5} max={255} value={s.BRI} onChange={(v) => setSetting({ BRI: v })} />
+        <Slider label={t("settingsDisplay.display.gamma")} helper={t("settingsDisplay.display.gammaHelper")} min={0.5} max={3} step={0.1} value={s.GAMMA} onChange={(v) => setSetting({ GAMMA: v })} />
+        <Toggle label={t("settingsDisplay.display.uppercase")} checked={s.UPPERCASE} onChange={(v) => setSetting({ UPPERCASE: v }, true)} />
+        <ColorField label={t("settingsDisplay.display.textColor")} value={s.TCOL} onChange={(v) => setSetting({ TCOL: v }, true)} />
         <Select
           label={t("settingsDisplay.display.backgroundEffect")}
           value={s.BEFF ?? -1}
@@ -52,21 +39,27 @@ export function DisplaySection() {
               label: humanize(e.name, t("settingsDisplay.display.effectFallback", { n: i + 1 })),
             })),
           ]}
-          onChange={(v) => updateSettings({ BEFF: v as number })}
+          onChange={(v) => setSetting({ BEFF: v as number }, true)}
         />
-        <FormRow>
-          <div class="form-group">
-            <label htmlFor="color-correction">{t("settingsDisplay.display.colorCorrection")}</label>
-            <input id="color-correction" name="colorCorrection" type="color" value={s.CCORRECTION}
-              onInput={(e) => updateSettings({ CCORRECTION: (e.target as HTMLInputElement).value })} />
-          </div>
-          <div class="form-group">
-            <label htmlFor="color-temperature">{t("settingsDisplay.display.colorTemperature")}</label>
-            <input id="color-temperature" name="colorTemperature" type="color" value={s.CTEMP}
-              onInput={(e) => updateSettings({ CTEMP: (e.target as HTMLInputElement).value })} />
-          </div>
-        </FormRow>
-        <Button variant="primary" onClick={handleSave} loading={saving}>{t("settingsDisplay.display.save")}</Button>
+        <fieldset class={styles.fieldset}>
+          <legend class={styles.legend}>{t("settingsDisplay.display.whiteBalance")}</legend>
+          <FormRow>
+            <ColorField
+              hex
+              label={t("settingsDisplay.display.colorCorrection")}
+              helper={t("settingsDisplay.display.colorCorrectionHelper")}
+              value={s.CCORRECTION}
+              onChange={(v) => setSetting({ CCORRECTION: v }, true)}
+            />
+            <ColorField
+              hex
+              label={t("settingsDisplay.display.colorTemperature")}
+              helper={t("settingsDisplay.display.colorTemperatureHelper")}
+              value={s.CTEMP}
+              onChange={(v) => setSetting({ CTEMP: v }, true)}
+            />
+          </FormRow>
+        </fieldset>
       </div>
     </Card>
   );

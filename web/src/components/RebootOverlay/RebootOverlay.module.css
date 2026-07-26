@@ -1,0 +1,90 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: rbFade 0.15s var(--ease-out);
+}
+
+.dialog {
+  width: 100%;
+  max-width: 380px;
+  max-height: calc(100dvh - 40px);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  text-align: center;
+  background: color-mix(in srgb, var(--surface-tint) 94%, transparent);
+  backdrop-filter: blur(var(--glass-blur-thick)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur-thick)) saturate(180%);
+  border-radius: var(--r-card);
+  padding: 28px 24px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 20px 60px rgba(0, 0, 0, 0.45);
+  animation: rbPop 0.22s var(--ease-spring);
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .dialog {
+    background: var(--surface-tint);
+  }
+}
+
+.spinner {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 3px solid color-mix(in srgb, var(--accent) 25%, transparent);
+  border-top-color: var(--accent);
+  animation: rbSpin 0.8s linear infinite;
+}
+
+.title {
+  font-size: var(--text-headline);
+  font-weight: var(--weight-semibold);
+  line-height: var(--lh-tight);
+  color: var(--label);
+  margin: 0;
+  text-wrap: balance;
+}
+
+.body {
+  font-size: var(--text-body);
+  line-height: var(--lh-body);
+  color: var(--label-secondary);
+  margin: 0;
+  text-wrap: pretty;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+}
+
+@keyframes rbFade {
+  from { opacity: 0; }
+}
+@keyframes rbPop {
+  from { opacity: 0; transform: scale(0.96); }
+}
+@keyframes rbSpin {
+  to { transform: rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .backdrop,
+  .dialog {
+    animation: none;
+  }
+  .spinner {
+    animation-duration: 1.6s;
+  }
+}

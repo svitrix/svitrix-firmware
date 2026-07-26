@@ -1,0 +1,16 @@
+.indicator {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.25em;
+  font-size: var(--text-footnote);
+  font-weight: var(--weight-medium);
+  color: var(--label-secondary);
+}
+
+.saved {
+  color: var(--green);
+}
+
+.error {
+  color: var(--danger-text);
+}

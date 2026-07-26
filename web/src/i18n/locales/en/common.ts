@@ -14,6 +14,8 @@ export default {
   close: "Close",
   loading: "Loading...",
   saving: "Saving...",
+  saved: "Saved ✓",
+  notSaved: "Not saved",
   enabled: "Enabled",
   disabled: "Disabled",
   on: "On",

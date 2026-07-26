@@ -15,6 +15,8 @@ const uk: typeof en = {
   close: "Закрити",
   loading: "Завантаження...",
   saving: "Збереження...",
+  saved: "Збережено ✓",
+  notSaved: "Не збережено",
   enabled: "Увімкнено",
   disabled: "Вимкнено",
   on: "Увімк.",

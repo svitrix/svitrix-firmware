@@ -3,7 +3,7 @@ import type en from "../en/settingsInfra";
 const nl: typeof en = {
   wifi: {
     confirmConnectTitle: "Verbinden en opnieuw opstarten?",
-    confirmConnectBody: "Het apparaat slaat de wifi-gegevens voor «{{ssid}}» op en start opnieuw op om verbinding te maken. Mogelijk verlies je toegang tot deze pagina als het met een ander netwerk verbindt.",
+    confirmConnectBody: "Na verbinden met «{{ssid}}» verliest deze pagina het contact en komt mogelijk niet terug op dit adres. De klok toont zijn nieuwe IP op het scherm — maak daar opnieuw verbinding.",
     confirmConnect: "Verbinden en herstarten",
     title: "WiFi",
     apSubtitle:
@@ -52,7 +52,9 @@ const nl: typeof en = {
     hint: "Laat leeg om HTTP-authenticatie uit te schakelen.",
   },
   infra: {
-    save: "Netwerk/MQTT/Tijd/Auth opslaan",
+    save: "Opslaan & herstarten",
+    requiresRestart: "Herstart vereist",
+    restartHint: "Netwerkwijzigingen herstarten de klok en deze verliest kort de verbinding.",
   },
 };
 

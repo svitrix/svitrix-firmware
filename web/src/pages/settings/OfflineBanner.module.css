@@ -1,0 +1,36 @@
+.banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--r-card);
+  background: color-mix(in srgb, var(--red) 12%, var(--surface-tint));
+  border: 1px solid color-mix(in srgb, var(--red) 45%, transparent);
+
+  @media (min-width: 720px) {
+    position: sticky;
+    top: var(--space-4);
+    z-index: 6;
+  }
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+  flex: 1;
+}
+
+.title {
+  font-size: var(--text-subhead);
+  font-weight: var(--weight-semibold);
+  color: var(--danger-text);
+}
+
+.hint {
+  font-size: var(--text-footnote);
+  line-height: var(--lh-body);
+  color: var(--label-secondary);
+  text-wrap: pretty;
+}

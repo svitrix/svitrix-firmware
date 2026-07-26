@@ -2,24 +2,20 @@ import { useState } from "preact/hooks";
 import { useTranslation } from "react-i18next";
 import { useSettings } from "../../../context/SettingsContext";
 import { resetSettings, reboot } from "../../../api/client";
-import { toast } from "../../../components/Toast";
 import { Button, ConfirmDialog } from "../../../components/ui";
+import { RebootOverlay } from "../../../components/RebootOverlay";
 import styles from "./sections.module.css";
 
 export function ActionsBar() {
   const { t } = useTranslation();
-  const { settings, saveDisplaySettings, reload } = useSettings();
+  const { settings, reload } = useSettings();
   const [confirmReset, setConfirmReset] = useState(false);
   const [confirmReboot, setConfirmReboot] = useState(false);
+  const [rebooting, setRebooting] = useState(false);
   if (!settings) return null;
 
   return (
     <div class={styles.actions}>
-      <Button variant="primary" onClick={async () => {
-        await saveDisplaySettings(settings);
-      }}>
-        {t("settingsDisplay.actions.saveAll")}
-      </Button>
       <Button onClick={() => setConfirmReset(true)}>
         {t("settingsDisplay.actions.resetDefaults")}
       </Button>
@@ -35,7 +31,10 @@ export function ActionsBar() {
         danger
         onConfirm={() => {
           setConfirmReset(false);
-          resetSettings().then(() => { toast(t("settingsDisplay.actions.settingsReset")); reload(); });
+          // Fire the action then poll via the overlay — the old
+          // resetSettings().then(reload) fetched into a rebooting device.
+          resetSettings().catch(() => {});
+          setRebooting(true);
         }}
         onCancel={() => setConfirmReset(false)}
       />
@@ -48,9 +47,18 @@ export function ActionsBar() {
         danger
         onConfirm={() => {
           setConfirmReboot(false);
-          reboot().then(() => toast(t("settingsDisplay.actions.rebooting")));
+          reboot().catch(() => {});
+          setRebooting(true);
         }}
         onCancel={() => setConfirmReboot(false)}
+      />
+
+      <RebootOverlay
+        open={rebooting}
+        onBack={() => {
+          setRebooting(false);
+          reload();
+        }}
       />
     </div>
   );

@@ -1,0 +1,74 @@
+.layout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+
+  @media (min-width: 720px) {
+    position: sticky;
+    top: var(--space-4);
+    z-index: 5;
+  }
+}
+
+.body {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+
+  @media (min-width: 720px) {
+    grid-template-columns: 15rem 1fr;
+    align-items: start;
+  }
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+    border-radius: var(--r-card);
+  }
+}
+
+.panelHead {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.heading {
+  font-size: var(--text-title);
+  font-weight: var(--weight-bold);
+  line-height: var(--lh-tight);
+  color: var(--label);
+  margin: 0;
+}
+
+.subtitle {
+  font-size: var(--text-subhead);
+  color: var(--label-secondary);
+  margin: 0;
+}
+
+.sections {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* Tools are actions, not settings — a subtle accent rail marks them apart. */
+.tools .sections {
+  padding-left: var(--space-3);
+  border-left: 2px dashed var(--separator);
+}

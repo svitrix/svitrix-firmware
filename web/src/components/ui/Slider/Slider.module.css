@@ -128,3 +128,11 @@
     &:active::-moz-range-thumb { transform: none; }
   }
 }
+
+/* Caption line under the control (plain-language hint). */
+.helper {
+  margin: var(--space-1) 0 0;
+  font-size: var(--text-caption);
+  color: var(--label-secondary);
+  line-height: var(--lh-tight);
+}

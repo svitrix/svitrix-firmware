@@ -1,0 +1,82 @@
+/* Two-layer Liquid Glass time field (see DESIGN.md §6). Native CSS nesting.
+   Mirrors TextField: outer shell = 1px gradient glass rim; inner plate = dense
+   surface that keeps the value legible over the vivid scene. */
+
+.shell {
+  position: relative;
+  border-radius: var(--r-control);
+  padding: 1px;
+  background: var(--glass-shell); /* theme-aware rim (dark: white / light: dark edge) */
+
+  /* Invalid state — red rim AND a text/icon cue (never colour alone). */
+  &:has([aria-invalid="true"]) {
+    background: var(--red);
+  }
+}
+
+/* Class overrides the global `input` element rules (class > element). */
+.input {
+  display: block;
+  width: 100%;
+  border: none;
+  border-radius: calc(var(--r-control) - 1px);
+  padding: var(--space-3) var(--space-4);
+  min-height: 44px;
+  font: inherit;
+  color: var(--label);
+  background: var(--field-plate); /* stabilized plate — legible on any background */
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.22); /* recessed */
+  outline: none;
+  transition: background var(--dur-fast) var(--ease-out),
+              box-shadow var(--dur-fast) var(--ease-out);
+
+  /* Focus: plate goes solid (max legibility) + crisp accent ring ignoring bg. */
+  &:focus {
+    background: var(--surface-tint);
+    box-shadow:
+      inset 0 1px 2px rgba(0, 0, 0, 0.12),
+      0 0 0 3px color-mix(in srgb, var(--accent) 28%, transparent);
+  }
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &[aria-invalid="true"] {
+    box-shadow: inset 0 0 0 1px var(--red), inset 0 1px 2px rgba(0, 0, 0, 0.22);
+
+    &:focus {
+      box-shadow: inset 0 0 0 1px var(--red),
+        0 0 0 3px color-mix(in srgb, var(--red) 28%, transparent);
+    }
+  }
+
+  /* Theme the native clock/spin indicator so it stays visible in dark mode. */
+  &::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 0.7;
+  }
+}
+
+.error {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-1);
+  margin-top: var(--space-2);
+  color: var(--danger-text); /* AA-contrast red text */
+  font-size: var(--text-footnote);
+  line-height: var(--lh-tight);
+}
+.errorIcon {
+  flex: none;
+  font-size: var(--text-subhead);
+  line-height: 1;
+}
+
+/* Caption line under the control (plain-language hint). */
+.helper {
+  margin: var(--space-2) 0 0;
+  font-size: var(--text-caption);
+  color: var(--label-secondary);
+  line-height: var(--lh-tight);
+}

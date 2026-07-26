@@ -22,6 +22,34 @@
   font-variant-numeric: tabular-nums; /* aligned digits (P2-2) */
 }
 
+/* Grouped controls — a11y chunking (<fieldset>/<legend>). Reset the native
+   fieldset chrome and stack children to match the section stack rhythm. */
+.fieldset {
+  border: none;
+  margin: 0;
+  padding: 0;
+  min-inline-size: 0; /* let the fieldset shrink inside flex/grid */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.legend {
+  padding: 0;
+  margin-bottom: var(--space-1);
+  font-size: var(--text-subhead);
+  font-weight: var(--weight-medium);
+  color: var(--label-secondary);
+}
+
+/* Lightweight subheading inside a section (not a grouping boundary). */
+.subheading {
+  margin: var(--space-2) 0 0;
+  font-size: var(--text-subhead);
+  font-weight: var(--weight-medium);
+  color: var(--label-secondary);
+}
+
 /* Hint / helper text */
 .hint {
   font-size: var(--text-caption);
@@ -85,4 +113,31 @@
 /* form-group aligned to bottom (flex-end) */
 .formGroupEnd {
   justify-content: flex-end;
+}
+
+/* Infra "Save & restart" bar — the one explicit save left in settings */
+.infraBar {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+.restartBadge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: var(--r-control);
+  font-size: var(--text-caption);
+  font-weight: var(--weight-medium);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  color: var(--danger-text);
+  background: color-mix(in srgb, var(--danger-text) 12%, transparent);
+  border: 0.5px solid color-mix(in srgb, var(--danger-text) 32%, transparent);
+}
+
+.infraHint {
+  font-size: var(--text-caption);
+  color: var(--label-secondary);
+  margin: 0;
 }

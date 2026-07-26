@@ -1,6 +1,7 @@
 export { Toggle } from "./Toggle";
 export { TextField } from "./TextField";
 export { ColorField } from "./ColorField";
+export { TimeField } from "./TimeField";
 export { Slider } from "./Slider";
 export { Select } from "./Select";
 export { Card } from "./Card";

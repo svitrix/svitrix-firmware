@@ -9,6 +9,8 @@ import update from "./nl/update";
 import files from "./nl/files";
 import settings from "./nl/settingsInfra";
 import settingsDisplay from "./nl/settingsDisplay";
+import settingsNav from "./nl/settingsNav";
+import deviceState from "./nl/deviceState";
 
 export default {
   nav,
@@ -21,4 +23,6 @@ export default {
   files,
   settings,
   settingsDisplay,
+  settingsNav,
+  deviceState,
 };
