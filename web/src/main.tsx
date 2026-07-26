@@ -16,7 +16,7 @@ import "./i18n";
 import "./styles/global.css";
 import styles from "./main.module.css";
 
-/** Route path → i18n key for the browser/tab title (WCAG 2.4.2). Reuses the
+/** Route path → i18n key for the browser/tab title. Reuses the
  *  existing nav labels so no page component needs editing. */
 const ROUTE_TITLES: Record<string, string> = {
   "/": "nav.screen",

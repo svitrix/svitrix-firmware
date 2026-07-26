@@ -33,9 +33,8 @@
   scrollbar-width: none;
   font-size: var(--text-footnote);
   white-space: nowrap;
-}
-.breadcrumb::-webkit-scrollbar {
-  display: none;
+
+  &::-webkit-scrollbar { display: none; }
 }
 .crumbGroup {
   display: inline-flex;
@@ -53,10 +52,11 @@
   color: var(--label-secondary);
   cursor: pointer;
   font: inherit;
-}
-.crumb:hover {
-  background: var(--fill);
-  color: var(--label);
+
+  &:hover {
+    background: var(--fill);
+    color: var(--label);
+  }
 }
 .crumbCurrent,
 .crumbCurrent:hover {
@@ -106,10 +106,8 @@
   min-height: 44px;
   padding: 4px 14px;
   border-bottom: 0.5px solid var(--separator);
-}
-.row:last-child,
-.rowNav:last-child {
-  border-bottom: none;
+
+  &:last-child { border-bottom: none; }
 }
 .rowNav {
   border: none;
@@ -120,9 +118,8 @@
   cursor: pointer;
   font: inherit;
   border-bottom: 0.5px solid var(--separator);
-}
-.rowNav:hover {
-  background: var(--fill);
+
+  &:hover { background: var(--fill); }
 }
 
 .nameBtn {
@@ -161,15 +158,11 @@
   flex: 0 0 auto;
   opacity: 0;
   transition: opacity var(--dur-fast) var(--ease-out);
-}
-.row:hover .actions,
-.row:focus-within .actions {
-  opacity: 1;
-}
-@media (pointer: coarse) {
-  .actions {
-    opacity: 0.85;
-  }
+
+  /* trailing & — reveal when the owning row is hovered/focused */
+  :is(.row:hover, .row:focus-within) & { opacity: 1; }
+
+  @media (pointer: coarse) { opacity: 0.85; }
 }
 .iconBtn {
   display: inline-flex;
@@ -184,10 +177,11 @@
   border-radius: var(--r-inner);
   color: var(--label-secondary);
   cursor: pointer;
-}
-.iconBtn:hover {
-  background: var(--fill);
-  color: var(--label);
+
+  &:hover {
+    background: var(--fill);
+    color: var(--label);
+  }
 }
 .iconDelete:hover {
   color: var(--red);

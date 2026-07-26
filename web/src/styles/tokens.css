@@ -1,0 +1,125 @@
+/* ---------------------------------------------------------------------------
+   Design tokens — Liquid Glass (see web/DESIGN.md §9).
+   The single source of theme values. Components consume these directly
+   (materials, colour, geometry, typography, motion). No hard-coded colours/px.
+   --------------------------------------------------------------------------- */
+:root {
+  /* scene — a vivid environment so glass has something to refract/tint;
+     blooms pulled inward so colour bleeds UNDER the centered content column */
+  --scene:
+    radial-gradient(62% 50% at 28% 2%,   rgba(94, 92, 230, 0.30), transparent 62%),
+    radial-gradient(58% 46% at 78% 8%,   rgba(48, 209, 209, 0.20), transparent 58%),
+    radial-gradient(72% 62% at 58% 100%, rgba(255, 110, 90, 0.17), transparent 60%),
+    radial-gradient(120% 120% at 50% 35%, #1a1d28, #0e1016);
+  /* Dark-mode elevation = LIGHTER surface. Cards sit clearly above the bg. */
+  --surface-tint: #383d4d; /* slight cool chroma so glass isn't dead grey */
+  --glass: 77%; /* let the scene tint the material (was 82%) */
+
+  /* semantic text & fills (Apple system) */
+  --label:           rgba(255, 255, 255, 0.95);
+  --label-secondary: rgba(235, 235, 245, 0.62); /* 5.1:1 on card · Apple #EBEBF5 tint */
+  --label-tertiary:  rgba(235, 235, 245, 0.35);
+  --separator:       rgba(255, 255, 255, 0.12);
+  --fill:            rgba(130, 132, 145, 0.28);
+  --fill-secondary:  rgba(130, 132, 145, 0.40);
+  /* field = a DARK, near-opaque recessed well (opaque so the shell rim shows
+     only at the 1px edge — a translucent plate leaks the shell gradient as a
+     metallic diagonal sheen across the field body) */
+  --field-plate:     rgba(14, 16, 23, 0.88);
+  --placeholder:     color-mix(in srgb, var(--label) 55%, transparent); /* 5.9:1 */
+  /* field/select shell rim — white specular reads as glass edge on dark */
+  --glass-shell: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.5),
+    rgba(255, 255, 255, 0.06) 40%,
+    transparent 60%,
+    rgba(255, 255, 255, 0.2)
+  );
+
+  /* accents (Apple system colors; Svitrix amber as brand accent) */
+  --accent: #ffc93c;
+  --accent-pressed: #e6a100;
+  --accent-hover: #ffd65c;
+  --blue: #0a84ff;
+  --green: #30d158;
+  --red: #ff453a;
+  --orange: #ff9f0a;
+  /* red is for fills/rims (non-text); danger *text* needs a tuned value to hit
+     4.5:1 on the card surface. Dark: lightened red ≈5.1:1. */
+  --danger-text: #ff8a80;
+
+  /* material thickness (blur radius) */
+  --glass-blur-thin: 30px;
+  --glass-blur-regular: 40px;
+  --glass-blur-thick: 50px;
+
+  /* geometry */
+  --r-card: 20px;
+  --r-control: 12px;
+  --r-inner: 8px;
+  --r-pill: 999px;
+  --space-1: 4px;  --space-2: 8px;  --space-3: 12px;
+  --space-4: 16px; --space-5: 20px; --space-6: 24px; --space-8: 32px;
+
+  /* motion */
+  --ease-spring: linear(0, 0.2, 0.6, 0.9, 1.02, 1);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 0.18s; --dur-med: 0.28s; --dur-slow: 0.4s;
+
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+
+  /* typography — sizes in rem (root = the browser's font-size) so text scales
+     with the user's setting / zoom. Names map to Apple text styles;
+     base is a compact 14px, one step below Apple Body (17px). */
+  --text-title:    1.25rem;   /* 20px · Title 3 */
+  --text-headline: 1.0625rem; /* 17px · Headline */
+  --text-subhead:  0.9375rem; /* 15px · Subheadline */
+  --text-body:     0.875rem;  /* 14px · body (compact) */
+  --text-footnote: 0.8125rem; /* 13px · Footnote */
+  --text-caption:  0.75rem;   /* 12px · Caption */
+  /* line-height: looser for prose (≥1.5), tight for dense UI / large numerals */
+  --lh-body:  1.5;
+  --lh-tight: 1.3;
+  --lh-solid: 1.1;
+  /* weights — standard SF ladder only (no off-scale values) */
+  --weight-regular:  400;
+  --weight-medium:   500;
+  --weight-semibold: 600;
+  --weight-bold:     700;
+}
+
+[data-theme="light"] {
+  --scene:
+    radial-gradient(70% 58% at 22% 4%,   rgba(120, 118, 255, 0.34), transparent 62%),
+    radial-gradient(64% 50% at 80% 8%,   rgba(60, 200, 220, 0.30), transparent 58%),
+    radial-gradient(80% 68% at 60% 100%, rgba(255, 150, 120, 0.28), transparent 60%),
+    radial-gradient(120% 120% at 50% 50%, #eef1f8, #dde2ec);
+  --surface-tint: #ffffff;
+  --glass: 70%;
+
+  --label:           rgba(0, 0, 0, 0.85);
+  --label-secondary: rgba(60, 60, 67, 0.75);   /* 5.1:1 on white — passes AA (was 3.96:1) */
+  --label-tertiary:  rgba(60, 60, 67, 0.45);
+  --separator:       rgba(0, 0, 0, 0.12);
+  --fill:            rgba(120, 120, 128, 0.12);
+  --fill-secondary:  rgba(120, 120, 128, 0.16);
+  --field-plate:     rgba(233, 235, 241, 0.96); /* opaque ≈systemGray6 well — no shell bleed */
+  --placeholder:     rgba(60, 60, 67, 0.70);    /* ~4.5:1 — passes AA (0.55 was 2.86:1) */
+  /* light: a stronger dark edge so the rim does the definition the pale plate can't */
+  --glass-shell: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.85),
+    rgba(0, 0, 0, 0.05) 40%,
+    transparent 60%,
+    rgba(0, 0, 0, 0.20)
+  );
+
+  --accent: #e6a100;
+  --accent-pressed: #c98a00;
+  --accent-hover: #c98a00;
+  --blue: #007aff;
+  --green: #34c759;
+  --red: #ff3b30;
+  --orange: #ff9500;
+  --danger-text: #d70015; /* darker red — 4.9:1 on the light card (system red fails at 3.9:1) */
+}

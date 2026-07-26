@@ -1,0 +1,120 @@
+/* ---------------------------------------------------------------------------
+   Shared component classes used across pages (glass material, layout, toast).
+   Uses native CSS nesting. Per-component styles live in each *.module.css.
+   --------------------------------------------------------------------------- */
+
+/* Liquid Glass material — translucent neutral surface over the vivid scene
+   (see web/DESIGN.md §3). Colour comes from the scene bleeding through, not
+   from the tint. Rim highlight is drawn by ::before (curved specular). */
+.card {
+  position: relative;
+  /* a query container so inner layouts (e.g. .form-row) respond to the CARD's
+     width, not the viewport — correct for a reusable card at any column width */
+  container: card / inline-size;
+  /* clip the backdrop-filter to the rounded corners (otherwise the blurred
+     backdrop renders in the square bounding box and pokes past the radius) */
+  overflow: hidden;
+  /* faint top sheen over the tint — sells "material catches light" */
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), transparent 42%),
+    color-mix(in srgb, var(--surface-tint) var(--glass), transparent);
+  backdrop-filter: blur(var(--glass-blur-regular)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur-regular)) saturate(180%);
+  border: none;
+  border-radius: var(--r-card);
+  padding: var(--space-5);
+  box-shadow:
+    0 1px 1px rgba(0, 0, 0, 0.14),
+    0 14px 34px rgba(0, 0, 0, 0.34);
+  animation: glassIn var(--dur-slow) var(--ease-out) both;
+
+  /* Curved specular rim: bright top-left arc fading around the edge, masked to
+     a 1px ring — light catching a curved glass edge, not a flat border. */
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: var(--glass-shell); /* theme-aware rim (dark: white / light: dark edge) */
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+  /* Fallback: no backdrop-filter → solid surface (readability over effect). */
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    background: var(--surface-tint);
+  }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+
+  /* collapse to one column when the containing card is narrow (not the window) */
+  @container card (max-width: 420px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Toast — thin glass capsule, spring entrance. */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: color-mix(in srgb, var(--surface-tint) 70%, transparent);
+  backdrop-filter: blur(var(--glass-blur-thin)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur-thin)) saturate(180%);
+  color: var(--label);
+  padding: 10px 24px;
+  overflow: hidden; /* clip backdrop-filter to the pill radius */
+  border-radius: var(--r-pill);
+  border: 0.5px solid var(--separator);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 8px 24px rgba(0, 0, 0, 0.3);
+  font-weight: var(--weight-semibold);
+  z-index: 1000;
+  animation: toastIn var(--dur-med) var(--ease-spring);
+
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    background: var(--surface-tint);
+  }
+}
+
+.theme-toggle {
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 4px;
+  font-size: 1.125rem; /* 18px icon glyph */
+  line-height: 1;
+  color: var(--label-secondary);
+
+  &:hover {
+    color: var(--accent);
+    border: none;
+    background: none;
+  }
+}
+
+@keyframes glassIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(12px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}

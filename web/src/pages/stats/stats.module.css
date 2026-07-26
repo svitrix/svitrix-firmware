@@ -88,6 +88,10 @@
   min-width: 4px; /* low values (e.g. brightness 8/255) still show a nub */
   border-radius: var(--r-pill);
   transition: width var(--dur-med) var(--ease-out);
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 }
 
 .statusRow {
@@ -103,10 +107,4 @@
   height: 7px;
   border-radius: 50%;
   flex: 0 0 auto;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .meterFill {
-    transition: none;
-  }
 }

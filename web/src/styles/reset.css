@@ -1,0 +1,45 @@
+/* ---------------------------------------------------------------------------
+   Reset + accessibility helpers.
+   --------------------------------------------------------------------------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Visually hidden but available to assistive tech / live regions. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Skip link — hidden via .sr-only until focused, then un-hidden
+   as a real, visible control pinned top-left above everything. */
+.skip-link:focus {
+  position: fixed;
+  top: var(--space-3);
+  left: var(--space-3);
+  z-index: 2000;
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: var(--space-2) var(--space-4);
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+  background: var(--accent);
+  color: #000;
+  font-weight: var(--weight-semibold);
+  border-radius: var(--r-control);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  /* accent-on-accent would be invisible; use a dark ring on the amber pill */
+  outline: 2px solid rgba(0, 0, 0, 0.65);
+  outline-offset: 2px;
+}

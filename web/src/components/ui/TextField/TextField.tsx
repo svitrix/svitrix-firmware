@@ -15,7 +15,7 @@ export function TextField({
   onChange: (v: string) => void;
   type?: string;
   placeholder?: string;
-  /** Forwarded to the native <input autocomplete> (WCAG 1.3.5). */
+  /** Forwarded to the native <input autocomplete>. */
   autocomplete?: string;
   /** When non-empty, marks the field invalid and shows a described message. */
   error?: string;

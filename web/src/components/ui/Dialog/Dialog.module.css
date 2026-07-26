@@ -15,7 +15,7 @@
   width: 100%;
   max-width: 380px;
   /* Never taller than the viewport — scroll inside instead of pushing the
-     buttons off-screen when text is enlarged (WCAG 1.4.4 / 1.4.10). Backdrop
+     buttons off-screen when text is enlarged. Backdrop
      has 20px padding top+bottom. */
   max-height: calc(100vh - 40px);
   max-height: calc(100dvh - 40px);
@@ -41,12 +41,14 @@
   font-weight: var(--weight-semibold);
   color: var(--label);
   margin-bottom: 8px;
+  text-wrap: balance;
 }
 .body {
   font-size: var(--text-body);
   line-height: var(--lh-body);
   color: var(--label-secondary);
   margin-bottom: 18px;
+  text-wrap: pretty;
 }
 .field {
   margin-bottom: 18px;

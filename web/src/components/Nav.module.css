@@ -16,9 +16,8 @@
     0 6px 20px rgba(0, 0, 0, 0.22);
   flex-wrap: wrap;
   align-items: center;
-}
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .nav {
+
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
     background: var(--surface-tint);
   }
 }
@@ -36,14 +35,15 @@
   font-size: var(--text-footnote);
   transition: background var(--dur-fast) var(--ease-out),
               color var(--dur-fast) var(--ease-out);
-}
-.link:hover {
-  background: var(--fill);
-  color: var(--label);
-}
-.link:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
+
+  &:hover {
+    background: var(--fill);
+    color: var(--label);
+  }
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
 }
 
 .linkActive,

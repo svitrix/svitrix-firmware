@@ -1,0 +1,64 @@
+/* ---------------------------------------------------------------------------
+   Accessibility preference queries (see web/DESIGN.md §8).
+   Imported last so its :root token overrides and !important rules win.
+   --------------------------------------------------------------------------- */
+
+/* Larger tap targets on touch devices (Apple HIG: min 44px). */
+@media (pointer: coarse) {
+  button,
+  input,
+  select,
+  textarea {
+    min-height: 44px;
+  }
+  input[type="checkbox"] {
+    min-height: 0;
+  }
+}
+
+/* Respect reduced motion: no transforms/springs, plain fades only. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  button:active {
+    transform: none;
+  }
+}
+
+/* Reduced transparency: glass becomes solid, blur off. */
+@media (prefers-reduced-transparency: reduce) {
+  .card,
+  .nav,
+  .toast {
+    background: var(--surface-tint) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+}
+
+/* Increased contrast: promote hairlines to full lines, strengthen text. */
+@media (prefers-contrast: more) {
+  :root {
+    --separator: rgba(255, 255, 255, 0.4);
+    --label-secondary: rgba(255, 255, 255, 0.8);
+  }
+  [data-theme="light"] {
+    --separator: rgba(0, 0, 0, 0.5);
+    --label-secondary: rgba(0, 0, 0, 0.75);
+  }
+  .card,
+  .nav,
+  input,
+  select,
+  textarea,
+  button {
+    outline: 1px solid var(--separator);
+    outline-offset: -1px;
+  }
+}

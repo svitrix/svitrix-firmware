@@ -4,6 +4,14 @@ Preact + Vite + TypeScript SPA for the Svitrix ESP32 pixel clock.
 
 Replaces the embedded PROGMEM HTML pages. Served from LittleFS `/web/` on the device.
 
+## Documentation
+
+- **[CLAUDE.md](CLAUDE.md)** — build guide: how to add a component / page / settings
+  section following the Liquid Glass + WCAG 2.1 AA rules (start here when coding).
+- **[DESIGN.md](DESIGN.md)** — design spec: principles, tokens (§9), materials,
+  components (§6), motion (§7), accessibility (§8), rationale (§11).
+- This file — run/build, architecture, project structure, conventions.
+
 ## Quick Start
 
 ```bash
@@ -59,13 +67,15 @@ VITE_DEVICE_IP=192.168.1.42
 
 ## Bundle Size
 
-Target: < 30 KB gzip. Current: ~17.7 KB gzip.
+```
+app.js.gz      ~44 KB    (Preact + router + signals + all pages + i18n × 5 langs)
+style.css.gz   ~5.7 KB   (global styles + Liquid Glass tokens, light/dark)
+index.html.gz  ~0.2 KB   (minimal shell)
+```
 
-```
-app.js.gz      ~16.6 KB   (Preact + router + signals + all pages)
-style.css.gz    ~0.9 KB   (global styles, dark theme)
-index.html.gz   ~0.2 KB   (minimal shell)
-```
+The original < 30 KB gzip target is now exceeded because all five locales are
+bundled into a single IIFE (no code-splitting on the device). The glass/token CSS
+weighs almost nothing; the growth is i18n + the accessibility pass.
 
 ## Tech Stack
 
@@ -115,7 +125,8 @@ src/
 
 - **Directory-per-page**: each page in its own directory with `index.ts` barrel export
 - **CSS Modules**: use `.module.css` files, no inline styles for static layout
-- **CSS variables**: use `var(--bg)`, `var(--accent)`, etc. for theming (dark/light)
+- **CSS variables**: use the Liquid Glass tokens (`var(--surface-tint)`, `var(--label)`, `var(--accent)`, etc.) for theming (dark/light) — see `DESIGN.md` §9
+- **Typography**: use the `rem`-based type tokens (`--text-body`, `--text-footnote`, `--lh-*`, `--weight-*`) — never hard-code `px` font sizes (WCAG 1.4.4); see `DESIGN.md` §5
 - **Preact**: use `class` not `className`, import from `preact` and `preact/hooks`
 - **Components**: reusable UI in `components/ui/`, page-specific in page directory
 - **Context**: shared state via `SettingsContext`, sections save only their own fields

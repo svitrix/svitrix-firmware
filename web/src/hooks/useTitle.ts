@@ -2,7 +2,7 @@ import { useEffect } from "preact/hooks";
 
 /**
  * Sets the document title to `Svitrix — <title>` for the lifetime of the
- * calling component / until `title` changes (WCAG 2.4.2 Page Titled).
+ * calling component / until `title` changes.
  * Driven from the route→title map in main.tsx so page components don't each
  * need to manage their own title.
  */

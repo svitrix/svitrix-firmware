@@ -13,7 +13,7 @@ export function Select({
   value: string | number;
   options: Array<{ value: string | number; label: string }>;
   onChange: (v: number | string) => void;
-  /** Forwarded to the native <select autocomplete> (WCAG 1.3.5). */
+  /** Forwarded to the native <select autocomplete>. */
   autocomplete?: string;
   /** When non-empty, marks the field invalid and shows a described message. */
   error?: string;

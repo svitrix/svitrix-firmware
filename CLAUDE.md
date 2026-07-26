@@ -148,7 +148,7 @@ Per-module docs auto-load when you Read files in their directory.
 | Config | [lib/config/CLAUDE.md](lib/config/CLAUDE.md) | Config structs, defaults, persistence |
 | HA integration | [lib/home-assistant-integration/CLAUDE.md](lib/home-assistant-integration/CLAUDE.md) | ArduinoHA fork, entity types enabled |
 | Webserver | [lib/webserver/CLAUDE.md](lib/webserver/CLAUDE.md) | Async server wrapper, WiFi, SPA fallback |
-| SPA | [web/README.md](web/README.md) | Preact + Vite, pages & components |
+| SPA | [web/CLAUDE.md](web/CLAUDE.md) | Preact SPA build guide (Liquid Glass + WCAG AA); see also [web/DESIGN.md](web/DESIGN.md), [web/README.md](web/README.md) |
 | src root | [src/CLAUDE.md](src/CLAUDE.md) | Globals, AppContent, cross-cutting files |
 | ServerManager | [src/ServerManager/CLAUDE.md](src/ServerManager/CLAUDE.md) | HTTP REST API, WiFi, mDNS, UDP/TCP |
 | PeripheryManager | [src/PeripheryManager/CLAUDE.md](src/PeripheryManager/CLAUDE.md) | Buttons, I2C sensors, LDR, battery, buzzer |
