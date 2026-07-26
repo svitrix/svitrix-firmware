@@ -121,22 +121,22 @@ scheme (white cards, light-grey field wells).
 
 ## 3. Materials (Glass)
 
-The core of the language. Three blur levels (`--glass-blur-*`) + a tint density
-`--glass`.
+The core of the language. Three blur levels (`--glass-blur-*`) + a tinted surface.
 
 | Level | blur token | blur | Density | Where |
 |-------|-----------|------|---------|-------|
 | Thin | `--glass-blur-thin` | 30px | nav 72% · toast 70% | Navigation, toasts |
-| Regular | `--glass-blur-regular` | 40px | cards `--glass` (77% dark / 70% light) | Section cards (base) |
+| Regular | `--glass-blur-regular` | 40px | cards `--card-surface` (77% dark / 70% light) | Section cards (base) |
 | Thick | `--glass-blur-thick` | 50px | ~92% | Modals `ConfirmDialog`/`PromptDialog` |
 
 Card density (77/70%) is higher than the ~52% "glassy" value from an early version:
 in dense content Apple trades transparency for legibility (Deference) — the scene
-still tints the material, but text stays contrast-safe.
+still tints the material, but text stays contrast-safe. The two densities are baked
+into `--card-surface` as a single `light-dark()` colour (§9).
 
 ### 3.1 The glass surface recipe
 
-Glass is a **tinted base (at `--glass` density) + backdrop-blur + a curved specular
+Glass is a **tinted base (`--card-surface`) + backdrop-blur + a curved specular
 rim**. The rim is not a flat `1px` line but a theme-aware gradient `--glass-shell`,
 masked down to a 1px ring (reads as light catching a curved glass edge). Plus
 `overflow: hidden` — otherwise the blurred backdrop pokes past the rounded corners.
@@ -147,7 +147,7 @@ masked down to a 1px ring (reads as light catching a curved glass edge). Plus
   overflow: hidden; /* clip backdrop-filter to the radius */
   background:
     linear-gradient(180deg, rgba(255,255,255,.06), transparent 42%), /* top sheen */
-    color-mix(in srgb, var(--surface-tint) var(--glass), transparent);
+    var(--card-surface); /* light-dark() surface-tint at 70/77% opacity */
   backdrop-filter: blur(var(--glass-blur-regular)) saturate(180%);
   -webkit-backdrop-filter: blur(var(--glass-blur-regular)) saturate(180%);
   border: none;
@@ -414,7 +414,7 @@ when adding UI:
   Dialogs trap + restore focus and are named via `aria-labelledby`.
 - **Skip link + `<main id="main">`** in `main.tsx`; per-route `document.title`
   via `useTitle`. Nav marks the active link with `aria-current="page"`; the theme
-  toggle has `aria-label` + `aria-pressed`.
+  toggle (System/Light/Dark) has an `aria-label` announcing the current mode.
 - **Semantics:** real headings (`<h2>`/`<h3>`), real lists (`<ul>/<li>`),
   `role="img"` + label on state-bearing `<canvas>`/`<svg>`, `alt` on images.
 - **Icon-only buttons** need an `aria-label`; loading buttons keep their name and
@@ -431,63 +431,71 @@ aggregator that `@import`s tokens → reset → base → components → a11y). T
 alias set (`--bg`, `--bg-card`, `--border`, `--text`, `--radius`…) has been removed
 — components consume the tokens below directly.
 
+**Theming = `light-dark()` + `color-scheme`.** *Every* themed value is a single
+`light-dark(<light>, <dark>)` declaration — including `--scene` (shared bloom
+geometry, `light-dark()` on the stop colours) and the card surface (`--card-surface`
+folds the old 70/77% opacity into a colour).
+
+**Three-state model (System / Light / Dark).** `:root { color-scheme: light dark }`
+is the default, so with **no** `data-theme` the theme **follows the OS live** (the
+browser tracks it — no matchMedia listener). The toggle cycles the modes: "system"
+removes `data-theme`; "light"/"dark" set it, which forces `color-scheme` and
+overrides the OS. Choice persists in `localStorage`; an inline `<head>` script in
+`index.html` applies an explicit choice before first paint (no FOUC). Colour tokens
+never duplicate — the `[data-theme]` rules are just the scheme switch.
+
+(Vite/Lightning CSS lowers `light-dark()` to a custom-property toggle: one
+`@media (prefers-color-scheme)` for the OS-following default plus static values for
+the forced modes, so it works in older browsers too.)
+
 ```css
-:root { /* DARK */
-  --scene:
-    radial-gradient(62% 50% at 28% 2%,   rgba(94,92,230,.30), transparent 62%),
-    radial-gradient(58% 46% at 78% 8%,   rgba(48,209,209,.20), transparent 58%),
-    radial-gradient(72% 62% at 58% 100%, rgba(255,110,90,.17), transparent 60%),
-    radial-gradient(120% 120% at 50% 35%, #1a1d28, #0e1016);
-  --surface-tint: #383d4d;  --glass: 77%;   /* dark: surface LIGHTER than bg */
+:root {
+  color-scheme: light dark;                   /* default: follow the OS */
+  --scene:                                    /* shared geometry, light-dark colours */
+    radial-gradient(62% 50% at 28% 2%, light-dark(rgba(120,118,255,.34), rgba(94,92,230,.30)), transparent 62%),
+    … , radial-gradient(120% 120% at 50% 35%, light-dark(#eef1f8,#1a1d28), light-dark(#dde2ec,#0e1016));
+  --surface-tint: light-dark(#ffffff, #383d4d);
+  --card-surface: light-dark(              /* folds the old --glass 70/77% opacity */
+    color-mix(in srgb, var(--surface-tint) 70%, transparent),
+    color-mix(in srgb, var(--surface-tint) 77%, transparent));
 
-  --label:           rgba(255,255,255,.95);
-  --label-secondary: rgba(235,235,245,.62); /* Apple #EBEBF5 · AA */
-  --label-tertiary:  rgba(235,235,245,.35);
-  --separator:       rgba(255,255,255,.12);
-  --fill:            rgba(130,132,145,.28);
-  --fill-secondary:  rgba(130,132,145,.40);
-  --field-plate:     rgba(14,16,23,.88);     /* opaque well */
-  --placeholder:     color-mix(in srgb, var(--label) 55%, transparent);
-  --glass-shell: linear-gradient(135deg,
-    rgba(255,255,255,.5), rgba(255,255,255,.06) 40%, transparent 60%, rgba(255,255,255,.2));
+  --label:           light-dark(rgba(0,0,0,.85),    rgba(255,255,255,.95));
+  --label-secondary: light-dark(rgba(60,60,67,.75), rgba(235,235,245,.62)); /* AA both */
+  --label-tertiary:  light-dark(rgba(60,60,67,.45), rgba(235,235,245,.35));
+  --separator:       light-dark(rgba(0,0,0,.12),    rgba(255,255,255,.12));
+  --fill:            light-dark(rgba(120,120,128,.12), rgba(130,132,145,.28));
+  --fill-secondary:  light-dark(rgba(120,120,128,.16), rgba(130,132,145,.40));
+  --field-plate:     light-dark(rgba(233,235,241,.96), rgba(14,16,23,.88));  /* opaque well */
+  --placeholder:     light-dark(rgba(60,60,67,.70),
+                                color-mix(in srgb, var(--label) 55%, transparent));
+  --glass-shell: linear-gradient(135deg,          /* same structure both themes */
+    light-dark(rgba(255,255,255,.85), rgba(255,255,255,.5)),
+    light-dark(rgba(0,0,0,.05), rgba(255,255,255,.06)) 40%,
+    transparent 60%,
+    light-dark(rgba(0,0,0,.2), rgba(255,255,255,.2)));
 
-  --accent: #ffc93c; --accent-pressed: #e6a100; --accent-hover: #ffd65c;
-  --blue: #0a84ff; --green: #30d158; --red: #ff453a; --orange: #ff9f0a;
-  --danger-text: #ff8a80; /* red *text* — 5.1:1 on card (--red fails at 3.9:1) */
+  --accent:         light-dark(#e6a100, #ffc93c);
+  --accent-pressed: light-dark(#c98a00, #e6a100);
+  --accent-hover:   light-dark(#c98a00, #ffd65c);
+  --blue:  light-dark(#007aff, #0a84ff);  --green:  light-dark(#34c759, #30d158);
+  --red:   light-dark(#ff3b30, #ff453a);  --orange: light-dark(#ff9500, #ff9f0a);
+  --danger-text: light-dark(#d70015, #ff8a80); /* red TEXT (--red fails at 3.9:1) */
 
+  /* theme-independent below */
   --glass-blur-thin: 30px; --glass-blur-regular: 40px; --glass-blur-thick: 50px;
   --r-card: 20px; --r-control: 12px; --r-inner: 8px; --r-pill: 999px;
-  --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px; --space-5:20px;
-  --space-6:24px; --space-8:32px;
+  --space-1:4px … --space-8:32px;
   --ease-spring: linear(0,.2,.6,.9,1.02,1); --ease-out: cubic-bezier(.22,1,.36,1);
   --dur-fast:.18s; --dur-med:.28s; --dur-slow:.4s;
-  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
-
-  /* type — rem so text scales with the browser setting (WCAG 1.4.4) */
-  --text-title:1.25rem; --text-headline:1.0625rem; --text-subhead:.9375rem;
-  --text-body:.875rem; --text-footnote:.8125rem; --text-caption:.75rem;
+  --font: -apple-system, …;
+  --text-title:1.25rem … --text-caption:.75rem;   /* rem — WCAG 1.4.4 */
   --lh-body:1.5; --lh-tight:1.3; --lh-solid:1.1;
-  --weight-regular:400; --weight-medium:500; --weight-semibold:600; --weight-bold:700;
+  --weight-regular:400 … --weight-bold:700;
 }
 
-[data-theme="light"] {
-  --scene:
-    radial-gradient(70% 58% at 22% 4%,   rgba(120,118,255,.34), transparent 62%),
-    radial-gradient(64% 50% at 80% 8%,   rgba(60,200,220,.30), transparent 58%),
-    radial-gradient(80% 68% at 60% 100%, rgba(255,150,120,.28), transparent 60%),
-    radial-gradient(120% 120% at 50% 50%, #eef1f8, #dde2ec);
-  --surface-tint: #ffffff; --glass: 70%;
-  --label: rgba(0,0,0,.85); --label-secondary: rgba(60,60,67,.75); /* #3C3C43 · AA */
-  --label-tertiary: rgba(60,60,67,.45); --separator: rgba(0,0,0,.12);
-  --fill: rgba(120,120,128,.12); --fill-secondary: rgba(120,120,128,.16);
-  --field-plate: rgba(233,235,241,.96); /* ≈systemGray6 */
-  --placeholder: rgba(60,60,67,.70);
-  --glass-shell: linear-gradient(135deg,
-    rgba(255,255,255,.85), rgba(0,0,0,.05) 40%, transparent 60%, rgba(0,0,0,.2));
-  --accent: #e6a100; --accent-pressed: #c98a00; --accent-hover: #c98a00;
-  --blue:#007aff; --green:#34c759; --red:#ff3b30; --orange:#ff9500;
-  --danger-text: #d70015; /* 4.9:1 on the light card */
-}
+/* explicit choice forces a scheme (overrides the OS); every light-dark() flips */
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"]  { color-scheme: dark; }
 ```
 
 ---

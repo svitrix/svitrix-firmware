@@ -36,8 +36,15 @@ scan (all routes × light/dark). Keep it that way.
   `container: card / inline-size`, so inner layouts query the card width, not the
   viewport (`@container card (...)`), not `@media`; `@property` to register an
   animatable custom prop (see `--pct` in `Slider.module.css`); `:has()`,
-  `color-mix()`, `light-dark()`-ready tokens. New responsive layout inside a card
-  → use `@container card`, not a viewport media query.
+  `color-mix()`. **Theming is `light-dark()` + a three-state
+  toggle** (System/Light/Dark). Colour tokens are single `light-dark(<light>,
+  <dark>)` declarations; `:root { color-scheme: light dark }` follows the OS by
+  default, and an explicit `data-theme` (set by the toggle in `Nav.tsx`, persisted
+  in localStorage, pre-applied by the inline script in `index.html`) forces a
+  scheme. Add a new colour token as `light-dark(...)`, never two theme blocks; a
+  new theme-varying value that isn't a colour → fold it into a `light-dark()`
+  colour if possible. New responsive layout inside a card → use `@container card`,
+  not a viewport media query.
 - **i18n:** every user-facing string (incl. `aria-label`, error text, titles) goes
   through `t("key")`. Add the key to **all five** locale slices
   (`src/i18n/locales/{en,uk,es,de,nl}/…`) — `Dict = typeof en`, so a key missing

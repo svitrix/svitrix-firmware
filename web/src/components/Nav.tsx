@@ -5,15 +5,32 @@ import { supportedLanguages } from "../i18n";
 import styles from "./Nav.module.css";
 
 const currentPath = signal(window.location.pathname);
-const theme = signal<"dark" | "light">(
-  (localStorage.getItem("theme") as "dark" | "light") || "dark"
-);
-document.documentElement.setAttribute("data-theme", theme.value);
 
-export function toggleTheme() {
-  theme.value = theme.value === "dark" ? "light" : "dark";
-  document.documentElement.setAttribute("data-theme", theme.value);
-  localStorage.setItem("theme", theme.value);
+/* Theme has three states. "system" (the default when nothing is stored) sets NO
+   data-theme, so the root's `color-scheme: light dark` follows the OS — the
+   browser tracks OS changes live, no matchMedia listener needed. An explicit
+   "light"/"dark" writes data-theme, which forces the scheme. */
+type ThemeMode = "system" | "light" | "dark";
+const stored = localStorage.getItem("theme");
+const themeMode = signal<ThemeMode>(
+  stored === "light" || stored === "dark" ? stored : "system"
+);
+
+function applyTheme(mode: ThemeMode) {
+  const root = document.documentElement;
+  if (mode === "system") root.removeAttribute("data-theme");
+  else root.setAttribute("data-theme", mode);
+}
+applyTheme(themeMode.value); // idempotent with the anti-FOUC script in index.html
+
+/** Cycle System → Light → Dark → System. */
+export function cycleTheme() {
+  const order: ThemeMode[] = ["system", "light", "dark"];
+  const next = order[(order.indexOf(themeMode.value) + 1) % order.length];
+  themeMode.value = next;
+  applyTheme(next);
+  if (next === "system") localStorage.removeItem("theme");
+  else localStorage.setItem("theme", next);
 }
 
 window.addEventListener("popstate", () => {
@@ -33,6 +50,9 @@ const links = [
 export function Nav() {
   const { t, i18n } = useTranslation();
   const path = currentPath.value;
+  const mode = themeMode.value;
+  const themeIcon = mode === "system" ? "◐" : mode === "light" ? "☀" : "☽";
+  const themeLabel = `${t("nav.theme")}: ${t(`nav.theme_${mode}`)}`;
 
   function navigate(e: Event, href: string) {
     e.preventDefault();
@@ -74,12 +94,11 @@ export function Nav() {
         </select>
         <button
           class="theme-toggle"
-          onClick={toggleTheme}
-          title={t("nav.toggleTheme")}
-          aria-label={t("nav.toggleTheme")}
-          aria-pressed={theme.value === "light"}
+          onClick={cycleTheme}
+          title={themeLabel}
+          aria-label={themeLabel}
         >
-          {theme.value === "dark" ? "\u2600" : "\u263D"}
+          {themeIcon}
         </button>
       </div>
     </nav>

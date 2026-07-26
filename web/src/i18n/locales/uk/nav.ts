@@ -1,6 +1,10 @@
 import type en from "../en/nav";
 
 const uk: typeof en = {
+  theme: "Тема",
+  theme_system: "Системна",
+  theme_light: "Світла",
+  theme_dark: "Темна",
   logo: "Svitrix",
   screen: "Екран",
   stats: "Статистика",

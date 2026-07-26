@@ -3,7 +3,19 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- The page supports both schemes — lets the UA style form controls / the
+         initial canvas correctly before CSS loads (no white flash). -->
+    <meta name="color-scheme" content="light dark" />
     <title>Svitrix</title>
+    <!-- Apply an explicit theme choice before first paint (no FOUC). No stored
+         choice → no attribute → CSS `color-scheme: light dark` follows the OS. -->
+    <script>
+      try {
+        var t = localStorage.getItem("theme");
+        if (t === "light" || t === "dark")
+          document.documentElement.setAttribute("data-theme", t);
+      } catch (e) {}
+    </script>
   </head>
   <body>
     <div id="app"></div>

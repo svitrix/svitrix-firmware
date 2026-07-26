@@ -1,52 +1,64 @@
 /* ---------------------------------------------------------------------------
    Design tokens — Liquid Glass (see web/DESIGN.md §9).
-   The single source of theme values. Components consume these directly
-   (materials, colour, geometry, typography, motion). No hard-coded colours/px.
+   The single source of theme values. Components consume these directly.
+
+   Theming uses light-dark(<light>, <dark>). `color-scheme` is derived from the
+   `data-theme` attribute (set by the theme toggle) right here in CSS, so the
+   toggle stays the single source of truth and needs no JS change. EVERY themed
+   value is a light-dark() declaration — the light override at the bottom is a
+   single line (`color-scheme: light`) with zero duplicated values.
    --------------------------------------------------------------------------- */
 :root {
-  /* scene — a vivid environment so glass has something to refract/tint;
-     blooms pulled inward so colour bleeds UNDER the centered content column */
-  --scene:
-    radial-gradient(62% 50% at 28% 2%,   rgba(94, 92, 230, 0.30), transparent 62%),
-    radial-gradient(58% 46% at 78% 8%,   rgba(48, 209, 209, 0.20), transparent 58%),
-    radial-gradient(72% 62% at 58% 100%, rgba(255, 110, 90, 0.17), transparent 60%),
-    radial-gradient(120% 120% at 50% 35%, #1a1d28, #0e1016);
-  /* Dark-mode elevation = LIGHTER surface. Cards sit clearly above the bg. */
-  --surface-tint: #383d4d; /* slight cool chroma so glass isn't dead grey */
-  --glass: 77%; /* let the scene tint the material (was 82%) */
+  color-scheme: light dark; /* default: FOLLOW THE OS. Explicit choice forces it (below) */
 
-  /* semantic text & fills (Apple system) */
-  --label:           rgba(255, 255, 255, 0.95);
-  --label-secondary: rgba(235, 235, 245, 0.62); /* 5.1:1 on card · Apple #EBEBF5 tint */
-  --label-tertiary:  rgba(235, 235, 245, 0.35);
-  --separator:       rgba(255, 255, 255, 0.12);
-  --fill:            rgba(130, 132, 145, 0.28);
-  --fill-secondary:  rgba(130, 132, 145, 0.40);
-  /* field = a DARK, near-opaque recessed well (opaque so the shell rim shows
-     only at the 1px edge — a translucent plate leaks the shell gradient as a
-     metallic diagonal sheen across the field body) */
-  --field-plate:     rgba(14, 16, 23, 0.88);
-  --placeholder:     color-mix(in srgb, var(--label) 55%, transparent); /* 5.9:1 */
-  /* field/select shell rim — white specular reads as glass edge on dark */
+  /* scene — a vivid environment so glass has something to refract/tint; blooms
+     pulled inward so colour bleeds UNDER the centered column. One gradient for
+     both themes: shared bloom geometry, light-dark() only on the stop colours. */
+  --scene:
+    radial-gradient(62% 50% at 28% 2%,   light-dark(rgba(120,118,255,.34), rgba(94,92,230,.30)),  transparent 62%),
+    radial-gradient(58% 46% at 78% 8%,   light-dark(rgba(60,200,220,.30),  rgba(48,209,209,.20)),  transparent 58%),
+    radial-gradient(72% 62% at 58% 100%, light-dark(rgba(255,150,120,.28), rgba(255,110,90,.17)),  transparent 60%),
+    radial-gradient(120% 120% at 50% 35%, light-dark(#eef1f8, #1a1d28), light-dark(#dde2ec, #0e1016));
+  /* Elevation: dark surface is LIGHTER than the bg; light surface is white. */
+  --surface-tint: light-dark(#ffffff, #383d4d);
+  /* card material — folds the old --glass opacity (light 70% / dark 77%) into a
+     single colour so it, too, is light-dark(). */
+  --card-surface: light-dark(
+    color-mix(in srgb, var(--surface-tint) 70%, transparent),
+    color-mix(in srgb, var(--surface-tint) 77%, transparent));
+
+  /* semantic text & fills (Apple system) — light-dark(<light>, <dark>) */
+  --label:           light-dark(rgba(0, 0, 0, 0.85),     rgba(255, 255, 255, 0.95));
+  --label-secondary: light-dark(rgba(60, 60, 67, 0.75),  rgba(235, 235, 245, 0.62)); /* AA both */
+  --label-tertiary:  light-dark(rgba(60, 60, 67, 0.45),  rgba(235, 235, 245, 0.35));
+  --separator:       light-dark(rgba(0, 0, 0, 0.12),     rgba(255, 255, 255, 0.12));
+  --fill:            light-dark(rgba(120, 120, 128, 0.12), rgba(130, 132, 145, 0.28));
+  --fill-secondary:  light-dark(rgba(120, 120, 128, 0.16), rgba(130, 132, 145, 0.40));
+  /* opaque recessed well (opaque so the shell rim shows only at the 1px edge) */
+  --field-plate:     light-dark(rgba(233, 235, 241, 0.96), rgba(14, 16, 23, 0.88));
+  --placeholder:     light-dark(rgba(60, 60, 67, 0.70),
+                                color-mix(in srgb, var(--label) 55%, transparent)); /* AA both */
+  /* field/select shell rim — same gradient structure both themes, only the stop
+     colours differ, so light-dark() folds it into one declaration */
   --glass-shell: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.5),
-    rgba(255, 255, 255, 0.06) 40%,
+    light-dark(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.5)),
+    light-dark(rgba(0, 0, 0, 0.05), rgba(255, 255, 255, 0.06)) 40%,
     transparent 60%,
-    rgba(255, 255, 255, 0.2)
+    light-dark(rgba(0, 0, 0, 0.20), rgba(255, 255, 255, 0.2))
   );
 
   /* accents (Apple system colors; Svitrix amber as brand accent) */
-  --accent: #ffc93c;
-  --accent-pressed: #e6a100;
-  --accent-hover: #ffd65c;
-  --blue: #0a84ff;
-  --green: #30d158;
-  --red: #ff453a;
-  --orange: #ff9f0a;
+  --accent:         light-dark(#e6a100, #ffc93c);
+  --accent-pressed: light-dark(#c98a00, #e6a100);
+  --accent-hover:   light-dark(#c98a00, #ffd65c);
+  --blue:   light-dark(#007aff, #0a84ff);
+  --green:  light-dark(#34c759, #30d158);
+  --red:    light-dark(#ff3b30, #ff453a);
+  --orange: light-dark(#ff9500, #ff9f0a);
   /* red is for fills/rims (non-text); danger *text* needs a tuned value to hit
-     4.5:1 on the card surface. Dark: lightened red ≈5.1:1. */
-  --danger-text: #ff8a80;
+     4.5:1 on the card surface (system red fails at ~3.9:1) */
+  --danger-text: light-dark(#d70015, #ff8a80);
 
   /* material thickness (blur radius) */
   --glass-blur-thin: 30px;
@@ -88,38 +100,8 @@
   --weight-bold:     700;
 }
 
-[data-theme="light"] {
-  --scene:
-    radial-gradient(70% 58% at 22% 4%,   rgba(120, 118, 255, 0.34), transparent 62%),
-    radial-gradient(64% 50% at 80% 8%,   rgba(60, 200, 220, 0.30), transparent 58%),
-    radial-gradient(80% 68% at 60% 100%, rgba(255, 150, 120, 0.28), transparent 60%),
-    radial-gradient(120% 120% at 50% 50%, #eef1f8, #dde2ec);
-  --surface-tint: #ffffff;
-  --glass: 70%;
-
-  --label:           rgba(0, 0, 0, 0.85);
-  --label-secondary: rgba(60, 60, 67, 0.75);   /* 5.1:1 on white — passes AA (was 3.96:1) */
-  --label-tertiary:  rgba(60, 60, 67, 0.45);
-  --separator:       rgba(0, 0, 0, 0.12);
-  --fill:            rgba(120, 120, 128, 0.12);
-  --fill-secondary:  rgba(120, 120, 128, 0.16);
-  --field-plate:     rgba(233, 235, 241, 0.96); /* opaque ≈systemGray6 well — no shell bleed */
-  --placeholder:     rgba(60, 60, 67, 0.70);    /* ~4.5:1 — passes AA (0.55 was 2.86:1) */
-  /* light: a stronger dark edge so the rim does the definition the pale plate can't */
-  --glass-shell: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.85),
-    rgba(0, 0, 0, 0.05) 40%,
-    transparent 60%,
-    rgba(0, 0, 0, 0.20)
-  );
-
-  --accent: #e6a100;
-  --accent-pressed: #c98a00;
-  --accent-hover: #c98a00;
-  --blue: #007aff;
-  --green: #34c759;
-  --red: #ff3b30;
-  --orange: #ff9500;
-  --danger-text: #d70015; /* darker red — 4.9:1 on the light card (system red fails at 3.9:1) */
-}
+/* Explicit user choice (theme toggle) forces a scheme and flips every light-dark()
+   token above; with no `data-theme` the root's `light dark` follows the OS. No
+   colour values here — just the scheme switch. */
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"]  { color-scheme: dark; }

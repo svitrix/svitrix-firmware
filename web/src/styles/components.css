@@ -17,7 +17,7 @@
   /* faint top sheen over the tint — sells "material catches light" */
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.06), transparent 42%),
-    color-mix(in srgb, var(--surface-tint) var(--glass), transparent);
+    var(--card-surface);
   backdrop-filter: blur(var(--glass-blur-regular)) saturate(180%);
   -webkit-backdrop-filter: blur(var(--glass-blur-regular)) saturate(180%);
   border: none;

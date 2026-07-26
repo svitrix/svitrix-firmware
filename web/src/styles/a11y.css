@@ -45,12 +45,8 @@
 /* Increased contrast: promote hairlines to full lines, strengthen text. */
 @media (prefers-contrast: more) {
   :root {
-    --separator: rgba(255, 255, 255, 0.4);
-    --label-secondary: rgba(255, 255, 255, 0.8);
-  }
-  [data-theme="light"] {
-    --separator: rgba(0, 0, 0, 0.5);
-    --label-secondary: rgba(0, 0, 0, 0.75);
+    --separator:       light-dark(rgba(0, 0, 0, 0.5), rgba(255, 255, 255, 0.4));
+    --label-secondary: light-dark(rgba(0, 0, 0, 0.75), rgba(255, 255, 255, 0.8));
   }
   .card,
   .nav,

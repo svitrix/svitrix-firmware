@@ -1,6 +1,10 @@
 import type en from "../en/nav";
 
 const de: typeof en = {
+  theme: "Design",
+  theme_system: "System",
+  theme_light: "Hell",
+  theme_dark: "Dunkel",
   logo: "Svitrix",
   screen: "Bildschirm",
   stats: "Statistik",

@@ -1,4 +1,8 @@
 export default {
+  theme: "Theme",
+  theme_system: "System",
+  theme_light: "Light",
+  theme_dark: "Dark",
   logo: "Svitrix",
   screen: "Screen",
   stats: "Stats",
