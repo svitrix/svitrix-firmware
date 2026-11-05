@@ -54,3 +54,5 @@ SVITRIX розробляється за підходом **AI-first**. [Claude](
 ## Підтримка
 
 Якщо вам подобається цей проєкт, поставте зірку на [GitHub](https://github.com/svitrix/svitrix-firmware) та долучайтесь!
+
+Питання, ідеї, ваші збірки та бета-версії — у [Discord SVITRIX](https://discord.gg/9WHHPae2DV) (спілкування англійською).

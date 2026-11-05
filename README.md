@@ -16,6 +16,7 @@
 [![GitHub releases](https://img.shields.io/github/downloads/svitrix/svitrix-firmware/total?style=flat-square)](https://github.com/svitrix/svitrix-firmware/releases)
 [![GitHub stars](https://img.shields.io/github/stars/svitrix/svitrix-firmware?style=flat-square)](https://github.com/svitrix/svitrix-firmware)
 [![AI-First](https://img.shields.io/badge/AI--First-Claude-blueviolet?style=flat-square)](https://claude.ai)
+[![Discord](https://img.shields.io/badge/Discord-join-5865F2?style=flat-square&logo=discord&logoColor=white)](https://discord.gg/9WHHPae2DV)
 
 [Quick Start](#quick-start) · [Features](#features) · [API](#api) · [Documentation](https://svitrix.github.io/svitrix-firmware/) · [FAQ](#faq)
 
@@ -132,6 +133,8 @@ SVITRIX is developed using an **AI-first** approach. [Claude](https://claude.ai)
 ## Contributing
 
 Star the repo, open issues, and submit pull requests — contributions are welcome!
+
+Questions, ideas, showcases and beta builds: join the [SVITRIX Discord](https://discord.gg/9WHHPae2DV).
 
 ## Disclaimer
 

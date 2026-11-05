@@ -1,7 +1,8 @@
 import { defineConfig } from 'vitepress'
 
 const sharedSocialLinks = [
-  { icon: 'github', link: 'https://github.com/svitrix/svitrix-firmware' }
+  { icon: 'github', link: 'https://github.com/svitrix/svitrix-firmware' },
+  { icon: 'discord', link: 'https://discord.gg/9WHHPae2DV' }
 ]
 
 function sidebarEn() {
